@@ -84,13 +84,14 @@ public class UI {
 		
 		fighter_one_startX = gp.tileSize * 14;
 		fighter_two_startX = 0 - gp.tileSize * 3;
-		fighter_one_endX = gp.tileSize * 2;
-		fighter_two_endX = gp.tileSize * 9;
-		
+				
 		fighter_one_X = fighter_one_startX;
 		fighter_two_X = fighter_two_startX;
 		fighter_one_Y = gp.tileSize * 3;
 		fighter_two_Y = 0;
+		
+		fighter_one_endX = gp.tileSize * 2;
+		fighter_two_endX = gp.tileSize * 9;
 		
 		// FONT DECLARATION		
 		try {
@@ -202,8 +203,8 @@ public class UI {
 		int y;		
 		
 		g2.drawImage(fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
-		x = (int) (gp.tileSize * 9.6);
-		y = (int) (gp.tileSize * 5.3);
+		x = (int) (gp.tileSize * 9.1);
+		y = (int) (gp.tileSize * 5.4);
 		drawFighterWindow(x, y, 0);				
 				
 		g2.drawImage(fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
@@ -226,53 +227,68 @@ public class UI {
 	}
 	private void drawFighterWindow(int x, int y, int num) {
 		
-		int tempX = x + gp.tileSize;
+		int tempX = x;
 		
-		int width = gp.tileSize * 6;
-		int height = (int) (gp.tileSize * 2.5);
+		String text;
+		int width = (int) (gp.tileSize * 6.5);
+		int height = (int) (gp.tileSize * 2.3);
 		
 		drawSubWindow(x, y, width, height, 15, 6, battle_yellow, Color.BLACK);
 		
 		x += gp.tileSize * 0.3;
 		y += gp.tileSize * 0.8;
+		text = fighter[num].getName();
 		g2.setColor(Color.BLACK);
-		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 40F));
-		g2.drawString(fighter[num].getName(), x, y);
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));
+		g2.drawString(text, x, y);
 		
-		x += gp.tileSize * 4.3;
+		int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+		
+		x += length;
+		if (fighter[num].getSex() == '♂') g2.setColor(Color.BLUE);		
+		else g2.setColor(Color.RED);			
+		g2.drawString("" + fighter[num].getSex(), x, y);
+		
+		text = "Lv";
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 27F));
-		g2.drawString("Lv", x, y);
+		g2.setColor(Color.BLACK);
+		x = getXforRightAlignText(text, x);		
+		g2.drawString(text, x, y);
 		
-		x += gp.tileSize * 0.55;
-		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 40F));
-		g2.drawString("" + fighter[num].getLevel(), x, y);
+		text = "" + fighter[num].getLevel();
+		x = getXforRightAlignText(text, x);
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));
+		g2.drawString(text, x, y);
 		
-		x = tempX;
+		x = (int) (tempX + gp.tileSize * 1.7);
 		y += gp.tileSize * 0.7;
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));
 		g2.drawString("HP", x, y);
 		
 		x += gp.tileSize * 0.6;
 		y -= gp.tileSize * 0.35;
-		width = gp.tileSize * 4;
+		width = (int) (gp.tileSize * 3.8);
 		height = (int) (gp.tileSize * 0.4);
 		g2.setStroke(new BasicStroke(2));
 		g2.drawRoundRect(x, y, width, height, 15, 15);
 				
 		height -= 2;
 		drawFighterHealthBar(x, y, width, height, num);
+						
+		text = fighter[num].getHP() + " / " + fighter[num].getBHP();
+		x += gp.tileSize * 3.8;
+		x = getXforRightAlignText(text, x);
 		
-		x += gp.tileSize * 2.4;
-		y += gp.tileSize;
+		y += gp.tileSize * 0.9;
 		g2.setColor(Color.BLACK);
-		g2.drawString(fighter[num].getHP() + " / " + fighter[num].getBHP(), x, y);	
+		g2.drawString(text, x, y);	
 	}
 	private void drawFighterHealthBar(int x, int y, int width, int height, int num) {
 		
 		int tempHP = 0;
 		
 		if (num == 0) tempHP = fighter_one_HP;
-		else tempHP = fighter_two_HP;		
+		else tempHP = fighter_two_HP;
 		
 		if (hpCounter == hpSpeed) {
 			if (tempHP > fighter[num].getHP()) tempHP--;			
@@ -365,6 +381,7 @@ public class UI {
 		combinedText = "";	
 		battleDialogue = "";	
 		currentDialogue = "";
+		commandNum = 0;
 		
 		battleSubState = nextSubState;
 	}
@@ -414,12 +431,12 @@ public class UI {
 			
 			if (commandNum == 0) {
 				advanceDialogue();	
-				battleSubState = gp.ui.subStateMoves;		
+				battleSubState = subStateMoves;		
 			}
 			else if (commandNum == 3) {
 				advanceDialogue();	
 				battleDialogue = "Got away safely!";
-				battleSubState = gp.ui.subStateRun;
+				battleSubState = subStateRun;
 			}
 		}
 	}
@@ -471,6 +488,13 @@ public class UI {
 			
 			gp.battleEngine.move(fighter[0].getMoveSet().get(commandNum), gp.battleEngine.cpuSelectMove());		
 		}
+		else if (gp.keyH.bPressed) {
+			
+			advanceDialogue();	
+			gp.keyH.bPressed = false;
+			
+			battleSubState = subStateOptions;
+		}
 	}	
 	private void drawBattleMoveDescriptionWindow() {
 		
@@ -503,6 +527,11 @@ public class UI {
 		g2.setColor(borderColor);
 		g2.setStroke(new BasicStroke(borderStroke));
 		g2.drawRoundRect(x + 4, y + 4, width - 8, height - 8, curve, curve);		
+	}
+	public int getXforRightAlignText(String text, int tailX) {
+		int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+		int x = tailX - length;
+		return x;
 	}
 	private BufferedImage setup(String imagePath, int width, int height) {
 		
