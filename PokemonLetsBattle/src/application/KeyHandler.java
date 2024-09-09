@@ -3,8 +3,6 @@ package application;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-import moves.Move;
-
 public class KeyHandler implements KeyListener {
 
 	private GamePanel gp;
@@ -61,8 +59,8 @@ public class KeyHandler implements KeyListener {
 	
 	// BATTLE
 	private void battleState(int code) { 
-						
-		if (gp.ui.battleSubState == gp.ui.subStateEncounter) {				
+		
+		if (gp.ui.battleSubState == gp.ui.subStateDialogue) {				
 			if (code == gp.btn_A && lock) { 
 				aPressed = true; 
 				lock = false; 
@@ -71,24 +69,8 @@ public class KeyHandler implements KeyListener {
 		else if (gp.ui.battleSubState == gp.ui.subStateOptions) {			
 			
 			if (code == gp.btn_A && lock) { 
-				playCursorSE();		
-				
+				playCursorSE();						
 				aPressed = true; lock = false; 
-				
-				if (gp.ui.commandNum == 0) {
-					gp.ui.commandNum = 0;
-					gp.ui.charIndex = 0;
-					gp.ui.combinedText = "";
-					gp.ui.battleDialogue = "";
-					gp.ui.battleSubState = gp.ui.subStateMoves;					
-				}
-				else if (gp.ui.commandNum == 3) {
-					gp.ui.commandNum = 0;
-					gp.ui.charIndex = 0;
-					gp.ui.combinedText = "";
-					gp.ui.battleDialogue = "Got away safely!";
-					gp.ui.battleSubState = gp.ui.subStateRun;
-				}
 			}
 			
 			if (code == gp.btn_UP) {				
@@ -123,34 +105,12 @@ public class KeyHandler implements KeyListener {
 		else if (gp.ui.battleSubState == gp.ui.subStateMoves) {
 			
 			if (code == gp.btn_A && lock) { 	
-				playCursorSE();				
-				
-				aPressed = true; lock = false;
-				
-				Move move_one = gp.ui.fighter_one.getMoveSet().get(gp.ui.commandNum);
-				Move move_two = gp.battleEngine.cpuSelectMove();				
-				
-				
-				gp.ui.battleDialogue = gp.ui.fighter_one.getName() + " used\n" + 
-						 move_one.getName() + "!";
-				
-				gp.battleEngine.move(move_one, move_two);
-				
-				gp.ui.commandNum = 0;
-				gp.ui.charIndex = 0;
-				gp.ui.combinedText = "";
-				
-				gp.ui.battleSubState = gp.ui.subStateAttack;
+				playCursorSE();					
+				aPressed = true; lock = false;										
 			}			
 			if (code == gp.btn_B && lock) { 
-				playCursorSE();		
-				
-				bPressed = true; lock = false; 
-				
-				gp.ui.commandNum = 0;
-				gp.ui.charIndex = 0;
-				gp.ui.combinedText = "";
-				gp.ui.startBattle();			
+				playCursorSE();						
+				bPressed = true; lock = false; 	
 			}			
 			
 			if (code == gp.btn_UP) {
@@ -182,17 +142,9 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 		}		
-		else if (gp.ui.battleSubState == gp.ui.subStateRun) {
-			
+		else if (gp.ui.battleSubState == gp.ui.subStateRun) {			
 			if (code == gp.btn_A && lock && gp.ui.canSkip) { 				
-				playCursorSE();	
-				
-				gp.ui.commandNum = 0;
-				gp.ui.charIndex = 0;
-				gp.ui.combinedText = "";
-				gp.ui.battleDialogue = "";
-				
-				gp.gameState = gp.playState;
+				playCursorSE();					
 			}
 		}
 		

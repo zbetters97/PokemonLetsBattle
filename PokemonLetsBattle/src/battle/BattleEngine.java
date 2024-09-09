@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import application.GamePanel;
+
 import java.lang.Math;
 
 import moves.Move;
@@ -19,6 +21,13 @@ public class BattleEngine {
 	private Pokemon[] pokemon;
 	private int[] cpuItems;
 	public boolean swap = false;
+	private GamePanel gp;
+	
+	private int faint_SE = 4;
+	private int moves_SE = 5;
+	private int battle_SE = 6;
+	
+	private String dialogue;
 	
 	/** GETTERS AND SETTERS **/
 	public Pokemon getWinningPokemon() { return winningPokemon; }
@@ -28,7 +37,7 @@ public class BattleEngine {
 	/** CONSTRUCTOR 
 	 * @param trainer 1 pokemon, trainer 2 pokemon
 	 **/
-	public BattleEngine(Pokemon fighter_one, Pokemon fighter_two) {
+	public BattleEngine(Pokemon fighter_one, Pokemon fighter_two, GamePanel gp) {
 				
 		// array to hold fighting pokemon
 		pokemon = new Pokemon[12];
@@ -37,6 +46,8 @@ public class BattleEngine {
 		pokemon[1] = fighter_two;
 		
 		this.cpuItems = new int[]{3, 2, 1, 1};
+		
+		this.gp = gp;
 	}
 	/** END CONSTRUCTOR **/
 
@@ -187,7 +198,7 @@ public class BattleEngine {
 			
 			pokemon[1].setHP(hp);
 			
-			// PLAY HEAL SE
+			gp.playSE(battle_SE, "heal");
 			
 			if (newHP == 60) {				
 				System.out.println("'s POTION restored " + 
@@ -394,7 +405,7 @@ public class BattleEngine {
 					val = 1 + (int)(Math.random() * 4);
 					if (val == 1) {			
 						
-						// PLAY PRZ SE
+						gp.playSE(battle_SE, "paralyzed");
 						
 						System.out.println(pokemon[atk].getName() + pokemon[atk].getStatus().printStatus());
 						
@@ -414,7 +425,7 @@ public class BattleEngine {
 					}
 					else {	
 						
-						// PLAY FRZ SE
+						gp.playSE(battle_SE, "frozen");
 						
 						System.out.println(pokemon[atk].getName() + pokemon[atk].getStatus().printStatus());
 						
@@ -463,7 +474,7 @@ public class BattleEngine {
 			
 			if (status.equals("SLP")) {	
 				
-				// PLAY SLP SE
+				gp.playSE(battle_SE, "asleep");
 				
 				System.out.println(pokemon[pkm].getName() + pokemon[pkm].getStatus().printStatus());
 				
@@ -471,7 +482,7 @@ public class BattleEngine {
 			}
 			else if (status.equals("CNF")) {		
 				
-				// PLAY CNF SE
+				gp.playSE(battle_SE, "confused");
 				
 				System.out.println(pokemon[pkm].getName() + pokemon[pkm].getStatus().printStatus());
 				
@@ -509,7 +520,7 @@ public class BattleEngine {
 					
 					p.setHP(newHP);			
 					
-					// PLAY STATUS SE
+					gp.playSE(battle_SE, p.getStatus().getName());
 					
 					System.out.println(p.getName() + p.getStatus().printStatus());
 										
@@ -558,7 +569,7 @@ public class BattleEngine {
 			int damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
 				power * (A / D)) / 50)) + 2));
 		
-			// PLAY NORMAL HIT SE
+			gp.playSE(battle_SE, "hit-normal");
 			
 			System.out.println(pokemon[atk].getName() + pokemon[atk].getStatus().printStatus());
 			
@@ -588,13 +599,15 @@ public class BattleEngine {
 	 * @param int attacker, int target, Moves attacker move, Moves target move
 	 **/	
 	private void useTurn(int atk, int trg, Move atkMove, Move trgMove) {
-		
-		System.out.println(pokemon[atk].getName() + " used " + atkMove.getName() + "!");
-		
+						
+		dialogue = pokemon[atk].toString() + " used\n" + atkMove.toString() + "!"; 	
+		gp.ui.dialogueTimerMax = 120;
+		gp.ui.battleSubState = gp.ui.subStateDialogue;
+						
 		// if not delayed move or delayed move is ready
 		if (1 >= atkMove.getTurns()) {	
 			
-			// PLAY MOVE SE
+			gp.playSE(moves_SE, atkMove.getName());
 			
 			// reset turns to wait
 			atkMove.setTurns(atkMove.getNumTurns());
@@ -768,11 +781,11 @@ public class BattleEngine {
 		
 		// attributes raised
 		if (move.getLevel() > 0) {
-			// PLAY STAT UP SE
+			gp.playSE(battle_SE, "stat-up");
 		}
 		// attributes lowered
 		else  {
-			// PLAY STAT DOWN SE
+			gp.playSE(battle_SE, "stat-down");
 		}
 	}
 	/** END ATTRIBUTE MOVE METHOD **/
@@ -1023,7 +1036,7 @@ public class BattleEngine {
 		int xp = calculateXP(lsr);
 		pokemon[win].setXP(pokemon[win].getBXP() + xp);
 		
-		// PLAY POKEMON FAINT SE
+		gp.playSE(faint_SE, pokemon[lsr].getName());
 		
 		System.out.println(pokemon[lsr].getName() + " fainted!");			
 		System.out.println(pokemon[win].getName() + " gained " + xp + " Exp. Points!");
@@ -1068,6 +1081,13 @@ public class BattleEngine {
 	
 	public Pokemon getPokemon(int slot) {
 		return pokemon[slot];
+	}
+	
+	public String getDialogue() {
+		return dialogue;
+	}
+	public void setDialogue(String dialogue) {
+		this.dialogue = dialogue;
 	}
 }
 /*** END BATTLE ENGINE CLASS ***/

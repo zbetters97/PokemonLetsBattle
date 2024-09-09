@@ -130,9 +130,9 @@ public class GamePanel extends JPanel implements Runnable {
 		
  		gameState = playState;	
 		currentArea = outside;
-		currentLocation = town;
-		
-		setupMusicWorld();
+		currentLocation = town;		
+				
+//		setupMusicWorld();
 		
 		tileM.loadMap();
 		
@@ -143,30 +143,32 @@ public class GamePanel extends JPanel implements Runnable {
 		g2 = (Graphics2D)tempScreen.getGraphics();
 		
 		if (fullScreenOn) setFullScreen();
+		
+		setupBattle(wildBattle);
 	}
 	
-	private void setupMusicWorld() {
-		
+	private void setupMusicWorld() {		
 		if (currentLocation == town) playMusicWorld(0);
 	}
 	
 	public void setupBattle(int currentBattle) {	
 		
-		Pokemon fighter_one = Pokemon.getPokemon(0);
-		Pokemon fighter_two = Pokemon.getPokemon(1);
+		ui.fighter[0] = Pokemon.getPokemon(0);
+		ui.fighter[1] = Pokemon.getPokemon(1);
 		
-		battleEngine = new BattleEngine(fighter_one, fighter_two);
-		
-		ui.fighter_one = fighter_one;
-		ui.fighter_two = fighter_two;
-		ui.battleDialogue = "A wild " + fighter_two.getName() + " appeared!";
-		ui.battleSubState = ui.subStateEncounter;
-		
+		battleEngine = new BattleEngine(ui.fighter[0], ui.fighter[1], this);
+						
 		battleMode = currentBattle;
 		
-		stopMusic();
-		setupMusicBattle();
+		if (battleMode == wildBattle) {
+			battleEngine.setDialogue("A wild " + ui.fighter[1].toString() + " appeared!");
+			ui.nextSubState = ui.subStateOptions;
+		}
 		
+//		stopMusic();
+//		setupMusicBattle();
+		
+		ui.battleSubState = ui.subStateEncounter;
 		gameState = battleState;
 	}
 	
@@ -197,6 +199,10 @@ public class GamePanel extends JPanel implements Runnable {
 		se.setFile(i, c);
 		se.play();
 	}	
+	public void playSE (int record, String file) {
+		se.setFile(record, se.getFile(record, file));
+		se.play();
+	}
 	
 	private void setFullScreen() {
 		

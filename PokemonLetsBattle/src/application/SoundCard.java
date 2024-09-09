@@ -11,7 +11,7 @@ public class SoundCard {
 	
 	// CLIP HOLDERS
 	public Clip clip;
-	private String sounds[][] = new String[6][];
+	private String sounds[][] = new String[7][];
 	
 	// VOLUME SLIDER
 	private FloatControl fc;
@@ -22,9 +22,10 @@ public class SoundCard {
 		sounds[0] = getSounds("musicwrld");
 		sounds[1] = getSounds("musicbtl");
 		sounds[2] = getSounds("menu");
-		sounds[3] = getSounds("moves");
-		sounds[4] = getSounds("pdxcry");	
-		sounds[5] = getSounds("pdxfaint");			
+		sounds[3] = getSounds("pdxcry");	
+		sounds[4] = getSounds("pdxfaint");	
+		sounds[5] = getSounds("moves");
+		sounds[6] = getSounds("battle");				
 	}	
 	
 	private String[] getSounds(String library) {		
@@ -59,6 +60,18 @@ public class SoundCard {
 			return;
 		}
 	}
+	
+	public int getFile(int record, String file) {
+		
+		for (int i = 0; i < sounds[record].length; i++) {	
+			if (sounds[record][i].contains(file)) {
+				return i;
+			}			
+		}
+		
+		return 0;
+	}
+	
 	public void play() {		
 		clip.start();
 	}	

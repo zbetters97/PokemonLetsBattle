@@ -40,7 +40,7 @@ public class Player extends NPC {
 		screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 						
 		// HITBOX (x, y, width, height)
-		hitbox = new Rectangle(8, 12, 40, 46); 
+		hitbox = new Rectangle(8, 12, 32, 36); 
 		hitboxDefaultX = hitbox.x;
 		hitboxDefaultY = hitbox.y;
 		hitboxDefaultWidth = hitbox.width;
@@ -57,7 +57,7 @@ public class Player extends NPC {
 	// DEFAULT VALUES
 	public void setDefaultValues() {
 					
-		speed = 4; defaultSpeed = speed;
+		speed = 3; defaultSpeed = speed;
 		animationSpeed = 10; defaultAnimationSpeed = animationSpeed;
 		
 		// PLAYER ATTRIBUTES		
@@ -97,33 +97,33 @@ public class Player extends NPC {
 	
 	// PLAYER IMAGES
 	public void getImage() {			
-		up1 = setup("/player/boy_up_1", gp.tileSize + 10, gp.tileSize + 10); 
-		up2 = setup("/player/boy_up_2", gp.tileSize + 10, gp.tileSize + 10); 
-		up3 = setup("/player/boy_up_3", gp.tileSize + 10, gp.tileSize + 10); 
-		down1 = setup("/player/boy_down_1", gp.tileSize + 10, gp.tileSize + 10); 
-		down2 = setup("/player/boy_down_2", gp.tileSize + 10, gp.tileSize + 10);
-		down3 = setup("/player/boy_down_3", gp.tileSize + 10, gp.tileSize + 10);
-		left1 = setup("/player/boy_left_1", gp.tileSize + 10, gp.tileSize + 10); 
-		left2 = setup("/player/boy_left_2", gp.tileSize + 10, gp.tileSize + 10);
-		left3 = setup("/player/boy_left_3", gp.tileSize + 10, gp.tileSize + 10);
-		right1 = setup("/player/boy_right_1", gp.tileSize + 10, gp.tileSize + 10); 
-		right2 = setup("/player/boy_right_2", gp.tileSize + 10, gp.tileSize + 10);
-		right3 = setup("/player/boy_right_3", gp.tileSize + 10, gp.tileSize + 10);
+		up1 = setup("/player/boy_up_1"); 
+		up2 = setup("/player/boy_up_2"); 
+		up3 = setup("/player/boy_up_3"); 
+		down1 = setup("/player/boy_down_1"); 
+		down2 = setup("/player/boy_down_2");
+		down3 = setup("/player/boy_down_3");
+		left1 = setup("/player/boy_left_1"); 
+		left2 = setup("/player/boy_left_2");
+		left3 = setup("/player/boy_left_3");
+		right1 = setup("/player/boy_right_1"); 
+		right2 = setup("/player/boy_right_2");
+		right3 = setup("/player/boy_right_3");
 	}	
 	
 	public void getRunImage() {			
-		runUp1 = setup("/player/boy_run_up_1", gp.tileSize + 10, gp.tileSize + 10); 
-		runUp2 = setup("/player/boy_run_up_2", gp.tileSize + 10, gp.tileSize + 10); 
-		runUp3 = setup("/player/boy_run_up_3", gp.tileSize + 10, gp.tileSize + 10); 
-		runDown1 = setup("/player/boy_run_down_1", gp.tileSize + 10, gp.tileSize + 10); 
-		runDown2 = setup("/player/boy_run_down_2", gp.tileSize + 10, gp.tileSize + 10);
-		runDown3 = setup("/player/boy_run_down_3", gp.tileSize + 10, gp.tileSize + 10);
-		runLeft1 = setup("/player/boy_run_left_1", gp.tileSize + 10, gp.tileSize + 10); 
-		runLeft2 = setup("/player/boy_run_left_2", gp.tileSize + 10, gp.tileSize + 10);
-		runLeft3 = setup("/player/boy_run_left_3", gp.tileSize + 10, gp.tileSize + 10);
-		runRight1 = setup("/player/boy_run_right_1", gp.tileSize + 10, gp.tileSize + 10); 
-		runRight2 = setup("/player/boy_run_right_2", gp.tileSize + 10, gp.tileSize + 10);
-		runRight3 = setup("/player/boy_run_right_3", gp.tileSize + 10, gp.tileSize + 10);
+		runUp1 = setup("/player/boy_run_up_1"); 
+		runUp2 = setup("/player/boy_run_up_2"); 
+		runUp3 = setup("/player/boy_run_up_3"); 
+		runDown1 = setup("/player/boy_run_down_1"); 
+		runDown2 = setup("/player/boy_run_down_2");
+		runDown3 = setup("/player/boy_run_down_3");
+		runLeft1 = setup("/player/boy_run_left_1"); 
+		runLeft2 = setup("/player/boy_run_left_2");
+		runLeft3 = setup("/player/boy_run_left_3");
+		runRight1 = setup("/player/boy_run_right_1"); 
+		runRight2 = setup("/player/boy_run_right_2");
+		runRight3 = setup("/player/boy_run_right_3");
 	}	
 /** END DEFAULT HANDLERS **/
 	

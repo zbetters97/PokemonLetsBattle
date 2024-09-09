@@ -21,13 +21,14 @@ public enum Pokemon {
 	/*** EXP / EV REFERENCE https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield ***/
 	
 	BULBASAUR ("Bulbasaur", 1, Type.GRASS, 5, 45, 49, 49, 65, 65, 45, 16, 64, 1),
-	CHARMANDER ("Charmander", 4, Type.FIRE, 5, 39, 52, 43, 60, 50, 65, 16, 65, 1);
-	/*
-	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), 16, 60, 62, 63, 80, 80, 60, 32, 141, 2),
-	VENUSAUR ("Venusaur", 3, Arrays.asList(Type.GRASS, Type.POISON), 36, 80, 82, 83, 100, 100, 80, -1, 208, 3),
 	CHARMANDER ("Charmander", 4, Type.FIRE, 5, 39, 52, 43, 60, 50, 65, 16, 65, 1),
-	CHARMELEON ("Charmeleon", 5, Type.FIRE, 16, 58, 64, 58, 80, 65, 80, 36, 142, 2),
-	CHARIZARD ("Charizard", 6, Arrays.asList(Type.FIRE, Type.FLYING), 36, 78, 84, 78, 109, 85, 100, -1, 209, 3),
+	
+//	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), 16, 60, 62, 63, 80, 80, 60, 32, 141, 2),
+	VENUSAUR ("Venusaur", 3, Arrays.asList(Type.GRASS, Type.POISON), 36, 80, 82, 83, 100, 100, 80, -1, 208, 3),
+//	CHARMANDER ("Charmander", 4, Type.FIRE, 5, 39, 52, 43, 60, 50, 65, 16, 65, 1),
+//	CHARMELEON ("Charmeleon", 5, Type.FIRE, 16, 58, 64, 58, 80, 65, 80, 36, 142, 2),
+	CHARIZARD ("Charizard", 6, Arrays.asList(Type.FIRE, Type.FLYING), 36, 78, 84, 78, 109, 85, 100, -1, 209, 3);
+/*
 	SQUIRTLE ("Squirtle", 7, Type.WATER, 5, 44, 48, 65, 50, 64, 43, 16, 66, 1),
 	WARTORTLE ("Wartortle", 8, Type.WATER, 16, 59, 63, 80, 65, 80, 58, 36, 143, 2),
 	BLASTOISE ("Blastoise", 9, Type.WATER, 36, 79, 83, 100, 85, 105, 78, -1, 210, 3),
@@ -99,7 +100,7 @@ public enum Pokemon {
 		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
 		
 		// hp calculation reference (GEN IV): https://pokemon.fandom.com/wiki/Individual_Values
-		this.name = name.toUpperCase(); this.index = index; 
+		this.name = name; this.index = index; 
 		
 		// coin flip for Pokemon gender
 		this.sex = Math.random() > 0.5 ? '♂' : '♀';
@@ -141,9 +142,10 @@ public enum Pokemon {
 	Pokemon(String name, int index, List<Type> types, int level, int hp, int attack, int defense, 
 			int spAttack, int spDefense, int speed, int evLevel, int xp, int ev) {			
 		
-		this.frontSprite = setup("/pokedexfront/" + name, 48, 48); this.backSprite = setup("/pokedexback/" + name, 48, 48);
-		
-		this.name = name.toUpperCase(); this.index = index; 
+		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
+		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
+
+		this.name = name; this.index = index; 
 		
 		// coin flip for Pokemon gender
 		this.sex = Math.random() > 0.5 ? '♂' : '♀';		
@@ -196,18 +198,18 @@ public enum Pokemon {
         		new Move(Moves.TACKLE)));
         pokeMap.put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
         
-        /*
-        pokeMap.put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
-        		new Move(Moves.TACKLE)));
+    
+ //       pokeMap.put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
+//        		new Move(Moves.TACKLE)));
 		pokeMap.put(VENUSAUR, Arrays.asList(new Move(Moves.PETALBLIZZARD), new Move(Moves.SOLARBEAM, 2), new Move(Moves.TAKEDOWN), 
 				new Move(Moves.DOUBLEEDGE)));
 		
-        pokeMap.put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
-		pokeMap.put(CHARMELEON, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.EMBER), new Move(Moves.SLASH), 
-				new Move(Moves.GROWL)));
+ //       pokeMap.put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
+//		pokeMap.put(CHARMELEON, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.EMBER), new Move(Moves.SLASH), 
+//				new Move(Moves.GROWL)));
         pokeMap.put(CHARIZARD, Arrays.asList(new Move(Moves.FLAMETHROWER), new Move(Moves.FLAREBLITZ),new Move(Moves.DRAGONBREATH),
         	new Move(Moves.FLY, 2)));
-        
+  /*      
 		pokeMap.put(SQUIRTLE, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.TAILWHIP)));
         pokeMap.put(WARTORTLE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.WATERGUN), new Move(Moves.TAILWHIP)));
         pokeMap.put(BLASTOISE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.AQUATAIL), new Move(Moves.HYDROPUMP), 
@@ -406,7 +408,11 @@ public enum Pokemon {
 	}
 	/** END SET NATURE METHOD **/
 	
-	/** GETTERS AND SETTERS **/
+	/** GETTERS AND SETTERS **/	
+	public String toString() {
+		return name.toUpperCase();
+	}
+	
 	public BufferedImage getFrontSprite() { return frontSprite; }
 	public BufferedImage getBackSprite() { return backSprite; }
 	public String getName() { return name; }

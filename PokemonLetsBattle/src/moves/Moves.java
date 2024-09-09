@@ -116,7 +116,7 @@ public enum Moves {
 	
 	/** CONSTRUCTORS **/
 	Moves (String name, String mtype, Type type, int pp, int power, int accuracy, String info) {
-		this.name = name.toUpperCase();;
+		this.name = name;
 		this.mtype = mtype;
 		this.type = type;
 		this.pp = pp;
@@ -125,7 +125,7 @@ public enum Moves {
 		this.info = info;
 	}	
 	Moves (String name, String mtype, Type type, int pp, int power, int accuracy, double selfInflict, String info) {
-		this.name = name.toUpperCase();;
+		this.name = name;
 		this.mtype = mtype;
 		this.type = type;
 		this.pp = pp;
@@ -135,7 +135,7 @@ public enum Moves {
 		this.info = info;
 	}	
 	Moves (String name, String mtype, Type type, int pp, int power, int accuracy, int crit, String info) {
-		this.name = name.toUpperCase();;
+		this.name = name;
 		this.mtype = mtype;
 		this.type = type;
 		this.pp = pp;
@@ -145,7 +145,7 @@ public enum Moves {
 		this.info = info;
 	}	
 	Moves (String name, String mtype, Type type, int pp, int power, int accuracy, boolean goFirst, String info) {
-		this.name = name.toUpperCase();;
+		this.name = name;
 		this.mtype = mtype;
 		this.type = type;
 		this.pp = pp;		
@@ -155,7 +155,7 @@ public enum Moves {
 		this.info = info;
 	}	
 	Moves (String name, String mtype, Type type, int pp, int power, int accuracy, boolean canHit, String delay, String info) {
-		this.name = name.toUpperCase();;
+		this.name = name;
 		this.mtype = mtype;
 		this.type = type;
 		this.pp = pp;
@@ -166,7 +166,7 @@ public enum Moves {
 		this.info = info;
 	}	
 	Moves (String name, String mtype, Type type, Status effect, int pp, int accuracy, String info) {
-		this.name = name.toUpperCase();;
+		this.name = name;
 		this.mtype = mtype;
 		this.type = type;
 		this.effect = effect;
@@ -175,7 +175,7 @@ public enum Moves {
 		this.info = info;
 	}	
 	Moves (String name, String mtype, Type type, Status effect, Double probability, int pp, int power, int accuracy, String info) {
-		this.name = name.toUpperCase();;
+		this.name = name;
 		this.mtype = mtype;
 		this.type = type;
 		this.effect = effect;
@@ -186,7 +186,7 @@ public enum Moves {
 		this.info = info;
 	}	
 	Moves (String name, String mtype, Type type, Status effect, Double probability, int pp, int power, int accuracy, int crit, String info) {
-		this.name = name.toUpperCase();;
+		this.name = name;
 		this.mtype = mtype;
 		this.type = type;
 		this.effect = effect;
@@ -198,7 +198,7 @@ public enum Moves {
 		this.info = info;
 	}	
 	Moves (String name, String mtype, Type type, boolean toSelf, int pp, int accuracy, int level, List<String> stats, String info) {
-		this.name = name.toUpperCase();;
+		this.name = name;
 		this.mtype = mtype;
 		this.type = type;
 		this.toSelf = toSelf;
@@ -209,7 +209,7 @@ public enum Moves {
 		this.info = info;
 	}	
 	Moves (String name, String mtype, Type type, boolean toSelf, Double probability, int pp, int power, int accuracy, int level, List<String> stats, String info) {
-		this.name = name.toUpperCase();
+		this.name = name;
 		this.mtype = mtype;
 		this.type = type;
 		this.toSelf = toSelf;

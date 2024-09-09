@@ -31,7 +31,10 @@ public class Move {
 	}
 	/** END CONSTRUCTORS **/
 	
-	/** GETTERS AND SETTERS **/
+	/** GETTERS AND SETTERS **/	
+	public String toString() {
+		return move.getName().toUpperCase();
+	}
 	public Moves getMove() { return move; }
 	public String getName() { return move.getName(); }
 	
