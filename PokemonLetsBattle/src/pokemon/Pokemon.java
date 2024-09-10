@@ -529,115 +529,111 @@ public enum Pokemon {
 	public void setAlive(boolean isAlive) {	this.isAlive = isAlive; }
 	/** END GETTERS AND SETTERS **/
 	
-	public void changeStat(String stat, int level) {	
+	public String changeStat(String stat, int level) {	
+		
+		String output = "";
 		
 		switch (stat) {
 			case "attack":
 				if (this.attackStg + level > 6 || this.attackStg + level < -6) {
 					if (level >= 1) 
-						System.out.println(this.name + "'s attack won't go any higher!");
+						output = this.name + "'s attack won't go any higher!";
 					else if (level <= -1) 
-						System.out.println(this.name + "'s attack won't go any lower!");
-					return;
+						output = this.name + "'s attack won't go any lower!";
 				}
 				else {	
 					this.attackStg += level;
 					this.attack *= Math.max(2, 2 + (double) this.attackStg) / Math.max(2, 2 - (double) this.attackStg);	
 		
-					outputChange(stat, level);
+					output = outputChange(stat, level);
 				}	
 				break;
 			case "sp. attack":
 				if (this.spAttackStg + level > 6 || this.spAttackStg + level < -6) {
 					if (level >= 1) 
-						System.out.println(this.name + "'s sp. attack won't go any higher!");
+						output = this.name + "'s sp. attack won't go any higher!";
 					else if (level <= -1) 
-						System.out.println(this.name + "'s sp. attack won't go any lower!");
-					return;
+						output = this.name + "'s sp. attack won't go any lower!";					
 				}
 				else {	
 					this.spAttackStg += level;
 					this.spAttack *= Math.max(2, 2 + (double) this.spAttackStg) / Math.max(2, 2 - (double) this.spAttackStg);	
 					
-					outputChange(stat, level);
+					output = outputChange(stat, level);
 				}
 				break;
 			case "defense":
 				if (this.defenseStg + level > 6 || this.defenseStg + level < -6) {
 					if (level >= 1) 
-						System.out.println(this.name + "'s defense won't go any higher!");
+						output = this.name + "'s defense won't go any higher!";
 					else if (level <= -1) 
-						System.out.println(this.name + "'s defense won't go any lower!");
-					return;
+						output = this.name + "'s defense won't go any lower!";
 				}
 				else {	
 					this.defenseStg += level;
 					this.defense *= Math.max(2, 2 + (double) this.defenseStg) / Math.max(2, 2 - (double) this.defenseStg);
 					
-					outputChange(stat, level);
+					output = outputChange(stat, level);
 				}	
 				break;
 			case "sp. defense":
 				if (this.spDefenseStg + level > 6 || this.spDefenseStg  + level < -6) {
 					if (level >= 1) 
-						System.out.println(this.name + "'s sp. defense won't go any higher!");
+						output = this.name + "'s sp. defense won't go any higher!";
 					else if (level <= -1) 
-						System.out.println(this.name + "'s sp. defense won't go any lower!");
-					return;
+						output = this.name + "'s sp. defense won't go any lower!";
 				}
 				else {	
 					this.spDefenseStg  += level;
 					this.spDefense *= Math.max(2, 2 + (double) this.spDefenseStg ) / Math.max(2, 2 - (double) this.spDefenseStg);	
 					
-					outputChange(stat, level);
+					output = outputChange(stat, level);
 				}	
 				break;
 			case "speed":
 				if (this.speedStg + level > 6 || this.speedStg + level < -6) {
 					if (level >= 1) 
-						System.out.println(this.name + "'s speed won't go any higher!");
+						output = this.name + "'s speed won't go any higher!";
 					else if (level <= -1) 
-						System.out.println(this.name + "'s speed won't go any lower!");
-					return;
+						output = this.name + "'s speed won't go any lower!";
 				}
 				else {	
 					this.speedStg += level;					
 					this.speed *= Math.max(2, 2 + (double) this.speedStg) / Math.max(2, 2 - (double) this.speedStg);	
 					
-					outputChange(stat, level);
+					output = outputChange(stat, level);
 				}	
 				break;
 			case "accuracy":
 				if (this.accuracyStg + level > 6 || this.accuracyStg + level < -6) {
 					if (level >= 1) 
-						System.out.println(this.name + "'s accuracy won't go any higher!");
+						output = this.name + "'s accuracy won't go any higher!";
 					else if (level <= -1) 
-						System.out.println(this.name + "'s accuracy won't go any lower!");
-					return;
+						output = this.name + "'s accuracy won't go any lower!";
 				}
 				else {	
 					this.accuracyStg += level;
 					this.accuracy = Math.max(3, 3 + (double) this.accuracyStg) / Math.max(3, 3 - (double) this.accuracyStg);	
 					
-					outputChange(stat, level);
+					output = outputChange(stat, level);
 				}	
 				break;
 		}
-	}
-	private void outputChange(String stat, int level) {
 		
-		if (level == 1)
-			System.out.println(this.name + "'s " + stat + " rose!");
-		else if (level == 2) 
-			System.out.println(this.name + "'s " + stat + " greatly rose!");
-		else if (level >= 3)
-			System.out.println(this.name + "'s " + stat + " drastically rose!");
-		else if (level == -1)
-			System.out.println(this.name + "'s " + stat + " fell!");
-		else if (level == -2)
-			System.out.println(this.name + "'s " + stat + " greatly fell!");
-		else if (level <= -3)
-			System.out.println(this.name + "'s " + stat + " severely fell!");
+		return output;
+	}
+	private String outputChange(String stat, int level) {
+		
+		String output = "";
+		
+		if (level == 1) output = this.name + "'s " + stat + " rose!";
+		else if (level == 2) output = this.name + "'s " + stat + " greatly rose!";
+		else if (level >= 3) output = this.name + "'s " + stat + " drastically rose!";
+		else if (level == -1) output = this.name + "'s " + stat + " fell!";
+		else if (level == -2) output = this.name + "'s " + stat + " greatly fell!";
+		else if (level <= -3) output = this.name + "'s " + stat + " severely fell!";
+		
+		return output;
 	}
 	
 	// IMAGE MANAGERS

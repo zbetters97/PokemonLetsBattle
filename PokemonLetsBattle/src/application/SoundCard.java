@@ -1,11 +1,14 @@
 package application;
 
 import java.io.File;
+import java.io.IOException;
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class SoundCard {
 	
@@ -45,6 +48,17 @@ public class SoundCard {
 		return sounds;					
 	}
 	
+	public int getFile(int category, String file) {
+		
+		for (int i = 0; i < sounds[category].length; i++) {	
+			if (sounds[category][i].contains(file)) {
+				return i;
+			}			
+		}
+		
+		return 0;
+	}
+	
 	public void setFile(int category, int record) {		
 		try {			
 			String filePath = sounds[category][record];
@@ -60,16 +74,28 @@ public class SoundCard {
 			return;
 		}
 	}
-	
-	public int getFile(int record, String file) {
+				
+	public int getSoundDuration(int category, int record) {
 		
-		for (int i = 0; i < sounds[record].length; i++) {	
-			if (sounds[record][i].contains(file)) {
-				return i;
-			}			
+		int duration = 0;
+		
+		String filePath = sounds[category][record];
+		File file = new File(filePath);		
+		AudioInputStream audioInputStream;
+		try {
+			audioInputStream = AudioSystem.getAudioInputStream(file);
+			AudioFormat format = audioInputStream.getFormat();
+			long frames = audioInputStream.getFrameLength();
+			duration = (int) ((frames + 0.0) / format.getFrameRate()); 
+		} 
+		catch (UnsupportedAudioFileException e) {			
+			e.printStackTrace();
+		} 
+		catch (IOException e) {			
+			e.printStackTrace();
 		}
 		
-		return 0;
+		return duration;
 	}
 	
 	public void play() {		

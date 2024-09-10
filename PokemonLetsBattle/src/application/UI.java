@@ -14,8 +14,6 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
-import pokemon.Pokemon;
-
 public class UI {
 	
 	// UI FONTS
@@ -33,9 +31,12 @@ public class UI {
 	private BufferedImage current_arena;
 	
 	// DIALOGUE HANDLER	
+	private ArrayList<String> battleDialogue;
+	private String menuDialogue;
 	public String currentDialogue = "";
 	public String combinedText = "";
 	public int dialogueCounter = 0;	
+	private int dialogueIndex = 0;
 	public int charIndex = 0;	
 	public int textSpeed = 3;
 	public boolean canSkip = false;
@@ -45,7 +46,6 @@ public class UI {
 	public int dialogueTimerMax = 60;
 	
 	// FIGHTER VALUES
-	public Pokemon[] fighter = new Pokemon[2];
 	private final int fighter_one_startX;
 	private final int fighter_two_startX;
 	private final int fighter_one_endX;
@@ -57,26 +57,25 @@ public class UI {
 	
 	private int fighter_one_HP;
 	private int fighter_two_HP;
-	private int hpSpeed = 3;
+	private int hpSpeed = 2;
 	private int hpCounter = 0;
 	
 	private boolean fighterReady = false;	
 	
-	public String battleDialogue;
 	private ArrayList<String> battleOptions;
 	
 	public int battleSubState;
 	public int nextSubState;
-	public final int subStateEncounter = 1;
-	public final int subStateDialogue = 2;
-	public final int subStateOptions = 3;
-	public final int subStateMoves = 4;
-	public final int subStateAttack = 5;
-	public final int subStateRun = 6;	
+	public final int subState_Encounter = 1;
+	public final int subState_Dialogue = 2;
+	public final int subState_Options = 3;
+	public final int subState_Moves = 4;
+	public final int subState_CPU = 5;
 	
 	public UI(GamePanel gp) {
 		this.gp = gp;
 		
+		battleDialogue = new ArrayList<String>();
 		battleOptions = new ArrayList<String>();
 		battleOptions.addAll(Arrays.asList("FIGHT", "BAG", "POKEMON", "RUN"));
 		
@@ -140,43 +139,36 @@ public class UI {
 		g2.setColor(battle_white);  
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 		
-		if (battleSubState == subStateEncounter) {		
+		if (battleSubState == subState_Encounter) {		
 			drawFighterPlatforms();
 			animateFighterOneEntrance(); animateFighterTwoEntrance();
 			drawBattleDialogueWindow();		
 			if (fighterReady) {
-				fighter_one_HP = fighter[0].getHP();
-				fighter_two_HP = fighter[1].getHP();
+				fighter_one_HP = gp.btlManager.fighter[0].getHP();
+				fighter_two_HP = gp.btlManager.fighter[1].getHP();
+				dialogueTimerMax = 120;
 				
-				gp.playSE(3, fighter[1].getName());
-				battleSubState = subStateDialogue;				
+				gp.playSE(3, gp.btlManager.fighter[1].getName());
+				nextSubState = subState_Options;
+				battleSubState = subState_Dialogue;				
 			}
 		}		
-		else if (battleSubState == subStateOptions) {
-			gp.battleEngine.setDialogue("What will\n" + fighter[0].toString() + " do?");
-			skippable = true;
+		else if (battleSubState == subState_Dialogue) {			
+			drawFighters();
+			drawBattleDialogueWindow();			
+			drawBattleDialogue();
+		}
+		else if (battleSubState == subState_Options) {
+			menuDialogue = "What will\n" + gp.btlManager.fighter[0].getName() + " do?";
 			drawFighters();
 			drawBattleDialogueWindow();	
+			drawMenuDialogue();
 			drawBattleOptionsWindow();			
 		}
-		else if (battleSubState == subStateMoves) {
-			skippable = true;
+		else if (battleSubState == subState_Moves) {
 			drawFighters();
 			drawBattleMovesetWindow();
 			drawBattleMoveDescriptionWindow();
-		}
-		else if (battleSubState == subStateAttack) {
-			drawFighters();
-			drawBattleDialogueWindow();	
-		}
-		else if (battleSubState == subStateRun) {
-			skippable = true;
-			drawFighters();
-			drawBattleDialogueWindow();	
-		}
-		else if (battleSubState == subStateDialogue) {			
-			drawFighters();
-			drawBattleDialogueWindow();				
 		}
 	}
 	
@@ -185,14 +177,14 @@ public class UI {
 		if (fighter_one_endX < fighter_one_X) fighter_one_X -= 5;		
 		else fighterReady = true;		
 				
-		g2.drawImage(fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
+		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
 	}	
 	private void animateFighterTwoEntrance() {
 		
 		if (fighter_two_endX > fighter_two_X) fighter_two_X += 5;		
 		else fighterReady = true;		
 		
-		g2.drawImage(fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
+		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
 	}
 	
 	private void drawFighters() {	
@@ -202,12 +194,12 @@ public class UI {
 		int x;
 		int y;		
 		
-		g2.drawImage(fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
+		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
 		x = (int) (gp.tileSize * 9.1);
 		y = (int) (gp.tileSize * 5.4);
 		drawFighterWindow(x, y, 0);				
 				
-		g2.drawImage(fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
+		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
 		x = (int) (gp.tileSize * 0.4);
 		y = (int) (gp.tileSize * 0.4);
 		drawFighterWindow(x, y, 1);		
@@ -238,26 +230,26 @@ public class UI {
 		
 		x += gp.tileSize * 0.3;
 		y += gp.tileSize * 0.8;
-		text = fighter[num].getName();
+		text = gp.btlManager.fighter[num].getName();
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));
 		g2.drawString(text, x, y);
 		
 		length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();		
 		x += length;
-		g2.setColor(fighter[num].getSexColor());	
-		g2.drawString("" + fighter[num].getSex(), x, y);
+		g2.setColor(gp.btlManager.fighter[num].getSexColor());	
+		g2.drawString("" + gp.btlManager.fighter[num].getSex(), x, y);
 		
 		g2.setColor(Color.BLACK);		
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));		
-		text = "Lv" + fighter[num].getLevel();		
+		text = "Lv" + gp.btlManager.fighter[num].getLevel();		
 		length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();		
 		x = (int) (tempX + width - length - gp.tileSize * 0.45);
 		g2.drawString(text, x, y);
 		
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));
 		
-		if (fighter[num].getStatus() != null) {
+		if (gp.btlManager.fighter[num].getStatus() != null) {
 			drawFighterStatus((int) (tempX + gp.tileSize * 0.3), (int) (y + gp.tileSize * 0.2), num);
 		}
 		
@@ -269,14 +261,15 @@ public class UI {
 		y -= gp.tileSize * 0.35;
 		width = (int) (gp.tileSize * 3.8);
 		height = (int) (gp.tileSize * 0.4);
-		g2.setStroke(new BasicStroke(2));
-		g2.drawRoundRect(x, y, width, height, 15, 15);
+		g2.setColor(Color.BLACK);
+		g2.setStroke(new BasicStroke(3));
+		g2.fillRoundRect(x, y, width, height, 15, 15);
 				
 		height -= 2;
 		drawFighterHealthBar(x, y, width, height, num);
-						
+		
 		g2.setColor(Color.BLACK);
-		text = fighter[num].getHP() + " / " + fighter[num].getBHP();
+		text = gp.btlManager.fighter[num].getHP() + " / " + gp.btlManager.fighter[num].getBHP();
 		x = getXforRightAlignText(text, (int) (x + gp.tileSize * 3.8));		
 		y += gp.tileSize * 0.9;
 		g2.drawString(text, x, y);	
@@ -285,32 +278,42 @@ public class UI {
 		
 		int width = gp.tileSize;
 		int height = (int) (gp.tileSize * 0.6);
-		g2.setColor(fighter[num].getStatus().getColor());
+		g2.setColor(gp.btlManager.fighter[num].getStatus().getColor());
 		g2.fillRoundRect(x, y, width, height, 20, 20);
 		
 		g2.setColor(Color.BLACK);
 		x += gp.tileSize * 0.15;
 		y += gp.tileSize * 0.48;
-		g2.drawString(fighter[num].getStatus().getAbreviation(), x, y);
+		g2.drawString(gp.btlManager.fighter[num].getStatus().getAbreviation(), x, y);
 	}	
 	private void drawFighterHealthBar(int x, int y, int width, int height, int num) {
 		
 		int tempHP = 0;
 		
-		if (num == 0) tempHP = fighter_one_HP;
+		if (num == 0) tempHP = fighter_one_HP;		
 		else tempHP = fighter_two_HP;
-		
-		if (hpCounter == hpSpeed) {
-			if (tempHP > fighter[num].getHP()) tempHP--;			
-			else if (tempHP < fighter[num].getHP()) tempHP++;
+					
+		if (tempHP > gp.btlManager.fighter[num].getHP()) {
+			if (hpCounter == hpSpeed) {
+				tempHP--;	
+				hpCounter = 0;
+			}
+			else {
+				hpCounter++;			
+			}					
+		}
+		else if (tempHP < gp.btlManager.fighter[num].getHP()) {
 			
-			hpCounter = 0;
-		}
-		else {
-			hpCounter++;			
+			if (hpCounter == hpSpeed) {
+				tempHP++;
+				hpCounter = 0;
+			}
+			else {
+				hpCounter++;			
+			}			
 		}
 		
-		double remainHP = (double)tempHP / (double)fighter[num].getBHP();				
+		double remainHP = (double)tempHP / (double)gp.btlManager.fighter[num].getBHP();				
 		if (remainHP >= .50) g2.setColor(Color.GREEN);
 		else if (remainHP >= .25) g2.setColor(Color.YELLOW);
 		else g2.setColor(Color.RED);	
@@ -331,8 +334,41 @@ public class UI {
 		int height = gp.tileSize * 4;
 		
 		drawSubWindow(x, y, width, height, 12, 10, battle_green, battle_red);
+	}	
+	
+	private void drawMenuDialogue() {
 		
-		if (fighterReady) drawBattleDialogue();
+		int x = gp.tileSize / 2;
+		int y = (int) (gp.screenHeight - gp.tileSize * 2.2);
+		
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));		
+		
+		if (dialogueCounter == textSpeed) {
+			
+			char characters[] = menuDialogue.toCharArray();
+						
+			if (charIndex < characters.length) {
+				
+				String s = String.valueOf(characters[charIndex]);				
+				combinedText += s;
+				currentDialogue = combinedText;					
+				charIndex++;					
+			}
+
+			dialogueCounter = 0;
+		}
+		else {
+			dialogueCounter++;			
+		}					
+		
+  		for (String line : currentDialogue.split("\n")) { 
+  			g2.setColor(Color.BLACK);
+			g2.drawString(line, x, y);	
+			g2.setColor(battle_white);
+			g2.drawString(line, x-2, y-2);
+			y += gp.tileSize;
+		} 	
 	}	
 	private void drawBattleDialogue() {
 		
@@ -342,28 +378,37 @@ public class UI {
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
 		
-		if (dialogueCounter == textSpeed) {
+		if (battleDialogue.size() > dialogueIndex && battleDialogue.get(dialogueIndex) != null) {
 			
-			char characters[] = gp.battleEngine.getDialogue().toCharArray();
-						
-			if (charIndex < characters.length) {
+			if (dialogueCounter == textSpeed) {
 				
-				// PLAY DIALOGUE SE
-				
-				String s = String.valueOf(characters[charIndex]);				
-				combinedText += s;
-				currentDialogue = combinedText;					
-				charIndex++;					
+				char characters[] = battleDialogue.get(dialogueIndex).toCharArray();
+							
+				if (charIndex < characters.length) {
+					
+					String s = String.valueOf(characters[charIndex]);				
+					combinedText += s;
+					currentDialogue = combinedText;					
+					charIndex++;					
+				}
+	
+				dialogueCounter = 0;
 			}
-			if (charIndex >= characters.length) {
-				canSkip = true;
-			}
-
-			dialogueCounter = 0;
+			else {
+				dialogueCounter++;			
+			}			
 		}
-		else {
-			dialogueCounter++;			
-		}			
+		else {			
+			dialogueIndex = 0;
+			battleDialogue.clear();			
+			
+			if (nextSubState == subState_CPU) {
+				gp.btlManager.startTurn(1, 0);
+			}
+			else {
+				battleSubState = nextSubState;	
+			}  			
+		}
 		
   		for (String line : currentDialogue.split("\n")) { 
   			g2.setColor(Color.BLACK);
@@ -373,27 +418,19 @@ public class UI {
 			y += gp.tileSize;
 		} 	
   		
-  		if (canSkip) {
-  			dialogueTimer++;
-  		}
-  		
-  		if (!skippable && dialogueTimer >= 60) {
+  		dialogueTimer++;
+  		if (dialogueTimer >= dialogueTimerMax) {
   			advanceDialogue();
+  			dialogueIndex++;
   		}
-	}	
-	private void advanceDialogue() {		
+	}		
+	private void advanceDialogue() {
 		gp.keyH.aPressed = false;
-		dialogueTimer = 0;
-		dialogueTimerMax = 0;
-		skippable = false;
-		canSkip = false;
 		charIndex = 0;
 		combinedText = "";	
-		battleDialogue = "";	
 		currentDialogue = "";
 		commandNum = 0;
-		
-		battleSubState = nextSubState;
+		dialogueTimer = 0;
 	}
 	
 	private void drawBattleOptionsWindow() {	
@@ -441,16 +478,10 @@ public class UI {
 			
 			if (commandNum == 0) {
 				advanceDialogue();	
-				battleSubState = subStateMoves;		
-			}
-			else if (commandNum == 3) {
-				advanceDialogue();	
-				battleDialogue = "Got away safely!";
-				battleSubState = subStateRun;
+				battleSubState = subState_Moves;		
 			}
 		}
 	}
-	
 	private void drawBattleMovesetWindow() {
 		
 		int x = 0;
@@ -468,7 +499,7 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));		
 		g2.setStroke(new BasicStroke(4));
 		
-		for (int i = 0; i < fighter[0].getMoveSet().size(); i++) {			
+		for (int i = 0; i < gp.btlManager.fighter[0].getMoveSet().size(); i++) {			
 						
 			if (i == 1) {
 				x += gp.tileSize * 6;		
@@ -482,52 +513,58 @@ public class UI {
 			}
 			
 			if (commandNum == i) {
-				width = (int)g2.getFontMetrics().getStringBounds(fighter[0].getMoveSet().get(i).getName(), g2).getWidth();
+				width = (int)g2.getFontMetrics().getStringBounds(gp.btlManager.fighter[0].getMoveSet().get(i).getName(), g2).getWidth();
 				g2.setColor(battle_red);
 				g2.drawRect(x - 4, y - (int) (gp.tileSize * 0.85), width + 4, height);
 				g2.setColor(Color.BLACK);
 			}
 			
-			g2.drawString(fighter[0].getMoveSet().get(i).getName(), x, y);
+			g2.drawString(gp.btlManager.fighter[0].getMoveSet().get(i).getName(), x, y);
 		}
 		
-		if (gp.keyH.aPressed) {
-			
+		if (gp.keyH.aPressed) {									
+			gp.btlManager.playerSelectMove(commandNum);
 			advanceDialogue();	
-			gp.keyH.aPressed = false;			
-			
-			gp.battleEngine.move(fighter[0].getMoveSet().get(commandNum), gp.battleEngine.cpuSelectMove());		
+			gp.btlManager.cpuSelectMove();
+			gp.btlManager.startTurn(0, 1);
 		}
-		else if (gp.keyH.bPressed) {
-			
-			advanceDialogue();	
-			gp.keyH.bPressed = false;
-			
-			battleSubState = subStateOptions;
+		else if (gp.keyH.bPressed) {			
+			advanceDialogue();				
+			battleSubState = subState_Options;
 		}
 	}	
 	private void drawBattleMoveDescriptionWindow() {
 		
+		String text;
 		int x = gp.tileSize * 12;
 		int y = gp.screenHeight - gp.tileSize * 4; 
 		int width = gp.tileSize * 4;
 		int height = gp.tileSize * 4;
 		
-		drawSubWindow(x, y, width, height, 12, 10, battle_white, battle_gray);
+		drawSubWindow(x, y, width, height, 12, 10, gp.btlManager.fighter[0].getMoveSet().get(commandNum).getType().getColor(), battle_gray);
 						
 		x += gp.tileSize * 0.3;
 		y = (int) (gp.screenHeight - gp.tileSize * 2.5);	
-		String pp = "PP " + fighter[0].getMoveSet().get(commandNum).getpp() + "/" + 
-				fighter[0].getMoveSet().get(commandNum).getbpp();
-		g2.setColor(Color.BLACK);
+		text = "PP " + gp.btlManager.fighter[0].getMoveSet().get(commandNum).getpp() + "/" + 
+				gp.btlManager.fighter[0].getMoveSet().get(commandNum).getbpp();
+		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));	
-		g2.drawString(pp, x, y);	
+		g2.setColor(Color.BLACK);
+		g2.drawString(text, x, y);	
+		g2.setColor(battle_white);
+		g2.drawString(text, x-2, y-2);
 		
 		y += gp.tileSize * 1.5;
-		String type = fighter[0].getMoveSet().get(commandNum).getType().getName();
-		g2.drawString(type, x, y);	
+		text = gp.btlManager.fighter[0].getMoveSet().get(commandNum).getType().getName();
+		g2.setColor(Color.BLACK);
+		g2.drawString(text, x, y);	
+		g2.setColor(battle_white);
+		g2.drawString(text, x-2, y-2);
 	}	
 	
+	public void addBattleDialogue(String text) {
+		battleDialogue.add(text);
+	}	
 	private void drawSubWindow(int x, int y, int width, int height, int curve, int borderStroke, 
 			Color fillCollor, Color borderColor) {
 		
@@ -536,7 +573,7 @@ public class UI {
 		
 		g2.setColor(borderColor);
 		g2.setStroke(new BasicStroke(borderStroke));
-		g2.drawRoundRect(x + 4, y + 4, width - 8, height - 8, curve, curve);		
+		g2.drawRoundRect(x + 2, y + 2, width - 4, height - 4, curve, curve);		
 	}
 	public int getXforRightAlignText(String text, int tailX) {
 		int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();

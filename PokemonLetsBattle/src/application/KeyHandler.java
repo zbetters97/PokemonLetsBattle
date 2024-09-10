@@ -52,7 +52,7 @@ public class KeyHandler implements KeyListener {
 		if (code == gp.btn_R && lock) { rPressed = true; lock = false; }
 		if (code == gp.btn_Z) { zPressed = true; }
 		
-		if (code == gp.btn_START && lock) { gp.setupBattle(gp.trainerBattle); lock = false; }		
+		if (code == gp.btn_START && lock) { startPressed = true; lock = false; }		
 		
 		if (code == gp.btn_DEBUG) { if (debug) debug = false; else debug = true; }
 	}
@@ -60,13 +60,13 @@ public class KeyHandler implements KeyListener {
 	// BATTLE
 	private void battleState(int code) { 
 		
-		if (gp.ui.battleSubState == gp.ui.subStateDialogue) {				
+		if (gp.ui.battleSubState == gp.ui.subState_Dialogue) {				
 			if (code == gp.btn_A && lock) { 
 				aPressed = true; 
 				lock = false; 
 			}
 		}
-		else if (gp.ui.battleSubState == gp.ui.subStateOptions) {			
+		else if (gp.ui.battleSubState == gp.ui.subState_Options) {			
 			
 			if (code == gp.btn_A && lock) { 
 				playCursorSE();						
@@ -102,7 +102,7 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 		}
-		else if (gp.ui.battleSubState == gp.ui.subStateMoves) {
+		else if (gp.ui.battleSubState == gp.ui.subState_Moves) {
 			
 			if (code == gp.btn_A && lock) { 	
 				playCursorSE();					
@@ -142,11 +142,6 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 		}		
-		else if (gp.ui.battleSubState == gp.ui.subStateRun) {			
-			if (code == gp.btn_A && lock && gp.ui.canSkip) { 				
-				playCursorSE();					
-			}
-		}
 		
 		if (code == gp.btn_START && lock) { 
 			gp.gameState = gp.playState; 

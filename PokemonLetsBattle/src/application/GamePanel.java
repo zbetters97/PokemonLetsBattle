@@ -11,10 +11,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
-import battle.BattleEngine;
 import person.Player;
-import pokemon.Pokemon;
-import properties.Status;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -101,21 +98,10 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int town = 1;
 	public final int gym = 2;
 	
-	// BATTLE STATES
-	public int battleMode;
-	public final int wildBattle = 1;
-	public final int trainerBattle = 2;
-	public final int gymBattle = 3;
-	public final int rivalBattle = 4;
-	public final int eliteBattle = 5;
-	public final int championBattle = 6;
-	public final int legendaryBattle = 7;
-
 	public TileManager tileM = new TileManager(this);
 	public CollisionChecker cChecker = new CollisionChecker(this);	
 	public Player player = new Player(this);	
-	public BattleEngine battleEngine;
-	
+	public BattleManager btlManager = new BattleManager(this);	
 	
 /** CONSTRUCTOR **/	
 	public GamePanel() {
@@ -128,12 +114,12 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	protected void setupGame() {	
-		
- 		gameState = playState;	
+						
+		gameState = playState;
 		currentArea = outside;
 		currentLocation = town;		
 				
-//		setupMusicWorld();
+		setupMusic();
 		
 		tileM.loadMap();
 		
@@ -145,63 +131,30 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		if (fullScreenOn) setFullScreen();
 		
-		setupBattle(wildBattle);
-	}
-	
-	private void setupMusicWorld() {		
-		if (currentLocation == town) playMusicWorld(0);
-	}
-	
-	public void setupBattle(int currentBattle) {	
+		btlManager.setupBattle(btlManager.wildBattle);
 		
-		ui.fighter[0] = Pokemon.getPokemon(0);
-		ui.fighter[1] = Pokemon.getPokemon(2);
-		
-		battleEngine = new BattleEngine(ui.fighter[0], ui.fighter[1], this);
-						
-		battleMode = currentBattle;
-		
-		if (battleMode == wildBattle) {
-			battleEngine.setDialogue("A wild " + ui.fighter[1].toString() + " appeared!");
-			ui.nextSubState = ui.subStateOptions;
-		}
-		
-//		stopMusic();
-//		setupMusicBattle();
-		
-		ui.battleSubState = ui.subStateEncounter;
+		ui.battleSubState = ui.subState_Encounter;
 		gameState = battleState;
 	}
 	
-	private void setupMusicBattle() {
-		if (battleMode == wildBattle) playMusicBattle(0);		
-		else if (battleMode == trainerBattle) playMusicBattle(1);
-		else if (battleMode == gymBattle) playMusicBattle(2);
-		else if (battleMode == rivalBattle) playMusicBattle(3);
-		else if (battleMode == eliteBattle) playMusicBattle(4);
-		else if (battleMode == championBattle) playMusicBattle(5);
-		else if (battleMode == legendaryBattle) playMusicBattle(6);		
+	public void setupMusic() {		
+		if (currentLocation == town) playMusic(0, 0);
 	}
 
-	public void playMusicWorld(int c) {		
-		music.setFile(0, c);
-		music.play();
-		music.loop();
-	}
-	public void playMusicBattle(int c) {		
-		music.setFile(1, c);
+	public void playMusic(int category, int record) {		
+		music.setFile(category, record);
 		music.play();
 		music.loop();
 	}
 	public void stopMusic() {
 		music.stop();
 	}
-	public void playSE(int i, int c) {
-		se.setFile(i, c);
+	public void playSE(int category, int record) {
+		se.setFile(category, record);
 		se.play();
 	}	
-	public void playSE (int record, String file) {
-		se.setFile(record, se.getFile(record, file));
+	public void playSE (int category, String file) {
+		se.setFile(category, se.getFile(category, file));
 		se.play();
 	}
 	

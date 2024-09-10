@@ -23,9 +23,9 @@ public class BattleEngine {
 	public boolean swap = false;
 	private GamePanel gp;
 	
-	private int faint_SE = 4;
-	private int moves_SE = 5;
-	private int battle_SE = 6;
+	private final int faint_SE = 4;
+	private final int moves_SE = 5;
+	private final int battle_SE = 6;
 	
 	private String dialogue;
 	
@@ -602,7 +602,7 @@ public class BattleEngine {
 						
 		dialogue = pokemon[atk].toString() + " used\n" + atkMove.toString() + "!"; 	
 		gp.ui.dialogueTimerMax = 120;
-		gp.ui.battleSubState = gp.ui.subStateDialogue;
+		gp.ui.battleSubState = gp.ui.subState_Dialogue;
 						
 		// if not delayed move or delayed move is ready
 		if (1 >= atkMove.getTurns()) {	
@@ -874,7 +874,7 @@ public class BattleEngine {
 		if (move.getSelfInflict() != null) {								
 			damage = (int)(damage * move.getSelfInflict());	
 			
-			System.out.println(pokemon[atk].getName() + " was hit with " + damage + " recoil damage!");		
+			gp.ui.addBattleDialogue(pokemon[atk].getName() + " was hit with " + damage + " recoil damage!");		
 			
 			// damage is fatal to attacker
 			if (damage >= pokemon[atk].getHP()) {
@@ -892,7 +892,7 @@ public class BattleEngine {
 	 * @param number of attacker, number of target, selected move, critical damage, cpu true/false
 	 * @return damage calculated
 	 **/
-	private int calculateDamage(int atk, int trg, Move move, double crit, boolean cpu) {
+	public int calculateDamage(int atk, int trg, Move move, double crit, boolean cpu) {
 		
 		double level = pokemon[atk].getLevel();		
 		double power = (move.getPower() == -1) ? level : move.getPower();		
@@ -1011,7 +1011,7 @@ public class BattleEngine {
 	 * Applies damage dealt to target's total HP
 	 * @param number of target, damage dealt
 	 **/
-	private void dealDamage(int trg, int damage) {		
+	public void dealDamage(int trg, int damage) {		
 		
 		// subtract damage dealt from total hp
 		int result = pokemon[trg].getHP() - (int)damage;		
@@ -1056,6 +1056,7 @@ public class BattleEngine {
 		int exp = (int) (((( pokemon[lsr].getXP() * pokemon[lsr].getLevel() ) / 7)) * 1.5);		
 		return exp;
 	}
+	
 	/** END CALCULATE XP METHOD **/
 	
 	/** GET WINNER METHOD 

@@ -1,5 +1,6 @@
 package properties;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -172,37 +173,35 @@ public enum Type {
     	for (Type type : typeList) {
     		vulnerability.put(type, strength);
     	}       
-    }
-    
-    /*
+    }    
+
     public Color getColor() {
     	
     	Color color = Color.BLACK;
     	
     	switch (this.name) {
-	    	case ("Normal"): color = ""; break;    	
-	    	case ("Fire"): color = Style.RED; break;
-	    	case ("Water"): color = Style.BLUE; break;
-	    	case ("Electric"): color = Style.YELLOW; break;
-	    	case ("Grass"): color = Style.GREEN; break;
-	    	case ("Ice"): color = Style.WHITE; break;
-	    	case ("Fighting"): color = Style.BOLD; break;
-	    	case ("Poison"): color = Style.PURPLE; break;
-	    	case ("Ground"): color = Style.GRAY; break;
-	    	case ("Flying"): color = Style.CYAN; break;
-	    	case ("Psychic"): color = Style.PINK; break;
-	    	case ("Bug"): color = Style.YELLOW; break;
-	    	case ("Rock"): color = Style.YELLOW; break;
-	    	case ("Ghost"): color = Style.GRAY; break;
-	    	case ("Dragon"): color = Style.BLUE; break;
-	    	case ("Dark"): color = Style.BLACK; break;
-	    	case ("Steel"): color = Style.WHITE; break;
-	    	case ("Fairy"): color = Style.PINK; break;
+	    	case ("Normal"): color = new Color(168,167,119); break;    	
+	    	case ("Fire"): color = new Color(240,127,47); break;
+	    	case ("Water"): color = new Color(101,142,244); break;
+	    	case ("Electric"): color = new Color(245,209,43); break;
+	    	case ("Grass"): color = new Color(119,198,82); break;
+	    	case ("Ice"): color = new Color(152,216,216); break;
+	    	case ("Fighting"): color = new Color(192,46,36); break;
+	    	case ("Poison"): color = new Color(159,64,162); break;
+	    	case ("Ground"): color = new Color(224,191,96); break;
+	    	case ("Flying"): color = new Color(167,144,239); break;
+	    	case ("Psychic"): color = new Color(250,85,135); break;
+	    	case ("Bug"): color = new Color(168,184,33); break;
+	    	case ("Rock"): color = new Color(184,159,56); break;
+	    	case ("Ghost"): color = new Color(113,87,152); break;
+	    	case ("Dragon"): color = new Color(112,55,253); break;
+	    	case ("Dark"): color = new Color(11,87,71); break;
+	    	case ("Steel"): color = new Color(184,184,208); break;
+	    	case ("Fairy"): color = new Color(217,163,215); break;
 	    }
     	
     	return color;
     }
-    */
     
     public String printType() {    	 	
     	return name;
