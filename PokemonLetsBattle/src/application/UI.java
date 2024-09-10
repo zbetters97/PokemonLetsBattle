@@ -92,7 +92,7 @@ public class UI {
 		
 		fighter_one_endX = gp.tileSize * 2;
 		fighter_two_endX = gp.tileSize * 9;
-		
+				
 		// FONT DECLARATION		
 		try {
 			InputStream is;
@@ -230,6 +230,7 @@ public class UI {
 		int tempX = x;
 		
 		String text;
+		int length;
 		int width = (int) (gp.tileSize * 6.5);
 		int height = (int) (gp.tileSize * 2.3);
 		
@@ -242,27 +243,26 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));
 		g2.drawString(text, x, y);
 		
-		int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-		
+		length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();		
 		x += length;
-		if (fighter[num].getSex() == '♂') g2.setColor(Color.BLUE);		
-		else g2.setColor(Color.RED);			
+		g2.setColor(fighter[num].getSexColor());	
 		g2.drawString("" + fighter[num].getSex(), x, y);
 		
-		text = "Lv";
-		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 27F));
-		g2.setColor(Color.BLACK);
-		x = getXforRightAlignText(text, x);		
+		g2.setColor(Color.BLACK);		
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));		
+		text = "Lv" + fighter[num].getLevel();		
+		length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();		
+		x = (int) (tempX + width - length - gp.tileSize * 0.45);
 		g2.drawString(text, x, y);
 		
-		text = "" + fighter[num].getLevel();
-		x = getXforRightAlignText(text, x);
-		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));
-		g2.drawString(text, x, y);
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));
+		
+		if (fighter[num].getStatus() != null) {
+			drawFighterStatus((int) (tempX + gp.tileSize * 0.3), (int) (y + gp.tileSize * 0.2), num);
+		}
 		
 		x = (int) (tempX + gp.tileSize * 1.7);
 		y += gp.tileSize * 0.7;
-		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));
 		g2.drawString("HP", x, y);
 		
 		x += gp.tileSize * 0.6;
@@ -275,14 +275,24 @@ public class UI {
 		height -= 2;
 		drawFighterHealthBar(x, y, width, height, num);
 						
-		text = fighter[num].getHP() + " / " + fighter[num].getBHP();
-		x += gp.tileSize * 3.8;
-		x = getXforRightAlignText(text, x);
-		
-		y += gp.tileSize * 0.9;
 		g2.setColor(Color.BLACK);
+		text = fighter[num].getHP() + " / " + fighter[num].getBHP();
+		x = getXforRightAlignText(text, (int) (x + gp.tileSize * 3.8));		
+		y += gp.tileSize * 0.9;
 		g2.drawString(text, x, y);	
-	}
+	}	
+	private void drawFighterStatus(int x, int y, int num) {	
+		
+		int width = gp.tileSize;
+		int height = (int) (gp.tileSize * 0.6);
+		g2.setColor(fighter[num].getStatus().getColor());
+		g2.fillRoundRect(x, y, width, height, 20, 20);
+		
+		g2.setColor(Color.BLACK);
+		x += gp.tileSize * 0.15;
+		y += gp.tileSize * 0.48;
+		g2.drawString(fighter[num].getStatus().getAbreviation(), x, y);
+	}	
 	private void drawFighterHealthBar(int x, int y, int width, int height, int num) {
 		
 		int tempHP = 0;

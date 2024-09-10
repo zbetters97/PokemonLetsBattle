@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import battle.BattleEngine;
 import person.Player;
 import pokemon.Pokemon;
+import properties.Status;
 import tile.TileManager;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -154,7 +155,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public void setupBattle(int currentBattle) {	
 		
 		ui.fighter[0] = Pokemon.getPokemon(0);
-		ui.fighter[1] = Pokemon.getPokemon(1);
+		ui.fighter[1] = Pokemon.getPokemon(2);
 		
 		battleEngine = new BattleEngine(ui.fighter[0], ui.fighter[1], this);
 						

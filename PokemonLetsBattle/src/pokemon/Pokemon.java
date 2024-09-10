@@ -1,5 +1,6 @@
 package pokemon;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -422,6 +423,10 @@ public enum Pokemon {
 	public char getSex() { return sex; }
 	public String printSex() { 			
 		return sex + ""; 
+	}
+	public Color getSexColor() {
+		if (sex == '♂') return Color.BLUE;		
+		else return Color.RED;		
 	}
 	public void setSex(char sex) { this.sex = sex; }
 

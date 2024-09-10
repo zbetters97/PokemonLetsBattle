@@ -33,12 +33,12 @@ public enum Status {
 		Color color = Color.BLACK;
 		
 		switch (this.abr) {  	
-	    	case ("PAR"): color = Color.YELLOW; break;
-	    	case ("PSN"): color = Color.PINK; break;
-	    	case ("CNF"): color = Color.CYAN; break;
-	    	case ("BRN"): color = Color.RED; break;
-	    	case ("FRZ"): color = Color.BLUE; break;
-	    	case ("SLP"): color = Color.GRAY; break;
+	    	case ("PAR"): color = new Color(253,174,16); break;
+	    	case ("PSN"): color = new Color(188,82,231); break;
+	    	case ("CNF"): color = new Color(226,196,116); break;
+	    	case ("BRN"): color = new Color(249,78,0); break;
+	    	case ("FRZ"): color = new Color(98,204,212); break;
+	    	case ("SLP"): color = new Color(125,125,125); break;
 		}		
 		return color; 
 	}
