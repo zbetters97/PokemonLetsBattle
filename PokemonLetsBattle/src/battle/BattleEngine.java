@@ -27,8 +27,6 @@ public class BattleEngine {
 	private final int moves_SE = 5;
 	private final int battle_SE = 6;
 	
-	private String dialogue;
-	
 	/** GETTERS AND SETTERS **/
 	public Pokemon getWinningPokemon() { return winningPokemon; }
 	public void setWinningPokemon(Pokemon winningPokemon) { this.winningPokemon = winningPokemon; }
@@ -600,7 +598,7 @@ public class BattleEngine {
 	 **/	
 	private void useTurn(int atk, int trg, Move atkMove, Move trgMove) {
 						
-		dialogue = pokemon[atk].toString() + " used\n" + atkMove.toString() + "!"; 	
+		System.out.println( pokemon[atk].toString() + " used\n" + atkMove.toString() + "!"); 	
 		gp.ui.dialogueTimerMax = 120;
 		gp.ui.battleSubState = gp.ui.subState_Dialogue;
 						
@@ -1082,13 +1080,6 @@ public class BattleEngine {
 	
 	public Pokemon getPokemon(int slot) {
 		return pokemon[slot];
-	}
-	
-	public String getDialogue() {
-		return dialogue;
-	}
-	public void setDialogue(String dialogue) {
-		this.dialogue = dialogue;
 	}
 }
 /*** END BATTLE ENGINE CLASS ***/

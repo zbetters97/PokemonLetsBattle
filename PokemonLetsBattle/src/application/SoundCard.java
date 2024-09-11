@@ -86,7 +86,9 @@ public class SoundCard {
 			audioInputStream = AudioSystem.getAudioInputStream(file);
 			AudioFormat format = audioInputStream.getFormat();
 			long frames = audioInputStream.getFrameLength();
-			duration = (int) ((frames + 0.0) / format.getFrameRate()); 
+			double length = (double) ((frames + 0.0) / format.getFrameRate()); 
+			duration = (int) Math.ceil(60.0 * length);
+			if (duration == 0) duration = 60;
 		} 
 		catch (UnsupportedAudioFileException e) {			
 			e.printStackTrace();

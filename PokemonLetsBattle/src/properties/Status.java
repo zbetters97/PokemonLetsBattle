@@ -48,12 +48,12 @@ public enum Status {
 		String status = "";
 		
 		switch (this.abr) {  	
-			case ("PAR"): status = " is paralyzed and unable to move!"; break;
-	    	case ("PSN"): status = " is hurt from the poison!"; break;
-	    	case ("CNF"): status = " hurt itself in confusion!"; break;
-	    	case ("BRN"): status = " is hurt from the burn!"; break;
-	    	case ("FRZ"): status = " is frozen solid!"; break;
-	    	case ("SLP"): status = " is fast asleep!"; break;
+			case ("PAR"): status = " is paralyzed\nand unable to move!"; break;
+	    	case ("PSN"): status = " is hurt\nfrom the poison!"; break;
+	    	case ("CNF"): status = " hurt itself\nin confusion!"; break;
+	    	case ("BRN"): status = " is hurt\nfrom the burn!"; break;
+	    	case ("FRZ"): status = " is frozen\nsolid!"; break;
+	    	case ("SLP"): status = " is fast\nasleep!"; break;
 		}			
 		return status; 
 	}
@@ -62,11 +62,11 @@ public enum Status {
 		String recover = "";
 		
 		switch (this.abr) {  	
-			case ("PAR"): recover = " healed from paralysis!"; break;
-			case ("PSN"): recover = " healed from the poison!"; break;
-	    	case ("CNF"): recover = " snapped out of confusion!"; break;
-	    	case ("BRN"): recover = " healed from the burn!"; break;
-	    	case ("FRZ"): recover = " thawed from the ice!"; break;
+			case ("PAR"): recover = " healed\nfrom paralysis!"; break;
+			case ("PSN"): recover = " healed\nfrom the poison!"; break;
+	    	case ("CNF"): recover = " snapped\nout of confusion!"; break;
+	    	case ("BRN"): recover = " healed\nfrom the burn!"; break;
+	    	case ("FRZ"): recover = " thawed\nfrom the ice!"; break;
 	    	case ("SLP"): recover = " woke up!"; break;
 		}		
 		return recover; 
