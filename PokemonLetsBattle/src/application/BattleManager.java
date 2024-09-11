@@ -15,13 +15,15 @@ public class BattleManager {
 	
 	GamePanel gp;
 	public Pokemon[] fighter = new Pokemon[2];
+	public int winner = -1;
+	public int loser = -1;
 	public Move move1, move2;
 	public BattleEngine battleEngine;	
 	public boolean canMove;
 	
 	public int damageDealt;
 	
-	private int currentTurn;
+	public int currentTurn;
 	private int nextTurn;
 	private final int playerTurn = 1;
 	private final int cpuTurn = 2;	
@@ -46,29 +48,15 @@ public class BattleManager {
 	}
 	
 	public void update() {		
-		
-		if (currentTurn == playerTurn) {
-			useTurn(0, 1, move1, move2);
-		}
-		else if (currentTurn == cpuTurn) {
-			useTurn(1, 0, move2, move1);
-		}				
-
-		if (currentTurn == playerTurn) {
-			attack(0, 1, move1, move2);
-		}
-		else if (currentTurn == cpuTurn) {
-			attack(1, 0, move2, move1);
-		}
-		
+				
 		// check if either fighter has status damage					
 		statusDamage();			
 	}
 	
 	public void setupBattle(int currentBattle) {		
 		
-		fighter[0] = Pokemon.getPokemon(0);
-		fighter[1] = Pokemon.getPokemon(1);
+		fighter[0] = Pokemon.getPokemon(1);
+		fighter[1] = Pokemon.getPokemon(0);
 		
 		gp.ui.fighter_one_HP = fighter[0].getHP();
 		gp.ui.fighter_two_HP = fighter[1].getHP();
@@ -76,10 +64,10 @@ public class BattleManager {
 		battleMode = currentBattle;
 						
 		gp.stopMusic();
-//		setupMusic();
+		setupMusic();
 	}
 	private void setupMusic() {
-		if (battleMode == wildBattle) gp.playMusic(1, 0);		
+		if (battleMode == wildBattle) gp.playMusic(1, 3);		
 		else if (battleMode == trainerBattle) gp.playMusic(1, 1);
 		else if (battleMode == gymBattle) gp.playMusic(1, 2);
 		else if (battleMode == rivalBattle) gp.playMusic(1, 3);
@@ -169,13 +157,15 @@ public class BattleManager {
 		}
 	}
 	
-	private void runTurn() {		
-		if (currentTurn == playerTurn) {
-			useTurn(0, 1, move1, move2);
+	public void runTurn() {		
+		if (fighter[0].isAlive() && fighter[1].isAlive()) {
+			if (currentTurn == playerTurn) {
+				useTurn(0, 1, move1, move2);
+			}
+			else if (currentTurn == cpuTurn) {
+				useTurn(1, 0, move2, move1);
+			}		
 		}
-		else if (currentTurn == cpuTurn) {
-			useTurn(1, 0, move2, move1);
-		}		
 	}
 	
 	private int getTurn(Move move1, Move move2) {		
@@ -228,7 +218,7 @@ public class BattleManager {
 			
 			int soundFile = gp.se.getFile(moves_SE, atkMove.getName());
 			int soundDuration = gp.se.getSoundDuration(moves_SE, soundFile);
-			gp.ui.dialogueTimerMax = 50 + soundDuration;
+			gp.ui.dialogueTimerMax = 30 + soundDuration;
 			gp.ui.setSoundFile(moves_SE, soundFile);	
 			
 			// reset turns to wait
@@ -246,11 +236,30 @@ public class BattleManager {
 		}
 		
 		// decrease move pp
-		atkMove.setpp(atkMove.getpp() - 1);	
-		attack(atk, trg, atkMove, trgMove);
+		atkMove.setpp(atkMove.getpp() - 1);
+		
+		gp.ui.battleSubState = gp.ui.subState_Turn_End;
 	}		
 	
-	private void attack(int atk, int trg, Move move, Move trgMove) {
+	public void attack() {
+		
+		int atk = 0;
+		int trg = 0;
+		Move move = null;
+		Move trgMove = null;
+		
+		if (currentTurn == playerTurn) {
+			atk = 0;
+			trg = 1;
+			move = move1;
+			trgMove = move2;
+		}
+		else if (currentTurn == cpuTurn){
+			atk = 1;
+			trg = 0;
+			move = move2;
+			trgMove = move1;
+		}
 		
         // if attack lands
 		if (isHit(atk, move, trgMove)) {
@@ -365,7 +374,8 @@ public class BattleManager {
 			// if damage is fatal
 			if (damage >= fighter[trg].getHP())	{
 				dealDamage(trg, damage);
-				defeated(atk, trg);
+				winner = atk;
+				loser = trg;
 				currentTurn = -1;	
 				nextTurn = -1;
 //				isRecoil(atk, trg, move, damage);
@@ -589,7 +599,8 @@ public class BattleManager {
 			statusDamage(fighter[0]);
 
 			if (!fighter[0].isAlive()) { 
-				defeated(1, 0);	
+				winner = 1;
+				loser = 0;
 			}
 		}
 		
@@ -597,7 +608,8 @@ public class BattleManager {
 			statusDamage(fighter[1]);
 
 			if (fighter[1].isAlive()) { 
-				defeated(0, 1);	
+				winner = 0;
+				loser = 1;
 			}
 		}		
 	}
@@ -627,21 +639,22 @@ public class BattleManager {
 		}
 	}
 	
-	private void defeated(int win, int lsr) {
+	public void announceWinner() {
 		
-		fighter[lsr].setAlive(false);
+		fighter[loser].setAlive(false);
 		
-		int xp = calculateXP(lsr);
-		fighter[win].setXP(fighter[win].getBXP() + xp);
+		int xp = calculateXP(loser);
+		fighter[winner].setXP(fighter[winner].getBXP() + xp);
 		
-		int soundFile = gp.se.getFile(faint_SE, fighter[lsr].getName());
+		int soundFile = gp.se.getFile(faint_SE, fighter[loser].getName());
 		gp.ui.setSoundFile(faint_SE, soundFile);
 		
-		gp.ui.addBattleDialogue(fighter[lsr].getName() + " fainted!");			
-		gp.ui.addBattleDialogue(fighter[win].getName() + "\ngained " + xp + " Exp. Points!");
+		gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
+		gp.ui.addBattleDialogue(fighter[winner].getName() + "\ngained " + xp + " Exp. Points!");
 		
 		return;
 	}
+	
 	private int calculateXP(int lsr) {
 		
 		// exp formula reference (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience		

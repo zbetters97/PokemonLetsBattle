@@ -78,6 +78,9 @@ public class UI {
 	public final int subState_Dialogue = 2;
 	public final int subState_Options = 3;
 	public final int subState_Moves = 4;
+	public final int subState_Turn_Start = 5;
+	public final int subState_Turn_End = 6;
+	public final int subState_KO = 7;
 	
 	public UI(GamePanel gp) {
 		this.gp = gp;
@@ -165,10 +168,18 @@ public class UI {
 				battleSubState = subState_Dialogue;				
 			}
 		}		
-		else if (battleSubState == subState_Dialogue) {			
+		else if (battleSubState == subState_Dialogue ||
+				battleSubState == subState_Turn_Start ||
+				battleSubState == subState_Turn_End) {			
 			drawFighters();
 			drawBattleDialogueWindow();			
 			drawBattleDialogue();
+		}
+		else if (battleSubState == subState_KO) {	
+			animateFighterDefeat();
+			drawFighters();
+			drawBattleDialogueWindow();			
+			drawBattleDialogue();			
 		}
 		else if (battleSubState == subState_Options) {
 			currentDialogue = "What will\n" + gp.btlManager.fighter[0].getName() + " do?";
@@ -207,24 +218,37 @@ public class UI {
 		
 		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
 	}	
+	private void animateFighterDefeat() {		
+		if (gp.btlManager.loser == 0) {
+			if (fighter_one_Y < gp.screenHeight) {
+				fighter_one_Y += 12;
+			}
+		}
+		else if (gp.btlManager.loser == 1) {
+			if (fighter_two_Y < gp.screenHeight) {
+				fighter_two_Y += 12;
+			}
+		}		
+	}
 	
 	private void drawFighters() {	
 		
+		int x;
+		int y;	
+				
 		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
 		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
 		
-		int x;
-		int y;		
-		
 		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
+		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
+		
 		x = (int) (gp.tileSize * 9.1);
 		y = (int) (gp.tileSize * 5.4);
-		drawFighterWindow(x, y, 0);				
-				
-		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
+		drawFighterWindow(x, y, 0);	
+		
 		x = (int) (gp.tileSize * 0.4);
 		y = (int) (gp.tileSize * 0.4);
-		drawFighterWindow(x, y, 1);		
+		drawFighterWindow(x, y, 1);	
 	}
 	private void drawFighterWindow(int x, int y, int num) {
 		
@@ -385,7 +409,7 @@ public class UI {
 		
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
-		
+		System.out.println(dialogueTimerMax);
 		if (battleDialogue.size() > dialogueIndex && battleDialogue.get(dialogueIndex) != null) {
 			
 			if (dialogueCounter == textSpeed) {
@@ -403,14 +427,14 @@ public class UI {
 				dialogueCounter = 0;
 			}
 			else {
-				dialogueCounter++;			
+				dialogueCounter++;		
 			}			
 		}
 		else {			
 			dialogueIndex = 0;
 			battleDialogue.clear();	
 			dialogueFinished = true;
-			battleSubState = subState_Options;
+			advanceBattle();
 		}
 		
   		for (String line : currentDialogue.split("\n")) { 
@@ -425,12 +449,30 @@ public class UI {
   		if (dialogueTimer >= dialogueTimerMax) {  			
   			advanceDialogue();
   			dialogueIndex++;
+  			dialogueTimerMax = 2 * 45;
   		}
   		
-  		if (category_SE != -1 && dialogueTimer == 60) {
-  			gp.playSE(category_SE, record_SE);
-  		}
+  		playBattleSound();	
 	}		
+	
+	private void playBattleSound() {
+		
+		if (category_SE != -1) {
+			
+			if (battleSubState == subState_Turn_Start && dialogueTimer == 45) {
+				gp.playSE(category_SE, record_SE);  	
+				category_SE = -1;
+				record_SE = -1;		
+			}
+			else if ((battleSubState == subState_Turn_End || battleSubState == subState_KO) && 
+					dialogueTimer == 5) {
+				gp.playSE(category_SE, record_SE);  
+				category_SE = -1;
+				record_SE = -1;		
+			}
+  		}			
+	}
+	
 	public void advanceDialogue() {
 		gp.keyH.aPressed = false;
 		dialogueFinished = false;
@@ -439,6 +481,34 @@ public class UI {
 		currentDialogue = "";
 		commandNum = 0;
 		dialogueTimer = 0;
+	}
+	private void advanceBattle() {
+
+		if (battleSubState == subState_Dialogue) {
+			battleSubState = subState_Options;	
+		}
+		else if (battleSubState == subState_Turn_Start) {
+			gp.btlManager.attack();
+			battleSubState = subState_Turn_End;	
+		}
+		else if (battleSubState == subState_Turn_End) {
+			if (gp.btlManager.winner != -1) {
+				
+				gp.btlManager.announceWinner();
+				
+				battleSubState = subState_KO;
+			}
+			else if (gp.btlManager.currentTurn != -1) {
+				gp.btlManager.runTurn();
+				battleSubState = subState_Turn_Start;	
+			}
+			else {
+				battleSubState = subState_Options;	
+			}
+		}
+		else if (battleSubState == subState_KO) {
+			gp.gameState = gp.playState;
+		}
 	}
 	
 	public void setSoundFile(int cat, int rec) {
@@ -538,7 +608,7 @@ public class UI {
 		if (gp.keyH.aPressed) {		
 			gp.btlManager.move(commandNum);
 			advanceDialogue();		
-			battleSubState = subState_Dialogue;
+			battleSubState = subState_Turn_Start;
 		}
 		else if (gp.keyH.bPressed) {			
 			advanceDialogue();
