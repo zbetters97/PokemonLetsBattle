@@ -2,6 +2,8 @@ package properties;
 
 import java.awt.Color;
 
+import application.GamePanel;
+
 /*** STATUS CLASS ***/
 public enum Status {
 	/*** STATUS CHART REFERENCE: https://pokemon.fandom.com/wiki/Status_Effects ***/
@@ -43,19 +45,35 @@ public enum Status {
 		return color; 
 	}
 	/** END GETTERS **/
-	
-	public String printStatus() {
-		String status = "";
 		
+	public void printStatus(GamePanel gp, String fighter) {
+	
 		switch (this.abr) {  	
-			case ("PAR"): status = " is paralyzed\nand unable to move!"; break;
-	    	case ("PSN"): status = " is hurt\nfrom the poison!"; break;
-	    	case ("CNF"): status = " hurt itself\nin confusion!"; break;
-	    	case ("BRN"): status = " is hurt\nfrom the burn!"; break;
-	    	case ("FRZ"): status = " is frozen\nsolid!"; break;
-	    	case ("SLP"): status = " is fast\nasleep!"; break;
-		}			
-		return status; 
+			case ("PAR"): 				
+				gp.ui.addBattleDialogue(fighter + " is\nparalyzed and unable to move!");
+				gp.ui.setSoundFile(6, condition, 5, 120);	
+				break;
+	    	case ("PSN"): 
+	    		gp.ui.addBattleDialogue(fighter + " is\nhurt from the poison!"); 
+	    		gp.ui.setSoundFile(6, condition, 5, 120);	
+	    		break;
+	    	case ("CNF"): 
+	    		gp.ui.addBattleDialogue(fighter + " hurt\nitself in confusion!"); 
+	    		gp.ui.setSoundFile(6, "hit-normal", 5, 120);	
+	    		break;
+	    	case ("BRN"): 
+	    		gp.ui.addBattleDialogue(fighter + " is\nhurt from the burn!"); 
+	    		gp.ui.setSoundFile(6, condition, 5, 120);	
+	    		break;
+	    	case ("FRZ"): 
+	    		gp.ui.addBattleDialogue(fighter + " is\nfrozen solid!"); 
+	    		gp.ui.setSoundFile(6, condition, 5, 120);	
+	    		break;
+	    	case ("SLP"): 
+	    		gp.ui.addBattleDialogue(fighter + " is\nfast asleep!"); 
+	    		gp.ui.setSoundFile(6, condition, 5, 120);	
+	    		break;
+		}				
 	}
 	
 	public String printRecover() {

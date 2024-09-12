@@ -81,6 +81,7 @@ public enum Pokemon {
 	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg;
 	private Status status;
 	private boolean isAlive;
+	public boolean canMove = true;
 	
 	private int statusCounter, statusLimit;
 	/** END INITIALIZE VALUES **/
@@ -192,9 +193,9 @@ public enum Pokemon {
 		Map<Pokemon, List<Move>> pokeMap = new HashMap<>();
 		
 		// set default moves for each pokemon
-        pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
-        pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
-        		new Move(Moves.TACKLE)));
+//      pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
+        pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL), 
+        		new Move(Moves.THUNDERWAVE)));
     
         pokeMap.put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
         		new Move(Moves.TACKLE)));

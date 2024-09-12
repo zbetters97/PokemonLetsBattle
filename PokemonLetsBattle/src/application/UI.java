@@ -505,6 +505,7 @@ public class UI {
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
 		
+		
 		if (battleDialogue.size() > dialogueIndex && battleDialogue.get(dialogueIndex) != null) {
 			
 			if (dialogueCounter == textSpeed) {
@@ -546,7 +547,7 @@ public class UI {
   			dialogueTimerMax = 2 * 45;
   		}
   		
-  		if (seTimer != -1 && dialogueTimer == seTimer) {
+  		if (dialogueTimer == seTimer) {
   			playBattleSE();
   		}
 	}		
@@ -566,9 +567,23 @@ public class UI {
 		record_SE = -1;				
 	}
 	
-	public void setSoundFile(int cat, int rec) {
-		category_SE = cat;
-		record_SE = rec;
+	public void setSoundFile(int cat, String soundFile, int timer) {
+		
+		category_SE = cat;		
+		record_SE = gp.se.getFile(cat, soundFile);
+		
+		int soundDuration = gp.se.getSoundDuration(category_SE, record_SE);		
+		dialogueTimerMax = 30 + soundDuration;		
+		
+		seTimer = timer;
+	}
+	public void setSoundFile(int cat, String soundFile, int timer, int duration) {
+		
+		category_SE = cat;		
+		record_SE = gp.se.getFile(cat, soundFile);
+		
+		dialogueTimerMax = duration;				
+		seTimer = timer;
 	}
 	public void addBattleDialogue(String text) {
 		battleDialogue.add(text);
