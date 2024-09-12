@@ -20,6 +20,7 @@ public class BattleManager {
 	public Move move1, move2;
 	public BattleEngine battleEngine;	
 	public boolean canMove;
+	public String dialogue = "";
 	
 	public int damageDealt;
 	
@@ -28,7 +29,7 @@ public class BattleManager {
 	private final int playerTurn = 1;
 	private final int cpuTurn = 2;	
 	
-	private final int cry_SE = 3;
+//	private final int cry_SE = 3;
 	private final int faint_SE = 4;
 	private final int moves_SE = 5;
 	private final int battle_SE = 6;
@@ -42,21 +43,62 @@ public class BattleManager {
 	public final int eliteBattle = 5;
 	public final int championBattle = 6;
 	public final int legendaryBattle = 7;
+	
+	// FIGHT STAGES
+	public int fightStage = 0;
+	public final int fightStage_Encounter = 1;
+	public final int fightStage_Attack = 2;
+	public final int fightStage_Hit = 3;
+	public final int fightStage_End = 4;
 			
 	public BattleManager(GamePanel gp) {
 		this.gp = gp;
 	}
 	
-	public void update() {		
+	public void update() {				
 				
-		// check if either fighter has status damage					
-		statusDamage();			
+		System.out.println(fightStage);		
+		
+		if (fightStage == fightStage_Encounter) {
+			if (gp.ui.dialogueFinished) {				
+				gp.ui.battleSubState = gp.ui.subState_Options;
+			}
+		}	
+		else if (fightStage == fightStage_Attack) {
+			gp.ui.battleSubState = gp.ui.subState_Dialogue;
+			if (gp.ui.dialogueFinished) {
+				attack();
+				fightStage = fightStage_Hit;
+			}
+		}		
+		else if (fightStage == fightStage_Hit) {
+			if (gp.ui.dialogueFinished) {
+				setTurn();
+			}
+		}
+		else if (fightStage == fightStage_End) {
+			
+			if (!fighter[0].isAlive() || !fighter[1].isAlive()) {
+				
+				gp.ui.battleSubState = gp.ui.subState_KO;
+				
+				if (gp.ui.dialogueFinished) {
+					gp.gameState = gp.playState;
+				}
+			}
+			else if (gp.ui.dialogueFinished) {	
+				fightStage = 0;
+				gp.ui.battleSubState = gp.ui.subState_Options;					
+			}
+		}
+		
+		gp.ui.dialogueFinished = false;
 	}
 	
 	public void setupBattle(int currentBattle) {		
 		
-		fighter[0] = Pokemon.getPokemon(1);
-		fighter[1] = Pokemon.getPokemon(0);
+		fighter[0] = Pokemon.getPokemon(0);
+		fighter[1] = Pokemon.getPokemon(3);
 		
 		gp.ui.fighter_one_HP = fighter[0].getHP();
 		gp.ui.fighter_two_HP = fighter[1].getHP();
@@ -64,18 +106,39 @@ public class BattleManager {
 		battleMode = currentBattle;
 						
 		gp.stopMusic();
-		setupMusic();
-	}
-	private void setupMusic() {
-		if (battleMode == wildBattle) gp.playMusic(1, 3);		
-		else if (battleMode == trainerBattle) gp.playMusic(1, 1);
-		else if (battleMode == gymBattle) gp.playMusic(1, 2);
-		else if (battleMode == rivalBattle) gp.playMusic(1, 3);
-		else if (battleMode == eliteBattle) gp.playMusic(1, 4);
-		else if (battleMode == championBattle) gp.playMusic(1, 5);
-		else if (battleMode == legendaryBattle) gp.playMusic(1, 6);		
+		
+		if (battleMode == wildBattle) {
+			gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!");
+//			gp.playMusic(1, 0);		
+		}
+		else if (battleMode == trainerBattle) {
+			gp.playMusic(1, 1);
+		}
+		else if (battleMode == gymBattle) {
+			gp.playMusic(1, 2);
+		}
+		else if (battleMode == rivalBattle) {
+			gp.playMusic(1, 3);
+		}
+		else if (battleMode == eliteBattle) {
+			gp.playMusic(1, 4);
+		}
+		else if (battleMode == championBattle) {
+			gp.playMusic(1, 5);
+		}
+		else if (battleMode == legendaryBattle) {
+			gp.playMusic(1, 6);		
+		}
 	}
 	
+	public void getMoves(int selection) {
+		
+		move1 = playerSelectMove(selection);
+		move2 = cpuSelectMove();
+		
+		startRound();
+		setTurn();
+	}
 	private Move playerSelectMove(int selection) {
 		return fighter[0].getMoveSet().get(selection);
 	}
@@ -120,10 +183,7 @@ public class BattleManager {
 		return bestMove;	
 	}
 	
-	public void move(int selection) {
-		
-		move1 = playerSelectMove(selection);
-		move2 = cpuSelectMove();
+	private void startRound() {		
 		
 		// if both pokemon are alive
 		if (fighter[0].isAlive() && fighter[1].isAlive()) {
@@ -152,22 +212,29 @@ public class BattleManager {
 				currentTurn = -1;
 				nextTurn = -1;
 			}
-			
-			runTurn();		
 		}
 	}
-	
-	public void runTurn() {		
+	private void setTurn() {
+		
 		if (fighter[0].isAlive() && fighter[1].isAlive()) {
+		
 			if (currentTurn == playerTurn) {
-				useTurn(0, 1, move1, move2);
+				useTurn(0, 1, move1, move2);			
 			}
 			else if (currentTurn == cpuTurn) {
 				useTurn(1, 0, move2, move1);
-			}		
+			}	
+			else if (currentTurn == -1) {
+				checkStatus();
+			}
+		}
+		else if (!fighter[0].isAlive()) {
+			setWinner(1, 0);
+		}
+		else if (!fighter[1].isAlive()) {
+			setWinner(0, 1);
 		}
 	}
-	
 	private int getTurn(Move move1, Move move2) {		
 		
 		if (move1 == null && move2 == null) {
@@ -219,10 +286,13 @@ public class BattleManager {
 			int soundFile = gp.se.getFile(moves_SE, atkMove.getName());
 			int soundDuration = gp.se.getSoundDuration(moves_SE, soundFile);
 			gp.ui.dialogueTimerMax = 30 + soundDuration;
-			gp.ui.setSoundFile(moves_SE, soundFile);	
+			gp.ui.setSoundFile(moves_SE, soundFile);
+			gp.ui.seTimer = 45;
 			
 			// reset turns to wait
 			atkMove.setTurns(atkMove.getNumTurns());
+			
+			fightStage = fightStage_Attack;
 		}
 		// delayed move is used for first time
 		else if (atkMove.getTurns() == atkMove.getNumTurns()) {
@@ -232,13 +302,13 @@ public class BattleManager {
 			// reduce number of turns to wait
 			atkMove.setTurns(atkMove.getTurns() - 1);	
 			
+			fightStage = fightStage_Attack;
+			
 			return;
 		}
 		
 		// decrease move pp
 		atkMove.setpp(atkMove.getpp() - 1);
-		
-		gp.ui.battleSubState = gp.ui.subState_Turn_End;
 	}		
 	
 	public void attack() {
@@ -262,7 +332,7 @@ public class BattleManager {
 		}
 		
         // if attack lands
-		if (isHit(atk, move, trgMove)) {
+		if (hit(atk, move, trgMove)) {
 			
 			// move has a status affect
 			if (move.getMType().equals("Status")) {
@@ -300,7 +370,27 @@ public class BattleManager {
 			nextTurn = -1;
 		}				
 	}		
-	
+	private boolean hit(int atk, Move move, Move trgMove) {
+		
+		if (trgMove == null)
+			return true;
+		
+		// if target used delayed move and delayed move protects target		
+		if (trgMove.getTurns() == 1 && !trgMove.getCanHit())
+			return false;
+				
+		// if move never misses, return true
+		if (move.getAccuracy() == -1) 
+			return true; 
+		
+		double accuracy = move.getAccuracy() * fighter[atk].getAccuracy();
+		
+		Random r = new Random();
+		float chance = r.nextFloat();
+		
+		// chance of missing is accuracy value / 100
+		return (chance <= ((float) accuracy / 100)) ? true : false;
+	}
 	private void statusMove(int trg, Move move) {
 		
 		// if pokemon does not already have status affect
@@ -313,7 +403,7 @@ public class BattleManager {
 		}
 		// pokemon already has status affect
 		else {
-			gp.ui.addBattleDialogue(fighter[trg].getName() + " is already " + 
+			gp.ui.addBattleDialogue(fighter[trg].getName() + " is\nalready " + 
 					fighter[trg].getStatus().getCondition() + "!");
 		}
 	}
@@ -372,14 +462,10 @@ public class BattleManager {
 //			absorbHP(atk, trg, move, damage);
 									
 			// if damage is fatal
-			if (damage >= fighter[trg].getHP())	{
+/*			if (damage >= fighter[trg].getHP())	{
 				dealDamage(trg, damage);
-				winner = atk;
-				loser = trg;
-				currentTurn = -1;	
-				nextTurn = -1;
-//				isRecoil(atk, trg, move, damage);
-//				defeated(atk, trg, damage);
+				isRecoil(atk, trg, move, damage);
+				setWinner(atk, trg);
 			}						
 			// fighter survives hit
 			else {							
@@ -388,11 +474,12 @@ public class BattleManager {
 				
 				currentTurn = nextTurn;	
 				nextTurn = -1;
-//				isRecoil(atk, trg, move, damage);
+				isRecoil(atk, trg, move, damage);
 			}
+*/
+			dealDamage(atk, trg, move, damage);
 		}	
 	}
-	
 	private double isCritical(Move move) {			
 		/** CRITICAL HIT REFERENCE: https://www.serebii.net/games/criticalhits.shtml (GEN II-V) **/
 		
@@ -403,29 +490,6 @@ public class BattleManager {
 		Random r = new Random();		
 		return (r.nextFloat() <= ((float) chance / 25)) ? 1.5 : 1;
 	}
-	
-	private boolean isHit(int atk, Move move, Move trgMove) {
-		
-		if (trgMove == null)
-			return true;
-		
-		// if target used delayed move and delayed move protects target		
-		if (trgMove.getTurns() == 1 && !trgMove.getCanHit())
-			return false;
-				
-		// if move never misses, return true
-		if (move.getAccuracy() == -1) 
-			return true; 
-		
-		double accuracy = move.getAccuracy() * fighter[atk].getAccuracy();
-		
-		Random r = new Random();
-		float chance = r.nextFloat();
-		
-		// chance of missing is accuracy value / 100
-		return (chance <= ((float) accuracy / 100)) ? true : false;
-	}
-	
 	private int calculateDamage(int atk, int trg, Move move, double crit, boolean cpu) {
 		
 		double level = fighter[atk].getLevel();		
@@ -470,12 +534,14 @@ public class BattleManager {
 		// don't play sound if cpu is calling method
 		if (!cpu) {
 			int soundFile = gp.se.getFile(battle_SE, getHitSE(type));
+			int soundDuration = gp.se.getSoundDuration(battle_SE, soundFile);
+			gp.ui.dialogueTimerMax = 30 + soundDuration;
 			gp.ui.setSoundFile(battle_SE, soundFile);
+			gp.ui.seTimer = 5;
 		}
 		
 		return damageDealt;
 	}
-	
 	private double effectiveness(int trg, Type type) {
 		
 		// default value
@@ -534,7 +600,6 @@ public class BattleManager {
 						
 		return effect;
 	}
-	
 	private String getHitSE(double effectiveness) {
 		
 		String hit = "";
@@ -557,15 +622,23 @@ public class BattleManager {
 		
 		return hit;
 	}
-
-	private void dealDamage(int trg, int damage) {		
+	private void dealDamage(int atk, int trg, Move move, int damage) {		
 		
 		// subtract damage dealt from total hp
 		int result = fighter[trg].getHP() - (int)damage;		
 		
 		// set HP to 0 if below 0
-		if (result < 0)
+		if (result <= 0) {
 			result = 0;
+			fighter[trg].setAlive(false);
+			currentTurn = -1;
+			nextTurn = -1;			
+		}
+		else {
+			applyEffect(atk, trg, move);
+			currentTurn = nextTurn;	
+			nextTurn = -1;
+		}
 		
 		fighter[trg].setHP(result);
 	}
@@ -593,28 +666,25 @@ public class BattleManager {
 		}
 	}
 	
-	private void statusDamage() {
+	private void checkStatus() {
 		
 		if (fighter[0].isAlive()) {
-			statusDamage(fighter[0]);
+			getStatusDamage(fighter[0]);
 
 			if (!fighter[0].isAlive()) { 
-				winner = 1;
-				loser = 0;
+				setWinner(1, 0);
 			}
 		}
 		
 		if (fighter[1].isAlive()) {
-			statusDamage(fighter[1]);
+			getStatusDamage(fighter[1]);
 
-			if (fighter[1].isAlive()) { 
-				winner = 0;
-				loser = 1;
+			if (!fighter[1].isAlive()) { 
+				setWinner(0, 1);
 			}
 		}		
 	}
-	
-	private void statusDamage(Pokemon p) {
+	private void getStatusDamage(Pokemon p) {
 		
 		if (p.getStatus() != null) {				
 			
@@ -633,13 +703,20 @@ public class BattleManager {
 													
 				int soundFile = gp.se.getFile(battle_SE, p.getStatus().getName().toLowerCase());
 				gp.ui.setSoundFile(battle_SE, soundFile);
-			
-				gp.ui.addBattleDialogue(p.getName() + p.getStatus().printStatus());									
+				gp.ui.dialogueTimerMax = 2 * 60;
+				gp.ui.seTimer = 5;
+				
+				gp.ui.addBattleDialogue(p.getName() + p.getStatus().printStatus());	
 			}		
-		}
+		}	
+		
+		fightStage = fightStage_End;
 	}
 	
-	public void announceWinner() {
+	public void setWinner(int winner, int loser) {
+		
+		this.winner = winner;
+		this.loser = loser;
 		
 		fighter[loser].setAlive(false);
 		
@@ -648,21 +725,20 @@ public class BattleManager {
 		
 		int soundFile = gp.se.getFile(faint_SE, fighter[loser].getName());
 		gp.ui.setSoundFile(faint_SE, soundFile);
+		gp.ui.dialogueTimerMax = 2 * 60;
+		gp.ui.seTimer = 5;
 		
 		gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
 		gp.ui.addBattleDialogue(fighter[winner].getName() + "\ngained " + xp + " Exp. Points!");
 		
+		fightStage = fightStage_End;
+		
 		return;
 	}
-	
 	private int calculateXP(int lsr) {
 		
 		// exp formula reference (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience		
 		int exp = (int) (((( fighter[lsr].getXP() * fighter[lsr].getLevel() ) / 7)) * 1.5);		
 		return exp;
 	}
-}
-
-interface StatusEffect {
-	public void dealDamage(Pokemon pokemon);
 }

@@ -22,12 +22,10 @@ public enum Pokemon {
 	/*** EXP / EV REFERENCE https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield ***/
 	
 	BULBASAUR ("Bulbasaur", 1, Type.GRASS, 5, 45, 49, 49, 65, 65, 45, 16, 64, 1),
-	CHARMANDER ("Charmander", 4, Type.FIRE, 5, 39, 52, 43, 60, 50, 65, 16, 65, 1),
-	
-//	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), 16, 60, 62, 63, 80, 80, 60, 32, 141, 2),
+	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), 16, 60, 62, 63, 80, 80, 60, 32, 141, 2),
 	VENUSAUR ("Venusaur", 3, Arrays.asList(Type.GRASS, Type.POISON), 36, 80, 82, 83, 100, 100, 80, -1, 208, 3),
-//	CHARMANDER ("Charmander", 4, Type.FIRE, 5, 39, 52, 43, 60, 50, 65, 16, 65, 1),
-//	CHARMELEON ("Charmeleon", 5, Type.FIRE, 16, 58, 64, 58, 80, 65, 80, 36, 142, 2),
+	CHARMANDER ("Charmander", 4, Type.FIRE, 5, 39, 52, 43, 60, 50, 65, 16, 65, 1),
+	CHARMELEON ("Charmeleon", 5, Type.FIRE, 16, 58, 64, 58, 80, 65, 80, 36, 142, 2),
 	CHARIZARD ("Charizard", 6, Arrays.asList(Type.FIRE, Type.FLYING), 36, 78, 84, 78, 109, 85, 100, -1, 209, 3);
 /*
 	SQUIRTLE ("Squirtle", 7, Type.WATER, 5, 44, 48, 65, 50, 64, 43, 16, 66, 1),
@@ -194,20 +192,18 @@ public enum Pokemon {
 		Map<Pokemon, List<Move>> pokeMap = new HashMap<>();
 		
 		// set default moves for each pokemon
- //       pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
+        pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
         pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
         		new Move(Moves.TACKLE)));
-        pokeMap.put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
-        
     
- //       pokeMap.put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
-//        		new Move(Moves.TACKLE)));
+        pokeMap.put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
+        		new Move(Moves.TACKLE)));
 		pokeMap.put(VENUSAUR, Arrays.asList(new Move(Moves.PETALBLIZZARD), new Move(Moves.SOLARBEAM, 2), new Move(Moves.TAKEDOWN), 
 				new Move(Moves.DOUBLEEDGE)));
 		
- //       pokeMap.put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
-//		pokeMap.put(CHARMELEON, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.EMBER), new Move(Moves.SLASH), 
-//				new Move(Moves.GROWL)));
+        pokeMap.put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
+		pokeMap.put(CHARMELEON, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.EMBER), new Move(Moves.SLASH), 
+				new Move(Moves.GROWL)));
         pokeMap.put(CHARIZARD, Arrays.asList(new Move(Moves.FLAMETHROWER), new Move(Moves.FLAREBLITZ),new Move(Moves.DRAGONBREATH),
         	new Move(Moves.FLY, 2)));
   /*      

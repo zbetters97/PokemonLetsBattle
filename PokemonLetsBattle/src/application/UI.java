@@ -44,14 +44,15 @@ public class UI {
 	public int dialogueTimerMax = 60;
 	public boolean dialogueFinished = false;
 	
+	public int seTimer = -1;
 	private int category_SE = -1;
 	private int record_SE = -1;
 	
 	// FIGHTER X/Y VALUES
-	private int fighter_one_X;
-	private int fighter_two_X;
-	private int fighter_one_Y;
-	private int fighter_two_Y;
+	public int fighter_one_X;
+	public int fighter_two_X;
+	public int fighter_one_Y;
+	public int fighter_two_Y;
 	
 	private final int fighter_one_startX;
 	private final int fighter_two_startX;
@@ -78,9 +79,7 @@ public class UI {
 	public final int subState_Dialogue = 2;
 	public final int subState_Options = 3;
 	public final int subState_Moves = 4;
-	public final int subState_Turn_Start = 5;
-	public final int subState_Turn_End = 6;
-	public final int subState_KO = 7;
+	public final int subState_KO = 5;
 	
 	public UI(GamePanel gp) {
 		this.gp = gp;
@@ -119,8 +118,7 @@ public class UI {
 		}
 	}
 	
-	public void draw(Graphics2D g2) {
-		
+	public void draw(Graphics2D g2) {		
 		this.g2 = g2;
 		
 		g2.setFont(PK_DS);
@@ -155,43 +153,26 @@ public class UI {
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 		if (battleSubState == subState_Encounter) {		
 			animateFighterEntrance(); 
-			drawBattleDialogueWindow();		
-			
-			if (fighterReady) {
-				
-				if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {
-					addBattleDialogue("A wild " + gp.btlManager.fighter[1].toString() + " appeared!");
-					dialogueTimerMax = 2 * 60;
-				}
-				
-//				gp.playSE(cry_SE, gp.btlManager.fighter[1].getName());
-				battleSubState = subState_Dialogue;				
-			}
+			drawBattleDialogueWindow();	
 		}		
-		else if (battleSubState == subState_Dialogue ||
-				battleSubState == subState_Turn_Start ||
-				battleSubState == subState_Turn_End) {			
-			drawFighters();
-			drawBattleDialogueWindow();			
+		else if (battleSubState == subState_Dialogue) {			
+			drawFighters();	
 			drawBattleDialogue();
 		}
-		else if (battleSubState == subState_KO) {	
-			animateFighterDefeat();
-			drawFighters();
-			drawBattleDialogueWindow();			
-			drawBattleDialogue();			
-		}
 		else if (battleSubState == subState_Options) {
-			currentDialogue = "What will\n" + gp.btlManager.fighter[0].getName() + " do?";
 			drawFighters();
-			drawBattleDialogueWindow();	
-			drawMenuDialogue();
+			drawBattleDialogue();
 			drawBattleOptionsWindow();			
 		}
 		else if (battleSubState == subState_Moves) {
 			drawFighters();
 			drawBattleMovesetWindow();
 			drawBattleMoveDescriptionWindow();
+		}
+		else if (battleSubState == subState_KO) {			
+			animateFighterDefeat();
+			drawFighters();	
+			drawBattleDialogue();
 		}
 	}
 	
@@ -200,23 +181,27 @@ public class UI {
 		int x; 
 		int y; 
 		
+		x = fighter_two_X - gp.tileSize;
+		y = (int) (fighter_two_Y + gp.tileSize * 2.3);
+		g2.drawImage(current_arena, x, y, null);	
+		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
+		
 		x = fighter_one_X - gp.tileSize;
 		y = fighter_one_Y + gp.tileSize * 4;
 		g2.drawImage(current_arena, x, y, null);
-						
-		if (fighter_one_endX < fighter_one_X) fighter_one_X -= 5;		
-		else fighterReady = true;		
-				
 		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
 		
-		x = fighter_two_X - gp.tileSize;
-		y = (int) (fighter_two_Y + gp.tileSize * 2.3);
-		g2.drawImage(current_arena, x, y, null);
-		
-		if (fighter_two_endX > fighter_two_X) fighter_two_X += 5;		
-		else fighterReady = true;		
-		
-		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
+		if (fighter_one_X < fighter_one_endX &&
+				fighter_two_X > fighter_two_endX) {
+//			gp.playSE(cry_SE, gp.btlManager.fighter[1].getName());
+			dialogueTimerMax = 2 * 45;
+			gp.btlManager.fightStage = gp.btlManager.fightStage_Encounter;
+			battleSubState = subState_Dialogue;					
+		}
+		else {
+			fighter_one_X -= 5;	
+			fighter_two_X += 5;			
+		}
 	}	
 	private void animateFighterDefeat() {		
 		if (gp.btlManager.loser == 0) {
@@ -359,167 +344,24 @@ public class UI {
 		else fighter_two_HP = tempHP;	
 	}
 	
-	private void drawBattleDialogueWindow() {
-		
-		int x = 0;
-		int y = gp.screenHeight - gp.tileSize * 4; 
-		int width = gp.screenWidth;
-		int height = gp.tileSize * 4;
-		
-		drawSubWindow(x, y, width, height, 12, 10, battle_green, battle_red);
-	}	
-	private void drawMenuDialogue() {
-		
-		int x = gp.tileSize / 2;
-		int y = (int) (gp.screenHeight - gp.tileSize * 2.2);
-		
-		g2.setColor(Color.BLACK);
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));		
-		
-		if (dialogueCounter == textSpeed) {
-			
-			char characters[] = currentDialogue.toCharArray();
-						
-			if (charIndex < characters.length) {
-				
-				String s = String.valueOf(characters[charIndex]);	
-				combinedText += s;
-				currentDialogue = combinedText;					
-				charIndex++;					
-			}
-
-			dialogueCounter = 0;
-		}
-		else {
-			dialogueCounter++;			
-		}					
-		
-  		for (String line : combinedText.split("\n")) { 
-  			g2.setColor(Color.BLACK);
-			g2.drawString(line, x, y);	
-			g2.setColor(battle_white);
-			g2.drawString(line, x-2, y-2);
-			y += gp.tileSize;
-		} 	
-	}	
-	private void drawBattleDialogue() {
-		
-		int x = gp.tileSize / 2;
-		int y = (int) (gp.screenHeight - gp.tileSize * 2.2);
-		
-		g2.setColor(Color.BLACK);
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
-		System.out.println(dialogueTimerMax);
-		if (battleDialogue.size() > dialogueIndex && battleDialogue.get(dialogueIndex) != null) {
-			
-			if (dialogueCounter == textSpeed) {
-				
-				char characters[] = battleDialogue.get(dialogueIndex).toCharArray();
-							
-				if (charIndex < characters.length) {
-					
-					String s = String.valueOf(characters[charIndex]);				
-					combinedText += s;
-					currentDialogue = combinedText;					
-					charIndex++;					
-				}
-	
-				dialogueCounter = 0;
-			}
-			else {
-				dialogueCounter++;		
-			}			
-		}
-		else {			
-			dialogueIndex = 0;
-			battleDialogue.clear();	
-			dialogueFinished = true;
-			advanceBattle();
-		}
-		
-  		for (String line : currentDialogue.split("\n")) { 
-  			g2.setColor(Color.BLACK);
-			g2.drawString(line, x, y);	
-			g2.setColor(battle_white);
-			g2.drawString(line, x-2, y-2);
-			y += gp.tileSize;
-		} 	
-  		
-  		dialogueTimer++;
-  		if (dialogueTimer >= dialogueTimerMax) {  			
-  			advanceDialogue();
-  			dialogueIndex++;
-  			dialogueTimerMax = 2 * 45;
-  		}
-  		
-  		playBattleSound();	
-	}		
-	
-	private void playBattleSound() {
-		
-		if (category_SE != -1) {
-			
-			if (battleSubState == subState_Turn_Start && dialogueTimer == 45) {
-				gp.playSE(category_SE, record_SE);  	
-				category_SE = -1;
-				record_SE = -1;		
-			}
-			else if ((battleSubState == subState_Turn_End || battleSubState == subState_KO) && 
-					dialogueTimer == 5) {
-				gp.playSE(category_SE, record_SE);  
-				category_SE = -1;
-				record_SE = -1;		
-			}
-  		}			
-	}
-	
-	public void advanceDialogue() {
-		gp.keyH.aPressed = false;
-		dialogueFinished = false;
-		charIndex = 0;
-		combinedText = "";	
-		currentDialogue = "";
-		commandNum = 0;
-		dialogueTimer = 0;
-	}
-	private void advanceBattle() {
-
-		if (battleSubState == subState_Dialogue) {
-			battleSubState = subState_Options;	
-		}
-		else if (battleSubState == subState_Turn_Start) {
-			gp.btlManager.attack();
-			battleSubState = subState_Turn_End;	
-		}
-		else if (battleSubState == subState_Turn_End) {
-			if (gp.btlManager.winner != -1) {
-				
-				gp.btlManager.announceWinner();
-				
-				battleSubState = subState_KO;
-			}
-			else if (gp.btlManager.currentTurn != -1) {
-				gp.btlManager.runTurn();
-				battleSubState = subState_Turn_Start;	
-			}
-			else {
-				battleSubState = subState_Options;	
-			}
-		}
-		else if (battleSubState == subState_KO) {
-			gp.gameState = gp.playState;
-		}
-	}
-	
-	public void setSoundFile(int cat, int rec) {
-		category_SE = cat;
-		record_SE = rec;
-	}
-	
 	private void drawBattleOptionsWindow() {	
 		
-		int x = gp.tileSize * 9;
-		int y = gp.screenHeight - gp.tileSize * 4; 
+		drawBattleDialogueWindow();
+		
+		int x = gp.tileSize / 2;
+		int y = (int) (gp.screenHeight - gp.tileSize * 2.2);
+		String text = "What will\n" + gp.btlManager.fighter[0].getName() + " do?";
+		
+		for (String line : text.split("\n")) { 
+			g2.setColor(Color.BLACK);
+			g2.drawString(line, x, y);	
+			g2.setColor(battle_white);
+			g2.drawString(line, x-2, y-2);
+			y += gp.tileSize;
+		}
+		
+		x = gp.tileSize * 9;
+		y = gp.screenHeight - gp.tileSize * 4; 
 		int width = gp.tileSize * 7;
 		int height = gp.tileSize * 4;
 		
@@ -606,9 +448,9 @@ public class UI {
 		}
 		
 		if (gp.keyH.aPressed) {		
-			gp.btlManager.move(commandNum);
+			gp.btlManager.getMoves(commandNum);
 			advanceDialogue();		
-			battleSubState = subState_Turn_Start;
+			battleSubState = subState_Dialogue;	
 		}
 		else if (gp.keyH.bPressed) {			
 			advanceDialogue();
@@ -642,8 +484,92 @@ public class UI {
 		g2.drawString(text, x, y);	
 		g2.setColor(battle_white);
 		g2.drawString(text, x-2, y-2);
+	}		
+	private void drawBattleDialogueWindow() {
+		
+		int x = 0;
+		int y = gp.screenHeight - gp.tileSize * 4; 
+		int width = gp.screenWidth;
+		int height = gp.tileSize * 4;
+		
+		drawSubWindow(x, y, width, height, 12, 10, battle_green, battle_red);
 	}	
 	
+	private void drawBattleDialogue() {
+		
+		drawBattleDialogueWindow();	
+		
+		int x = gp.tileSize / 2;
+		int y = (int) (gp.screenHeight - gp.tileSize * 2.2);
+		
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
+		
+		if (battleDialogue.size() > dialogueIndex && battleDialogue.get(dialogueIndex) != null) {
+			
+			if (dialogueCounter == textSpeed) {
+				
+				char characters[] = battleDialogue.get(dialogueIndex).toCharArray();
+							
+				if (charIndex < characters.length) {
+					
+					String s = String.valueOf(characters[charIndex]);				
+					combinedText += s;
+					currentDialogue = combinedText;					
+					charIndex++;					
+				}
+	
+				dialogueCounter = 0;
+			}
+			else {
+				dialogueCounter++;		
+			}			
+		}
+		else {			
+			dialogueIndex = 0;
+			battleDialogue.clear();	
+			dialogueFinished = true;
+		}
+		
+  		for (String line : currentDialogue.split("\n")) { 
+  			g2.setColor(Color.BLACK);
+			g2.drawString(line, x, y);	
+			g2.setColor(battle_white);
+			g2.drawString(line, x-2, y-2);
+			y += gp.tileSize;
+		} 	
+  		
+  		dialogueTimer++;
+  		if (dialogueTimer >= dialogueTimerMax) {  			
+  			advanceDialogue();
+  			dialogueIndex++;
+  			dialogueTimerMax = 2 * 45;
+  		}
+  		
+  		if (seTimer != -1 && dialogueTimer == seTimer) {
+  			playBattleSE();
+  		}
+	}		
+	public void advanceDialogue() {
+		gp.keyH.aPressed = false;
+		dialogueFinished = false;
+		charIndex = 0;
+		combinedText = "";	
+		currentDialogue = "";
+		commandNum = 0;
+		dialogueTimer = 0;
+	}
+	private void playBattleSE() {		
+		gp.playSE(category_SE, record_SE);  	
+		seTimer = -1;
+		category_SE = -1;
+		record_SE = -1;				
+	}
+	
+	public void setSoundFile(int cat, int rec) {
+		category_SE = cat;
+		record_SE = rec;
+	}
 	public void addBattleDialogue(String text) {
 		battleDialogue.add(text);
 	}	

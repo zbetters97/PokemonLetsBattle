@@ -218,6 +218,7 @@ public class GamePanel extends JPanel implements Runnable {
 		}	
 		// BATTLE STATE
 		else if (gameState == battleState) {
+			btlManager.update();
 		}
 	}
 	
@@ -227,8 +228,9 @@ public class GamePanel extends JPanel implements Runnable {
 		if (gameState == titleState) {
 			ui.draw(g2);
 		}		
-		// GAME START
-		else {					
+		// PLAY STATE
+		else if (gameState == playState) {	
+			
 			// DRAW TILES
 			tileM.draw(g2);	
 									
@@ -238,6 +240,12 @@ public class GamePanel extends JPanel implements Runnable {
 			// DRAW UI
 			ui.draw(g2);	
 		}		
+		// BATTLE STATE
+		else if (gameState == battleState) {
+									
+			// DRAW UI
+			ui.draw(g2);
+		}
 	}
 	private void drawToScreen() {		
 		Graphics g = getGraphics();

@@ -104,6 +104,8 @@ public class KeyHandler implements KeyListener {
 		}
 		else if (gp.ui.battleSubState == gp.ui.subState_Moves) {
 			
+			int maxMoves = gp.btlManager.fighter[0].getMoveSet().size() - 1;
+			
 			if (code == gp.btn_A && lock) { 	
 				playCursorSE();					
 				aPressed = true; lock = false;										
@@ -125,6 +127,7 @@ public class KeyHandler implements KeyListener {
 				if (gp.ui.commandNum < 2) {
 					playCursorSE();		
 					gp.ui.commandNum += 2;
+					if (gp.ui.commandNum > maxMoves) gp.ui.commandNum = maxMoves;
 				}
 			}
 			if (code == gp.btn_LEFT) {
@@ -136,7 +139,7 @@ public class KeyHandler implements KeyListener {
 			}
 			if (code == gp.btn_RIGHT) {				
 				rightPressed = true;	
-				if (gp.ui.commandNum < 3) {
+				if (gp.ui.commandNum < maxMoves) {
 					playCursorSE();		
 					gp.ui.commandNum++;
 				}
