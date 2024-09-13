@@ -63,9 +63,9 @@ public class BattleManager {
 	public void setupBattle(int currentBattle) {		
 		
 		fighter[0] = Pokemon.getPokemon(0);
-		fighter[0].setStatus(Status.BURN);
+//		fighter[0].setStatus(Status.BURN);
 		fighter[1] = Pokemon.getPokemon(3);
-		fighter[1].setStatus(Status.CONFUSE);
+//		fighter[1].setStatus(Status.CONFUSE);
 		
 		gp.ui.fighter_one_HP = fighter[0].getHP();
 		gp.ui.fighter_two_HP = fighter[1].getHP();
@@ -76,7 +76,7 @@ public class BattleManager {
 		
 		if (battleMode == wildBattle) {
 			gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!");
-//			gp.playMusic(1, 0);		
+			gp.playMusic(1, 0);		
 		}
 		else if (battleMode == trainerBattle) {
 			gp.playMusic(1, 1);
@@ -117,8 +117,7 @@ public class BattleManager {
 				}
 				// FIGHTER DOES NOT HAVE STATUS
 				else {
-					startMove();
-					fightStage = fightStage_Turn;	
+					fightStage = fightStage_Attack;	
 				}
 			}
 			// NEITHER TURN
