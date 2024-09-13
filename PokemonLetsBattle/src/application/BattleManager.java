@@ -47,12 +47,14 @@ public class BattleManager {
 	public int fightStage = 0;
 	public final int fightStage_Encounter = 1;
 	public final int fightStage_Turn = 2;
-	public final int fightStage_Status = 3;
+	public final int fightStage_Condition = 3;
 	public final int fightStage_Recovery = 4;
 	public final int fightStage_Attack = 5;
 	public final int fightStage_Hit = 6;	
-	public final int fightStage_End = 7;
-	public final int fightStage_KO = 8;
+	public final int fightStage_Status_1 = 7;
+	public final int fightStage_Status_2 = 8;
+	public final int fightStage_End = 9;
+	public final int fightStage_KO = 10;
 			
 	public BattleManager(GamePanel gp) {
 		this.gp = gp;
@@ -61,9 +63,9 @@ public class BattleManager {
 	public void setupBattle(int currentBattle) {		
 		
 		fighter[0] = Pokemon.getPokemon(0);
-		fighter[0].setStatus(Status.POISON);
+		fighter[0].setStatus(Status.BURN);
 		fighter[1] = Pokemon.getPokemon(3);
-		fighter[1].setStatus(Status.BURN);
+		fighter[1].setStatus(Status.CONFUSE);
 		
 		gp.ui.fighter_one_HP = fighter[0].getHP();
 		gp.ui.fighter_two_HP = fighter[1].getHP();
@@ -99,87 +101,85 @@ public class BattleManager {
 	public void update() {				
 				
 		if (fightStage == fightStage_Encounter) {
-			if (gp.ui.dialogueFinished) {				
-				gp.ui.battleSubState = gp.ui.subState_Options;
-			}
+			gp.ui.battleSubState = gp.ui.subState_Options;
+			fightStage++;
 		}	
 		// START OF ROUND
 		else if (fightStage == fightStage_Turn) {
 			
-			if (gp.ui.dialogueFinished) {
-			
-				// PLAYER OR CPU TURN
-				if (currentTurn != -1) {
+			// PLAYER OR CPU TURN
+			if (currentTurn != -1) {
 					
-					// FIGHTER HAS STATUS
-					if (fighter[currentTurn].getStatus() != null) {						
-						checkStatus(currentTurn);					
-						fightStage = fightStage_Status;					
-					}
-					// FIGHTER DOES NOT HAVE STATUS
-					else {
-						startMove();
-						fightStage = fightStage_Attack;
-					}
+				// FIGHTER HAS STATUS
+				if (fighter[currentTurn].getStatus() != null) {						
+					checkStatus(currentTurn);		
+					fightStage = fightStage_Condition;	
 				}
-				// NEITHER TURN
+				// FIGHTER DOES NOT HAVE STATUS
 				else {
-					fightStage = fightStage_End;
+					startMove();
+					fightStage = fightStage_Turn;	
 				}
 			}
+			// NEITHER TURN
+			else {
+				fightStage = fightStage_Status_1;
+			}
+			
 		}
 		// STATUS CONDITION
-		else if (fightStage == fightStage_Status) {
-			if (gp.ui.dialogueFinished) {
+		else if (fightStage == fightStage_Condition) {
+			getStatus(currentTurn);
 				
-				getStatus(currentTurn);
-					
-				// FIGHTER CAN MOVE
-				if (fighter[currentTurn].canMove) {					
-					fightStage = fightStage_Recovery;
-				}
-				// FIGHTER CANNOT MOVE
-				else {
-					fighter[currentTurn].canMove = true;
-					currentTurn = nextTurn;
-					nextTurn = -1;
-					fightStage = fightStage_Turn;
-				}							
+			// FIGHTER CAN MOVE
+			if (fighter[currentTurn].canMove) {	
+				fightStage = fightStage_Attack;
 			}
+			// FIGHTER CANNOT MOVE
+			else {
+				fighter[currentTurn].canMove = true;
+				currentTurn = nextTurn;
+				nextTurn = -1;
+				fightStage = fightStage_Turn;
+			}								
 		}
 		else if (fightStage == fightStage_Recovery) {
-			if (gp.ui.dialogueFinished) {
-				startMove();
-			}
+			startMove();	
+			fightStage = fightStage_Hit;
 		}
 		else if (fightStage == fightStage_Attack) {
-			if (gp.ui.dialogueFinished) {
-				attack();
-			}
+			startMove();
+			fightStage = fightStage_Hit;
 		}
 		else if (fightStage == fightStage_Hit) {
-			if (gp.ui.dialogueFinished) {
-				fightStage = fightStage_Turn;
-			}
+			attack();		
+			fightStage = fightStage_Turn;			
 		}
+		else if (fightStage == fightStage_Status_1) {
+			checkStatusDamage(0);
+			fightStage = fightStage_Status_2;			
+		}
+		else if (fightStage == fightStage_Status_2) {
+			checkStatusDamage(1);
+			fightStage = fightStage_End;			
+		}	
+		
 		// END OF ROUND
 		else if (fightStage == fightStage_End) {
 			
 			if (hasWinner()) {
 				setWinner(winner, loser);
-				gp.ui.battleSubState = gp.ui.subState_KO;
 				fightStage = fightStage_KO;
+				gp.ui.battleSubState = gp.ui.subState_KO;
 			}
-			else if (gp.ui.dialogueFinished) {
+			else {
+				fightStage = fightStage_Turn;
 				gp.ui.battleSubState = gp.ui.subState_Options;					
 			}
 		}
-		else if (fightStage == fightStage_KO) {
-			
-			if (gp.ui.dialogueFinished) {
-				fightStage = 0;
-				gp.gameState = gp.playState;
-			}
+		else if (fightStage == fightStage_KO) {			
+			fightStage = 0;
+			gp.gameState = gp.playState;			
 		}
 		
 		gp.ui.dialogueFinished = false;
@@ -191,8 +191,6 @@ public class BattleManager {
 		move2 = cpuSelectMove();
 
 		setRotation();
-		
-		fightStage = fightStage_Turn;
 	}
 	private Move playerSelectMove(int selection) {
 		return fighter[0].getMoveSet().get(selection);
@@ -360,7 +358,7 @@ public class BattleManager {
 		// 1/4 chance attacker can thaw from ice
 		int val = 1 + (int)(Math.random() * 4);
 		if (val == 1) {
-			gp.ui.addBattleDialogue(fighter[atk].getName() + " " + fighter[atk].getStatus().printRecover());
+			gp.ui.addBattleDialogue(fighter[atk].getName() + "" + fighter[atk].getStatus().printRecover());
 			fighter[atk].setStatus(null);
 		}
 		else {	
@@ -479,8 +477,6 @@ public class BattleManager {
 			
 			// reset turns to wait
 			atkMove.setTurns(atkMove.getNumTurns());
-			
-			fightStage = fightStage_Attack;
 		}
 		// delayed move is used for first time
 		else if (atkMove.getTurns() == atkMove.getNumTurns()) {
@@ -489,16 +485,12 @@ public class BattleManager {
 									
 			// reduce number of turns to wait
 			atkMove.setTurns(atkMove.getTurns() - 1);	
-			
-			fightStage = fightStage_Attack;
-			
+
 			return;
 		}
 		
 		// decrease move pp
 		atkMove.setpp(atkMove.getpp() - 1);
-		
-		fightStage = fightStage_Attack;
 	}		
 	
 	public void attack() {
@@ -559,8 +551,6 @@ public class BattleManager {
 			currentTurn = nextTurn;	
 			nextTurn = -1;
 		}				
-		
-		fightStage = fightStage_Hit;
 	}		
 	private boolean hit(int atk, Move move, Move trgMove) {
 		
@@ -835,19 +825,12 @@ public class BattleManager {
 		}
 	}
 
-	private void checkStatusDamage() {
+	private void checkStatusDamage(int atk) {
 		
-		if (fighter[0].isAlive()) {
-			getStatusDamage(0);
+		if (fighter[atk].isAlive()) {
+			getStatusDamage(atk);
 
-			if (!fighter[0].isAlive()) { 
-				hasWinner();
-			}
-		}	
-		if (fighter[1].isAlive()) {
-			getStatusDamage(1);
-
-			if (!fighter[1].isAlive()) { 
+			if (!fighter[atk].isAlive()) { 
 				hasWinner();
 			}
 		}	
@@ -867,6 +850,8 @@ public class BattleManager {
 					newHP = 0;
 					fighter[atk].setAlive(false);
 				}
+	
+				gp.ui.setSoundFile(battle_SE, fighter[atk].getStatus().getName(), 5);
 				
 				fighter[atk].getStatus().printStatus(gp, fighter[atk].getName());				
 				fighter[atk].setHP(newHP);		

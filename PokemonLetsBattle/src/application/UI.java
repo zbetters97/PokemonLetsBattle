@@ -161,7 +161,6 @@ public class UI {
 		}
 		else if (battleSubState == subState_Options) {
 			drawFighters();
-			drawBattleDialogue();
 			drawBattleOptionsWindow();			
 		}
 		else if (battleSubState == subState_Moves) {
@@ -352,6 +351,9 @@ public class UI {
 		int y = (int) (gp.screenHeight - gp.tileSize * 2.2);
 		String text = "What will\n" + gp.btlManager.fighter[0].getName() + " do?";
 		
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
+		
 		for (String line : text.split("\n")) { 
 			g2.setColor(Color.BLACK);
 			g2.drawString(line, x, y);	
@@ -530,6 +532,7 @@ public class UI {
 			dialogueIndex = 0;
 			battleDialogue.clear();	
 			dialogueFinished = true;
+			gp.btlManager.update();
 		}
 		
   		for (String line : currentDialogue.split("\n")) { 
