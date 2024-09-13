@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import application.GamePanel;
+import pokemon.Pokemon;
 
 public class NPC {
 	
@@ -78,16 +79,24 @@ public class NPC {
 	// CHARACTER TYPES
 	public final int type_player = 0;
 	public final int type_npc = 1;
-		
+	
+	// POKEMON PARTY
+	public ArrayList<Pokemon> pokeParty = new ArrayList<>();
+	public final int maxPartySize = 6;
 	
 	// CONSTRUCTOR
 	public NPC(GamePanel gp) {
 		this.gp = gp;
+		
+		pokeParty = new ArrayList<>();
+		assignParty();
+		
 		getImage();
 	}
 	
 	// CHILD ONLY		
 	public void getImage() { }
+	public void assignParty() { }
 	
 	public void setAction() { }	
 	public void move(String direction) { }

@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import application.GamePanel;
+import pokemon.Pokemon;
 
 /** PLAYER CLASS **/
 public class Player extends NPC {
@@ -55,6 +56,9 @@ public class Player extends NPC {
 /** DEFAULT HANDLERS **/
 	
 	// DEFAULT VALUES
+	public void assignParty() {
+		pokeParty.add(Pokemon.getPokemon(0));
+	}
 	public void setDefaultValues() {
 					
 		speed = 3; defaultSpeed = speed;
@@ -90,7 +94,7 @@ public class Player extends NPC {
 		canMove = true;
 		running = false;
 	}
-
+	
 	// DIALOGUE
 	public void setDialogue() {
 	}
@@ -110,7 +114,6 @@ public class Player extends NPC {
 		right2 = setup("/player/boy_right_2");
 		right3 = setup("/player/boy_right_3");
 	}	
-	
 	public void getRunImage() {			
 		runUp1 = setup("/player/boy_run_up_1"); 
 		runUp2 = setup("/player/boy_run_up_2"); 

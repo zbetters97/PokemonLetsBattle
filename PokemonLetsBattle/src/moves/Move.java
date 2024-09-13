@@ -7,6 +7,10 @@ import properties.Type;
 
 /*** MOVE CLASS ***/
 public class Move {
+
+	public enum MoveType {
+		STATUS, ATTRIBUTE, PHYSICAL, SPECIAL, OTHER;
+	}
 	
 	/** INITIALIZE VALUES FOR UNIQUE MOVES **/
 	private Moves move;
@@ -52,7 +56,7 @@ public class Move {
 	/** END GETTERS AND SETTERS **/
 	
 	/** GETTERS **/
-	public String getMType() { return move.getMType(); }	
+	public MoveType getMType() { return move.getMType(); }	
 	public Type getType() { return move.getType(); }
 	public Status getEffect() { return move.getEffect(); }	
 	public Double getSelfInflict() { return move.getSelfInflict(); }	

@@ -6,13 +6,10 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import javax.imageio.ImageIO;
 
 public class UI {
 	
@@ -27,8 +24,6 @@ public class UI {
 	private Color battle_green = new Color(111,163,161);
 	private Color battle_red = new Color(165,71,74);	
 	private Color battle_yellow = new Color(250,254,219);	
-	
-	private BufferedImage current_arena;
 	
 	// DIALOGUE HANDLER	
 	public String currentDialogue = "";
@@ -46,22 +41,6 @@ public class UI {
 	public ArrayList<Integer> seTimer;
 	private ArrayList<Integer> category_SE;
 	private ArrayList<Integer> record_SE;
-	
-	// FIGHTER X/Y VALUES
-	public int fighter_one_X;
-	public int fighter_two_X;
-	public int fighter_one_Y;
-	public int fighter_two_Y;
-	
-	private final int fighter_one_startX;
-	private final int fighter_two_startX;
-	private final int fighter_one_endX;
-	private final int fighter_two_endX;
-	
-	private final int fighter_one_platform_endX;
-	private final int fighter_two_platform_endX;
-	private final int fighter_one_platform_Y;
-	private final int fighter_two_platform_Y;
 	
 	// FIGHTER HP
 	public int fighter_one_HP;
@@ -90,25 +69,7 @@ public class UI {
 		battleDialogue = new ArrayList<String>();
 		battleOptions = new ArrayList<String>();
 		battleOptions.addAll(Arrays.asList("FIGHT", "BAG", "POKEMON", "RUN"));
-		
-		current_arena = setup("/ui/arenas/grass", gp.tileSize * 7, gp.tileSize * 3);
-		
-		fighter_one_startX = gp.tileSize * 14 - 1;
-		fighter_two_startX = 0 - gp.tileSize * 3 - 1;
-				
-		fighter_one_X = fighter_one_startX;
-		fighter_two_X = fighter_two_startX;
-		fighter_one_Y = gp.tileSize * 3;
-		fighter_two_Y = 0;
-		
-		fighter_one_platform_Y = fighter_one_Y + gp.tileSize * 4;
-		fighter_two_platform_Y = (int) (fighter_two_Y + gp.tileSize * 2.3);
-		
-		fighter_one_endX = gp.tileSize * 2;
-		fighter_two_endX = gp.tileSize * 9;
-		fighter_one_platform_endX = fighter_one_endX - gp.tileSize;
-		fighter_two_platform_endX = fighter_two_endX - gp.tileSize;		
-				
+			
 		// FONT DECLARATION		
 		try {
 			InputStream is;
@@ -125,7 +86,6 @@ public class UI {
 		this.g2 = g2;
 		
 		g2.setFont(PK_DS);
-		g2.setColor(Color.white);
 		
 		if (gp.gameState == gp.playState) {
 			drawHUD();
@@ -151,91 +111,39 @@ public class UI {
 	
 	// BATTLE SCREEN
 	private void drawBattleScreen() {
-		
-		g2.setColor(battle_white);  
-		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+	
 		if (battleSubState == subState_Encounter) {		
-			animateFighterEntrance(); 
 			drawBattleDialogueWindow();	
 		}		
 		else if (battleSubState == subState_Dialogue) {			
-			drawFighters();	
+			drawFighterWindows();
 			drawBattleDialogue();
 		}
 		else if (battleSubState == subState_Options) {
-			drawFighters();
+			drawFighterWindows();
 			drawBattleOptionsWindow();			
 		}
 		else if (battleSubState == subState_Moves) {
-			drawFighters();
+			drawFighterWindows();
 			drawBattleMovesetWindow();
 			drawBattleMoveDescriptionWindow();
 		}
-		else if (battleSubState == subState_KO) {			
-			animateFighterDefeat();
-			drawFighters();	
+		else if (battleSubState == subState_KO) {	
+			drawFighterWindows();
 			drawBattleDialogue();
 		}
 	}
 	
-	private void animateFighterEntrance() {
-		
-		int x; 
-		int y; 
-		
-		x = fighter_two_X - gp.tileSize;
-		y = (int) (fighter_two_Y + gp.tileSize * 2.3);
-		g2.drawImage(current_arena, x, y, null);	
-		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
-		
-		x = fighter_one_X - gp.tileSize;
-		y = fighter_one_Y + gp.tileSize * 4;
-		g2.drawImage(current_arena, x, y, null);
-		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
-		
-		if (fighter_one_X < fighter_one_endX &&
-				fighter_two_X > fighter_two_endX) {
-//			gp.playSE(cry_SE, gp.btlManager.fighter[1].getName());
-			dialogueTimerMax = 2 * 45;
-			battleSubState = subState_Dialogue;					
-		}
-		else {
-			fighter_one_X -= 5;	
-			fighter_two_X += 5;			
-		}
-	}	
-	private void animateFighterDefeat() {		
-		if (gp.btlManager.loser == 0) {
-			if (fighter_one_Y < gp.screenHeight) {
-				fighter_one_Y += 12;
-			}
-		}
-		else if (gp.btlManager.loser == 1) {
-			if (fighter_two_Y < gp.screenHeight) {
-				fighter_two_Y += 12;
-			}
-		}		
-	}
-	
-	private void drawFighters() {	
-		
-		int x;
-		int y;	
-				
-		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
-		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
-		
-		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
-		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
-		
-		x = (int) (gp.tileSize * 9.1);
-		y = (int) (gp.tileSize * 5.4);
+	private void drawFighterWindows() {
+		int x = (int) (gp.tileSize * 9.1);
+		int y = (int) (gp.tileSize * 5.4);
 		drawFighterWindow(x, y, 0);	
 		
 		x = (int) (gp.tileSize * 0.4);
 		y = (int) (gp.tileSize * 0.4);
 		drawFighterWindow(x, y, 1);	
 	}
+	
 	private void drawFighterWindow(int x, int y, int num) {
 		
 		int tempX = x;
@@ -608,20 +516,5 @@ public class UI {
 		int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
 		int x = tailX - length;
 		return x;
-	}
-	private BufferedImage setup(String imagePath, int width, int height) {
-		
-		UtilityTool utility = new UtilityTool();
-		BufferedImage image = null;
-		
-		try {
-			image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
-			image = utility.scaleImage(image, width, height);
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return image;
 	}	
 }
