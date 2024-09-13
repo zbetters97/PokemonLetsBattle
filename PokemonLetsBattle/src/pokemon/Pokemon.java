@@ -195,7 +195,7 @@ public enum Pokemon {
 		// set default moves for each pokemon
 //      pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
         pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL), 
-        		new Move(Moves.THUNDERWAVE)));
+        		new Move(Moves.DOUBLEEDGE)));
     
         pokeMap.put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
         		new Move(Moves.TACKLE)));

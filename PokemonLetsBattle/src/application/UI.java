@@ -42,11 +42,10 @@ public class UI {
 	public int commandNum = 0;
 	private int dialogueTimer = 0;
 	public int dialogueTimerMax = 60;
-	public boolean dialogueFinished = false;
 	
-	public int seTimer = -1;
-	private int category_SE = -1;
-	private int record_SE = -1;
+	public ArrayList<Integer> seTimer;
+	private ArrayList<Integer> category_SE;
+	private ArrayList<Integer> record_SE;
 	
 	// FIGHTER X/Y VALUES
 	public int fighter_one_X;
@@ -83,6 +82,10 @@ public class UI {
 	
 	public UI(GamePanel gp) {
 		this.gp = gp;
+		
+		seTimer = new ArrayList<Integer>();
+		category_SE = new ArrayList<Integer>();
+		record_SE = new ArrayList<Integer>();
 		
 		battleDialogue = new ArrayList<String>();
 		battleOptions = new ArrayList<String>();
@@ -194,7 +197,6 @@ public class UI {
 				fighter_two_X > fighter_two_endX) {
 //			gp.playSE(cry_SE, gp.btlManager.fighter[1].getName());
 			dialogueTimerMax = 2 * 45;
-			gp.btlManager.fightStage = gp.btlManager.fightStage_Encounter;
 			battleSubState = subState_Dialogue;					
 		}
 		else {
@@ -506,8 +508,7 @@ public class UI {
 		
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
-		
-		
+				
 		if (battleDialogue.size() > dialogueIndex && battleDialogue.get(dialogueIndex) != null) {
 			
 			if (dialogueCounter == textSpeed) {
@@ -531,8 +532,7 @@ public class UI {
 		else {			
 			dialogueIndex = 0;
 			battleDialogue.clear();	
-			dialogueFinished = true;
-			gp.btlManager.update();
+			gp.btlManager.ready = true;
 		}
 		
   		for (String line : currentDialogue.split("\n")) { 
@@ -544,53 +544,56 @@ public class UI {
 		} 	
   		
   		dialogueTimer++;
-  		if (dialogueTimer >= dialogueTimerMax) {  			
-  			advanceDialogue();
+  		if (dialogueTimer >= dialogueTimerMax) {  	
   			dialogueIndex++;
   			dialogueTimerMax = 2 * 45;
+  			advanceDialogue();
+  			
   		}
   		
-  		if (dialogueTimer == seTimer) {
+  		if (seTimer.size() > 0 && dialogueTimer == seTimer.get(0)) {
   			playBattleSE();
   		}
 	}		
 	public void advanceDialogue() {
 		gp.keyH.aPressed = false;
-		dialogueFinished = false;
 		charIndex = 0;
 		combinedText = "";	
 		currentDialogue = "";
 		commandNum = 0;
 		dialogueTimer = 0;
 	}
-	private void playBattleSE() {		
-		gp.playSE(category_SE, record_SE);  	
-		seTimer = -1;
-		category_SE = -1;
-		record_SE = -1;				
+	private void playBattleSE() {	
+
+		if (category_SE.size() == seTimer.size()) {
+			gp.playSE(category_SE.get(0), record_SE.get(0));  				
+			category_SE.remove(0);	
+			record_SE.remove(0);	
+		}			
+			
+		seTimer.remove(0);	
 	}
 	
-	public void setSoundFile(int cat, String soundFile, int timer) {
+	public void setSoundFile(int cat, String soundFile, int timer) {		
+		category_SE.add(cat);		
+		record_SE.add(gp.se.getFile(cat, soundFile));
 		
-		category_SE = cat;		
-		record_SE = gp.se.getFile(cat, soundFile);
-		
-		int soundDuration = gp.se.getSoundDuration(category_SE, record_SE);		
+		int soundDuration = gp.se.getSoundDuration(cat, gp.se.getFile(cat, soundFile));		
 		dialogueTimerMax = 30 + soundDuration;		
 		
-		seTimer = timer;
+		seTimer.add(timer);
 	}
-	public void setSoundFile(int cat, String soundFile, int timer, int duration) {
-		
-		category_SE = cat;		
-		record_SE = gp.se.getFile(cat, soundFile);
+	public void setSoundFile(int cat, String soundFile, int timer, int duration) {		
+		category_SE.add(cat);		
+		record_SE.add(gp.se.getFile(cat, soundFile));
 		
 		dialogueTimerMax = duration;				
-		seTimer = timer;
+		seTimer.add(timer);
 	}
 	public void addBattleDialogue(String text) {
 		battleDialogue.add(text);
-	}	
+	}
+	
 	private void drawSubWindow(int x, int y, int width, int height, int curve, int borderStroke, 
 			Color fillCollor, Color borderColor) {
 		
