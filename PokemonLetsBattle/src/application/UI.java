@@ -143,7 +143,6 @@ public class UI {
 		y = (int) (gp.tileSize * 0.4);
 		drawFighterWindow(x, y, 1);	
 	}
-	
 	private void drawFighterWindow(int x, int y, int num) {
 		
 		int tempX = x;
@@ -360,7 +359,7 @@ public class UI {
 		}
 		
 		if (gp.keyH.aPressed) {		
-			gp.btlManager.getMoves(commandNum);
+			gp.btlManager.setPlayerMove(commandNum);
 			advanceDialogue();		
 			battleSubState = subState_Dialogue;	
 		}

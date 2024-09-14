@@ -26,13 +26,13 @@ public enum Pokemon {
 	VENUSAUR ("Venusaur", 3, Arrays.asList(Type.GRASS, Type.POISON), 36, 80, 82, 83, 100, 100, 80, -1, 208, 3),
 	CHARMANDER ("Charmander", 4, Type.FIRE, 5, 39, 52, 43, 60, 50, 65, 16, 65, 1),
 	CHARMELEON ("Charmeleon", 5, Type.FIRE, 16, 58, 64, 58, 80, 65, 80, 36, 142, 2),
-	CHARIZARD ("Charizard", 6, Arrays.asList(Type.FIRE, Type.FLYING), 36, 78, 84, 78, 109, 85, 100, -1, 209, 3);
-/*
+	CHARIZARD ("Charizard", 6, Arrays.asList(Type.FIRE, Type.FLYING), 36, 78, 84, 78, 109, 85, 100, -1, 209, 3),
 	SQUIRTLE ("Squirtle", 7, Type.WATER, 5, 44, 48, 65, 50, 64, 43, 16, 66, 1),
 	WARTORTLE ("Wartortle", 8, Type.WATER, 16, 59, 63, 80, 65, 80, 58, 36, 143, 2),
-	BLASTOISE ("Blastoise", 9, Type.WATER, 36, 79, 83, 100, 85, 105, 78, -1, 210, 3),
+	BLASTOISE ("Blastoise", 9, Type.WATER, 36, 79, 83, 100, 85, 105, 78, -1, 210, 3),	
 	PIKACHU ("Pikachu", 25, Type.ELECTRIC, 5, 55, 55, 40, 50, 50, 90, 30, 82, 2),
 	RAICHU ("Raichu", 26, Type.ELECTRIC, 30, 60, 90, 55, 90, 80, 110, -1, 122, 3),
+	/*
 	ABRA ("Abra", 63, Type.PSYCHIC, 5, 25, 20, 15, 105, 55, 90, 16, 62, 1),
 	KADABRA ("Kadabra", 64, Type.PSYCHIC, 16, 40, 35, 30, 120, 70, 105, 36, 140, 2),
 	ALAKAZAM ("Alakazam", 65, Type.PSYCHIC, 36, 55, 50, 45, 135, 95, 120, -1, 250, 3),
@@ -49,19 +49,27 @@ public enum Pokemon {
 	SEADRA ("Seadra", 117, Type.WATER, 32, 55, 65, 95, 95, 45, 85, 45, 154, 2),
 	LAPRAS ("Lapras", 131, Arrays.asList(Type.WATER, Type.ICE), 40, 130, 85, 80, 85, 95, 60, -1, 187, 2),
 	SNORLAX ("Snorlax", 143, Type.NORMAL, 45, 160, 110, 65, 65, 110, 30, -1, 189, 2),
+*/
 	KINGDRA ("Kingdra", 230, Arrays.asList(Type.WATER, Type.DRAGON), 40, 75, 95, 95, 95, 95, 85, -1, 270, 3),
+	/*
 	RAIKOU ("Raikou", 243, Type.ELECTRIC, 40, 90, 85, 75, 115, 100, 115, -1, 290, 3),
 	ENTEI ("Entei", 244, Type.FIRE, 40, 115, 115, 85, 90, 75, 100, -1, 290, 3),
 	SUICUNE ("Suicune", 245, Type.WATER, 40, 100, 75, 115, 90, 115, 85, -1, 290, 3),
 	TREECKO ("Treecko", 252, Type.GRASS, 5, 40, 45, 35, 65, 55, 70, 16, 62, 1),
 	GROVYLE ("Grovyle", 253, Type.GRASS, 16, 50, 65, 45, 85, 65, 95, 36, 142, 2),
+	*/
 	SCEPTILE ("Sceptile", 254, Type.GRASS, 36, 70, 85, 65, 105, 85, 120, -1, 265, 3),
+	/*
 	TORCHIC ("Torchic", 255, Type.FIRE, 5, 45, 60, 40, 70, 50, 45, 16, 62, 1),
 	COMBUSKEN ("Combusken", 256, Arrays.asList(Type.FIRE, Type.FIGHTING), 16, 60, 85, 60, 85, 60, 55, 36, 142, 2),
+	*/
 	BLAZIKEN ("Blaziken", 257, Arrays.asList(Type.FIRE, Type.FIGHTING), 36, 80, 120, 70, 110, 70, 80, -1, 265, 3),
+	/*
 	MUDKIP ("Mudkip", 258, Type.WATER, 5, 50, 70, 50, 50, 50, 40, 16, 62, 1),
 	MARSHTOMP ("Marshtomp", 259, Arrays.asList(Type.WATER, Type.GROUND), 16, 70, 85, 70, 60, 70, 50, 36, 142, 2),
-	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), 36, 100, 110, 90, 85, 90, 60, -1, 268, 3),
+	*/
+	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), 36, 100, 110, 90, 85, 90, 60, -1, 268, 3);
+	/*
 	KYOGRE ("Kyogre", 382, Type.WATER, 50, 100, 100, 90, 150, 140, 90, -1, 335, 3), 
 	GROUDON ("Groudon", 383, Type.GROUND, 50, 100, 150, 140, 100, 90, 90, -1, 335, 3),
 	RAYQUAZA ("Rayquaza", 384, Arrays.asList(Type.DRAGON, Type.FLYING), 50, 105, 150, 90, 150, 90, 95, -1, 340, 3);
@@ -192,10 +200,7 @@ public enum Pokemon {
 		Map<Pokemon, List<Move>> pokeMap = new HashMap<>();
 		
 		// set default moves for each pokemon
-//      pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
-        pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL), 
-        		new Move(Moves.DOUBLEEDGE)));
-    
+		pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
         pokeMap.put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
         		new Move(Moves.TACKLE)));
 		pokeMap.put(VENUSAUR, Arrays.asList(new Move(Moves.PETALBLIZZARD), new Move(Moves.SOLARBEAM, 2), new Move(Moves.TAKEDOWN), 
@@ -206,7 +211,7 @@ public enum Pokemon {
 				new Move(Moves.GROWL)));
         pokeMap.put(CHARIZARD, Arrays.asList(new Move(Moves.FLAMETHROWER), new Move(Moves.FLAREBLITZ),new Move(Moves.DRAGONBREATH),
         	new Move(Moves.FLY, 2)));
-  /*      
+  
 		pokeMap.put(SQUIRTLE, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.TAILWHIP)));
         pokeMap.put(WARTORTLE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.WATERGUN), new Move(Moves.TAILWHIP)));
         pokeMap.put(BLASTOISE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.AQUATAIL), new Move(Moves.HYDROPUMP), 
@@ -216,7 +221,7 @@ public enum Pokemon {
         		new Move(Moves.PLAYNICE)));
         pokeMap.put(RAICHU, Arrays.asList(new Move(Moves.THUNDERPUNCH), new Move(Moves.THUNDERBOLT), new Move(Moves.QUICKATTACK), 
         		new Move(Moves.SLAM)));    
-        
+        /*
         pokeMap.put(ABRA, Arrays.asList(new Move(Moves.TELEPORT)));
         pokeMap.put(KADABRA, Arrays.asList(new Move(Moves.CONFUSION), new Move(Moves.PSYBEAM), new Move(Moves.KINESIS)));
         pokeMap.put(ALAKAZAM, Arrays.asList(new Move(Moves.PSYCHIC), new Move(Moves.CONFUSION), new Move(Moves.PSYCHOCUT), 
@@ -243,9 +248,10 @@ public enum Pokemon {
         pokeMap.put(HORSEA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.BUBBLE), new Move(Moves.LEER))); 
         pokeMap.put(SEADRA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TWISTER), new Move(Moves.HYDROPUMP),
         		new Move(Moves.AGILITY))); 
+       */
         pokeMap.put(KINGDRA, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.DRAGONPULSE),
         		new Move(Moves.AGILITY))); 
-        
+        /*
         pokeMap.put(LAPRAS, Arrays.asList(new Move(Moves.ICEBEAM), new Move(Moves.HYDROPUMP), new Move(Moves.SHEERCOLD), 
         		new Move(Moves.CONFUSERAY)));     
         
@@ -262,28 +268,30 @@ public enum Pokemon {
         pokeMap.put(TREECKO, Arrays.asList(new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK), new Move(Moves.LEER))); 
         pokeMap.put(GROVYLE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK),
         		new Move(Moves.AGILITY))); 
+      */ 
         pokeMap.put(SCEPTILE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.LEAFSTORM), new Move(Moves.GIGADRAIN),
         		new Move(Moves.AGILITY))); 
-        
+        /*
         pokeMap.put(TORCHIC, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL))); 
         pokeMap.put(COMBUSKEN, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.DOUBLEKICK), new Move(Moves.SLASH), 
         		new Move(Moves.GROWL))); 
+        */
         pokeMap.put(BLAZIKEN, Arrays.asList(new Move(Moves.FIREPUNCH), new Move(Moves.BLAZEKICK), new Move(Moves.FLAREBLITZ),
         		new Move(Moves.SKYUPPERCUT))); 
-        
+        /*
         pokeMap.put(MUDKIP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.GROWL))); 
         pokeMap.put(MARSHTOMP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.MUDSHOT), new Move(Moves.MUDSLAP), 
         		new Move(Moves.TACKLE))); 
+     */ 
         pokeMap.put(SWAMPERT, Arrays.asList(new Move(Moves.SURF), new Move(Moves.MUDDYWATER), new Move(Moves.MUDBOMB),
         		new Move(Moves.EARTHQUAKE)));
-        
+        /*
         pokeMap.put(KYOGRE, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.THUNDER),
         		new Move(Moves.CALMMIND)));
         pokeMap.put(GROUDON, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.FIREFANG), new Move(Moves.DRAGONCLAW), 
         		new Move(Moves.SOLARBEAM, 2)));
         pokeMap.put(RAYQUAZA, Arrays.asList(new Move(Moves.DRAGONCLAW), new Move(Moves.EXTREMESPEED), new Move(Moves.BLIZZARD), 
-        		new Move(Moves.FLY, 2))); 
-        		
+        		new Move(Moves.FLY, 2)));         		
         */
         
         // if pokemon not already mapped to moveset

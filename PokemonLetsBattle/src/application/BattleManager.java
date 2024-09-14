@@ -106,7 +106,8 @@ public class BattleManager {
 	public void setBattle(int currentBattle) {	
 						
 //		fighter[0] = trainer1.pokeParty.get(0);		
-		fighter[0] = Pokemon.getPokemon(0);
+		fighter[0] = Pokemon.getPokemon(14);
+		fighter[1] = Pokemon.getPokemon(13);
 						
 		battleMode = currentBattle;
 	
@@ -120,11 +121,9 @@ public class BattleManager {
 		
 		if (battleMode == wildBattle) {
 			
-			fighter[1] = Pokemon.getPokemon(3);
-			
 			gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!");
 			gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30);
-			gp.playMusic(1, 0);		
+//			gp.playMusic(1, 0);		
 
 			fightStage = fightStage_Encounter;
 		}
@@ -189,11 +188,7 @@ public class BattleManager {
 		
 		if (ready) {
 			
-			if (fightStage == fightStage_Trainer) {
-				fightStage = fightStage_Start;
-				gp.ui.battleSubState = gp.ui.subState_Options;
-			}
-			if (fightStage == fightStage_Encounter) {
+			if (fightStage == fightStage_Trainer || fightStage == fightStage_Encounter) {				
 				fightStage = fightStage_Start;
 				gp.ui.battleSubState = gp.ui.subState_Options;
 			}			
@@ -207,18 +202,15 @@ public class BattleManager {
 				attack();
 			}
 			else if (fightStage == fightStage_End) {
-				if (currentTurn == -1) {
-					checkStatusDamage();	
-				}
-				else {
-					fightStage = fightStage_Move;										
-				}				
+				checkStatusDamage();								
 			}
 			else if (fightStage == fightStage_KO) {
 				setWinner(winner, loser);		
 			}
 			else if (fightStage == fightStage_Over) {
 				fightStage = 0;
+				gp.stopMusic();
+				gp.setupMusic();
 				gp.gameState = gp.playState;
 			}
 		}
@@ -226,16 +218,9 @@ public class BattleManager {
 		ready = false;
 	}
 	
-	// MOVE METHODS
-	public void getMoves(int selection) {
-		
-		move1 = playerSelectMove(selection);
-		move2 = cpuSelectMove();
-
-		setRotation();
-	}
-	private Move playerSelectMove(int selection) {
-		return fighter[0].getMoveSet().get(selection);
+	// SELECT MOVE METHODS
+	public void setPlayerMove(int selection) {
+		move1 = fighter[0].getMoveSet().get(selection);
 	}
 	private Move cpuSelectMove() {
 
@@ -277,7 +262,62 @@ public class BattleManager {
 		
 		return bestMove;	
 	}
-	private int getFirst(Move move1, Move move2) {
+	
+	// CHECK TURN METHODS
+	private void checkTurn() {
+						
+		// GET CPU MOVE IF NO CPU DELAY
+		int delay = getDelayedMove();
+		if (delay == 0 || delay == 1) {
+			move2 = cpuSelectMove();
+		}
+		
+		// SET ORDER OF TURNS
+		setRotation();
+		
+		// INITIATE MOVE
+		if (canMove()) {
+			fightStage = fightStage_Move;
+		}
+		// SKIP CURRENT TURN
+		else {
+			currentTurn = nextTurn;
+			nextTurn = -1;
+			fightStage = fightStage_Move;
+		}	
+	}	
+	private void setRotation() {		
+		
+		// if both pokemon are alive
+		if (fighter[0].isAlive() && fighter[1].isAlive()) {
+			
+			// 1 if trainer 1 moves first, 2 if trainer 2 moves first
+			// 3 if only trainer 2, 4 if only trainer 1, 5 if neither
+			int numTurn = getFirst();	
+			
+			if (numTurn == 1) { 
+				currentTurn = playerTurn;
+				nextTurn = cpuTurn;
+			}	
+			else if (numTurn == 2) { 
+				currentTurn = cpuTurn;
+				nextTurn = playerTurn;
+			}				
+			else if (numTurn == 3) { 
+				currentTurn = cpuTurn;
+				nextTurn = -1;
+			}				
+			else if (numTurn == 4) { 
+				currentTurn = playerTurn;
+				nextTurn = -1;
+			}
+			else if (numTurn == 5) {
+				currentTurn = -1;
+				nextTurn = -1;
+			}
+		}
+	}
+	private int getFirst() {
 		
 		if (move1 == null && move2 == null) {
 			return 5;
@@ -318,46 +358,41 @@ public class BattleManager {
 			}
 		}
 	}
-	private void setRotation() {		
+	public int getDelayedMove() {		
 		
-		// if both pokemon are alive
-		if (fighter[0].isAlive() && fighter[1].isAlive()) {
+		// if both moves are active
+		if (move1 != null && move2 != null) {	
 			
-			// 1 if trainer 1 moves first, 2 if trainer 2 moves first
-			// 3 if only trainer 2, 4 if only trainer 1, 5 if neither
-			int numTurn = getFirst(move1, move2);	
-			
-			if (numTurn == 1) { 
-				currentTurn = playerTurn;
-				nextTurn = cpuTurn;
-			}	
-			else if (numTurn == 2) { 
-				currentTurn = cpuTurn;
-				nextTurn = playerTurn;
-			}				
-			else if (numTurn == 3) { 
-				currentTurn = cpuTurn;
-				nextTurn = -1;
-			}				
-			else if (numTurn == 4) { 
-				currentTurn = playerTurn;
-				nextTurn = -1;
-			}
-			else if (numTurn == 5) {
-				currentTurn = -1;
-				nextTurn = -1;
-			}
+			//both players are waiting
+			if (move1.getTurns() != move1.getNumTurns() && move2.getTurns() != move2.getNumTurns())
+				return 3;			
+			else if (move1.getTurns() != move1.getNumTurns())
+				return 1;
+			else if (move2.getTurns() != move2.getNumTurns())
+				return 2;
 		}
-	}
+		// if only player 1 is active
+		else if (move1 != null) {
+			if (move1.getTurns() != move1.getNumTurns())
+				return 1;
+		}
+		// if only player 2 is active
+		else if (move2 != null) {
+			if (move2.getTurns() != move2.getNumTurns())
+				return 2;
+		}
+		
+		return 0;
+	}	
 	
-	// CHECK TURN METHODS
-	private void checkTurn() {
+	// CAN MOVE METHODS
+	private boolean canMove() {
 		
 		boolean canMove = true;
 		
 		// if attacker has status effect
 		if (fighter[currentTurn].getStatus() != null) {
-			
+		
 			// check which status
 			switch (fighter[currentTurn].getStatus().getAbreviation()) {			
 				case "PAR":	canMove = paralyzed(currentTurn); break;					
@@ -367,14 +402,7 @@ public class BattleManager {
 			}
 		}	
 		
-		if (canMove) {
-			fightStage = fightStage_Move;
-		}
-		else {
-			currentTurn = nextTurn;
-			nextTurn = -1;
-			fightStage = fightStage_End;
-		}		
+		return canMove;
 	}
 	private boolean paralyzed(int atk) {
 		
@@ -436,7 +464,7 @@ public class BattleManager {
 			}
 			else { 
 				return true;
-			}
+			}			
 		}
 	}
 	private boolean confusionDamage(int atk) {
@@ -495,16 +523,26 @@ public class BattleManager {
 	}
 	
 	// START MOVE METHODS
-	private void startMove() {			
-		if (currentTurn == playerTurn) {
-			useMove(0, 1, move1, move2);	
+	private void startMove() {	
+		
+		if (currentTurn != -1) {		
+
+			if (canMove()) {					
+				if (currentTurn == playerTurn) {
+					useMove(0, 1, move1, move2);	
+				}
+				else if (currentTurn == cpuTurn) {
+					useMove(1, 0, move2, move1);
+				}					
+			}
+			else {
+				currentTurn = nextTurn;
+				nextTurn = -1;
+			}
 		}
-		else if (currentTurn == cpuTurn) {
-			useMove(1, 0, move2, move1);
-		}	
-		else if (currentTurn == -1) {
-			gp.ui.battleSubState = gp.ui.subState_Options;
-		}
+		else {			
+			fightStage = fightStage_End;				
+		}			
 	}	
 	private void useMove(int atk, int trg, Move atkMove, Move trgMove) {		
 				
@@ -520,6 +558,8 @@ public class BattleManager {
 			
 			// decrease move pp
 			atkMove.setpp(atkMove.getpp() - 1);
+			
+			fightStage = fightStage_Attack;
 		}
 		// delayed move is used for first time
 		else if (atkMove.getTurns() == atkMove.getNumTurns()) {
@@ -528,9 +568,11 @@ public class BattleManager {
 									
 			// reduce number of turns to wait
 			atkMove.setTurns(atkMove.getTurns() - 1);	
+			
+			currentTurn = nextTurn;	
+			nextTurn = -1;
+			fightStage = fightStage_End;
 		}		
-		
-		fightStage++;
 	}		
 	
 	// ATTACK METHOD
@@ -592,7 +634,7 @@ public class BattleManager {
 			nextTurn = -1;
 		}			
 
-		fightStage = fightStage_End;
+		fightStage = fightStage_Move;
 	}		
 	private boolean hit(int atk, Move move, Move trgMove) {
 				
@@ -928,9 +970,15 @@ public class BattleManager {
 	private void checkStatusDamage() {
 		
 		if (nextTurn == 1) {
-			nextTurn = -1;
-			fightStage = fightStage_Start;
-			gp.ui.battleSubState = gp.ui.subState_Options;
+			
+			if (getDelayedMove() == 1 || getDelayedMove() == 3) {
+				fightStage = fightStage_Start;
+			}
+			else {
+				nextTurn = -1;
+				fightStage = fightStage_Start;
+				gp.ui.battleSubState = gp.ui.subState_Options;		
+			}
 		}
 		else {
 		

@@ -84,7 +84,7 @@ public enum Moves {
 	SKYUPPERCUT ("Sky Uppercut", MoveType.PHYSICAL, Type.FIGHTING, 15, 120, 100, "The user attacks the foe with an uppercut thrown skyward with force."),
 	SLAM ("Slam", MoveType.PHYSICAL, Type.NORMAL, 20, 80, 75, "The foe is slammed with a long tail, vines, etc., to inflict damage."),
 	SLASH ("Slash", MoveType.PHYSICAL, Type.NORMAL, 20, 70, 100, 1, "The foe is attacked with a slash of claws, etc. It has a high critical-hit ratio."),
-	SOLARBEAM ("Solar Beam", MoveType.SPECIAL, Type.GRASS, 10, 180, 100, true, "is charging a light beam...", "A two-turn attack. The user gathers light, then blasts a bundled beam on the second turn."),
+	SOLARBEAM ("Solar Beam", MoveType.SPECIAL, Type.GRASS, 10, 180, 100, true, "is\ncharging a light beam...", "A two-turn attack. The user gathers light, then blasts a bundled beam on the second turn."),
 	STRUGGLE ("Struggle", MoveType.PHYSICAL, Type.NORMAL, 10, 50, 100, 0.25, "Struggles"),
 	SURF ("Surf", MoveType.SPECIAL, Type.WATER, 15, 95, 100, "It swamps the entire battlefield with a giant wave. It can also be used for crossing water."),
 	TACKLE ("Tackle", MoveType.PHYSICAL, Type.NORMAL, 35, 40, 95, "A physical attack in which the user charges and slams into the foe with its whole body."),
