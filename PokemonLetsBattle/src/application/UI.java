@@ -45,7 +45,6 @@ public class UI {
 	// FIGHTER HP
 	public int fighter_one_HP;
 	public int fighter_two_HP;
-	private int hpSpeed = 2;
 	private int hpCounter = 0;
 	
 	public boolean fighterReady = false;	
@@ -218,31 +217,21 @@ public class UI {
 		
 		if (num == 0) tempHP = fighter_one_HP;		
 		else tempHP = fighter_two_HP;
-					
-		if (tempHP > gp.btlManager.fighter[num].getHP()) {
-			if (hpCounter == hpSpeed) {
-				tempHP--;	
-				hpCounter = 0;
-			}
-			else {
-				hpCounter++;			
-			}					
+							
+		if (tempHP > gp.btlManager.fighter[num].getHP()) {			
+			tempHP--;								
 		}
-		else if (tempHP < gp.btlManager.fighter[num].getHP()) {
-			
-			if (hpCounter == hpSpeed) {
-				tempHP++;
-				hpCounter = 0;
-			}
-			else {
-				hpCounter++;			
-			}			
+		else if (tempHP < gp.btlManager.fighter[num].getHP()) {			
+			tempHP++;
 		}
 		
 		double remainHP = (double)tempHP / (double)gp.btlManager.fighter[num].getBHP();				
 		if (remainHP >= .50) g2.setColor(Color.GREEN);
 		else if (remainHP >= .25) g2.setColor(Color.YELLOW);
-		else g2.setColor(Color.RED);	
+		else {
+			g2.setColor(Color.RED);
+			if (num == 0) playLowHPSE(remainHP);
+		}
 		
 		width *= remainHP;
 		
@@ -250,6 +239,19 @@ public class UI {
 		
 		if (num == 0) fighter_one_HP = tempHP;
 		else fighter_two_HP = tempHP;	
+	}
+	private void playLowHPSE(double remainHP) {
+		
+		if (remainHP > 0) {
+			hpCounter++;
+			if (hpCounter == 33) {
+				gp.playSE(6, 8);
+				hpCounter = 0;
+			}	
+		}
+		else {
+			hpCounter = 0;
+		}
 	}
 	
 	private void drawBattleOptionsWindow() {	

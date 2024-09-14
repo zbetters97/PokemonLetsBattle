@@ -106,8 +106,8 @@ public class BattleManager {
 	public void setBattle(int currentBattle) {	
 						
 //		fighter[0] = trainer1.pokeParty.get(0);		
-		fighter[0] = Pokemon.getPokemon(14);
-		fighter[1] = Pokemon.getPokemon(13);
+		fighter[0] = Pokemon.getPokemon(36);
+		fighter[1] = Pokemon.getPokemon(39);
 						
 		battleMode = currentBattle;
 	
@@ -123,7 +123,7 @@ public class BattleManager {
 			
 			gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!");
 			gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30);
-//			gp.playMusic(1, 0);		
+			gp.playMusic(1, 0);		
 
 			fightStage = fightStage_Encounter;
 		}
@@ -196,7 +196,7 @@ public class BattleManager {
 				checkTurn();
 			}
 			else if (fightStage == fightStage_Move) {
-				startMove();
+				startMove();				
 			}
 			else if (fightStage == fightStage_Attack) {
 				attack();
@@ -205,7 +205,7 @@ public class BattleManager {
 				checkStatusDamage();								
 			}
 			else if (fightStage == fightStage_KO) {
-				setWinner(winner, loser);		
+				getWinner();		
 			}
 			else if (fightStage == fightStage_Over) {
 				fightStage = 0;
@@ -268,6 +268,7 @@ public class BattleManager {
 						
 		// GET CPU MOVE IF NO CPU DELAY
 		int delay = getDelayedMove();
+		
 		if (delay == 0 || delay == 1) {
 			move2 = cpuSelectMove();
 		}
@@ -384,8 +385,6 @@ public class BattleManager {
 		
 		return 0;
 	}	
-	
-	// CAN MOVE METHODS
 	private boolean canMove() {
 		
 		boolean canMove = true;
@@ -524,7 +523,7 @@ public class BattleManager {
 	
 	// START MOVE METHODS
 	private void startMove() {	
-		
+
 		if (currentTurn != -1) {		
 
 			if (canMove()) {					
@@ -571,7 +570,7 @@ public class BattleManager {
 			
 			currentTurn = nextTurn;	
 			nextTurn = -1;
-			fightStage = fightStage_End;
+			fightStage = fightStage_Move;
 		}		
 	}		
 	
@@ -968,20 +967,22 @@ public class BattleManager {
 
 	// STATUS METHODS
 	private void checkStatusDamage() {
-		
-		if (nextTurn == 1) {
+
+		// STATUS CONDITIONS CHECKED		
+		if (nextTurn == 1) {	
 			
-			if (getDelayedMove() == 1 || getDelayedMove() == 3) {
+			nextTurn = -1;
+			
+			if (getDelayedMove() == 1 || getDelayedMove() == 3) {				
 				fightStage = fightStage_Start;
 			}
 			else {
-				nextTurn = -1;
 				fightStage = fightStage_Start;
 				gp.ui.battleSubState = gp.ui.subState_Options;		
 			}
 		}
-		else {
-		
+		// CHECK BOTH STATUS CONDITIONS
+		else {		
 			nextTurn++;
 			
 			if (fighter[nextTurn].isAlive()) {
@@ -1021,12 +1022,20 @@ public class BattleManager {
 	
 	// GET WINNER METHODS
 	private boolean hasWinner() {
-			
-		if (!fighter[0].isAlive()) {	
+		
+		// TIE
+		if (!fighter[0].isAlive() && !fighter[1].isAlive()) {
+			winner = 2;
+			loser = 2;
+			return true;
+		}			
+		// PLAYER 2 WINS
+		else if (!fighter[0].isAlive()) {	
 			winner = 1;
 			loser = 0;
 			return true;
 		}
+		// PLAYER 1 WINS
 		else if (!fighter[1].isAlive()) {
 			winner = 0;
 			loser = 1;
@@ -1036,21 +1045,24 @@ public class BattleManager {
 			return false;
 		}
 	}
-	public void setWinner(int winner, int loser) {
+	public void getWinner() {
 		
-		this.winner = winner;
-		this.loser = loser;
-		
-		fighter[loser].setAlive(false);
-		
-		int xp = calculateXP(loser);
-		fighter[winner].setXP(fighter[winner].getBXP() + xp);
-		
-		gp.ui.setSoundFile(faint_SE, fighter[loser].getName(), 5);
-		
-		gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
-		gp.ui.addBattleDialogue(fighter[winner].getName() + "\ngained " + xp + " Exp. Points!");
-		
+		// TIE GAME
+		if (winner == 2) {
+			gp.ui.addBattleDialogue(fighter[0].getName() + " fainted!");
+			gp.ui.addBattleDialogue(fighter[1].getName() + " fainted!");
+			gp.ui.addBattleDialogue("It's a draw!");
+		}
+		else {
+			int xp = calculateXP(loser);
+			fighter[winner].setXP(fighter[winner].getBXP() + xp);
+			
+			gp.ui.setSoundFile(faint_SE, fighter[loser].getName(), 5);
+			
+			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
+			gp.ui.addBattleDialogue(fighter[winner].getName() + "\ngained " + xp + " Exp. Points!");	
+		}
+				
 		fightStage++;
 	}
 	private int calculateXP(int lsr) {
@@ -1103,12 +1115,12 @@ public class BattleManager {
 	private void animateFighterDefeat() {		
 		if (gp.btlManager.loser == 0) {
 			if (fighter_one_Y < gp.screenHeight) {
-				fighter_one_Y += 12;
+				fighter_one_Y += 16;
 			}
 		}
 		else if (gp.btlManager.loser == 1) {
 			if (fighter_two_Y < gp.screenHeight) {
-				fighter_two_Y += 12;
+				fighter_two_Y += 16;
 			}
 		}		
 	}
