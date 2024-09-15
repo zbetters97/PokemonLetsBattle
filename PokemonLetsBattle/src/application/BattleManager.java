@@ -88,7 +88,7 @@ public class BattleManager {
 				
 		fighter_one_X = fighter_one_startX;
 		fighter_two_X = fighter_two_startX;
-		fighter_one_Y = gp.tileSize * 3;
+		fighter_one_Y = (int) (gp.tileSize * 3.5);
 		fighter_two_Y = 0;
 		
 		fighter_one_platform_Y = fighter_one_Y + gp.tileSize * 4;
@@ -104,10 +104,23 @@ public class BattleManager {
 	
 	// SETUP METHODS
 	public void setBattle(int currentBattle) {	
+		
+		trainer1 = new NPC(gp);
+		trainer1.pokeParty.add(Pokemon.getPokemon(0));
+		trainer1.pokeParty.add(Pokemon.getPokemon(1));
+		trainer1.pokeParty.add(Pokemon.getPokemon(2));
+		
+		trainer1.pokeParty.get(1).setAlive(false);
+		
+		trainer2 = new NPC(gp);
+		trainer2.pokeParty.add(Pokemon.getPokemon(3));
+		trainer2.pokeParty.add(Pokemon.getPokemon(4));
+		trainer2.pokeParty.add(Pokemon.getPokemon(5));
+		
+		trainer2.pokeParty.get(1).setAlive(false);
 						
-//		fighter[0] = trainer1.pokeParty.get(0);		
-		fighter[0] = Pokemon.getPokemon(4);
-		fighter[1] = Pokemon.getPokemon(1);
+		fighter[0] = trainer1.pokeParty.get(0);	
+		fighter[1] = trainer2.pokeParty.get(0);	
 						
 		battleMode = currentBattle;
 	
@@ -303,7 +316,7 @@ public class BattleManager {
 			// 1 if trainer 1 moves first, 2 if trainer 2 moves first
 			// 3 if only trainer 2, 4 if only trainer 1, 5 if neither
 			int numTurn = getFirst();	
-			
+
 			if (numTurn == 1) { 
 				currentTurn = playerTurn;
 				nextTurn = cpuTurn;
@@ -979,7 +992,6 @@ public class BattleManager {
 	}
 	private void getFlinch(int trg, Move move) {
 		
-		
 		if (move.getFlinch() != 0.0) {
 			
 			// chance for move to cause flinch
@@ -988,12 +1000,13 @@ public class BattleManager {
 				
 				currentTurn = -1;	
 				nextTurn = -1;	
-			}
-			else {
-				currentTurn = nextTurn;	
-				nextTurn = -1;	
+				
+				return;
 			}
 		}
+	
+		currentTurn = nextTurn;	
+		nextTurn = -1;		
 	}
 	
 	// STATUS METHODS
