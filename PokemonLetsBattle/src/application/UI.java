@@ -47,6 +47,9 @@ public class UI {
 	public int fighter_two_HP;
 	private int hpCounter = 0;
 	
+	public int hpSpeed_one = 1;
+	public int hpSpeed_two = 1;
+	
 	public boolean fighterReady = false;	
 	
 	private ArrayList<String> battleOptions;
@@ -214,15 +217,28 @@ public class UI {
 	private void drawFighterHealthBar(int x, int y, int width, int height, int num) {
 		
 		int tempHP = 0;
+		int tempHPspeed = 0;
 		
-		if (num == 0) tempHP = fighter_one_HP;		
-		else tempHP = fighter_two_HP;
+		if (num == 0) { tempHP = fighter_one_HP; tempHPspeed = hpSpeed_one; }	
+		else { tempHP = fighter_two_HP; tempHPspeed = hpSpeed_two; }	
 							
 		if (tempHP > gp.btlManager.fighter[num].getHP()) {			
-			tempHP--;								
+			if (hpCounter == tempHPspeed) {
+				tempHP--;	
+				hpCounter = 0;
+			}
+			else {
+				hpCounter++;			
+			}	
 		}
 		else if (tempHP < gp.btlManager.fighter[num].getHP()) {			
-			tempHP++;
+			if (hpCounter == tempHPspeed) {
+				tempHP++;
+				hpCounter = 0;
+			}
+			else {
+				hpCounter++;			
+			}	
 		}
 		
 		double remainHP = (double)tempHP / (double)gp.btlManager.fighter[num].getBHP();				

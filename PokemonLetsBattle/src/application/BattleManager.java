@@ -106,8 +106,8 @@ public class BattleManager {
 	public void setBattle(int currentBattle) {	
 						
 //		fighter[0] = trainer1.pokeParty.get(0);		
-		fighter[0] = Pokemon.getPokemon(36);
-		fighter[1] = Pokemon.getPokemon(39);
+		fighter[0] = Pokemon.getPokemon(4);
+		fighter[1] = Pokemon.getPokemon(1);
 						
 		battleMode = currentBattle;
 	
@@ -116,6 +116,14 @@ public class BattleManager {
 		
 		gp.ui.fighter_one_HP = fighter[0].getHP();
 		gp.ui.fighter_two_HP = fighter[1].getHP();
+		
+		if (fighter[0].getHP() > 100) gp.ui.hpSpeed_one = 1;
+		else if (fighter[0].getHP() > 50) gp.ui.hpSpeed_one = 2;
+		else gp.ui.hpSpeed_one = 3;
+		
+		if (fighter[1].getHP() > 100) gp.ui.hpSpeed_two = 1;
+		else if (fighter[1].getHP() > 50) gp.ui.hpSpeed_two = 2;
+		else gp.ui.hpSpeed_two = 3;
 	}
 	private void getBattleMode() {
 		
@@ -641,7 +649,7 @@ public class BattleManager {
 			return true;
 		
 		// if target used delayed move and delayed move protects target		
-		if (trgMove.getTurns() == 1 && !trgMove.getCanHit())
+		if (trgMove.getTurns() == 1 && !trgMove.getIsProtected())
 			return false;
 				
 		// if move never misses, return true
@@ -902,8 +910,8 @@ public class BattleManager {
 	}
 	private void getRecoil(int atk, int trg, Move move, int damage) {
 		
-		if (move.getSelfInflict() != null) {	
-			
+		if (move.getSelfInflict() != 0.0) {	
+			System.out.println(move.getSelfInflict());
 			damage = (int)(Math.ceil(damage * move.getSelfInflict()));	
 
 			// subtract damage dealt from total HP
@@ -935,8 +943,13 @@ public class BattleManager {
 		}
 		else {
 			applyEffect(atk, trg, move);
-			currentTurn = nextTurn;	
-			nextTurn = -1;
+			if (nextTurn != -1) {
+				getFlinch(trg, move);
+			}
+			else {
+				currentTurn = nextTurn;	
+				nextTurn = -1;	
+			}			
 		}
 		
 		fighter[trg].setHP(result);
@@ -944,7 +957,7 @@ public class BattleManager {
 	private void applyEffect(int atk, int trg, Move move) {
 		
 		// move causes attribute or status effect
-		if (move.getProbability() != null) {								
+		if (move.getProbability() != 0.0) {								
 										
 			// chance for effect to apply
 			if (new Random().nextDouble() <= move.getProbability()) {
@@ -964,7 +977,25 @@ public class BattleManager {
 			}							
 		}
 	}
-
+	private void getFlinch(int trg, Move move) {
+		
+		
+		if (move.getFlinch() != 0.0) {
+			
+			// chance for move to cause flinch
+			if (new Random().nextDouble() <= move.getFlinch()) {
+				gp.ui.addBattleDialogue(fighter[trg].getName() + " flinched!");
+				
+				currentTurn = -1;	
+				nextTurn = -1;	
+			}
+			else {
+				currentTurn = nextTurn;	
+				nextTurn = -1;	
+			}
+		}
+	}
+	
 	// STATUS METHODS
 	private void checkStatusDamage() {
 

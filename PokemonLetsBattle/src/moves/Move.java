@@ -59,8 +59,9 @@ public class Move {
 	public MoveType getMType() { return move.getMType(); }	
 	public Type getType() { return move.getType(); }
 	public Status getEffect() { return move.getEffect(); }	
-	public Double getSelfInflict() { return move.getSelfInflict(); }	
-	public Double getProbability() { return move.getProbability(); }	
+	public double getSelfInflict() { return move.getSelfInflict(); }	
+	public double getProbability() { return move.getProbability(); }	
+	public double getFlinch() { return move.getFlinch(); }	
 	public boolean isToSelf() { return move.isToSelf(); }	
 	public int getAccuracy() { 
 		if (move.getAccuracy() == -1) return 100;
@@ -68,7 +69,7 @@ public class Move {
 	}
 	public int getPower() {	return move.getPower(); }	
 	public boolean getGoFirst() { return move.getGoFirst(); }	
-	public boolean getCanHit() { return move.getCanHit(); }	
+	public boolean getIsProtected() { return move.getIsProtected(); }	
 	public String getDelay(String name) { return move.getDelay(name); }	
 	public String getInfo() {	return move.getInfo(); }	
 	public int getCrit() { return move.getCrit(); }	

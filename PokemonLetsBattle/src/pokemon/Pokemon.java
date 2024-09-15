@@ -616,12 +616,12 @@ public enum Pokemon {
 		
 		String output = "";
 		
-		if (level == 1) output = this.name + "'s " + stat + " rose!";
-		else if (level == 2) output = this.name + "'s " + stat + " greatly rose!";
-		else if (level >= 3) output = this.name + "'s " + stat + " drastically rose!";
-		else if (level == -1) output = this.name + "'s " + stat + " fell!";
-		else if (level == -2) output = this.name + "'s " + stat + " greatly fell!";
-		else if (level <= -3) output = this.name + "'s " + stat + " severely fell!";
+		if (level == 1) output = this.name + "'s " + stat + "\nrose!";
+		else if (level == 2) output = this.name + "'s " + stat + "\ngreatly rose!";
+		else if (level >= 3) output = this.name + "'s " + stat + "\ndrastically rose!";
+		else if (level == -1) output = this.name + "'s " + stat + "\nfell!";
+		else if (level == -2) output = this.name + "'s " + stat + "\ngreatly fell!";
+		else if (level <= -3) output = this.name + "'s " + stat + "\nseverely fell!";
 		
 		return output;
 	}
