@@ -33,7 +33,7 @@ public class ConfigManager {
 			bw.newLine();
 			
 			// SOUND EFFECTS VOLUME
-			bw.write("TEXT SPEED\n" + String.valueOf(gp.ui.textSpeed));			
+			bw.write("TEXT SPEED\n" + String.valueOf(gp.ui.textSpeed));	
 			bw.newLine();
 			
 			// CLOSE FILE

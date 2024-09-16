@@ -131,7 +131,7 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		if (fullScreenOn) setFullScreen();
 		
-		btlManager.setBattle(btlManager.wildBattle);
+		btlManager.setBattle(btlManager.trainerBattle);
 		
 		ui.battleSubState = ui.subState_Encounter;
 		gameState = battleState;

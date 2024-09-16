@@ -145,6 +145,28 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 		}		
+		else if (gp.ui.battleSubState == gp.ui.subState_Swap) {			
+			
+			if (code == gp.btn_A && lock) { 
+				playCursorSE();						
+				aPressed = true; lock = false; 
+			}
+			
+			if (code == gp.btn_UP) {				
+				upPressed = true;
+				if (gp.ui.commandNum != 0) {
+					playCursorSE();		
+					gp.ui.commandNum--;
+				}
+			}
+			if (code == gp.btn_DOWN) {				
+				downPressed = true;
+				if (gp.ui.commandNum != 1) {
+					playCursorSE();		
+					gp.ui.commandNum++;
+				}
+			}			
+		}
 		
 		if (code == gp.btn_START && lock) { 
 			gp.gameState = gp.playState; 
