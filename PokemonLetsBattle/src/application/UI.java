@@ -149,7 +149,7 @@ public class UI {
 	}
 	
 	private void drawFighterWindows() {
-		int x = gp.tileSize * 9;
+		int x = (int) (gp.tileSize * 9.25);
 		int y = (int) (gp.tileSize * 5.85);
 		drawFighterWindow(x, y, 0);	
 		
@@ -172,7 +172,7 @@ public class UI {
 		
 		String text;
 		int length;
-		int width = (int) (gp.tileSize * 6.5);
+		int width = (int) (gp.tileSize * 6.35);
 		int height = (int) (gp.tileSize * 2.3);
 		
 		drawSubWindow(x, y, width, height, 15, 6, battle_yellow, Color.BLACK);
@@ -193,7 +193,7 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));		
 		text = "Lv" + gp.btlManager.fighter[num].getLevel();		
 		length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();		
-		x = (int) (tempX + width - length - gp.tileSize * 0.45);
+		x = (int) (tempX + width - length - gp.tileSize * 0.4);
 		g2.drawString(text, x, y);
 		
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));
@@ -202,24 +202,33 @@ public class UI {
 			drawFighterStatus((int) (tempX + gp.tileSize * 0.3), (int) (y + gp.tileSize * 0.2), num);
 		}
 		
-		x = (int) (tempX + gp.tileSize * 1.7);
-		y += gp.tileSize * 0.7;
-		g2.drawString("HP", x, y);
-		
-		x += gp.tileSize * 0.6;
-		y -= gp.tileSize * 0.35;
-		width = (int) (gp.tileSize * 3.8);
-		height = (int) (gp.tileSize * 0.4);
+		x = (int) (tempX + gp.tileSize * 1.45);
+		y += gp.tileSize * 0.22;
+		width = (int) (gp.tileSize * 4.7);
+		height = (int) (gp.tileSize * 0.55);
 		g2.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(3));
-		g2.fillRoundRect(x, y, width, height, 15, 15);
-				
-		height -= 2;
+		g2.fillRoundRect(x, y, width, height, 30, 30);
+		
+		g2.setColor(Color.WHITE);	
+		x = (int) (tempX + gp.tileSize * 1.7);
+		y += gp.tileSize * 0.45;
+		g2.drawString("HP", x, y);		
+		
+		x += gp.tileSize * 0.55;
+		y -= gp.tileSize * 0.33;
+		width = (int) (gp.tileSize * 3.8);
+		height = (int) (gp.tileSize * 0.33);
+		
 		drawFighterHealthBar(x, y, width, height, num);
+		
+		g2.setColor(Color.WHITE);
+		g2.setStroke(new BasicStroke(3));
+		g2.drawRoundRect(x, y, width, height, 15, 15);		
 		
 		g2.setColor(Color.BLACK);
 		text = gp.btlManager.fighter[num].getHP() + " / " + gp.btlManager.fighter[num].getBHP();
-		x = getXforRightAlignText(text, (int) (x + gp.tileSize * 3.8));		
+		x = getXforRightAlignText(text, (int) (x + gp.tileSize * 3.85));		
 		y += gp.tileSize * 0.9;
 		g2.drawString(text, x, y);	
 	}	

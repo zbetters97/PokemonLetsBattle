@@ -17,6 +17,7 @@ import moves.Moves;
 import person.NPC;
 import moves.Move.MoveType;
 import pokemon.Pokemon;
+import properties.Status;
 import properties.Type;
 
 public class BattleManager {
@@ -114,6 +115,7 @@ public class BattleManager {
 		trainer[0].pokeParty.add(Pokemon.getPokemon(0));
 		trainer[0].pokeParty.add(Pokemon.getPokemon(1));
 		trainer[0].pokeParty.add(Pokemon.getPokemon(2));
+		trainer[0].pokeParty.get(2).setStatus(Status.PARALYZE);
 		
 		trainer[1] = new NPC(gp);
 		trainer[1].name = "RED";
@@ -121,7 +123,7 @@ public class BattleManager {
 		trainer[1].pokeParty.add(Pokemon.getPokemon(4));
 		trainer[1].pokeParty.add(Pokemon.getPokemon(5));
 						
-		fighter[0] = trainer[0].pokeParty.get(0);	
+		fighter[0] = trainer[0].pokeParty.get(2);	
 		fighter[1] = trainer[1].pokeParty.get(0);	
 						
 		battleMode = currentBattle;
