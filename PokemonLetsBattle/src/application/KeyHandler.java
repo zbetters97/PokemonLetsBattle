@@ -187,8 +187,7 @@ public class KeyHandler implements KeyListener {
 			}
 			if (code == gp.btn_B && lock) { 
 				playCursorSE();						
-				aPressed = true; lock = false; 		
-				gp.ui.commandNum = 6;						
+				bPressed = true; lock = false; 	
 			}
 			
 			if (code == gp.btn_UP) {				
@@ -215,6 +214,89 @@ public class KeyHandler implements KeyListener {
 				if (gp.ui.commandNum < 6) {
 					playCursorSE();		
 					gp.ui.commandNum++;
+				}
+			}
+		}
+		else if (gp.ui.partySubState == gp.ui.party_Stats) {	
+			
+			int maxParty = gp.btlManager.trainer[0].pokeParty.size() - 1;
+			
+			if (code == gp.btn_B && lock) { 
+				playCursorSE();						
+				bPressed = true; lock = false; 
+			}			
+			if (code == gp.btn_LEFT) {
+				leftPressed = true;
+				playCursorSE();					
+			}
+			if (code == gp.btn_RIGHT) {
+				rightPressed = true;
+				playCursorSE();	
+			}			
+			if (code == gp.btn_L) {				
+				lPressed = true;
+				if (0 < gp.ui.fighterNum) {
+					gp.ui.fighterNum--;
+					gp.ui.commandNum = 0;
+					playCursorSE();			
+				}
+			}
+			if (code == gp.btn_R) {				
+				rPressed = true;
+				if (gp.ui.fighterNum < maxParty) {
+					gp.ui.fighterNum++;
+					gp.ui.commandNum = 0;
+					playCursorSE();			
+				}
+			}
+		}
+		else if (gp.ui.partySubState == gp.ui.party_Moves) {			
+			
+			int maxParty = gp.btlManager.trainer[0].pokeParty.size() - 1;
+			int maxMoves = gp.btlManager.trainer[0].pokeParty.get(gp.ui.fighterNum).getMoveSet().size() - 1;
+
+			if (code == gp.btn_B && lock) { 
+				playCursorSE();						
+				bPressed = true; lock = false; 	
+			}	
+			
+			if (code == gp.btn_UP) {				
+				upPressed = true;
+				
+				if (gp.ui.commandNum > 0) {
+					gp.ui.commandNum--;
+					playCursorSE();	
+				}				
+			}
+			if (code == gp.btn_DOWN) {				
+				downPressed = true;	
+				if (gp.ui.commandNum < maxMoves) {
+					gp.ui.commandNum++;
+					playCursorSE();	
+				}
+			}			
+			if (code == gp.btn_LEFT) {
+				leftPressed = true;
+				playCursorSE();					
+			}
+			if (code == gp.btn_RIGHT) {
+				rightPressed = true;
+				playCursorSE();	
+			}
+			if (code == gp.btn_L) {				
+				lPressed = true;
+				if (0 < gp.ui.fighterNum) {
+					gp.ui.fighterNum--;
+					gp.ui.commandNum = 0;
+					playCursorSE();			
+				}
+			}
+			if (code == gp.btn_R) {				
+				rPressed = true;
+				if (gp.ui.fighterNum < maxParty) {
+					gp.ui.fighterNum++;
+					gp.ui.commandNum = 0;
+					playCursorSE();			
 				}
 			}
 		}

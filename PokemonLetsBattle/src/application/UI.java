@@ -4,7 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
-
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import moves.Move;
 import pokemon.Pokemon;
 
 public class UI {
@@ -34,6 +35,7 @@ public class UI {
 	private Color party_green = new Color(81,109,69);
 	private Color party_blue = new Color(71,174,181);
 	private Color party_red = new Color(245,126,63);
+	private Color party_gray = new Color(136,152,168);
 	
 	// DIALOGUE HANDLER	
 	public String currentDialogue = "";
@@ -43,7 +45,6 @@ public class UI {
 	private int dialogueIndex = 0;
 	public int charIndex = 0;	
 	public int textSpeed = 2;
-	public int commandNum = 0;
 	private int dialogueTimer = 0;
 	public int dialogueTimerMax = 60;
 	private boolean canSkip = false;
@@ -64,8 +65,13 @@ public class UI {
 	
 	public boolean fighterReady = false;	
 	
+	public int commandNum = 0;
+	public int fighterNum = 0;
+	
 	public int partySubState;
 	public final int party_Main = 1;
+	public final int party_Stats = 2;
+	public final int party_Moves = 3;
 	
 	public int battleSubState;
 	public final int battle_Encounter = 1;
@@ -136,11 +142,20 @@ public class UI {
 		
 		switch(partySubState) {
 			case party_Main:
-				drawPartyMainScreen();
+				drawParty_Main();
+				break;
+			case party_Stats:				
+				drawParty_Skills();
+				drawHeader("STATS");
+				break;
+			case party_Moves:
+				drawParty_Moves();
+				drawHeader("MOVES");
 				break;
 		}
-	}
-	private void drawPartyMainScreen() {
+	}			
+	
+	private void drawParty_Main() {
 		
 		g2.setColor(party_green);  
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
@@ -193,16 +208,13 @@ public class UI {
 		y = (int) (gp.tileSize * 10);
 		width = gp.tileSize * 11;
 		height = (int) (gp.tileSize * 1.6);
-		drawSubWindow(x, y, width, height, 3, 5, battle_white, Color.BLACK);		
-				
+		drawSubWindow(x, y, width, height, 3, 5, battle_white, Color.BLACK);	
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));
 		x += gp.tileSize * 0.3;
 		y += gp.tileSize * 1.15;
-		text = "CHOOSE A POKEMON";		
-		g2.setColor(Color.LIGHT_GRAY);
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));
-		g2.drawString(text, x, y);	
-		g2.setColor(Color.BLACK);
-		g2.drawString(text, x-2, y-2);
+		text = "CHOOSE A POKEMON";	
+		drawText(x, y, text, Color.BLACK, Color.LIGHT_GRAY);
 		
 		x += width + (gp.tileSize * 0.7);
 		y = (int) (gp.tileSize * 10.5);
@@ -216,35 +228,36 @@ public class UI {
 			drawSubWindow(x, y, width, height, 25, 4, party_blue, Color.BLACK);	
 		}
 		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));
 		x += gp.tileSize * 0.55;
 		y += gp.tileSize * 0.8;
 		text = "CANCEL";
-		g2.setColor(Color.BLACK);
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));		
-		g2.drawString(text, x, y);	
-		g2.setColor(Color.WHITE);
-		g2.drawString(text, x-2, y-2);
+		drawText(x, y, text, battle_white, Color.BLACK);
+		
+		if (gp.keyH.aPressed) {
+			fighterNum = commandNum;
+			commandNum = 0;
+			partySubState = party_Stats;
+		}
+		if (gp.keyH.bPressed) {			
+			commandNum = 6;	
+			gp.keyH.bPressed = false;
+		}
 	}
 	private void drawPartyBox(int x, int y, Pokemon fighter, boolean main) {
 		
 		g2.drawImage(fighter.getMenuSprite(), x, y, null);
 		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));	
 		x += gp.tileSize * 2;
 		y += gp.tileSize;
 		String text = fighter.name();
-		g2.setColor(Color.BLACK);		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));	
-		g2.drawString(text, x, y);	
-		g2.setColor(Color.WHITE);
-		g2.drawString(text, x-2, y-2);
+		drawText(x, y, text, battle_white, Color.BLACK);
 	
 		x += gp.tileSize * 0.9;
 		y += gp.tileSize * 0.55;
 		text = "Lv" + fighter.getLevel();			
-		g2.setColor(Color.BLACK);					
-		g2.drawString(text, x, y);	
-		g2.setColor(Color.WHITE);
-		g2.drawString(text, x-2, y-2);
+		drawText(x, y, text, battle_white, Color.BLACK);
 		
 		if (main) {
 			x = (int) (gp.tileSize * 1.7);
@@ -296,6 +309,200 @@ public class UI {
 		x = getXforRightAlignText(text, (int) (x + gp.tileSize * 3.15));		
 		y += gp.tileSize * 0.9;
 		g2.drawString(text, x, y);		
+	}
+	
+	private void drawParty_Skills() {
+		
+		drawParty_Info();
+		
+		int x;
+		int y;
+		String text;
+		
+		int frameX = (int) (gp.tileSize * 7.5);
+		int frameY = gp.tileSize * 2;
+		int width = gp.tileSize * 9;
+		int height = gp.tileSize * 11;
+		drawSubWindow(frameX, frameY, width, height, 10, 4, party_gray, Color.BLACK);	
+		
+		frameX += gp.tileSize * 0.8;
+		frameY += gp.tileSize;
+						
+		x = frameX;
+		y = frameY;		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));	
+
+		text = "HP"; drawText(x, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		text = "ATTACK"; drawText(x, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		text = "DEFENSE"; drawText(x, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		text = "SP. ATK"; drawText(x, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		text = "SP. DEF"; drawText(x, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		text = "SPEED"; drawText(x, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		
+		Pokemon fighter = gp.btlManager.trainer[0].pokeParty.get(fighterNum);
+		
+		x = frameX += gp.tileSize * 5;
+		y = frameY;		
+		text = fighter.getHP() + "/" + fighter.getBHP(); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(frameX, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		text = Integer.toString((int) fighter.getAttack()); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(frameX, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		text = Integer.toString((int) fighter.getDefense()); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(frameX, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		text = Integer.toString((int) fighter.getSpAttack()); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(frameX, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		text = Integer.toString((int) fighter.getSpDefense()); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(frameX, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		text = Integer.toString((int) fighter.getSpeed()); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(frameX, y, text, Color.WHITE, Color.BLACK); y += gp.tileSize;
+		
+		if (gp.keyH.rightPressed) {
+			commandNum = 0;
+			partySubState = party_Moves;				
+		}
+		if (gp.keyH.bPressed) {
+			commandNum = 0;
+			partySubState = party_Main;
+			gp.keyH.bPressed = false;
+		}
+	}
+	private void drawParty_Moves() {
+		
+		drawParty_Info();
+		
+		int x;
+		int y;
+		int textX;
+		int textY;
+		String text;
+								
+		int frameX = (int) (gp.tileSize * 7.5);
+		int frameY = gp.tileSize * 2;
+		int width = (int) (gp.tileSize * 8.4);
+		int height = (int) (gp.tileSize * 5.8);
+		drawSubWindow(frameX, frameY, width, height, 10, 4, party_gray, Color.BLACK);	
+		
+		
+		int slotX = frameX + 3;
+		int slotY;
+		int slotWidth = width - 7;
+		int slotHeight = gp.tileSize + 7;
+		
+		frameX += gp.tileSize * 0.4;
+		frameY += gp.tileSize * 0.4;
+					
+		int i = 0;
+		x = frameX;
+		y = frameY;		
+		width = gp.tileSize * 2;
+		height = gp.tileSize;
+		Pokemon fighter = gp.btlManager.trainer[0].pokeParty.get(fighterNum);
+		
+		for (Move m : fighter.getMoveSet()) {			
+				
+			drawSubWindow(x, y, width, height, 10, 3, m.getType().getColor(), Color.BLACK);		
+			
+			if (commandNum == i) {			
+				slotY = y - 3;
+				g2.setColor(battle_red);
+				g2.setStroke(new BasicStroke(4));
+				g2.drawRect(slotX, slotY, slotWidth, slotHeight);
+			}
+			
+			g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));			
+			text = m.getType().getName();
+			textX = getXForCenteredTextOnWidth(text, width, x + 5);
+			textY = (int) (y + (gp.tileSize * 0.75));			
+			drawText(textX, textY, text, battle_white, Color.BLACK);
+			
+			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 50F));
+			text = m.getName();
+			textX = (int) (frameX + (gp.tileSize * 2.5));
+			textY = (int) (y + (gp.tileSize * 0.85));			
+			drawText(textX, textY, text, battle_white, Color.BLACK);		
+						
+			y += gp.tileSize * 1.35;
+			i++;
+		}
+		
+		frameX = (int) (gp.tileSize * 7.5);
+		frameY = (int) (gp.tileSize * 7.9);
+		width = (int) (gp.tileSize * 8.4);
+		height = gp.tileSize * 4;
+		drawSubWindow(frameX, frameY, width, height, 10, 4, battle_white, Color.BLACK);	
+		
+		y = (int) (frameY + (gp.tileSize * 0.8));
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));
+		for (String line : fighter.getMoveSet().get(commandNum).getInfo().split("\n")) {   
+			drawText(x, y, line, Color.BLACK, Color.WHITE);
+			y += gp.tileSize * 0.8;
+		} 			
+		
+		if (gp.keyH.leftPressed) {
+			commandNum = 0;
+			partySubState = party_Stats;			
+		}
+		if (gp.keyH.bPressed) {			
+			commandNum = 0;
+			partySubState = party_Main;
+			gp.keyH.bPressed = false;
+		}
+	}
+	private void drawParty_Info() {
+		
+		g2.setColor(battle_white);  
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		Pokemon fighter = gp.btlManager.trainer[0].pokeParty.get(fighterNum);
+		
+		x = -10;
+		y = (int) (gp.tileSize * 0.5);
+		width = gp.screenWidth + 20;
+		height = (int) (gp.tileSize * 1);
+		drawSubWindow(x, y, width, height, 10, 4, party_green, Color.BLACK);	
+				
+		x = 5;
+		y = gp.tileSize * 2;
+		width = gp.tileSize * 7;
+		height = gp.tileSize * 2;
+		drawSubWindow(x, y, width, height, 10, 4, party_gray, Color.BLACK);	
+		
+		x += gp.tileSize * 0.3;
+		y += gp.tileSize;
+		String text = fighter.getName();		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55F));	
+		drawText(x, y, text, Color.WHITE, Color.BLACK);
+		
+		int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();		
+		x += length + 3;
+		g2.setColor(fighter.getSexColor());	
+		g2.drawString("" + fighter.getSex(), x, y);
+		
+		x = (int) (gp.tileSize * 0.7) - 10;
+		y += gp.tileSize * 0.7;
+		text = "Lv" + fighter.getLevel();
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 38F));	
+		drawText(x, y, text, Color.WHITE, Color.BLACK);
+		
+		x = gp.tileSize;
+		y = gp.tileSize * 5;
+		g2.drawImage(fighter.getFrontSprite(), x, y, null);
+	}
+	private void drawHeader(String text) {		
+		int x = gp.tileSize;
+		int y = (int) (gp.tileSize * 1.3);		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));		
+		drawText(x, y, text, Color.WHITE, Color.BLACK);
 	}
 	
 	// BATTLE SCREEN
@@ -562,10 +769,7 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
 		
 		for (String line : text.split("\n")) { 
-			g2.setColor(Color.BLACK);
-			g2.drawString(line, x, y);	
-			g2.setColor(battle_white);
-			g2.drawString(line, x-2, y-2);
+			drawText(x, y, line, battle_white, Color.BLACK);
 			y += gp.tileSize;
 		}
 		
@@ -706,17 +910,11 @@ public class UI {
 				gp.btlManager.fighter[0].getMoveSet().get(commandNum).getbpp();
 		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));	
-		g2.setColor(Color.BLACK);
-		g2.drawString(text, x, y);	
-		g2.setColor(battle_white);
-		g2.drawString(text, x-2, y-2);
+		drawText(x, y, text, battle_white, Color.BLACK);
 		
 		y += gp.tileSize * 1.5;
 		text = gp.btlManager.fighter[0].getMoveSet().get(commandNum).getType().getName();
-		g2.setColor(Color.BLACK);
-		g2.drawString(text, x, y);	
-		g2.setColor(battle_white);
-		g2.drawString(text, x-2, y-2);
+		drawText(x, y, text, battle_white, Color.BLACK);
 	}		
 	
 	private void drawSwapOptionsWindow() {
@@ -729,10 +927,7 @@ public class UI {
 		String text = "Will " + gp.btlManager.trainer[0].name + " swap\nPokemon?";
 		
 		for (String line : text.split("\n")) { 
-			g2.setColor(Color.BLACK);
-			g2.drawString(line, x, y);	
-			g2.setColor(battle_white);
-			g2.drawString(line, x-2, y-2);
+			drawText(x, y, line, battle_white, Color.BLACK);
 			y += gp.tileSize;
 		}
 		
@@ -824,11 +1019,7 @@ public class UI {
 		}
 		
   		for (String line : currentDialogue.split("\n")) {   
-  			text = line;
-  			g2.setColor(Color.BLACK);
-			g2.drawString(text, x, y);	
-			g2.setColor(battle_white);
-			g2.drawString(text, x-2, y-2);		
+  			drawText(x, y, line, battle_white, Color.BLACK);
 			y += gp.tileSize;
 		} 	
   		
@@ -874,6 +1065,12 @@ public class UI {
 			record_SE.remove(0);	
 		}			
 	}
+	private void drawText(int x, int y, String text, Color primary, Color shadow) {
+		g2.setColor(shadow);	
+		g2.drawString(text, x, y);	
+		g2.setColor(primary);
+		g2.drawString(text, x-2, y-2);		
+	}
 	
 	public void setSoundFile(int cat, String soundFile, int timer) {		
 		category_SE.add(cat);		
@@ -910,6 +1107,12 @@ public class UI {
 		int x = tailX - length;
 		return x;
 	}	
+	private int getXForCenteredTextOnWidth(String text, int width, int x) {		
+		FontMetrics fm = g2.getFontMetrics();
+		int stringWidth = fm.stringWidth(text);
+		int centeredX = (width - stringWidth) / 2;		
+		return centeredX + x;
+	}
 	private BufferedImage setup(String imagePath, int width, int height) {
 		
 		UtilityTool utility = new UtilityTool();
