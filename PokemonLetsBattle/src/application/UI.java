@@ -27,7 +27,13 @@ public class UI {
 	private Color battle_gray = new Color(135,131,156);
 	private Color battle_green = new Color(111,163,161);
 	private Color battle_red = new Color(165,71,74);	
-	private Color battle_yellow = new Color(250,254,219);	
+	private Color battle_yellow = new Color(250,254,219);
+	private Color hp_green = new Color(105,233,160);
+	private Color hp_yellow = new Color(222,202,43);
+	private Color hp_red = new Color(200,65,65);
+	private Color party_green = new Color(81,109,69);
+	private Color party_blue = new Color(71,174,181);
+	private Color party_red = new Color(245,126,63);
 	
 	// DIALOGUE HANDLER	
 	public String currentDialogue = "";
@@ -58,13 +64,16 @@ public class UI {
 	
 	public boolean fighterReady = false;	
 	
+	public int partySubState;
+	public final int party_Main = 1;
+	
 	public int battleSubState;
-	public final int subState_Encounter = 1;
-	public final int subState_Dialogue = 2;
-	public final int subState_Options = 3;
-	public final int subState_Moves = 4;	
-	public final int subState_KO = 5;
-	public final int subState_Swap = 6;
+	public final int battle_Encounter = 1;
+	public final int battle_Dialogue = 2;
+	public final int battle_Options = 3;
+	public final int battle_Moves = 4;	
+	public final int battle_KO = 5;
+	public final int battle_Swap = 6;
 	
 	public UI(GamePanel gp) {
 		this.gp = gp;
@@ -103,6 +112,9 @@ public class UI {
 		else if (gp.gameState == gp.battleState) {
 			drawBattleScreen();
 		}
+		else if (gp.gameState == gp.partyState) {
+			drawPartyScreen();
+		}
 	}
 	
 	// HUD	
@@ -119,35 +131,204 @@ public class UI {
 				gp.player.hitbox.width, gp.player.hitbox.height);
 	}
 	
-	// BATTLE SCREEN
-	private void drawBattleScreen() {
-	
-		if (battleSubState == subState_Encounter) {		
-			drawBattleDialogueWindow();
-		}		
-		else if (battleSubState == subState_Dialogue) {			
-			drawFighterWindows();
-			drawBattleDialogue();		
-		}
-		else if (battleSubState == subState_Options) {
-			drawFighterWindows();
-			drawBattleOptionsWindow();	
-		}
-		else if (battleSubState == subState_Moves) {
-			drawFighterWindows();
-			drawBattleMovesetWindow();
-			drawBattleMoveDescriptionWindow();
-		}
-		else if (battleSubState == subState_KO) {	
-			drawFighterWindows();
-			drawBattleDialogue();
-		}
-		else if (battleSubState == subState_Swap) {
-			drawFighterWindows();
-			drawSwapOptionsWindow();
+	// PARTY SCREEN
+	private void drawPartyScreen() {
+		
+		switch(partySubState) {
+			case party_Main:
+				drawPartyMainScreen();
+				break;
 		}
 	}
+	private void drawPartyMainScreen() {
+		
+		g2.setColor(party_green);  
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+				
+		int x;
+		int y;
+		int width;
+		int height;
+		String text;
+		Pokemon fighter;
+		
+		x = (int) (gp.tileSize * 0.5);
+		y = (int) (gp.tileSize * 2.8); 
+		width = (int) (gp.tileSize * 5.5);
+		height = (int) (gp.tileSize * 3.2);
+		fighter = gp.btlManager.trainer[0].pokeParty.get(0);
+		
+		if (commandNum == 0) {
+			drawSubWindow(x, y, width, height, 3, 5, party_blue, party_red);
+		}
+		else {
+			drawSubWindow(x, y, width, height, 3, 3, party_blue, Color.BLACK);
+		}
+		
+		drawPartyBox(x, y, fighter, true);
+		
+		x = (int) (gp.tileSize * 6.5);
+		y = (int) (gp.tileSize * 0.5); 
+		width = gp.tileSize * 9;
+		height = (int) (gp.tileSize * 1.7);
 	
+		for (int i = 1; i < 6; i++) {		
+			
+			if (commandNum == i) {
+				drawSubWindow(x, y, width, height, 3, 5, party_blue, party_red);	
+			}
+			else {
+				drawSubWindow(x, y, width, height, 3, 3, party_blue, Color.BLACK);
+			}
+			
+			if (gp.btlManager.trainer[0].pokeParty.size() > i) {					
+				fighter = gp.btlManager.trainer[0].pokeParty.get(i);
+				drawPartyBox((int) (x + gp.tileSize * 0.15), (int) (y - gp.tileSize * 0.15), fighter, false);				
+			}			
+			
+			y += gp.tileSize * 1.9;
+		}
+		
+		x = (int) (gp.tileSize * 0.3);
+		y = (int) (gp.tileSize * 10);
+		width = gp.tileSize * 11;
+		height = (int) (gp.tileSize * 1.6);
+		drawSubWindow(x, y, width, height, 3, 5, battle_white, Color.BLACK);		
+				
+		x += gp.tileSize * 0.3;
+		y += gp.tileSize * 1.15;
+		text = "CHOOSE A POKEMON";		
+		g2.setColor(Color.LIGHT_GRAY);
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));
+		g2.drawString(text, x, y);	
+		g2.setColor(Color.BLACK);
+		g2.drawString(text, x-2, y-2);
+		
+		x += width + (gp.tileSize * 0.7);
+		y = (int) (gp.tileSize * 10.5);
+		width = gp.tileSize * 3;
+		height = (int) (gp.tileSize * 1);			
+		
+		if (commandNum == 6) {
+			drawSubWindow(x, y, width, height, 25, 6, party_blue, party_red);			
+		}
+		else {
+			drawSubWindow(x, y, width, height, 25, 4, party_blue, Color.BLACK);	
+		}
+		
+		x += gp.tileSize * 0.55;
+		y += gp.tileSize * 0.8;
+		text = "CANCEL";
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));		
+		g2.drawString(text, x, y);	
+		g2.setColor(Color.WHITE);
+		g2.drawString(text, x-2, y-2);
+	}
+	private void drawPartyBox(int x, int y, Pokemon fighter, boolean main) {
+		
+		g2.drawImage(fighter.getMenuSprite(), x, y, null);
+		
+		x += gp.tileSize * 2;
+		y += gp.tileSize;
+		String text = fighter.name();
+		g2.setColor(Color.BLACK);		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));	
+		g2.drawString(text, x, y);	
+		g2.setColor(Color.WHITE);
+		g2.drawString(text, x-2, y-2);
+	
+		x += gp.tileSize * 0.9;
+		y += gp.tileSize * 0.55;
+		text = "Lv" + fighter.getLevel();			
+		g2.setColor(Color.BLACK);					
+		g2.drawString(text, x, y);	
+		g2.setColor(Color.WHITE);
+		g2.drawString(text, x-2, y-2);
+		
+		if (main) {
+			x = (int) (gp.tileSize * 1.7);
+			y = (int) (gp.tileSize * 4.8); 
+		}
+		else {
+			x += gp.tileSize * 1.65;
+			y -= gp.tileSize;	
+		}
+		
+		drawFighterHP_Party(x, y, fighter);
+	}
+	private void drawFighterHP_Party(int x, int y, Pokemon fighter) {
+		
+		int width = (int) (gp.tileSize * 4.2);
+		int height = (int) (gp.tileSize * 0.5);
+		
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 25F));
+		g2.setStroke(new BasicStroke(2));
+		g2.fillRoundRect(x, y, width, height, 30, 30);
+		
+		g2.setColor(Color.WHITE);	
+		x += (int) gp.tileSize * 0.25;
+		y += gp.tileSize * 0.42;
+		g2.drawString("HP", x, y);		
+				
+		double remainHP = (double)fighter.getHP() / (double)fighter.getBHP();	
+		
+		if (remainHP >= .50) g2.setColor(hp_green);
+		else if (remainHP >= .25) g2.setColor(hp_yellow);
+		else g2.setColor(hp_red);
+		
+		x += gp.tileSize * 0.55;
+		y -= gp.tileSize * 0.3;
+		width = (int) (gp.tileSize * 3.3);
+		width *= remainHP;	
+		height = (int) (gp.tileSize * 0.28);								
+		g2.fillRoundRect(x, y + 1, width, height, 15, 15);			
+		
+		width = (int) (gp.tileSize * 3.3);
+		g2.setColor(Color.WHITE);
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 30F));
+		g2.setStroke(new BasicStroke(2));
+		g2.drawRoundRect(x, y, width, height, 15, 15);		
+		
+		g2.setColor(Color.WHITE);
+		String text = fighter.getHP() + " / " + fighter.getBHP();
+		x = getXforRightAlignText(text, (int) (x + gp.tileSize * 3.15));		
+		y += gp.tileSize * 0.9;
+		g2.drawString(text, x, y);		
+	}
+	
+	// BATTLE SCREEN
+	private void drawBattleScreen() {
+		
+		switch(battleSubState) {
+		
+			case battle_Encounter:
+				drawBattleDialogueWindow();
+				break;
+			case battle_Dialogue:		
+				drawFighterWindows();
+				drawBattleDialogue();
+				break;
+			case battle_Options:
+				drawFighterWindows();
+				drawBattleOptionsWindow();	
+				break;
+			case battle_Moves:
+				drawFighterWindows();
+				drawBattleMovesetWindow();
+				drawBattleMoveDescriptionWindow();
+				break;
+			case battle_KO:
+				drawFighterWindows();
+				drawBattleDialogue();
+				break;
+			case battle_Swap:
+				drawFighterWindows();
+				drawSwapOptionsWindow();
+				break;
+		}
+	}
 	private void drawFighterWindows() {
 		int x = (int) (gp.tileSize * 9.25);
 		int y = (int) (gp.tileSize * 5.85);
@@ -175,7 +356,7 @@ public class UI {
 		int width = (int) (gp.tileSize * 6.35);
 		int height = (int) (gp.tileSize * 2.3);
 		
-		drawSubWindow(x, y, width, height, 15, 6, battle_yellow, Color.BLACK);
+		drawSubWindow(x, y, width, height, 15, 4, battle_yellow, Color.BLACK);
 				
 		x += gp.tileSize * 0.3;
 		y += gp.tileSize * 0.8;
@@ -203,91 +384,11 @@ public class UI {
 		}
 		
 		x = (int) (tempX + gp.tileSize * 1.45);
-		y += gp.tileSize * 0.22;
-		width = (int) (gp.tileSize * 4.7);
-		height = (int) (gp.tileSize * 0.55);
-		g2.setColor(Color.BLACK);
-		g2.setStroke(new BasicStroke(3));
-		g2.fillRoundRect(x, y, width, height, 30, 30);
-		
-		g2.setColor(Color.WHITE);	
-		x = (int) (tempX + gp.tileSize * 1.7);
-		y += gp.tileSize * 0.45;
-		g2.drawString("HP", x, y);		
-		
-		x += gp.tileSize * 0.55;
-		y -= gp.tileSize * 0.33;
-		width = (int) (gp.tileSize * 3.8);
-		height = (int) (gp.tileSize * 0.33);
-		
-		drawFighterHealthBar(x, y, width, height, num);
-		
-		g2.setColor(Color.WHITE);
-		g2.setStroke(new BasicStroke(3));
-		g2.drawRoundRect(x, y, width, height, 15, 15);		
-		
-		g2.setColor(Color.BLACK);
-		text = gp.btlManager.fighter[num].getHP() + " / " + gp.btlManager.fighter[num].getBHP();
-		x = getXforRightAlignText(text, (int) (x + gp.tileSize * 3.85));		
-		y += gp.tileSize * 0.9;
-		g2.drawString(text, x, y);	
+		y += gp.tileSize * 0.22;		
+		drawFighterHP_Battle(x, y, num);
 	}	
-	private void drawFighterStatus(int x, int y, int num) {	
-		
-		int width = gp.tileSize;
-		int height = (int) (gp.tileSize * 0.6);
-		g2.setColor(gp.btlManager.fighter[num].getStatus().getColor());
-		g2.fillRoundRect(x, y, width, height, 20, 20);
-		
-		g2.setColor(Color.BLACK);
-		x += gp.tileSize * 0.15;
-		y += gp.tileSize * 0.48;
-		g2.drawString(gp.btlManager.fighter[num].getStatus().getAbreviation(), x, y);
-	}	
-	private void drawFighterHealthBar(int x, int y, int width, int height, int num) {
-		
-		int tempHP = 0;
-		int tempHPspeed = 0;
-		
-		if (num == 0) { tempHP = fighter_one_HP; tempHPspeed = hpSpeed_one; }	
-		else { tempHP = fighter_two_HP; tempHPspeed = hpSpeed_two; }	
-							
-		if (tempHP > gp.btlManager.fighter[num].getHP()) {			
-			if (hpCounter == tempHPspeed) {
-				tempHP--;	
-				hpCounter = 0;
-			}
-			else {
-				hpCounter++;			
-			}	
-		}
-		else if (tempHP < gp.btlManager.fighter[num].getHP()) {			
-			if (hpCounter == tempHPspeed) {
-				tempHP++;
-				hpCounter = 0;
-			}
-			else {
-				hpCounter++;			
-			}	
-		}
-		
-		double remainHP = (double)tempHP / (double)gp.btlManager.fighter[num].getBHP();				
-		if (remainHP >= .50) g2.setColor(Color.GREEN);
-		else if (remainHP >= .25) g2.setColor(Color.YELLOW);
-		else {
-			g2.setColor(Color.RED);
-			if (num == 0) playLowHPSE(remainHP);
-		}
-		
-		width *= remainHP;
-		
-		g2.fillRoundRect(x, y + 1, width, height, 15, 15);	
-		
-		if (num == 0) fighter_one_HP = tempHP;
-		else fighter_two_HP = tempHP;	
-	}
 	private void drawPartyCount(int num) {	
-							
+		
 		int startX;
 		int x;
 		int y;
@@ -343,7 +444,89 @@ public class UI {
 			}
 		}	
 	}
+	private void drawFighterStatus(int x, int y, int num) {	
+		
+		int width = gp.tileSize;
+		int height = (int) (gp.tileSize * 0.6);
+		g2.setColor(gp.btlManager.fighter[num].getStatus().getColor());
+		g2.fillRoundRect(x, y, width, height, 20, 20);
+		
+		g2.setColor(Color.BLACK);
+		x += gp.tileSize * 0.15;
+		y += gp.tileSize * 0.48;
+		g2.drawString(gp.btlManager.fighter[num].getStatus().getAbreviation(), x, y);
+	}	
+	private void drawFighterHP_Battle(int x, int y, int num) {
+		
+		int width = (int) (gp.tileSize * 4.7);
+		int height = (int) (gp.tileSize * 0.55);
+		
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));
+		g2.setStroke(new BasicStroke(2));
+		g2.fillRoundRect(x, y, width, height, 30, 30);
+		
+		g2.setColor(Color.WHITE);	
+		x += (int) gp.tileSize * 0.25;
+		y += gp.tileSize * 0.46;
+		g2.drawString("HP", x, y);		
+		
+		x += gp.tileSize * 0.55;
+		y -= gp.tileSize * 0.34;
+		width = (int) (gp.tileSize * 3.8);
+		height = (int) (gp.tileSize * 0.33);
+		
+		int tempHP = 0;
+		int tempHPspeed = 0;
+		
+		if (num == 0) { tempHP = fighter_one_HP; tempHPspeed = hpSpeed_one; }	
+		else { tempHP = fighter_two_HP; tempHPspeed = hpSpeed_two; }	
+							
+		if (tempHP > gp.btlManager.fighter[num].getHP()) {			
+			if (hpCounter == tempHPspeed) {
+				tempHP--;	
+				hpCounter = 0;
+			}
+			else {
+				hpCounter++;			
+			}	
+		}
+		else if (tempHP < gp.btlManager.fighter[num].getHP()) {			
+			if (hpCounter == tempHPspeed) {
+				tempHP++;
+				hpCounter = 0;
+			}
+			else {
+				hpCounter++;			
+			}	
+		}
+		
+		double remainHP = (double)tempHP / (double)gp.btlManager.fighter[num].getBHP();	
+		
+		if (remainHP >= .50) g2.setColor(hp_green);
+		else if (remainHP >= .25) g2.setColor(hp_yellow);
+		else { 
+			g2.setColor(hp_red);
+			if (num == 0) playLowHPSE(remainHP);
+		}
+		
+		width *= remainHP;							
+		g2.fillRoundRect(x, y + 1, width, height, 15, 15);	
+		
+		if (num == 0) fighter_one_HP = tempHP;
+		else fighter_two_HP = tempHP;		
 
+		width = (int) (gp.tileSize * 3.8);
+		g2.setColor(Color.WHITE);
+		g2.setStroke(new BasicStroke(3));
+		g2.drawRoundRect(x, y, width, height, 15, 15);		
+		
+		g2.setColor(Color.BLACK);
+		String text = gp.btlManager.fighter[num].getHP() + " / " + gp.btlManager.fighter[num].getBHP();
+		x = getXforRightAlignText(text, (int) (x + gp.tileSize * 3.65));		
+		y += gp.tileSize * 0.9;
+		g2.drawString(text, x, y);	
+	}	
 	private void playLowHPSE(double remainHP) {
 		
 		if (remainHP > 0) {
@@ -358,11 +541,20 @@ public class UI {
 		}
 	}
 	
+	private void drawBattleDialogueWindow() {
+		
+		int width = (int) (gp.screenWidth - (gp.tileSize * 0.15));
+		int height = (int) (gp.tileSize * 3.5);
+		int x = (int) (gp.tileSize * 0.1);
+		int y = (int) (gp.screenHeight - (height * 1.02)); 
+		
+		drawSubWindow(x, y, width, height, 12, 10, battle_green, battle_red);
+	}	
 	private void drawBattleOptionsWindow() {	
 		
 		drawBattleDialogueWindow();
 		
-		int x = gp.tileSize / 2;
+		int x = gp.tileSize / 2; 
 		int y = gp.screenHeight - gp.tileSize * 2;
 		String text = "What will\n" + gp.btlManager.fighter[0].getName() + " do?";
 		
@@ -377,10 +569,11 @@ public class UI {
 			y += gp.tileSize;
 		}
 		
-		x = (int) (gp.tileSize * 8.5);
-		y = (int) (gp.screenHeight - gp.tileSize * 3.5); 
-		int width = (int) (gp.tileSize * 7.5);
+		
+		int width = (int) (gp.tileSize * 7.45);
 		int height = (int) (gp.tileSize * 3.5);
+		x = (int) (gp.tileSize * 8.5);
+		y = (int) (gp.screenHeight - (height * 1.02)); 
 		
 		drawSubWindow(x, y, width, height, 12, 10, battle_white, battle_gray);
 		
@@ -437,16 +630,16 @@ public class UI {
 			
 			if (commandNum == 0) {
 				advanceDialogue();	
-				battleSubState = subState_Moves;		
+				battleSubState = battle_Moves;		
 			}
 		}
 	}
 	private void drawBattleMovesetWindow() {
 		
-		int width = gp.screenWidth - gp.tileSize * 4;
+		int width = (int) (gp.screenWidth - (gp.tileSize * 4.2));
 		int height = (int) (gp.tileSize * 3.5);
-		int x = 0;
-		int y = gp.screenHeight - height; 
+		int x = (int) (gp.tileSize * 0.1);
+		int y = (int) (gp.screenHeight - (height * 1.02)); 
 		
 		drawSubWindow(x, y, width, height, 12, 10, battle_white, battle_gray);
 		
@@ -490,20 +683,20 @@ public class UI {
 		if (gp.keyH.aPressed) {		
 			gp.btlManager.setPlayerMove(commandNum);
 			advanceDialogue();		
-			battleSubState = subState_Dialogue;	
+			battleSubState = battle_Dialogue;	
 		}
 		else if (gp.keyH.bPressed) {			
 			advanceDialogue();
-			battleSubState = subState_Options;			
+			battleSubState = battle_Options;			
 		}
 	}	
 	private void drawBattleMoveDescriptionWindow() {
 		
 		String text;
-		int width = gp.tileSize * 4;
+		int width = (int) (gp.tileSize * 3.9);
 		int height = (int) (gp.tileSize * 3.5);
-		int x = gp.tileSize * 12;
-		int y = gp.screenHeight - height; 
+		int x = (int) (gp.tileSize * 12.1);
+		int y = (int) (gp.screenHeight - (height * 1.02)); 		
 		
 		drawSubWindow(x, y, width, height, 12, 10, gp.btlManager.fighter[0].getMoveSet().get(commandNum).getType().getColor(), battle_gray);
 						
@@ -525,15 +718,7 @@ public class UI {
 		g2.setColor(battle_white);
 		g2.drawString(text, x-2, y-2);
 	}		
-	private void drawBattleDialogueWindow() {
-		
-		int width = gp.screenWidth;
-		int height = (int) (gp.tileSize * 3.5);
-		int x = 0;
-		int y = gp.screenHeight - height; 
-		
-		drawSubWindow(x, y, width, height, 12, 10, battle_green, battle_red);
-	}	
+	
 	private void drawSwapOptionsWindow() {
 		
 		drawBattleDialogueWindow();
@@ -591,7 +776,7 @@ public class UI {
 						
 			}
 			else {
-				battleSubState = subState_Options;
+				battleSubState = battle_Options;
 			}
 			
 			advanceDialogue();	
@@ -718,7 +903,7 @@ public class UI {
 		
 		g2.setColor(borderColor);
 		g2.setStroke(new BasicStroke(borderStroke));
-		g2.drawRoundRect(x + 2, y + 2, width - 4, height - 4, curve, curve);		
+		g2.drawRoundRect(x, y, width, height, curve, curve);		
 	}
 	public int getXforRightAlignText(String text, int tailX) {
 		int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();

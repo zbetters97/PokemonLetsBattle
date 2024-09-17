@@ -33,6 +33,9 @@ public class KeyHandler implements KeyListener {
 		else if (gp.gameState == gp.battleState) {
 			battleState(code);
 		}
+		else if (gp.gameState == gp.partyState) {
+			partyState(code);
+		}
 	}
 			
 	// PLAY
@@ -60,13 +63,13 @@ public class KeyHandler implements KeyListener {
 	// BATTLE
 	private void battleState(int code) { 
 		
-		if (gp.ui.battleSubState == gp.ui.subState_Dialogue) {				
+		if (gp.ui.battleSubState == gp.ui.battle_Dialogue) {				
 			if (code == gp.btn_A && lock) { 
 				aPressed = true; 
 				lock = false; 
 			}
 		}
-		else if (gp.ui.battleSubState == gp.ui.subState_Options) {			
+		else if (gp.ui.battleSubState == gp.ui.battle_Options) {			
 			
 			if (code == gp.btn_A && lock) { 
 				playCursorSE();						
@@ -102,7 +105,7 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 		}
-		else if (gp.ui.battleSubState == gp.ui.subState_Moves) {
+		else if (gp.ui.battleSubState == gp.ui.battle_Moves) {
 			
 			int maxMoves = gp.btlManager.fighter[0].getMoveSet().size() - 1;
 			
@@ -145,7 +148,7 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 		}		
-		else if (gp.ui.battleSubState == gp.ui.subState_Swap) {			
+		else if (gp.ui.battleSubState == gp.ui.battle_Swap) {			
 			
 			if (code == gp.btn_A && lock) { 
 				playCursorSE();						
@@ -172,6 +175,49 @@ public class KeyHandler implements KeyListener {
 			gp.gameState = gp.playState; 
 			lock = false; 
 		}	
+	}
+	// PARTY
+	private void partyState(int code) { 
+		
+		if (gp.ui.partySubState == gp.ui.party_Main) {			
+			
+			if (code == gp.btn_A && lock) { 
+				playCursorSE();						
+				aPressed = true; lock = false; 
+			}
+			if (code == gp.btn_B && lock) { 
+				playCursorSE();						
+				aPressed = true; lock = false; 		
+				gp.ui.commandNum = 6;						
+			}
+			
+			if (code == gp.btn_UP) {				
+				upPressed = true;
+				if (gp.ui.commandNum > 0) {
+					playCursorSE();		
+					gp.ui.commandNum--;
+				}
+			}
+			if (code == gp.btn_DOWN) {				
+				downPressed = true;
+				if (gp.ui.commandNum < 6) {
+					playCursorSE();		
+					gp.ui.commandNum++;
+				}
+			}
+			if (code == gp.btn_LEFT) {
+				leftPressed = true;
+				playCursorSE();		
+				gp.ui.commandNum = 0;				
+			}
+			if (code == gp.btn_RIGHT) {				
+				rightPressed = true;	
+				if (gp.ui.commandNum < 6) {
+					playCursorSE();		
+					gp.ui.commandNum++;
+				}
+			}
+		}
 	}
 	
 	// KEY RELEASED

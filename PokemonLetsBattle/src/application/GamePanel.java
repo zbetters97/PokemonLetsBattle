@@ -85,6 +85,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int pauseState = 2;	
 	public final int dialogueState = 3;		
 	public final int battleState = 4;
+	public final int partyState = 5;
 	
 	// AREA STATES
 	public int currentArea;
@@ -133,8 +134,11 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		btlManager.setBattle(btlManager.trainerBattle);
 		
-		ui.battleSubState = ui.subState_Encounter;
+		ui.battleSubState = ui.battle_Encounter;
 		gameState = battleState;
+		
+//		ui.partySubState = ui.party_Main;
+//		gameState = partyState;
 	}
 	
 	public void setupMusic() {		
@@ -245,6 +249,12 @@ public class GamePanel extends JPanel implements Runnable {
 							
 			// DRAW BATTLE MANAGER
 			btlManager.draw(g2);
+			
+			// DRAW UI
+			ui.draw(g2);
+		}
+		// BATTLE STATE
+		else if (gameState == partyState) {
 			
 			// DRAW UI
 			ui.draw(g2);

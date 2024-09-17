@@ -67,7 +67,7 @@ public enum Pokemon {
 	/** END INITIALIZE ENUMS **/
 		
 	/** INITIALIZE VALUES**/
-	private BufferedImage frontSprite, backSprite;
+	private BufferedImage frontSprite, backSprite, menuSprite;
 	private String name;
 	private int index;
 	private char sex;
@@ -95,6 +95,7 @@ public enum Pokemon {
 		
 		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
 		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
+		this.menuSprite = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
 		
 		// hp calculation reference (GEN IV): https://pokemon.fandom.com/wiki/Individual_Values
 		this.name = name; this.index = index; 
@@ -141,6 +142,7 @@ public enum Pokemon {
 		
 		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
 		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
+		this.menuSprite = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
 
 		this.name = name; this.index = index; 
 		
@@ -201,7 +203,7 @@ public enum Pokemon {
 				new Move(Moves.GROWL)));
         pokeMap.put(CHARIZARD, Arrays.asList(new Move(Moves.FLAMETHROWER), new Move(Moves.FLAREBLITZ),new Move(Moves.DRAGONBREATH),
         	new Move(Moves.FLY, 2)));
-  
+ 
 		pokeMap.put(SQUIRTLE, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.TAILWHIP)));
         pokeMap.put(WARTORTLE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.WATERGUN), new Move(Moves.TAILWHIP)));
         pokeMap.put(BLASTOISE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.AQUATAIL), new Move(Moves.HYDROPUMP), 
@@ -278,7 +280,7 @@ public enum Pokemon {
         		new Move(Moves.SOLARBEAM, 2)));
         pokeMap.put(RAYQUAZA, Arrays.asList(new Move(Moves.DRAGONCLAW), new Move(Moves.EXTREMESPEED), new Move(Moves.BLIZZARD), 
         		new Move(Moves.FLY, 2)));         		
-       
+    
         
         // if pokemon not already mapped to moveset
         if (pokemon.getMoveSet().isEmpty()) {
@@ -406,6 +408,7 @@ public enum Pokemon {
 	
 	public BufferedImage getFrontSprite() { return frontSprite; }
 	public BufferedImage getBackSprite() { return backSprite; }
+	public BufferedImage getMenuSprite() { return menuSprite; }
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }	
 	public int getIndex() {	return index; }

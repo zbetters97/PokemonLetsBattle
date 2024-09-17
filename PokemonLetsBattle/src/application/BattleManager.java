@@ -37,13 +37,29 @@ public class BattleManager {
 	private int nextTurn;
 	private final int playerTurn = 0;
 	private final int cpuTurn = 1;	
+				
+	// FIGHTER X/Y VALUES
+	public int fighter_one_X;
+	public int fighter_two_X;
+	public int fighter_one_Y;
+	public int fighter_two_Y;	
+	private final int fighter_one_startX;
+	private final int fighter_two_startX;
+	private final int fighter_one_endX;
+	private final int fighter_two_endX;	
+	private final int fighter_one_startY;
+	private final int fighter_two_startY;
+	private final int fighter_one_platform_endX;
+	private final int fighter_two_platform_endX;
+	private final int fighter_one_platform_Y;
+	private final int fighter_two_platform_Y;
 	
 	// SOUND LIBRARIES
 	private final int cry_SE = 3;
 	private final int faint_SE = 4;
 	private final int moves_SE = 5;
 	private final int battle_SE = 6;
-
+	
 	// BATTLE STATES
 	public int battleMode;
 	public final int wildBattle = 1;
@@ -65,22 +81,6 @@ public class BattleManager {
 	public final int fightStage_KO = 7;
 	public final int fightStage_Swap = 8;
 	public final int fightStage_Over = 9;
-	
-	// FIGHTER X/Y VALUES
-	public int fighter_one_X;
-	public int fighter_two_X;
-	public int fighter_one_Y;
-	public int fighter_two_Y;	
-	private final int fighter_one_startX;
-	private final int fighter_two_startX;
-	private final int fighter_one_endX;
-	private final int fighter_two_endX;	
-	private final int fighter_one_startY;
-	private final int fighter_two_startY;
-	private final int fighter_one_platform_endX;
-	private final int fighter_two_platform_endX;
-	private final int fighter_one_platform_Y;
-	private final int fighter_two_platform_Y;
 			
 	// CONSTRUCTOR
 	public BattleManager(GamePanel gp) {
@@ -115,7 +115,6 @@ public class BattleManager {
 		trainer[0].pokeParty.add(Pokemon.getPokemon(0));
 		trainer[0].pokeParty.add(Pokemon.getPokemon(1));
 		trainer[0].pokeParty.add(Pokemon.getPokemon(2));
-		trainer[0].pokeParty.get(2).setStatus(Status.PARALYZE);
 		
 		trainer[1] = new NPC(gp);
 		trainer[1].name = "RED";
@@ -123,16 +122,16 @@ public class BattleManager {
 		trainer[1].pokeParty.add(Pokemon.getPokemon(4));
 		trainer[1].pokeParty.add(Pokemon.getPokemon(5));
 						
-		fighter[0] = trainer[0].pokeParty.get(2);	
+		fighter[0] = trainer[0].pokeParty.get(1);	
 		fighter[1] = trainer[1].pokeParty.get(0);	
 						
 		battleMode = currentBattle;
 	
 		gp.stopMusic();		
 		getBattleMode();
-		setUIHP();		
+		setHP();		
 	}
-	private void setUIHP() {
+	private void setHP() {
 		gp.ui.fighter_one_HP = fighter[0].getHP();
 		gp.ui.fighter_two_HP = fighter[1].getHP();
 		
@@ -186,7 +185,7 @@ public class BattleManager {
 			
 			if (fightStage == fightStage_Trainer || fightStage == fightStage_Encounter) {				
 				fightStage = fightStage_Start;
-				gp.ui.battleSubState = gp.ui.subState_Options;
+				gp.ui.battleSubState = gp.ui.battle_Options;
 			}			
 			else if (fightStage == fightStage_Start) {
 				checkTurn();
@@ -205,7 +204,7 @@ public class BattleManager {
 			}
 			else if (fightStage == fightStage_Swap) {
 				fightStage = fightStage_Start;
-				gp.ui.battleSubState = gp.ui.subState_Swap;
+				gp.ui.battleSubState = gp.ui.battle_Swap;
 			}
 			else if (fightStage == fightStage_Over) {
 				gp.gameState = gp.playState;
@@ -995,7 +994,7 @@ public class BattleManager {
 			}
 			else {
 				fightStage = fightStage_Start;
-				gp.ui.battleSubState = gp.ui.subState_Options;		
+				gp.ui.battleSubState = gp.ui.battle_Options;		
 			}
 		}
 		// CHECK BOTH STATUS CONDITIONS
@@ -1109,7 +1108,7 @@ public class BattleManager {
 			if (fighter[1] != null) {				
 				gp.ui.addBattleDialogue(trainer[1].name + " sent out\n" + fighter[1].getName() + "!");
 				fightStage = fightStage_Swap;
-				setUIHP();
+				setHP();
 			}
 			else {
 				
@@ -1278,7 +1277,7 @@ public class BattleManager {
 		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
 		
 		if (fighter_one_X == fighter_one_endX || fighter_two_X == fighter_two_endX) {
-			gp.ui.battleSubState = gp.ui.subState_Dialogue;					
+			gp.ui.battleSubState = gp.ui.battle_Dialogue;					
 		}
 		else {
 			fighter_one_X -= 6;	
