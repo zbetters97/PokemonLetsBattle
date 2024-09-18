@@ -1,5 +1,6 @@
 package application;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -30,7 +31,7 @@ public class BattleManager {
 	public int winner = -1;
 	public int loser = -1;
 	private BufferedImage current_arena;
-	
+		
 	// TURN VALUES
 	public boolean ready = false;
 	public int currentTurn;
@@ -127,7 +128,7 @@ public class BattleManager {
 		
 		fighter[0] = trainer[0].pokeParty.get(0);	
 		fighter[1] = trainer[1].pokeParty.get(0);	
-						
+		
 		battleMode = currentBattle;
 	
 		gp.stopMusic();		
@@ -180,6 +181,7 @@ public class BattleManager {
 			
 		}
 	}
+	
 	
 	// UPDATE METHOD
 	public void update() {				
@@ -1004,16 +1006,21 @@ public class BattleManager {
 		else {		
 			nextTurn++;
 			
-			if (fighter[nextTurn].isAlive()) {
-				getStatusDamage(nextTurn);
-			}	
-			
 			if (hasWinner()) {
 				nextTurn = -1;
 				getWinner();	
 			}
 			else {
-				fightStage = fightStage_End;
+				if (fighter[nextTurn].isAlive()) {
+					getStatusDamage(nextTurn);
+				}	
+				if (hasWinner()) {
+					nextTurn = -1;
+					getWinner();	
+				}
+				else {
+					fightStage = fightStage_End;
+				}
 			}
 		}
 	}
@@ -1096,6 +1103,7 @@ public class BattleManager {
 		int exp = (int) (((( fighter[lsr].getXP() * fighter[lsr].getLevel() ) / 7)) * 1.5);		
 		return exp;
 	}
+	
 	
 	// SWAP POKEMON METHODS
 	private void getNextFighter() {
@@ -1271,6 +1279,7 @@ public class BattleManager {
 	
 	
 	// DRAW METHODS
+	
 	public void draw(Graphics2D g2) {
 		
 		g2.setColor(new Color(234,233,246));  
@@ -1346,4 +1355,7 @@ public class BattleManager {
 		
 		return image;
 	}	
+	public void changeAlpha(Graphics2D g2, float alphaValue) {		
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
+	}
 }

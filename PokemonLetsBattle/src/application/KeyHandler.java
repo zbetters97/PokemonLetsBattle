@@ -193,6 +193,44 @@ public class KeyHandler implements KeyListener {
 			
 			if (code == gp.btn_UP) {				
 				upPressed = true;
+				if (gp.ui.fighterNum > 0) {
+					playCursorSE();		
+					gp.ui.fighterNum--;
+				}
+			}
+			if (code == gp.btn_DOWN) {				
+				downPressed = true;
+				if (gp.ui.fighterNum < 6) {
+					playCursorSE();		
+					gp.ui.fighterNum++;
+				}
+			}
+			if (code == gp.btn_LEFT) {
+				leftPressed = true;
+				playCursorSE();		
+				gp.ui.fighterNum = 0;				
+			}
+			if (code == gp.btn_RIGHT) {				
+				rightPressed = true;	
+				if (gp.ui.fighterNum < 6) {
+					playCursorSE();		
+					gp.ui.fighterNum++;
+				}
+			}
+		}
+		if (gp.ui.partySubState == gp.ui.party_Main_Select) {			
+			
+			if (code == gp.btn_A && lock) { 
+				playCursorSE();						
+				aPressed = true; lock = false; 
+			}
+			if (code == gp.btn_B && lock) { 
+				playCursorSE();						
+				bPressed = true; lock = false; 	
+			}
+			
+			if (code == gp.btn_UP) {				
+				upPressed = true;
 				if (gp.ui.commandNum > 0) {
 					playCursorSE();		
 					gp.ui.commandNum--;
@@ -200,19 +238,7 @@ public class KeyHandler implements KeyListener {
 			}
 			if (code == gp.btn_DOWN) {				
 				downPressed = true;
-				if (gp.ui.commandNum < 6) {
-					playCursorSE();		
-					gp.ui.commandNum++;
-				}
-			}
-			if (code == gp.btn_LEFT) {
-				leftPressed = true;
-				playCursorSE();		
-				gp.ui.commandNum = 0;				
-			}
-			if (code == gp.btn_RIGHT) {				
-				rightPressed = true;	
-				if (gp.ui.commandNum < 6) {
+				if (gp.ui.commandNum < 2) {
 					playCursorSE();		
 					gp.ui.commandNum++;
 				}

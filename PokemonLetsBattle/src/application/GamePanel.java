@@ -137,9 +137,9 @@ public class GamePanel extends JPanel implements Runnable {
 		ui.battleSubState = ui.battle_Encounter;
 		gameState = battleState;
 		
-		ui.partySubState = ui.party_Main;
+//		ui.partySubState = ui.party_Main;
 //		ui.partySubState = ui.party_Stats;
-		gameState = partyState;
+//		gameState = partyState;
 	}
 	
 	public void setupMusic() {		
