@@ -112,17 +112,20 @@ public class BattleManager {
 		
 		trainer[0] = new NPC(gp);
 		trainer[0].name = "ASH";
-		trainer[0].pokeParty.add(Pokemon.getPokemon(0));
-		trainer[0].pokeParty.add(Pokemon.getPokemon(1));
-		trainer[0].pokeParty.add(Pokemon.getPokemon(2));
+		trainer[0].pokeParty.add(Pokemon.getPokemon(34));
+		trainer[0].pokeParty.add(Pokemon.getPokemon(35));
+		trainer[0].pokeParty.add(Pokemon.getPokemon(36));
+		trainer[0].pokeParty.add(Pokemon.getPokemon(37));
+		trainer[0].pokeParty.add(Pokemon.getPokemon(38));
+		trainer[0].pokeParty.add(Pokemon.getPokemon(39));
 		
 		trainer[1] = new NPC(gp);
 		trainer[1].name = "RED";
 		trainer[1].pokeParty.add(Pokemon.getPokemon(3));
 		trainer[1].pokeParty.add(Pokemon.getPokemon(4));
 		trainer[1].pokeParty.add(Pokemon.getPokemon(5));
-						
-		fighter[0] = trainer[0].pokeParty.get(1);	
+		
+		fighter[0] = trainer[0].pokeParty.get(0);	
 		fighter[1] = trainer[1].pokeParty.get(0);	
 						
 		battleMode = currentBattle;
@@ -1116,8 +1119,30 @@ public class BattleManager {
 		}
 		else if (winner == 1) {
 			
+			fighter_one_Y = fighter_one_startY;
+			
+			fightStage = fightStage_Start;
+			gp.gameState = gp.partyState;
+			gp.ui.partySubState = gp.ui.party_Main;			
 		}		
 	}	
+	public Boolean swapPokemon(int partySlot) {
+		
+		Pokemon p = trainer[0].pokeParty.get(partySlot);
+		if (p.isAlive()) {
+			fighter[0] = p;
+			
+			if (trainer[0].pokeParty.size() > 1)
+				Collections.swap(trainer[0].pokeParty, 0, partySlot);	
+			
+			setHP();	
+			
+			return true;
+		}
+		else {
+			return false;
+		}		
+	}
 	private Pokemon cpuSelectNextPokemon() {
 		
 		int available = 0;
@@ -1243,6 +1268,7 @@ public class BattleManager {
 			return bestPokemon;
 		}
 	}
+	
 	
 	// DRAW METHODS
 	public void draw(Graphics2D g2) {

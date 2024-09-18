@@ -176,6 +176,7 @@ public class KeyHandler implements KeyListener {
 			lock = false; 
 		}	
 	}
+	
 	// PARTY
 	private void partyState(int code) { 
 		

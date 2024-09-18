@@ -195,7 +195,7 @@ public enum Type {
 	    	case ("Rock"): color = new Color(184,159,56); break;
 	    	case ("Ghost"): color = new Color(113,87,152); break;
 	    	case ("Dragon"): color = new Color(112,55,253); break;
-	    	case ("Dark"): color = new Color(11,87,71); break;
+	    	case ("Dark"): color = new Color(111,88,72); break;
 	    	case ("Steel"): color = new Color(184,184,208); break;
 	    	case ("Fairy"): color = new Color(217,163,215); break;
 	    }
