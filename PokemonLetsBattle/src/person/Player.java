@@ -112,7 +112,10 @@ public class Player extends NPC {
 		left3 = setup("/player/boy_left_3");
 		right1 = setup("/player/boy_right_1"); 
 		right2 = setup("/player/boy_right_2");
-		right3 = setup("/player/boy_right_3");
+		right3 = setup("/player/boy_right_3");		
+		
+		frontSprite = setup("/player/boy_battle_front");
+		backSprite = setup("/player/boy_battle_back");
 	}	
 	public void getRunImage() {			
 		runUp1 = setup("/player/boy_run_up_1"); 

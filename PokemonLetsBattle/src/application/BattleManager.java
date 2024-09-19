@@ -27,6 +27,7 @@ public class BattleManager {
 	private GamePanel gp;
 	public NPC[] trainer = new NPC[2];
 	public Pokemon[] fighter = new Pokemon[2];
+	public Pokemon[] newFighter = new Pokemon[2];
 	public Move move1, move2;
 	public int winner = -1;
 	public int loser = -1;
@@ -73,14 +74,14 @@ public class BattleManager {
 	
 	// FIGHT STAGES
 	public int fightStage;
-	public final int fightStage_Trainer = 1;
-	public final int fightStage_Encounter = 2;
-	public final int fightStage_Start = 3;
-	public final int fightStage_Move = 4;
-	public final int fightStage_Attack = 5;
-	public final int fightStage_End = 6;
-	public final int fightStage_KO = 7;
-	public final int fightStage_Swap = 8;
+	public final int fightStage_Encounter = 1;	
+	public final int fightStage_Swap = 2;
+	public final int fightStage_SwapOut = 3;
+	public final int fightStage_Start = 4;
+	public final int fightStage_Move = 5;
+	public final int fightStage_Attack = 6;
+	public final int fightStage_End = 7;
+	public final int fightStage_KO = 8;		
 	public final int fightStage_Over = 9;
 			
 	// CONSTRUCTOR
@@ -120,50 +121,36 @@ public class BattleManager {
 		trainer[0].pokeParty.add(Pokemon.getPokemon(38));
 		trainer[0].pokeParty.add(Pokemon.getPokemon(39));
 		
+		newFighter[0] = trainer[0].pokeParty.get(0);
+						
 		trainer[1] = new NPC(gp);
 		trainer[1].name = "RED";
 		trainer[1].pokeParty.add(Pokemon.getPokemon(3));
 		trainer[1].pokeParty.add(Pokemon.getPokemon(4));
 		trainer[1].pokeParty.add(Pokemon.getPokemon(5));
 		
-		fighter[0] = trainer[0].pokeParty.get(0);	
-		fighter[1] = trainer[1].pokeParty.get(0);	
-		
 		battleMode = currentBattle;
-	
+		fightStage = fightStage_Encounter;
+		
 		gp.stopMusic();		
 		getBattleMode();
-		setHP();		
-	}
-	private void setHP() {
-		gp.ui.fighter_one_HP = fighter[0].getHP();
-		gp.ui.fighter_two_HP = fighter[1].getHP();
-		
-		if (fighter[0].getHP() > 100) gp.ui.hpSpeed_one = 1;
-		else if (fighter[0].getHP() > 50) gp.ui.hpSpeed_one = 2;
-		else gp.ui.hpSpeed_one = 3;
-		
-		if (fighter[1].getHP() > 100) gp.ui.hpSpeed_two = 1;
-		else if (fighter[1].getHP() > 50) gp.ui.hpSpeed_two = 2;
-		else gp.ui.hpSpeed_two = 3;
 	}
 	private void getBattleMode() {
 		
 		if (battleMode == wildBattle) {
 			
+			fighter[1] = trainer[1].pokeParty.get(0);	
 			gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!");
-			gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30, 120);
-			gp.playMusic(1, 0);		
-
-			fightStage = fightStage_Encounter;
+					
+			gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30, 120);			
+			gp.playMusic(1, 0);					
 		}
 		else if (battleMode == trainerBattle) {		
 
-			gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nwould like to battle!");
-			gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30, 120);
-			gp.playMusic(1, 1);
+			gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nwould like to battle!");				
+			newFighter[1] = trainer[1].pokeParty.get(1);
 			
-			fightStage = fightStage_Encounter;
+			gp.playMusic(1, 1);
 		}
 		else if (battleMode == rivalBattle) {					
 			
@@ -181,17 +168,34 @@ public class BattleManager {
 			
 		}
 	}
-	
+	private void setHP() {
+		
+		gp.ui.fighter_one_HP = fighter[0].getHP();
+		gp.ui.fighter_two_HP = fighter[1].getHP();
+		
+		if (fighter[0].getHP() > 100) gp.ui.hpSpeed_one = 1;
+		else if (fighter[0].getHP() > 50) gp.ui.hpSpeed_one = 2;
+		else gp.ui.hpSpeed_one = 3;
+		
+		if (fighter[1].getHP() > 100) gp.ui.hpSpeed_two = 1;
+		else if (fighter[1].getHP() > 50) gp.ui.hpSpeed_two = 2;
+		else gp.ui.hpSpeed_two = 3;
+	}
 	
 	// UPDATE METHOD
-	public void update() {				
+	public void update() {	
 		
 		if (ready) {
 			
-			if (fightStage == fightStage_Trainer || fightStage == fightStage_Encounter) {				
-				fightStage = fightStage_Start;
-				gp.ui.battleSubState = gp.ui.battle_Options;
-			}			
+			if (fightStage == fightStage_Encounter) {		
+				fightStage = fightStage_Swap;
+			}	
+			else if (fightStage == fightStage_Swap) {
+				swapFighters();
+			}
+			else if (fightStage == fightStage_SwapOut) {				
+				setSwap();					
+			}
 			else if (fightStage == fightStage_Start) {
 				checkTurn();
 			}
@@ -205,11 +209,7 @@ public class BattleManager {
 				checkStatusDamage();								
 			}
 			else if (fightStage == fightStage_KO) {				
-				getNextFighter();
-			}
-			else if (fightStage == fightStage_Swap) {
-				fightStage = fightStage_Start;
-				gp.ui.battleSubState = gp.ui.battle_Swap;
+				
 			}
 			else if (fightStage == fightStage_Over) {
 				gp.gameState = gp.playState;
@@ -217,6 +217,227 @@ public class BattleManager {
 		}
 		
 		ready = false;
+	}
+	
+	// SWAP POKEMON METHODS
+	private void setSwap() {
+		
+		// POKEMON ALREADY SWAPPED OUT
+		if (winner == -1) {
+			fightStage = fightStage_Start;
+			gp.ui.battleSubState = gp.ui.battle_Options;	
+		}
+		// INITIATE SWAP OUT
+		else {			
+			winner = -1;
+						
+			fightStage = fightStage_Swap;
+			gp.ui.battleSubState = gp.ui.battle_Swap;
+		}		
+	}
+	private void swapFighters() {
+		
+		// WINNER NOT YET DECIDED
+		if (winner == -1) {
+			
+			if (fighter[1] == null || !fighter[1].isAlive()) {			
+				fighter[1] = newFighter[1];
+				newFighter[1] = null;
+
+				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nsent out " + fighter[1].getName() + "!");
+				gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30, 120);		
+			}		
+			if (fighter[0] == null || !fighter[0].isAlive()) {			
+				fighter[0] = newFighter[0];
+				newFighter[0] = null;
+				
+				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
+				gp.ui.setSoundFile(cry_SE, fighter[0].getName(), 30, 120);		
+			}	
+			
+			setHP();			
+			fighter_one_Y = fighter_one_startY;
+			fighter_two_Y = fighter_two_startY;
+			
+			fightStage = fightStage_SwapOut;
+		}
+		
+		// TRAINER 1 WINNER
+		else if (winner == 0) {
+			newFighter[1] = cpuSelectNextFighter();
+			gp.ui.addBattleDialogue("Trainer " + trainer[1].name + " is about to\nsent out " + newFighter[1].getName() + "!");
+			
+			fightStage = fightStage_SwapOut;
+		}
+		
+		// TRAINER 2 WINNER
+		else if (winner == 1) {
+			
+			boolean hasPokemon = false;
+			for (Pokemon p : trainer[0].pokeParty) {
+				if (p.isAlive()) {
+					hasPokemon = true;
+				}
+			}
+			
+			// TRAINER 1 HAS MORE POKEMON
+			if (hasPokemon) {				
+				winner = -1;
+				fightStage = fightStage_Swap;
+				gp.gameState = gp.partyState;
+				gp.ui.partySubState = gp.ui.party_Main;
+			}
+			// TRAINER 1 OUT OF POKEMON
+			else {
+				
+			}		
+		}				
+	}
+	public boolean swapPokemon(int partySlot) {
+		
+		Pokemon p = trainer[0].pokeParty.get(partySlot);
+		
+		if (p.isAlive()) {
+			
+			newFighter[0] = p;
+						
+			if (trainer[0].pokeParty.size() > 1) {
+				Collections.swap(trainer[0].pokeParty, 0, partySlot);	
+			}
+						
+			return true;
+		}
+		else {
+			return false;
+		}		
+	}
+	private Pokemon cpuSelectNextFighter() {
+		
+		if (fighter[0] == null) return trainer[1].pokeParty.get(0);
+		
+		int available = 0;
+		
+		// list to hold all candidates based on type effectiveness
+		Map<Pokemon, Integer> pokemonList = new HashMap<>();
+		
+		for (Pokemon p : trainer[1].pokeParty) {
+			if (p.isAlive()) {
+				available++;
+			}
+		}
+		
+		// if more than 1 pokemon in CPU party
+		if (available > 1) {
+			
+			// loop through each pokemon in party
+			for (Pokemon p : trainer[1].pokeParty) {
+				
+				if (p.isAlive()) {
+				
+					// if party is single type
+					if (p.getTypes() == null) {
+												
+						// if target is single type
+						if (fighter[0].getTypes() == null) {	
+							
+							// loop through each type in target pokemon
+							for (Type vulnType : fighter[0].getType().getVulnerability().keySet()) {	
+								
+								// if type matches target's vulnerability
+								if (vulnType.getName().equals(p.getType().getName()))
+									pokemonList.put(p, p.getLevel());
+							}
+						}					
+						// if target is multi type
+						else {			
+							
+							// for each type in target
+							for (Type type : fighter[0].getTypes()) {
+								
+								// loop through each vulnerability in type
+								for (Type vuln : type.getVulnerability().keySet()) {									
+	
+									// if type matches target's vulnerability
+									if (vuln.getName().equals(p.getType().getName()))
+										pokemonList.put(p, p.getLevel());
+								}
+							}						
+						}					
+					}				
+					// if party is multi type
+					else { 
+											
+						// if target is single type
+						if (fighter[0].getTypes() == null) {	
+							
+							// for each type in party
+							for (Type type : p.getTypes()) {
+								
+								// loop through each vulnerability in target pokemon
+								for (Type vulnType : fighter[0].getType().getVulnerability().keySet()) {	
+								
+									// if type matches target's vulnerability
+									if (vulnType.getName().equals(type.getName()))
+										pokemonList.put(p, p.getLevel());
+								}
+							}
+							
+							
+						}					
+						// if target is multi type
+						else {			
+							
+							// for each type in party
+							for (Type parType : p.getTypes()) {
+	
+								// for each type in target
+								for (Type tarType : fighter[0].getTypes()) {
+									
+									// loop through each vulnerability in type
+									for (Type vuln : tarType.getVulnerability().keySet()) {									
+		
+										// if type matches target's vulnerability
+										if (vuln.getName().equals(parType.getName()))
+											pokemonList.put(p, p.getLevel());
+									}
+								}		
+							}
+						}
+					}
+				}				
+			}
+		}
+		// if 1 pokemon remaining in party
+		else if (available == 1) {
+			for (Pokemon p : trainer[1].pokeParty) {
+				
+				if (p.isAlive()) {
+					return p;
+				}
+			}
+		}
+		
+		// if 0 pokemon remaining in party
+		else {
+			return null;
+		}
+			
+		Pokemon bestPokemon;
+		
+		// find best pokemon based on max level
+		if (!pokemonList.isEmpty()) {
+			bestPokemon = Collections.max(pokemonList.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
+			return bestPokemon;
+		}
+		else {			
+			// loop through party and find highest level pokemon
+			for (Pokemon p : trainer[1].pokeParty) {
+				pokemonList.put(p, p.getLevel());
+			}
+			
+			bestPokemon = Collections.max(pokemonList.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
+			return bestPokemon;
+		}
 	}
 	
 	// SELECT MOVE METHODS
@@ -263,7 +484,7 @@ public class BattleManager {
 		
 		return bestMove;	
 	}
-	
+			
 	// CHECK TURN METHODS
 	private void checkTurn() {
 						
@@ -1084,6 +1305,8 @@ public class BattleManager {
 			gp.ui.addBattleDialogue(fighter[0].getName() + " fainted!");
 			gp.ui.addBattleDialogue(fighter[1].getName() + " fainted!");
 			gp.ui.addBattleDialogue("It's a draw!");
+
+			fightStage = fightStage_Swap;
 		}
 		else {
 			int xp = calculateXP(loser);
@@ -1092,9 +1315,9 @@ public class BattleManager {
 			gp.ui.setSoundFile(faint_SE, fighter[loser].getName(), 5);
 			
 			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
-			gp.ui.addBattleDialogue(fighter[winner].getName() + "\ngained " + xp + " Exp. Points!");	
+			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + xp + " Exp. Points!");	
 			
-			fightStage = fightStage_KO;
+			fightStage = fightStage_KO;			
 		}
 	}
 	private int calculateXP(int lsr) {
@@ -1102,191 +1325,16 @@ public class BattleManager {
 		// exp formula reference (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience		
 		int exp = (int) (((( fighter[lsr].getXP() * fighter[lsr].getLevel() ) / 7)) * 1.5);		
 		return exp;
-	}
-	
-	
-	// SWAP POKEMON METHODS
-	private void getNextFighter() {
-		
-		if (winner == 2) {
-			
-		}
-		else if (winner == 0) {
-			
-			fighter[1] = cpuSelectNextPokemon();
-			fighter_two_Y = fighter_two_startY;
-			
-			if (fighter[1] != null) {				
-				gp.ui.addBattleDialogue(trainer[1].name + " sent out\n" + fighter[1].getName() + "!");
-				fightStage = fightStage_Swap;
-				setHP();
-			}
-			else {
-				
-			}
-		}
-		else if (winner == 1) {
-			
-			fighter_one_Y = fighter_one_startY;
-			
-			fightStage = fightStage_Start;
-			gp.gameState = gp.partyState;
-			gp.ui.partySubState = gp.ui.party_Main;			
-		}		
 	}	
-	public Boolean swapPokemon(int partySlot) {
-		
-		Pokemon p = trainer[0].pokeParty.get(partySlot);
-		if (p.isAlive()) {
-			fighter[0] = p;
-			
-			if (trainer[0].pokeParty.size() > 1)
-				Collections.swap(trainer[0].pokeParty, 0, partySlot);	
-			
-			setHP();	
-			
-			return true;
-		}
-		else {
-			return false;
-		}		
-	}
-	private Pokemon cpuSelectNextPokemon() {
-		
-		int available = 0;
-		
-		// list to hold all candidates based on type effectiveness
-		Map<Pokemon, Integer> pokemonList = new HashMap<>();
-		
-		for (Pokemon p : trainer[1].pokeParty) {
-			if (p.isAlive()) {
-				available++;
-			}
-		}
-		
-		// if more than 1 pokemon in CPU party
-		if (available > 1) {
-			
-			// loop through each pokemon in party
-			for (Pokemon p : trainer[1].pokeParty) {
-				
-				if (p.isAlive()) {
-				
-					// if party is single type
-					if (p.getTypes() == null) {
-						
-						// if target is single type
-						if (fighter[0].getTypes() == null) {	
-							
-							// loop through each type in target pokemon
-							for (Type vulnType : fighter[0].getType().getVulnerability().keySet()) {	
-								
-								// if type matches target's vulnerability
-								if (vulnType.getName().equals(p.getType().getName()))
-									pokemonList.put(p, p.getLevel());
-							}
-						}					
-						// if target is multi type
-						else {			
-							
-							// for each type in target
-							for (Type type : fighter[0].getTypes()) {
-								
-								// loop through each vulnerability in type
-								for (Type vuln : type.getVulnerability().keySet()) {									
-	
-									// if type matches target's vulnerability
-									if (vuln.getName().equals(p.getType().getName()))
-										pokemonList.put(p, p.getLevel());
-								}
-							}						
-						}					
-					}				
-					// if party is multi type
-					else { 
-											
-						// if target is single type
-						if (fighter[0].getTypes() == null) {	
-							
-							// for each type in party
-							for (Type type : p.getTypes()) {
-								
-								// loop through each vulnerability in target pokemon
-								for (Type vulnType : fighter[0].getType().getVulnerability().keySet()) {	
-								
-									// if type matches target's vulnerability
-									if (vulnType.getName().equals(type.getName()))
-										pokemonList.put(p, p.getLevel());
-								}
-							}
-							
-							
-						}					
-						// if target is multi type
-						else {			
-							
-							// for each type in party
-							for (Type parType : p.getTypes()) {
-	
-								// for each type in target
-								for (Type tarType : fighter[0].getTypes()) {
-									
-									// loop through each vulnerability in type
-									for (Type vuln : tarType.getVulnerability().keySet()) {									
-		
-										// if type matches target's vulnerability
-										if (vuln.getName().equals(parType.getName()))
-											pokemonList.put(p, p.getLevel());
-									}
-								}		
-							}
-						}
-					}
-				}				
-			}
-		}
-		else if (available == 1) {
-			for (Pokemon p : trainer[1].pokeParty) {
-				
-				if (p.isAlive()) {
-					return p;
-				}
-			}
-		}
-		
-		// if 1 pokemon remaining in party
-		else {
-			return trainer[1].pokeParty.get(0);
-		}
-			
-		Pokemon bestPokemon;
-		
-		// find best pokemon based on max level
-		if (!pokemonList.isEmpty()) {
-			bestPokemon = Collections.max(pokemonList.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
-			return bestPokemon;
-		}
-		else {			
-			// loop through party and find highest level pokemon
-			for (Pokemon p : trainer[1].pokeParty) {
-				pokemonList.put(p, p.getLevel());
-			}
-			
-			bestPokemon = Collections.max(pokemonList.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
-			return bestPokemon;
-		}
-	}
-	
 	
 	// DRAW METHODS
-	
 	public void draw(Graphics2D g2) {
 		
 		g2.setColor(new Color(234,233,246));  
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 		
 		if (fightStage == fightStage_Encounter) {
-			animateFighterEntrance(g2);
+			animateEntrance(g2);
 		}
 		else if (fightStage == fightStage_KO) {			
 			animateFighterDefeat();
@@ -1296,7 +1344,7 @@ public class BattleManager {
 			drawFighters(g2);	
 		}		
 	}	
-	private void animateFighterEntrance(Graphics2D g2) {
+	private void animateEntrance(Graphics2D g2) {
 		
 		int x; 
 		int y; 
@@ -1304,39 +1352,55 @@ public class BattleManager {
 		x = fighter_two_X - gp.tileSize;
 		y = (int) (fighter_two_Y + gp.tileSize * 2.3);
 		g2.drawImage(current_arena, x, y, null);	
-		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
+		
+		if (battleMode == wildBattle) {
+			g2.drawImage(fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
+		}
+		else if (battleMode == trainerBattle) {
+			g2.drawImage(trainer[1].frontSprite, fighter_two_X, fighter_two_Y, null);
+		}
 		
 		x = fighter_one_X - gp.tileSize;
 		y = fighter_one_Y + gp.tileSize * 4;
 		g2.drawImage(current_arena, x, y, null);
-		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
+		g2.drawImage(trainer[0].backSprite, fighter_one_X + 30, fighter_one_Y + 40, null);		
 		
-		if (fighter_one_X == fighter_one_endX || fighter_two_X == fighter_two_endX) {
-			gp.ui.battleSubState = gp.ui.battle_Dialogue;					
+		if (fighter_one_X >= fighter_one_endX || fighter_two_X <= fighter_two_endX) {
+			fighter_one_X -= 6;	
+			fighter_two_X += 6;	
 		}
 		else {
-			fighter_one_X -= 6;	
-			fighter_two_X += 6;			
+			gp.ui.battleSubState = gp.ui.battle_Dialogue;
 		}
 	}	
+	private void drawFighters(Graphics2D g2) {					
+		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
+		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
+		
+		if (fighter[0] != null) {
+			g2.drawImage(fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
+		}
+		if (fighter[1] != null) {
+			g2.drawImage(fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
+		}
+	}
 	private void animateFighterDefeat() {		
 		if (gp.btlManager.loser == 0) {
 			if (fighter_one_Y < gp.screenHeight) {
 				fighter_one_Y += 16;
+			}
+			else {
+				fightStage = fightStage_Swap;
 			}
 		}
 		else if (gp.btlManager.loser == 1) {
 			if (fighter_two_Y < gp.screenHeight) {
 				fighter_two_Y += 16;
 			}
+			else {
+				fightStage = fightStage_Swap;
+			}
 		}		
-	}
-	private void drawFighters(Graphics2D g2) {					
-		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
-		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
-		
-		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
-		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
 	}
 	
 	// MISC

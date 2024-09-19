@@ -50,6 +50,7 @@ public class NPC {
 							runDown1, runDown2, runDown3,
 							runLeft1, runLeft2, runLeft3,
 							runRight1, runRight2, runRight3;
+	public BufferedImage frontSprite, backSprite;
 		
 	// CHARACTER ATTRIBUTES	
 	public boolean hasItemToGive = false;	
@@ -94,8 +95,26 @@ public class NPC {
 		getImage();
 	}
 	
+	public void getImage() {			
+		up1 = setup("/player/boy_up_1"); 
+		up2 = setup("/player/boy_up_2"); 
+		up3 = setup("/player/boy_up_3"); 
+		down1 = setup("/player/boy_down_1"); 
+		down2 = setup("/player/boy_down_2");
+		down3 = setup("/player/boy_down_3");
+		left1 = setup("/player/boy_left_1"); 
+		left2 = setup("/player/boy_left_2");
+		left3 = setup("/player/boy_left_3");
+		right1 = setup("/player/boy_right_1"); 
+		right2 = setup("/player/boy_right_2");
+		right3 = setup("/player/boy_right_3");		
+		
+		frontSprite = setup("/player/boy_battle_front", gp.tileSize * 4, gp.tileSize * 4);
+		backSprite = setup("/player/boy_battle_back", gp.tileSize * 4, gp.tileSize * 4);
+	}	
+	
 	// CHILD ONLY		
-	public void getImage() { }
+//	public void getImage() { }
 	public void assignParty() { }
 	
 	public void setAction() { }	
