@@ -148,7 +148,7 @@ public class BattleManager {
 		else if (battleMode == trainerBattle) {		
 
 			gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nwould like to battle!");				
-			newFighter[1] = trainer[1].pokeParty.get(1);
+			newFighter[1] = trainer[1].pokeParty.get(0);
 			
 			gp.playMusic(1, 1);
 		}
@@ -220,46 +220,44 @@ public class BattleManager {
 	}
 	
 	// SWAP POKEMON METHODS
-	private void setSwap() {
-		
-		// POKEMON ALREADY SWAPPED OUT
-		if (winner == -1) {
-			fightStage = fightStage_Start;
-			gp.ui.battleSubState = gp.ui.battle_Options;	
-		}
-		// INITIATE SWAP OUT
-		else {			
-			winner = -1;
-						
-			fightStage = fightStage_Swap;
-			gp.ui.battleSubState = gp.ui.battle_Swap;
-		}		
-	}
 	private void swapFighters() {
 		
 		// WINNER NOT YET DECIDED
 		if (winner == -1) {
 			
-			if (fighter[1] == null || !fighter[1].isAlive()) {			
+			if (fighter[1] == null || !fighter[1].isAlive()) {		
+				
 				fighter[1] = newFighter[1];
 				newFighter[1] = null;
 
 				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nsent out " + fighter[1].getName() + "!");
 				gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30, 120);		
 			}		
-			if (fighter[0] == null || !fighter[0].isAlive()) {			
+			if (fighter[0] == null || !fighter[0].isAlive()) {	
+				
+				fighter[0] = newFighter[0];
+				newFighter[0] = null;
+				
+				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
+				gp.ui.setSoundFile(cry_SE, fighter[0].getName(), 30, 120);				
+								
+				fightStage = fightStage_SwapOut;
+			}	
+			else if (fighter[0].isAlive()) {
+				
 				fighter[0] = newFighter[0];
 				newFighter[0] = null;
 				
 				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
 				gp.ui.setSoundFile(cry_SE, fighter[0].getName(), 30, 120);		
-			}	
+				
+				fightStage = fightStage_Start;
+			}
 			
-			setHP();			
+			setHP();	
+			
 			fighter_one_Y = fighter_one_startY;
-			fighter_two_Y = fighter_two_startY;
-			
-			fightStage = fightStage_SwapOut;
+			fighter_two_Y = fighter_two_startY;			
 		}
 		
 		// TRAINER 1 WINNER
@@ -291,11 +289,15 @@ public class BattleManager {
 			else {
 				
 			}		
-		}				
+		}		
 	}
 	public boolean swapPokemon(int partySlot) {
 		
 		Pokemon p = trainer[0].pokeParty.get(partySlot);
+		
+		if (fighter[0] == p) {
+			return false;
+		}
 		
 		if (p.isAlive()) {
 			
@@ -438,6 +440,21 @@ public class BattleManager {
 			bestPokemon = Collections.max(pokemonList.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
 			return bestPokemon;
 		}
+	}
+	private void setSwap() {
+		
+		// POKEMON ALREADY SWAPPED OUT
+		if (winner == -1) {			
+			fightStage = fightStage_Start;
+			gp.ui.battleSubState = gp.ui.battle_Options;	
+		}
+		// INITIATE SWAP OUT
+		else {			
+			winner = -1;
+						
+			fightStage = fightStage_Swap;
+			gp.ui.battleSubState = gp.ui.battle_Swap;
+		}		
 	}
 	
 	// SELECT MOVE METHODS
@@ -1209,7 +1226,7 @@ public class BattleManager {
 	
 	// STATUS METHODS
 	private void checkStatusDamage() {
-
+				
 		// STATUS CONDITIONS CHECKED		
 		if (nextTurn == 1) {	
 			

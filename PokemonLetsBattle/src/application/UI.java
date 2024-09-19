@@ -296,12 +296,20 @@ public class UI {
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
 				
+				// NEW FIGHTER SELECTED
 				if (gp.btlManager.swapPokemon(fighterNum)) {
+					
+					if (gp.btlManager.fighter[0].isAlive()) {
+						gp.btlManager.fightStage = gp.btlManager.fightStage_Swap;
+					}
+					
 					gp.gameState = gp.battleState;
 					battleSubState = battle_Dialogue;
 					commandNum = 0;
 					fighterNum = 0;					
-				}				
+				}	
+				
+				// UNABLE TO SELECT FIGHTER
 				else {
 					
 				}				
