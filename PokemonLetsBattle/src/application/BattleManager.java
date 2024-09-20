@@ -114,9 +114,6 @@ public class BattleManager {
 		
 		trainer[0] = new NPC(gp);
 		trainer[0].name = "ASH";
-		trainer[0].pokeParty.add(Pokemon.getPokemon(34));
-		trainer[0].pokeParty.add(Pokemon.getPokemon(35));
-		trainer[0].pokeParty.add(Pokemon.getPokemon(36));
 		trainer[0].pokeParty.add(Pokemon.getPokemon(37));
 		trainer[0].pokeParty.add(Pokemon.getPokemon(38));
 		trainer[0].pokeParty.add(Pokemon.getPokemon(39));
@@ -208,9 +205,6 @@ public class BattleManager {
 			else if (fightStage == fightStage_End) {
 				checkStatusDamage();								
 			}
-			else if (fightStage == fightStage_KO) {				
-				
-			}
 			else if (fightStage == fightStage_Over) {
 				gp.gameState = gp.playState;
 			}
@@ -225,61 +219,76 @@ public class BattleManager {
 		// WINNER NOT YET DECIDED
 		if (winner == -1) {
 			
+			// TRAINER 2 FORCE SWAP OUT
 			if (fighter[1] == null || !fighter[1].isAlive()) {		
-				
+												
 				fighter[1] = newFighter[1];
-				newFighter[1] = null;
-
+				
 				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nsent out " + fighter[1].getName() + "!");
-				gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30, 120);		
+				gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30, 120);	
+				
+				fightStage = fightStage_SwapOut;
 			}		
-			if (fighter[0] == null || !fighter[0].isAlive()) {	
+			// TRAINER 1 FORCE SWAP OUT
+			if ((fighter[0] == null || !fighter[0].isAlive()) ||
+					(newFighter[0] != null && newFighter[1] != null)) {	
 				
 				fighter[0] = newFighter[0];
-				newFighter[0] = null;
 				
 				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
 				gp.ui.setSoundFile(cry_SE, fighter[0].getName(), 30, 120);				
 								
 				fightStage = fightStage_SwapOut;
 			}	
-			else if (fighter[0].isAlive()) {
+			// TRAINER 1 SWAP OUT (SAME TRAINER 2 FIGHTER)
+			else if (newFighter[0] != null && newFighter[1] == null) {
 				
 				fighter[0] = newFighter[0];
-				newFighter[0] = null;
 				
 				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
 				gp.ui.setSoundFile(cry_SE, fighter[0].getName(), 30, 120);		
 				
 				fightStage = fightStage_Start;
-			}
+			}			
+
+			newFighter[0] = null;
+			newFighter[1] = null;
 			
 			setHP();	
 			
 			fighter_one_Y = fighter_one_startY;
 			fighter_two_Y = fighter_two_startY;			
+		}		
+		// TRAINER HAS WON
+		else {					
+			getWinningTrainer();
 		}
+	}
+	private void getWinningTrainer() {
 		
-		// TRAINER 1 WINNER
-		else if (winner == 0) {
-			newFighter[1] = cpuSelectNextFighter();
-			gp.ui.addBattleDialogue("Trainer " + trainer[1].name + " is about to\nsent out " + newFighter[1].getName() + "!");
+		if (winner == 0) {
 			
-			fightStage = fightStage_SwapOut;
+			// GET NEW FIGHTER
+			newFighter[1] = cpuSelectNextFighter();	
+			
+			// TRAINER 2 HAS MORE POKEMON
+			if (newFighter[1] != null) {
+				if (trainer[0].getAvailablePokemon() > 1) {
+					gp.ui.addBattleDialogue("Trainer " + trainer[1].name + " is about to\nsent out " + newFighter[1].getName() + "!");
+				}
+				fightStage = fightStage_SwapOut;	
+			}
+			// TRAINER 2 OUT OF POKEMON
+			else {
+				gp.ui.addBattleDialogue(trainer[1].name + " ran\nout of Pokemon!");
+				gp.ui.addBattleDialogue("Trainer " + trainer[0].name + "\nis victorious!");
+				gp.gameState = gp.playState;
+			}	
 		}
-		
-		// TRAINER 2 WINNER
 		else if (winner == 1) {
 			
-			boolean hasPokemon = false;
-			for (Pokemon p : trainer[0].pokeParty) {
-				if (p.isAlive()) {
-					hasPokemon = true;
-				}
-			}
-			
 			// TRAINER 1 HAS MORE POKEMON
-			if (hasPokemon) {				
+			if (trainer[0].hasPokemon()) {				
 				winner = -1;
 				fightStage = fightStage_Swap;
 				gp.gameState = gp.partyState;
@@ -287,9 +296,11 @@ public class BattleManager {
 			}
 			// TRAINER 1 OUT OF POKEMON
 			else {
-				
+				gp.ui.addBattleDialogue(trainer[0].name + " ran\nout of Pokemon!");
+				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nis victorious!");
+				gp.gameState = gp.playState;
 			}		
-		}		
+		}				
 	}
 	public boolean swapPokemon(int partySlot) {
 		
@@ -449,11 +460,14 @@ public class BattleManager {
 			gp.ui.battleSubState = gp.ui.battle_Options;	
 		}
 		// INITIATE SWAP OUT
-		else {			
-			winner = -1;
-						
+		else {								
 			fightStage = fightStage_Swap;
-			gp.ui.battleSubState = gp.ui.battle_Swap;
+			
+			if (trainer[0].getAvailablePokemon() > 1) {
+				gp.ui.battleSubState = gp.ui.battle_Swap;	
+			}
+			
+			winner = -1;
 		}		
 	}
 	
@@ -778,6 +792,8 @@ public class BattleManager {
 			}
 		}
 		else {			
+			move1 = null;
+			move2 = null;
 			fightStage = fightStage_End;				
 		}			
 	}	
@@ -870,7 +886,7 @@ public class BattleManager {
 			currentTurn = nextTurn;	
 			nextTurn = -1;
 		}			
-
+		
 		fightStage = fightStage_Move;
 	}		
 	private boolean hit(int atk, Move move, Move trgMove) {
@@ -963,7 +979,7 @@ public class BattleManager {
 				gp.ui.addBattleDialogue("A critical hit!");
 			}
 		
-			gp.ui.addBattleDialogue(fighter[trg].getName() + "\ntook " + damage + " damage!");	
+			gp.ui.addBattleDialogue(fighter[trg].getName() + " took\n" + damage + " damage!");	
 
 			absorbHP(atk, trg, move, damage);
 			getRecoil(atk, trg, move, damage);
@@ -1226,7 +1242,7 @@ public class BattleManager {
 	
 	// STATUS METHODS
 	private void checkStatusDamage() {
-				
+						
 		// STATUS CONDITIONS CHECKED		
 		if (nextTurn == 1) {	
 			
@@ -1244,17 +1260,17 @@ public class BattleManager {
 		else {		
 			nextTurn++;
 			
-			if (hasWinner()) {
+			if (hasWinningPokemon()) {
 				nextTurn = -1;
-				getWinner();	
+				getWinningPokemon();	
 			}
 			else {
 				if (fighter[nextTurn].isAlive()) {
 					getStatusDamage(nextTurn);
 				}	
-				if (hasWinner()) {
+				if (hasWinningPokemon()) {
 					nextTurn = -1;
-					getWinner();	
+					getWinningPokemon();	
 				}
 				else {
 					fightStage = fightStage_End;
@@ -1284,7 +1300,7 @@ public class BattleManager {
 	}
 	
 	// GET WINNER METHODS
-	private boolean hasWinner() {
+	private boolean hasWinningPokemon() {
 		
 		for (int i = 0; i <= 1; i++) {
 			if (fighter[i].getHP() <= 0) {
@@ -1315,7 +1331,7 @@ public class BattleManager {
 			return false;
 		}
 	}
-	public void getWinner() {
+	public void getWinningPokemon() {
 		
 		// TIE GAME
 		if (winner == 2) {
@@ -1382,7 +1398,7 @@ public class BattleManager {
 		g2.drawImage(current_arena, x, y, null);
 		g2.drawImage(trainer[0].backSprite, fighter_one_X + 30, fighter_one_Y + 40, null);		
 		
-		if (fighter_one_X >= fighter_one_endX || fighter_two_X <= fighter_two_endX) {
+		if (fighter_one_X > fighter_one_endX && fighter_two_X < fighter_two_endX) {
 			fighter_one_X -= 6;	
 			fighter_two_X += 6;	
 		}

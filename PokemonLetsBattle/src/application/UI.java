@@ -252,7 +252,7 @@ public class UI {
 					battleSubState = battle_Options;
 					fighterNum = 0;
 				}
-				else {							
+				else if (gp.btlManager.trainer[0].pokeParty.size() > fighterNum){							
 					partySubState = party_Main_Select;					
 				}	
 			}
@@ -300,6 +300,7 @@ public class UI {
 				if (gp.btlManager.swapPokemon(fighterNum)) {
 					
 					if (gp.btlManager.fighter[0].isAlive()) {
+						gp.btlManager.fighter[0] = gp.btlManager.newFighter[0];								
 						gp.btlManager.fightStage = gp.btlManager.fightStage_Swap;
 					}
 					
@@ -1229,11 +1230,11 @@ public class UI {
 			gp.keyH.aPressed = false;
 			
 			if (commandNum == 0) {		
-				gp.btlManager.fighter[0] = null;
 				gp.gameState = gp.partyState;
 				partySubState = party_Main;
 			}
 			else {
+				gp.btlManager.fightStage = gp.btlManager.fightStage_Swap;
 				battleSubState = battle_Dialogue;
 			}
 			
@@ -1251,13 +1252,13 @@ public class UI {
 		
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
-
+		
 		if (battleDialogue.size() > dialogueIndex && battleDialogue.get(dialogueIndex) != null) {
 
 			if (dialogueCounter >= textSpeed) {
 				
 				char characters[] = battleDialogue.get(dialogueIndex).toCharArray();
-							
+										
 				if (charIndex < characters.length) {					
 					String s = String.valueOf(characters[charIndex]);				
 					combinedText += s;
@@ -1285,13 +1286,12 @@ public class UI {
   			drawText(text, x, y, battle_white, Color.BLACK);
 			y += gp.tileSize;
 		} 	
-  		
+
   		dialogueTimer++;  		
   		if (seTimer.size() > 0) {
   			canSkip = false;
   			if (dialogueTimer == seTimer.get(0)) playBattleSE();
   		}
-  		
   		
   		if (canSkip) {
   			x += (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
@@ -1303,7 +1303,7 @@ public class UI {
   			}
   		}
   		else {
-  			if (dialogueTimer >= dialogueTimerMax) {    			
+  			if (dialogueTimer >= dialogueTimerMax) {  
   	  			advanceDialogue();  			
   	  		}
   		}
@@ -1316,6 +1316,7 @@ public class UI {
 		currentDialogue = "";
 		commandNum = 0;
 		dialogueTimer = 0;
+		dialogueTimerMax = 90;
 		dialogueIndex++;
 		if (seTimer.size() > 0) {
 			seTimer.remove(0);	

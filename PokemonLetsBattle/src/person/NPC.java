@@ -199,7 +199,6 @@ public class NPC {
 		}
 	}
 	
-	
 	// PATH FINDING
 	public void isOnPath(NPC target, int distance) {
 		if (getTileDistance(target) < distance) {
@@ -311,6 +310,33 @@ public class NPC {
 		int goalRow = (target.worldY + target.hitbox.y) / gp.tileSize;
 		return goalRow;
 	}
+	
+	public boolean hasPokemon() {
+		
+		boolean hasPokemon = false;	
+		
+		for (Pokemon p : pokeParty) {
+			if (p.isAlive()) {
+				hasPokemon = true;
+			}
+		}
+		
+		return hasPokemon;
+	}	
+	public int getAvailablePokemon() {
+		
+		int availablePokemon = 0;	
+		
+		for (Pokemon p : pokeParty) {
+			if (p.isAlive()) {
+				availablePokemon++;
+			}
+		}
+		
+		return availablePokemon;
+	}
+	
+	
 	
 	// MANAGE VALUES
 	public void manageValues() {
