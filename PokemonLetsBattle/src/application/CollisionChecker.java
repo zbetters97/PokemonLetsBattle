@@ -271,4 +271,40 @@ public class CollisionChecker {
 		return index;
 	}
 
+	// CONTACT PLAYER COLLISION
+	public boolean checkPlayer(NPC entity) {
+				
+		boolean contactPlayer = false;
+		
+		String direction = entity.direction;
+				
+		entity.hitbox.x = entity.worldX + entity.hitbox.x;
+		entity.hitbox.y = entity.worldY + entity.hitbox.y;
+				
+		gp.player.hitbox.x = gp.player.worldX + gp.player.hitbox.x;
+		gp.player.hitbox.y = gp.player.worldY + gp.player.hitbox.y;
+			
+		switch (direction) {
+			case "up": entity.hitbox.y -= entity.speed; break;		
+			case "down": entity.hitbox.y += entity.speed; break;
+			case "left": entity.hitbox.x -= entity.speed; break;
+			case "right": entity.hitbox.x += entity.speed; break;	
+			default: entity.collision = true; return false;
+		}
+		
+		if (entity.hitbox.intersects(gp.player.hitbox)) {																			
+			entity.collisionOn = true;
+			contactPlayer = true;
+		}
+		
+		// reset entity solid area
+		entity.hitbox.x = entity.hitboxDefaultX;
+		entity.hitbox.y = entity.hitboxDefaultY;
+		
+		// reset object solid area
+		gp.player.hitbox.x = gp.player.hitboxDefaultX;
+		gp.player.hitbox.y = gp.player.hitboxDefaultY;
+		
+		return contactPlayer;
+	}
 }

@@ -135,7 +135,7 @@ public class BattleManager {
 		battleMode = currentBattle;
 		fightStage = fightStage_Encounter;
 		
-//		gp.stopMusic();		
+		gp.stopMusic();		
 		getBattleMode();
 	}
 	private void getBattleMode() {

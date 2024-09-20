@@ -14,6 +14,7 @@ import java.util.Comparator;
 
 import javax.swing.JPanel;
 
+import environment.EnvironmentManager;
 import person.NPC;
 import person.Player;
 import tile.TileManager;
@@ -105,6 +106,7 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	public TileManager tileM = new TileManager(this);
 	public AssetSetter aSetter = new AssetSetter(this);
+	public EnvironmentManager eManager = new EnvironmentManager(this);
 	public CollisionChecker cChecker = new CollisionChecker(this);	
 	public BattleManager btlManager = new BattleManager(this);	
 	
@@ -128,9 +130,10 @@ public class GamePanel extends JPanel implements Runnable {
 		currentArea = outside;
 		currentLocation = town;		
 				
-//		setupMusic();
+		setupMusic();
 		
 		tileM.loadMap();
+		eManager.setup();
 		
 		player.setDefaultValues();	
 		aSetter.setNPC();
@@ -225,7 +228,8 @@ public class GamePanel extends JPanel implements Runnable {
 	private void update() {
 		
 		// GAME PLAYING
-		if (gameState == playState) {			
+		if (gameState == playState) {
+			eManager.update();
 			player.update();	
 			updateNPC();
 		}

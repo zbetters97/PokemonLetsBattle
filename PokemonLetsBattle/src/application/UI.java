@@ -144,23 +144,51 @@ public class UI {
 		}
 	}
 	private void drawDebug() {
+		
+		int x = 10; 
+		int y = gp.tileSize * 6; 
+		int lineHeight = 20;
+		
+		String timeOfDay = "";
+		switch (gp.eManager.lighting.dayState) {
+			case 0: timeOfDay = "DAY"; break;
+			case 1: timeOfDay = "DUSK"; break;
+			case 2: timeOfDay = "NIGHT"; break;
+			case 3: timeOfDay = "DAWN"; break;
+		}
+		
+		g2.setColor(Color.WHITE);
+		g2.setFont(new Font("Arial", Font.BOLD, 50));
+		g2.drawString(timeOfDay, x, y - gp.tileSize);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20f));						
+		
+		g2.drawString("WorldX: " + gp.player.worldX, x , y); 
+		y += lineHeight;
+		g2.drawString("WorldY: " + gp.player.worldY, x , y); 
+		y += lineHeight;
+		g2.drawString("Column: " + (gp.player.worldX + gp.player.hitbox.x) / gp.tileSize, x , y);
+		y += lineHeight;
+		g2.drawString("Row: " + (gp.player.worldY + gp.player.hitbox.y) / gp.tileSize, x , y);
+		y += lineHeight;
+		g2.drawString("Time Counter: " + gp.eManager.lighting.dayCounter, x, y);
+		
 		g2.setColor(Color.RED);
 		g2.drawRect(gp.player.screenX + gp.player.hitbox.x, gp.player.screenY + gp.player.hitbox.y, 
 				gp.player.hitbox.width, gp.player.hitbox.height);
-	}
+		
+		g2.setColor(Color.WHITE);
+		g2.setFont(PK_DS);
+	}	
 	
 	// DIALOGUE	
 	public void drawDialogueScreen() {
 						
-		int x = gp.tileSize * 2;
-		int y = (gp.screenWidth / 2 ) - gp.tileSize;
-		int width = gp.screenWidth - (gp.tileSize * 4);
-		int height = gp.tileSize * 4;		
-		drawSubWindow(x, y, width, height);
-		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 43F));
-		x += gp.tileSize;
-		y += gp.tileSize;	
+		int x = (int) (gp.tileSize * 2);
+		int y = gp.tileSize * 9;
+		int width =(int) (gp.tileSize * 12);
+		int height = (int) (gp.tileSize * 2.5);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, party_green);
 		
 		// NPC HAS SOMETHING TO SAY
 		if (npc.dialogues[npc.dialogueSet][npc.dialogueIndex] != null) {	
@@ -204,24 +232,24 @@ public class UI {
 				// playDialogueFinishSE();				
 				gp.gameState = gp.playState;
 			}	
-		}		
-		
-  		for (String line : currentDialogue.split("\n")) { 
-			g2.drawString(line, x, y);	
-			y += 40;
+		}				
+
+		x += gp.tileSize * 0.8;
+		y += gp.tileSize * 1.1;			
+		String lastLine = "";
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
+  		for (String line : currentDialogue.split("\n")) {   			
+  			drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
+  			lastLine = line;
+  			y += 40;
 		} 
   		
   		// DRAW ICON BELOW DIALOGUE BOX
   		int nextIndex = npc.dialogueIndex + 1;
-  		if (canSkip && npc.dialogues[npc.dialogueSet][nextIndex] != null) {  		
-  			x = (gp.screenWidth / 2) - 24;
-			y = gp.tileSize * 10;
+  		if (canSkip && npc.dialogues[npc.dialogueSet][nextIndex] != null) {  
+ 			x += (int)g2.getFontMetrics().getStringBounds(lastLine, g2).getWidth() + 3;
+ 			y -= gp.tileSize * 1.75;
 	  		g2.drawImage(dialogue_next, x, y + 25, null);
-  		}
-  		else if (canSkip && npc.dialogues[npc.dialogueSet][nextIndex] == null) {  		
-			x = (gp.screenWidth / 2) - 24;
-			y = gp.tileSize * 10;
-	  		// g2.drawImage(dialogue_finish, x, y + 25, null);
   		}
   		
   		skipDialogue();
@@ -1490,21 +1518,8 @@ public class UI {
 	public void addBattleDialogue(String text) {
 		battleDialogue.add(text);
 	}
-	
-	// SUB WINDOW
-	private void drawSubWindow(int x, int y, int width, int height) {
-		
-		// BLACK COLOR (RGB, Transparency)
-		Color c = new Color(0,0,0,220);
-		g2.setColor(c);
-		g2.fillRoundRect(x, y, width, height, 25, 25); // 25px round corners
-		
-		// WHITE COLOR (RGB)
-		c = new Color(255, 255, 255);
-		g2.setColor(c);
-		g2.setStroke(new BasicStroke(5));
-		g2.drawRoundRect(x+5, y+5, width-10, height-10, 15, 15);
-	}	
+		// SUB WINDOW
+
 	private void drawSubWindow(int x, int y, int width, int height, int curve, int borderStroke, 
 			Color fillCollor, Color borderColor) {
 		

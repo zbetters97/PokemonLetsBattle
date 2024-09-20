@@ -1,5 +1,6 @@
 package application;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 public class Driver {
@@ -14,7 +15,7 @@ public class Driver {
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);
 		window.setTitle("Pokemon: Let's Battle!");	
-//		new Driver().setIcon();				
+		new Driver().setIcon();				
 		
 		GamePanel gamePanel = new GamePanel();
 		window.add(gamePanel); 
@@ -33,5 +34,10 @@ public class Driver {
 		// START
 		gamePanel.setupGame();
 		gamePanel.startGameThread();
+	}
+	
+	private void setIcon() {
+		ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource("misc/pokemon.png")); 
+		window.setIconImage(icon.getImage());
 	}
 }

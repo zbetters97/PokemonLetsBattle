@@ -69,7 +69,7 @@ public enum Moves {
 			"The foe is punched with a\nfiery fist.\nIt may leave the target\nwith a burn."),
 	FLAMETHROWER ("Flamethrower", MoveType.SPECIAL, Type.FIRE, Status.BURN, 0.10, 15, 135, 100, 
 			"The foe is scorched with\nan intense blast of fire.\nThe target may also be\nleft with a burn."),
-	FLAREBLITZ ("Flare Blitz", MoveType.PHYSICAL, Type.FIRE, Status.BURN, 0.10, 15, 180, 100, 
+	FLAREBLITZ ("Flare Blitz", MoveType.PHYSICAL, Type.FIRE, Status.BURN, 0.10, 15, 120, 100, 
 			"The foe is scorched with\nan intense blast of fire.\nThe target may also be\nleft with a burn."),
 	FLASHCANNON ("Flash Cannon", MoveType.SPECIAL, Type.STEEL, 10, 80, 100, 
 			"The user gathers all its light energy and releases it at once."),

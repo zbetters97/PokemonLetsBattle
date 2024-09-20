@@ -8,7 +8,6 @@ import pokemon.Pokemon;
 public class NPC_Rival extends NPC {
 	
 	public static final String npcName = "May";
-	int itemIndex = 0;
 	
 	public NPC_Rival(GamePanel gp, int worldX, int worldY) {		
 		super(gp);	
@@ -33,7 +32,7 @@ public class NPC_Rival extends NPC {
 		
 		setDialogue();
 	}
-	// PLAYER IMAGES
+	
 	public void getImage() {			
 		up1 = setup("/npc/rival_up_1"); 
 		up2 = setup("/npc/rival_up_2"); 
@@ -57,21 +56,41 @@ public class NPC_Rival extends NPC {
 		pokeParty.add(Pokemon.getPokemon(5));
 	}
 	public void setDialogue() {
-		dialogues[0][0] = "Hey, you looked at me funny!";
+		dialogues[0][0] = "Hey, you!\nYou looked at me funny!";
 		dialogues[0][1] = "Let's BATTLE!!!";
 	}
 	
 	public void speak() {	
 		
 		gp.ui.npc = this;
-		dialogueSet = 0;
-		
+		dialogueSet = 0;		
 		
 		direction = getOppositeDirection(gp.player.direction);
 		startDialogue(this, dialogueSet);
 	}
 	
-	public void setAction() {		
-		getDirection(60);		
+	public void setAction() {			
+		getDirection(60);	
 	}
+	
+	public void cycleSprites() {
+		
+		spriteCounter++;
+		if (spriteCounter > animationSpeed) {			
+										
+			// CYLCE WALKING/SWIMMING SPRITES
+			if (spriteNum == 1 && spriteCycle == 0) {
+				spriteNum = 2;	
+				spriteCycle = 1;
+			}
+			else if (spriteNum == 1 && spriteCycle == 1) {
+				spriteNum = 3;
+				spriteCycle = 0;
+			}
+			else if (spriteNum == 2) spriteNum = 1;
+			else if (spriteNum == 3) spriteNum = 1;		
+							
+			spriteCounter = 0;
+		}					
+	}	
 }

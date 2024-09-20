@@ -155,16 +155,22 @@ public class NPC {
 				case "left": worldX -= speed; break;
 				case "right": worldX += speed; break;
 			}
-		}	
-		
-		cycleSprites();		
+			
+			cycleSprites();
+		}			
+		else {
+			spriteNum = 1;
+		}
 	}	
 	
 	// COLLISION CHECKER
 	protected void checkCollision() {	
-				
+		
 		collisionOn = false;
-		gp.cChecker.checkTile(this);		
+		
+		gp.cChecker.checkTile(this);	
+		gp.cChecker.checkEntity(this, gp.npc);	
+		gp.cChecker.checkPlayer(this);				
 	}
 
 	public void walking() {
