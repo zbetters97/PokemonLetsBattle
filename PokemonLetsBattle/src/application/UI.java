@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import moves.Move;
+import person.NPC;
 import pokemon.Pokemon;
 import properties.Type;
 
@@ -40,8 +41,9 @@ public class UI {
 	private Color party_red = new Color(245,126,63);
 	private Color party_gray = new Color(136,152,168);
 	private Color party_faint = new Color(181,87,71);
-	
+		
 	// DIALOGUE HANDLER	
+	public NPC npc;
 	public String currentDialogue = "";
 	private ArrayList<String> battleDialogue;
 	public String combinedText = "";
@@ -49,6 +51,7 @@ public class UI {
 	private int dialogueIndex = 0;
 	public int charIndex = 0;	
 	public int textSpeed = 2;
+	public int battleTextSpeed = 1;
 	private int dialogueTimer = 0;
 	public int dialogueTimerMax = 90;
 	private boolean canSkip = false;
@@ -119,7 +122,11 @@ public class UI {
 		
 		if (gp.gameState == gp.playState) {
 			drawHUD();
-		}	
+		}
+		else if (gp.gameState == gp.dialogueState) {
+			drawHUD();
+			drawDialogueScreen();
+		}
 		else if (gp.gameState == gp.battleState) {
 			drawBattleScreen();
 		}
@@ -140,6 +147,103 @@ public class UI {
 		g2.setColor(Color.RED);
 		g2.drawRect(gp.player.screenX + gp.player.hitbox.x, gp.player.screenY + gp.player.hitbox.y, 
 				gp.player.hitbox.width, gp.player.hitbox.height);
+	}
+	
+	// DIALOGUE	
+	public void drawDialogueScreen() {
+						
+		int x = gp.tileSize * 2;
+		int y = (gp.screenWidth / 2 ) - gp.tileSize;
+		int width = gp.screenWidth - (gp.tileSize * 4);
+		int height = gp.tileSize * 4;		
+		drawSubWindow(x, y, width, height);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 43F));
+		x += gp.tileSize;
+		y += gp.tileSize;	
+		
+		// NPC HAS SOMETHING TO SAY
+		if (npc.dialogues[npc.dialogueSet][npc.dialogueIndex] != null) {	
+			
+			if (dialogueCounter == textSpeed) {
+				char characters[] = npc.dialogues[npc.dialogueSet][npc.dialogueIndex].toCharArray();
+							
+				if (charIndex < characters.length) {					
+					// playDialogueSE();
+					
+					String s = String.valueOf(characters[charIndex]);				
+					combinedText += s;
+					currentDialogue = combinedText;					
+					charIndex++;					
+				}
+				if (charIndex >= characters.length) {
+					canSkip = true;
+				}
+	
+				dialogueCounter = 0;
+			}
+			else
+				dialogueCounter++;
+			
+		}
+		// NPC HAS NO MORE DIALOGUE
+		else {			
+			npc.dialogueIndex = 0;
+			
+			// PLAYER HAS DIALOGUE RESPONSE
+			if (npc.hasBattle) {
+				gp.btlManager.trainer[1] = npc;
+				gp.btlManager.setBattle(gp.btlManager.trainerBattle);
+				
+				skipDialogue();
+				
+				battleSubState = battle_Encounter;
+				gp.gameState = gp.battleState;
+			}
+			else {
+				// playDialogueFinishSE();				
+				gp.gameState = gp.playState;
+			}	
+		}		
+		
+  		for (String line : currentDialogue.split("\n")) { 
+			g2.drawString(line, x, y);	
+			y += 40;
+		} 
+  		
+  		// DRAW ICON BELOW DIALOGUE BOX
+  		int nextIndex = npc.dialogueIndex + 1;
+  		if (canSkip && npc.dialogues[npc.dialogueSet][nextIndex] != null) {  		
+  			x = (gp.screenWidth / 2) - 24;
+			y = gp.tileSize * 10;
+	  		g2.drawImage(dialogue_next, x, y + 25, null);
+  		}
+  		else if (canSkip && npc.dialogues[npc.dialogueSet][nextIndex] == null) {  		
+			x = (gp.screenWidth / 2) - 24;
+			y = gp.tileSize * 10;
+	  		// g2.drawImage(dialogue_finish, x, y + 25, null);
+  		}
+  		
+  		skipDialogue();
+	}
+	private void skipDialogue() {		
+		if (gp.keyH.aPressed && canSkip) {
+			canSkip = false;
+			charIndex = 0;
+			combinedText = "";
+			currentDialogue = "";
+			
+			npc.dialogueIndex++;
+			gp.keyH.aPressed = false;			
+		}
+	}
+	public void resetDialogue() {	
+		dialogueCounter = 0;
+		charIndex = 0;		
+		combinedText = "";
+		currentDialogue = "";
+		npc = null;		
+		canSkip = false;		
 	}
 	
 	// PARTY SCREEN
@@ -663,7 +767,7 @@ public class UI {
 		g2.drawString("" + fighter.getSex(), x, y);
 	
 		x = (int) (gp.tileSize * 0.7) - 10;
-		y += gp.tileSize * 0.9;
+		y += gp.tileSize * 0.95;
 		text = "Lv" + fighter.getLevel();
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));	
 		g2.setColor(Color.BLACK);
@@ -1091,14 +1195,15 @@ public class UI {
 			gp.keyH.aPressed = false;
 			
 			if (commandNum == 0) {
-				advanceDialogue();	
+				skipBattleDialogue();	
 				battleSubState = battle_Moves;		
 			}
 			else if (commandNum == 2) {
-				advanceDialogue();
+				skipBattleDialogue();
 				gp.gameState = gp.partyState;
 				partySubState = party_Main;				
 			}
+			commandNum = 0;	
 		}
 	}
 	private void drawBattleMovesetWindow() {
@@ -1149,12 +1254,14 @@ public class UI {
 		
 		if (gp.keyH.aPressed) {		
 			gp.btlManager.setPlayerMove(commandNum);
-			advanceDialogue();		
+			skipBattleDialogue();		
 			battleSubState = battle_Dialogue;	
+			commandNum = 0;	
 		}
 		else if (gp.keyH.bPressed) {			
-			advanceDialogue();
-			battleSubState = battle_Options;			
+			skipBattleDialogue();
+			battleSubState = battle_Options;	
+			commandNum = 0;	
 		}
 	}	
 	private void drawBattleMoveDescriptionWindow() {
@@ -1245,7 +1352,8 @@ public class UI {
 				battleSubState = battle_Dialogue;
 			}
 			
-			advanceDialogue();	
+			commandNum = 0;	
+			skipBattleDialogue();	
 		}
 	}
 	
@@ -1263,7 +1371,7 @@ public class UI {
 		// DIALOGUE TO PRINT
 		if (battleDialogue.size() > dialogueIndex && battleDialogue.get(dialogueIndex) != null) {
 
-			if (dialogueCounter >= textSpeed) {
+			if (dialogueCounter >= battleTextSpeed) {
 				
 				char characters[] = battleDialogue.get(dialogueIndex).toCharArray();
 										
@@ -1317,15 +1425,15 @@ public class UI {
 	
 	  			if (gp.keyH.aPressed) {		  				
 	  				gp.keyH.playCursorSE();
-	  				advanceDialogue();		
+	  				skipBattleDialogue();		
 	  			}
 			}
   		}
 		else if (dialogueTimer >= dialogueTimerMax) {  
-	  		advanceDialogue();  			
+			skipBattleDialogue();  			
 	  	}
 	}		
-	public void advanceDialogue() {
+	public void skipBattleDialogue() {
 		gp.keyH.aPressed = false;		
 		
 		dialogueIndex++;
@@ -1383,6 +1491,20 @@ public class UI {
 		battleDialogue.add(text);
 	}
 	
+	// SUB WINDOW
+	private void drawSubWindow(int x, int y, int width, int height) {
+		
+		// BLACK COLOR (RGB, Transparency)
+		Color c = new Color(0,0,0,220);
+		g2.setColor(c);
+		g2.fillRoundRect(x, y, width, height, 25, 25); // 25px round corners
+		
+		// WHITE COLOR (RGB)
+		c = new Color(255, 255, 255);
+		g2.setColor(c);
+		g2.setStroke(new BasicStroke(5));
+		g2.drawRoundRect(x+5, y+5, width-10, height-10, 15, 15);
+	}	
 	private void drawSubWindow(int x, int y, int width, int height, int curve, int borderStroke, 
 			Color fillCollor, Color borderColor) {
 		
@@ -1393,6 +1515,7 @@ public class UI {
 		g2.setStroke(new BasicStroke(borderStroke));
 		g2.drawRoundRect(x, y, width, height, curve, curve);		
 	}
+	
 	public int getXforRightAlignText(String text, int tailX) {
 		int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
 		int x = tailX - length;

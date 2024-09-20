@@ -8,9 +8,13 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.JPanel;
 
+import person.NPC;
 import person.Player;
 import tile.TileManager;
 
@@ -100,9 +104,13 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int gym = 2;
 	
 	public TileManager tileM = new TileManager(this);
+	public AssetSetter aSetter = new AssetSetter(this);
 	public CollisionChecker cChecker = new CollisionChecker(this);	
-	public Player player = new Player(this);	
 	public BattleManager btlManager = new BattleManager(this);	
+	
+	public ArrayList<NPC> npcList = new ArrayList<>();
+	public Player player = new Player(this);	
+	public NPC npc[][] = new NPC[maxMap][10]; 
 	
 /** CONSTRUCTOR **/	
 	public GamePanel() {
@@ -125,6 +133,7 @@ public class GamePanel extends JPanel implements Runnable {
 		tileM.loadMap();
 		
 		player.setDefaultValues();	
+		aSetter.setNPC();
 		
 		// TEMP GAME WINDOW (before drawing to window)
 		tempScreen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
@@ -132,10 +141,12 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		if (fullScreenOn) setFullScreen();
 		
-		btlManager.setBattle(btlManager.trainerBattle);
+		gameState = playState;
 		
-		ui.battleSubState = ui.battle_Encounter;
-		gameState = battleState;
+//		btlManager.setBattle(btlManager.trainerBattle);
+				
+//		ui.battleSubState = ui.battle_Encounter;
+//		gameState = battleState;
 		
 //		ui.partySubState = ui.party_Main;
 //		ui.partySubState = ui.party_Stats;
@@ -216,6 +227,7 @@ public class GamePanel extends JPanel implements Runnable {
 		// GAME PLAYING
 		if (gameState == playState) {			
 			player.update();	
+			updateNPC();
 		}
 		// GAME PAUSED
 		else if (gameState == pauseState) { 
@@ -226,6 +238,13 @@ public class GamePanel extends JPanel implements Runnable {
 			btlManager.update();
 		}
 	}
+	private void updateNPC() {
+		for (int i = 0; i < npc[1].length; i++) {
+			if (npc[currentMap][i] != null) {
+				npc[currentMap][i].update();
+			}				
+		}
+	}	
 	
 	private void drawToTempScreen() {
 		
@@ -234,16 +253,39 @@ public class GamePanel extends JPanel implements Runnable {
 			ui.draw(g2);
 		}		
 		// PLAY STATE
-		else if (gameState == playState) {	
+		else if (gameState == playState || gameState == dialogueState) {	
 			
 			// DRAW TILES
 			tileM.draw(g2);	
 									
 			// DRAW PLAYER
-			player.draw(g2);							
+			player.draw(g2);
 			
 			// DRAW UI
 			ui.draw(g2);	
+						
+			// ALWAYS DRAW DIVING PLAYER FIRST
+			npcList.add(player);						
+			
+			// POPULATE ENTITY LIST
+			for (NPC n : npc[currentMap]) { if (n != null) npcList.add(n); }						
+			
+			// SORT DRAW ORDER BY Y COORD
+			Collections.sort(npcList, new Comparator<NPC>() {
+				public int compare(NPC e1, NPC e2) {					
+					int entityTop = Integer.compare(e1.worldY, e2.worldY);					
+					return entityTop;
+				}
+			});
+			
+			// DRAW ENTITIES
+			for (NPC e : npcList) { e.draw(g2); }
+									
+			// EMPTY ENTITY LIST
+			npcList.clear();			
+			
+			// DRAW UI
+			ui.draw(g2);			
 		}		
 		// BATTLE STATE
 		else if (gameState == battleState) {

@@ -57,7 +57,9 @@ public class Player extends NPC {
 	
 	// DEFAULT VALUES
 	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon(0));
+		pokeParty.add(Pokemon.getPokemon(37));
+		pokeParty.add(Pokemon.getPokemon(38));
+		pokeParty.add(Pokemon.getPokemon(39));
 	}
 	public void setDefaultValues() {
 					
@@ -114,8 +116,8 @@ public class Player extends NPC {
 		right2 = setup("/player/boy_right_2");
 		right3 = setup("/player/boy_right_3");		
 		
-		frontSprite = setup("/player/boy_battle_front");
-		backSprite = setup("/player/boy_battle_back");
+		frontSprite = setup("/player/boy_battle_front", gp.tileSize * 4, gp.tileSize * 4);
+		backSprite = setup("/player/boy_battle_back", gp.tileSize * 4, gp.tileSize * 4);
 	}	
 	public void getRunImage() {			
 		runUp1 = setup("/player/boy_run_up_1"); 
@@ -145,6 +147,11 @@ public class Player extends NPC {
 		}
 		else {
 			spriteNum = 1;
+		}
+		
+		if (gp.keyH.aPressed) {
+			int npcIndex = gp.cChecker.checkNPC();
+			if (npcIndex != -1) interactNPC(npcIndex);
 		}
 				
 		manageValues();	
@@ -246,9 +253,16 @@ public class Player extends NPC {
 		if (gp.keyH.debug) return;
 		
 		// CHECK TILE COLLISION
-		gp.cChecker.checkTile(this);		
-	}
+		gp.cChecker.checkTile(this);	
+		gp.cChecker.checkEntity(this, gp.npc);
+	}	
 	
+	public void interactNPC(int i) {		
+		if (i != -1) {				
+			resetValues();
+			gp.npc[gp.currentMap][i].speak();					
+		}	
+	}	
 
 	// CHECKERS
 	public void manageValues() {

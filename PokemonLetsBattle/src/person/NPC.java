@@ -35,6 +35,7 @@ public class NPC {
 	public boolean collision = true;
 	public boolean collisionOn = false;		
 	public boolean onGround = true;	
+	public boolean hasBattle = false;
 	
 	// SPRITE HANDLING
 	public int actionLockCounter;
@@ -95,6 +96,7 @@ public class NPC {
 		getImage();
 	}
 	
+	/*
 	public void getImage() {			
 		up1 = setup("/player/boy_up_1"); 
 		up2 = setup("/player/boy_up_2"); 
@@ -112,9 +114,10 @@ public class NPC {
 		frontSprite = setup("/player/boy_battle_front", gp.tileSize * 4, gp.tileSize * 4);
 		backSprite = setup("/player/boy_battle_back", gp.tileSize * 4, gp.tileSize * 4);
 	}	
+	*/
 	
 	// CHILD ONLY		
-//	public void getImage() { }
+	public void getImage() { }
 	public void assignParty() { }
 	
 	public void setAction() { }	
@@ -197,6 +200,29 @@ public class NPC {
 			
 			spriteCounter = 0;
 		}
+	}
+	
+	protected String getOppositeDirection(String direction) {
+		
+		String oppositeDirection = "";
+		
+		switch(direction) {
+			case "up": 
+			case "upleft": 
+			case "upright": oppositeDirection = "down"; break;
+			case "down": 
+			case "downleft": 
+			case "downright": oppositeDirection = "up"; break;
+			case "left": oppositeDirection = "right"; break;
+			case "right": oppositeDirection = "left"; break;
+		}
+		
+		return oppositeDirection;
+	}
+	public void startDialogue(NPC entity, int setNum) {
+		dialogueSet = setNum;
+		gp.ui.npc = entity;		
+		gp.gameState = gp.dialogueState;
 	}
 	
 	// PATH FINDING

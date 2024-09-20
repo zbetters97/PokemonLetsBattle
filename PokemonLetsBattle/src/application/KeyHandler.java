@@ -30,6 +30,9 @@ public class KeyHandler implements KeyListener {
 		if (gp.gameState == gp.playState) {
 			playState(code);
 		}
+		else if (gp.gameState == gp.dialogueState) {
+			dialogueState(code);
+		}	
 		else if (gp.gameState == gp.battleState) {
 			battleState(code);
 		}
@@ -59,7 +62,10 @@ public class KeyHandler implements KeyListener {
 		
 		if (code == gp.btn_DEBUG) { if (debug) debug = false; else debug = true; }
 	}
-	
+	// DIALOGUE
+	private void dialogueState(int code) { 
+		if (code == gp.btn_A && lock) {	aPressed = true; lock = false; }
+	}	
 	// BATTLE
 	private void battleState(int code) { 
 		
@@ -177,7 +183,6 @@ public class KeyHandler implements KeyListener {
 			lock = false; 
 		}	
 	}
-	
 	// PARTY
 	private void partyState(int code) { 
 		

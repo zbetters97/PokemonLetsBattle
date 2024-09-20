@@ -84,7 +84,7 @@ public class ConfigManager {
 			gp.se.volumeScale = 3;
 			
 			// TEXT SPEED
-			gp.ui.textSpeed = 1;
+			gp.ui.textSpeed = 2;
 		}
 	}
 }

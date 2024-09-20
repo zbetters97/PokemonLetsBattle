@@ -80,6 +80,7 @@ public enum Pokemon {
 	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg;
 	private Status status;
 	private boolean isAlive;
+	public boolean isHit = false;
 	
 	private int statusCounter, statusLimit;
 	/** END INITIALIZE VALUES **/

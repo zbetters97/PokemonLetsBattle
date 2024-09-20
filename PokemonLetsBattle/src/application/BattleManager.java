@@ -18,7 +18,6 @@ import moves.Moves;
 import person.NPC;
 import moves.Move.MoveType;
 import pokemon.Pokemon;
-import properties.Status;
 import properties.Type;
 
 public class BattleManager {
@@ -31,6 +30,7 @@ public class BattleManager {
 	public Move move1, move2;
 	public int winner = -1;
 	public int loser = -1;
+	private int hitCounter = -1;
 	private BufferedImage current_arena;
 		
 	// TURN VALUES
@@ -90,7 +90,7 @@ public class BattleManager {
 		
 		fighter_one_startX = gp.tileSize * 14;
 		fighter_two_startX = 0 - gp.tileSize * 3;
-		fighter_one_startY = (int) (gp.tileSize * 3.5);
+		fighter_one_startY = (int) (gp.tileSize * 3.8);
 		fighter_two_startY = 0;
 		
 		fighter_one_X = fighter_one_startX;
@@ -112,19 +112,25 @@ public class BattleManager {
 	// SETUP METHODS
 	public void setBattle(int currentBattle) {	
 		
+		/*
 		trainer[0] = new NPC(gp);
 		trainer[0].name = "ASH";
 		trainer[0].pokeParty.add(Pokemon.getPokemon(37));
 		trainer[0].pokeParty.add(Pokemon.getPokemon(38));
 		trainer[0].pokeParty.add(Pokemon.getPokemon(39));
 		
+		*/
+		
+		trainer[0] = gp.player;
 		newFighter[0] = trainer[0].pokeParty.get(0);
 		
+		/*
 		trainer[1] = new NPC(gp);
 		trainer[1].name = "RED";
 		trainer[1].pokeParty.add(Pokemon.getPokemon(3));
 		trainer[1].pokeParty.add(Pokemon.getPokemon(4));
 		trainer[1].pokeParty.add(Pokemon.getPokemon(5));
+		*/
 		
 		battleMode = currentBattle;
 		fightStage = fightStage_Encounter;
@@ -275,7 +281,7 @@ public class BattleManager {
 			// TRAINER 2 HAS MORE POKEMON
 			if (newFighter[1] != null) {
 				if (trainer[0].getAvailablePokemon() > 1) {
-					gp.ui.addBattleDialogue("Trainer " + trainer[1].name + " is about to\nsent out " + newFighter[1].getName() + "!");
+					gp.ui.addBattleDialogue("Trainer " + trainer[1].name + " is about\nto sent out " + newFighter[1].getName() + "!");
 				}
 				fightStage = fightStage_SwapOut;	
 			}
@@ -982,7 +988,8 @@ public class BattleManager {
 			}
 		
 			gp.ui.addBattleDialogue(fighter[trg].getName() + " took\n" + damage + " damage!");	
-
+			fighter[trg].isHit = true;			
+			
 			absorbHP(atk, trg, move, damage);
 			getRecoil(atk, trg, move, damage);
 			dealDamage(atk, trg, move, damage);
@@ -1389,10 +1396,10 @@ public class BattleManager {
 		g2.drawImage(current_arena, x, y, null);	
 		
 		if (battleMode == wildBattle) {
-			g2.drawImage(fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
+			g2.drawImage(fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y + 20, null);
 		}
 		else if (battleMode == trainerBattle) {
-			g2.drawImage(trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y + 20, null);
+			g2.drawImage(trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y, null);
 		}
 		
 		x = fighter_one_X - gp.tileSize;
@@ -1412,11 +1419,25 @@ public class BattleManager {
 		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
 		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
 		
-		if (fighter[0] != null) {
-			g2.drawImage(fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);
+		if (fighter[0] != null) {			
+			if (fighter[0].isHit) animateHit(0, g2);						
+			g2.drawImage(fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);			
+			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 		}
 		if (fighter[1] != null) {
-			g2.drawImage(fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
+			if (fighter[1].isHit) animateHit(1, g2);				
+			g2.drawImage(fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);			
+			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+		}				
+	}
+	private void animateHit(int num, Graphics2D g2) {
+		hitCounter++;
+		if (hitCounter > 30) {
+			fighter[num].isHit = false;
+			hitCounter = -1;
+		}
+		else if (hitCounter % 5 == 0) {
+			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
 		}
 	}
 	private void animateFighterDefeat() {		
@@ -1437,6 +1458,7 @@ public class BattleManager {
 			}
 		}		
 	}
+		
 	
 	// MISC
 	private BufferedImage setup(String imagePath, int width, int height) {
