@@ -67,13 +67,14 @@ public enum Pokemon {
 	/** END INITIALIZE ENUMS **/
 		
 	/** INITIALIZE VALUES**/
-	private BufferedImage frontSprite, backSprite, menuSprite;
-	private String name;
-	private int index;
+	private final BufferedImage frontSprite, backSprite, menuSprite;
+	private final String name;
+	private String nickname = "";
+	private final int index;
 	private char sex;
-	private Type type;
+	private final Type type;
 	private Nature nature;
-	private List<Type> types;
+	private final List<Type> types;
 	private int level, bhp, hp, evLevel, xp, bxp, ev, iv;
 	private double speed, attack, defense, spAttack, spDefense, accuracy;	
 	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg;
@@ -185,121 +186,139 @@ public enum Pokemon {
 	}
 	/** END CONSTRUCTORS **/
 	
-	/** MAP MOVES POKEMON METHOD **/
-	private static Pokemon mapMoves(Pokemon pokemon) {
-		
-		// map of pokemon and corresponding move set
-		Map<Pokemon, List<Move>> pokeMap = new HashMap<>();
-		
-		// set default moves for each pokemon
-		pokeMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
-        pokeMap.put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
+
+	/** POKEMON MOVES STATIC MAP **/
+	private static final Map<Pokemon, List<Move>> moveMap;
+	static {
+		moveMap = new HashMap<>();
+		moveMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
+        moveMap.put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
         		new Move(Moves.TACKLE)));
-		pokeMap.put(VENUSAUR, Arrays.asList(new Move(Moves.PETALBLIZZARD), new Move(Moves.SOLARBEAM, 2), new Move(Moves.TAKEDOWN), 
+		moveMap.put(VENUSAUR, Arrays.asList(new Move(Moves.PETALBLIZZARD), new Move(Moves.SOLARBEAM, 2), new Move(Moves.TAKEDOWN), 
 				new Move(Moves.DOUBLEEDGE)));
 		
-        pokeMap.put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
-		pokeMap.put(CHARMELEON, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.EMBER), new Move(Moves.SLASH), 
+        moveMap.put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
+		moveMap.put(CHARMELEON, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.EMBER), new Move(Moves.SLASH), 
 				new Move(Moves.GROWL)));
-        pokeMap.put(CHARIZARD, Arrays.asList(new Move(Moves.FLAMETHROWER), new Move(Moves.FLAREBLITZ),new Move(Moves.DRAGONBREATH),
+        moveMap.put(CHARIZARD, Arrays.asList(new Move(Moves.FLAMETHROWER), new Move(Moves.FLAREBLITZ),new Move(Moves.DRAGONBREATH),
         	new Move(Moves.FLY, 2)));
  
-		pokeMap.put(SQUIRTLE, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.TAILWHIP)));
-        pokeMap.put(WARTORTLE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.WATERGUN), new Move(Moves.TAILWHIP)));
-        pokeMap.put(BLASTOISE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.AQUATAIL), new Move(Moves.HYDROPUMP), 
+		moveMap.put(SQUIRTLE, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.TAILWHIP)));
+        moveMap.put(WARTORTLE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.WATERGUN), new Move(Moves.TAILWHIP)));
+        moveMap.put(BLASTOISE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.AQUATAIL), new Move(Moves.HYDROPUMP), 
         		new Move(Moves.FLASHCANNON)));
         
-        pokeMap.put(PIKACHU, Arrays.asList(new Move(Moves.THUNDERWAVE), new Move(Moves.THUNDERSHOCK),new Move(Moves.TACKLE),
+        moveMap.put(PIKACHU, Arrays.asList(new Move(Moves.THUNDERWAVE), new Move(Moves.THUNDERSHOCK),new Move(Moves.TACKLE),
         		new Move(Moves.PLAYNICE)));
-        pokeMap.put(RAICHU, Arrays.asList(new Move(Moves.THUNDERPUNCH), new Move(Moves.THUNDERBOLT), new Move(Moves.QUICKATTACK), 
+        moveMap.put(RAICHU, Arrays.asList(new Move(Moves.THUNDERPUNCH), new Move(Moves.THUNDERBOLT), new Move(Moves.QUICKATTACK), 
         		new Move(Moves.SLAM)));    
       
-        pokeMap.put(ABRA, Arrays.asList(new Move(Moves.TELEPORT)));
-        pokeMap.put(KADABRA, Arrays.asList(new Move(Moves.CONFUSION), new Move(Moves.PSYBEAM), new Move(Moves.KINESIS)));
-        pokeMap.put(ALAKAZAM, Arrays.asList(new Move(Moves.PSYCHIC), new Move(Moves.CONFUSION), new Move(Moves.PSYCHOCUT), 
+        moveMap.put(ABRA, Arrays.asList(new Move(Moves.TELEPORT)));
+        moveMap.put(KADABRA, Arrays.asList(new Move(Moves.CONFUSION), new Move(Moves.PSYBEAM), new Move(Moves.KINESIS)));
+        moveMap.put(ALAKAZAM, Arrays.asList(new Move(Moves.PSYCHIC), new Move(Moves.CONFUSION), new Move(Moves.PSYCHOCUT), 
         		new Move(Moves.CALMMIND)));     
         
-        pokeMap.put(MACHOP, Arrays.asList(new Move(Moves.LOWKICK), new Move(Moves.LOWSWEEP), new Move(Moves.KNOCKOFF))); 
-        pokeMap.put(MACHOKE, Arrays.asList(new Move(Moves.LOWKICK), new Move(Moves.LOWSWEEP), new Move(Moves.VITALTHROW),
+        moveMap.put(MACHOP, Arrays.asList(new Move(Moves.LOWKICK), new Move(Moves.LOWSWEEP), new Move(Moves.KNOCKOFF))); 
+        moveMap.put(MACHOKE, Arrays.asList(new Move(Moves.LOWKICK), new Move(Moves.LOWSWEEP), new Move(Moves.VITALTHROW),
         		new Move(Moves.SEISMICTOSS))); 
-        pokeMap.put(MACHAMP, Arrays.asList(new Move(Moves.SEISMICTOSS), new Move(Moves.DYNAMICPUNCH), new Move(Moves.CROSSCHOP), 
+        moveMap.put(MACHAMP, Arrays.asList(new Move(Moves.SEISMICTOSS), new Move(Moves.DYNAMICPUNCH), new Move(Moves.CROSSCHOP), 
         		new Move(Moves.SCARYFACE))); 
         
-        pokeMap.put(GEODUDE, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.TACKLE), new Move(Moves.DEFENSECURL)));
-        pokeMap.put(GRAVELER, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.ROLLOUT), new Move(Moves.TACKLE),
+        moveMap.put(GEODUDE, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.TACKLE), new Move(Moves.DEFENSECURL)));
+        moveMap.put(GRAVELER, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.ROLLOUT), new Move(Moves.TACKLE),
         		new Move(Moves.DEFENSECURL)));
-        pokeMap.put(GOLEM, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.DIG, 2), new Move(Moves.HEAVYSLAM), 
+        moveMap.put(GOLEM, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.DIG, 2), new Move(Moves.HEAVYSLAM), 
         		new Move(Moves.DOUBLEEDGE)));
         
-        pokeMap.put(GASTLY, Arrays.asList(new Move(Moves.LICK), new Move(Moves.PAYBACK), new Move(Moves.HYPNOSIS)));   
-        pokeMap.put(HAUNTER, Arrays.asList(new Move(Moves.PAYBACK), new Move(Moves.HEX), new Move(Moves.DARKPULSE), 
+        moveMap.put(GASTLY, Arrays.asList(new Move(Moves.LICK), new Move(Moves.PAYBACK), new Move(Moves.HYPNOSIS)));   
+        moveMap.put(HAUNTER, Arrays.asList(new Move(Moves.PAYBACK), new Move(Moves.HEX), new Move(Moves.DARKPULSE), 
         		new Move(Moves.CONFUSERAY)));   
-        pokeMap.put(GENGAR, Arrays.asList(new Move(Moves.SHADOWBALL), new Move(Moves.SHADOWPUNCH),new Move(Moves.HEX), 
+        moveMap.put(GENGAR, Arrays.asList(new Move(Moves.SHADOWBALL), new Move(Moves.SHADOWPUNCH),new Move(Moves.HEX), 
         		new Move(Moves.DARKPULSE))); 
         
-        pokeMap.put(HORSEA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.BUBBLE), new Move(Moves.LEER))); 
-        pokeMap.put(SEADRA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TWISTER), new Move(Moves.HYDROPUMP),
+        moveMap.put(HORSEA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.BUBBLE), new Move(Moves.LEER))); 
+        moveMap.put(SEADRA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TWISTER), new Move(Moves.HYDROPUMP),
         		new Move(Moves.AGILITY)));       
-        pokeMap.put(KINGDRA, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.DRAGONPULSE),
+        moveMap.put(KINGDRA, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.DRAGONPULSE),
         		new Move(Moves.AGILITY))); 
      
-        pokeMap.put(LAPRAS, Arrays.asList(new Move(Moves.ICEBEAM), new Move(Moves.HYDROPUMP), new Move(Moves.SHEERCOLD), 
+        moveMap.put(LAPRAS, Arrays.asList(new Move(Moves.ICEBEAM), new Move(Moves.HYDROPUMP), new Move(Moves.SHEERCOLD), 
         		new Move(Moves.CONFUSERAY)));     
         
-        pokeMap.put(SNORLAX, Arrays.asList(new Move(Moves.BODYSLAM), new Move(Moves.ROLLOUT), new Move(Moves.CRUNCH), 
+        moveMap.put(SNORLAX, Arrays.asList(new Move(Moves.BODYSLAM), new Move(Moves.ROLLOUT), new Move(Moves.CRUNCH), 
         		new Move(Moves.YAWN)));     
         
-        pokeMap.put(RAIKOU, Arrays.asList(new Move(Moves.THUNDERFANG), new Move(Moves.THUNDER), new Move(Moves.CRUNCH),
+        moveMap.put(RAIKOU, Arrays.asList(new Move(Moves.THUNDERFANG), new Move(Moves.THUNDER), new Move(Moves.CRUNCH),
         		new Move(Moves.CALMMIND)));
-        pokeMap.put(ENTEI, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.FLAMETHROWER), new Move(Moves.EXTRASENSORY),
+        moveMap.put(ENTEI, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.FLAMETHROWER), new Move(Moves.EXTRASENSORY),
         		new Move(Moves.CALMMIND)));
-        pokeMap.put(SUICUNE, Arrays.asList(new Move(Moves.ICEFANG), new Move(Moves.AURORABEAM), new Move(Moves.HYDROPUMP),
+        moveMap.put(SUICUNE, Arrays.asList(new Move(Moves.ICEFANG), new Move(Moves.AURORABEAM), new Move(Moves.HYDROPUMP),
         		new Move(Moves.CALMMIND)));
         
-        pokeMap.put(TREECKO, Arrays.asList(new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK), new Move(Moves.LEER))); 
-        pokeMap.put(GROVYLE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK),
+        moveMap.put(TREECKO, Arrays.asList(new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK), new Move(Moves.LEER))); 
+        moveMap.put(GROVYLE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK),
         		new Move(Moves.AGILITY))); 
-        pokeMap.put(SCEPTILE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.LEAFSTORM), new Move(Moves.GIGADRAIN),
+        moveMap.put(SCEPTILE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.LEAFSTORM), new Move(Moves.GIGADRAIN),
         		new Move(Moves.AGILITY))); 
        
-        pokeMap.put(TORCHIC, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL))); 
-        pokeMap.put(COMBUSKEN, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.DOUBLEKICK), new Move(Moves.SLASH), 
+        moveMap.put(TORCHIC, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL))); 
+        moveMap.put(COMBUSKEN, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.DOUBLEKICK), new Move(Moves.SLASH), 
         		new Move(Moves.GROWL))); 
-        pokeMap.put(BLAZIKEN, Arrays.asList(new Move(Moves.FIREPUNCH), new Move(Moves.BLAZEKICK), new Move(Moves.FLAREBLITZ),
+        moveMap.put(BLAZIKEN, Arrays.asList(new Move(Moves.FIREPUNCH), new Move(Moves.BLAZEKICK), new Move(Moves.FLAREBLITZ),
         		new Move(Moves.SKYUPPERCUT))); 
 
-        pokeMap.put(MUDKIP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.GROWL))); 
-        pokeMap.put(MARSHTOMP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.MUDSHOT), new Move(Moves.MUDSLAP), 
+        moveMap.put(MUDKIP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.GROWL))); 
+        moveMap.put(MARSHTOMP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.MUDSHOT), new Move(Moves.MUDSLAP), 
         		new Move(Moves.TACKLE))); 
-        pokeMap.put(SWAMPERT, Arrays.asList(new Move(Moves.SURF), new Move(Moves.MUDDYWATER), new Move(Moves.MUDBOMB),
+        moveMap.put(SWAMPERT, Arrays.asList(new Move(Moves.SURF), new Move(Moves.MUDDYWATER), new Move(Moves.MUDBOMB),
         		new Move(Moves.EARTHQUAKE)));
      
-        pokeMap.put(KYOGRE, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.THUNDER),
+        moveMap.put(KYOGRE, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.THUNDER),
         		new Move(Moves.CALMMIND)));
-        pokeMap.put(GROUDON, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.FIREFANG), new Move(Moves.DRAGONCLAW), 
+        moveMap.put(GROUDON, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.FIREFANG), new Move(Moves.DRAGONCLAW), 
         		new Move(Moves.SOLARBEAM, 2)));
-        pokeMap.put(RAYQUAZA, Arrays.asList(new Move(Moves.DRAGONCLAW), new Move(Moves.EXTREMESPEED), new Move(Moves.BLIZZARD), 
-        		new Move(Moves.FLY, 2)));         		
-    
-        
-        // if pokemon not already mapped to moveset
-        if (pokemon.getMoveSet().isEmpty()) {
+        moveMap.put(RAYQUAZA, Arrays.asList(new Move(Moves.DRAGONCLAW), new Move(Moves.EXTREMESPEED), new Move(Moves.BLIZZARD), 
+        		new Move(Moves.FLY, 2))); 
+	}
+	/** END POKEMON MOVES STATIC MAP **/
+	
+	/** MAP MOVES METHOD **/
+	private static void mapMoves(Pokemon p) {
+		
+		// if pokemon not already mapped to moveset
+        if (p.getMoveSet().isEmpty()) {
+        	
         	// add each move to passed in pokemon object
-            for (int i = 0; i < pokeMap.get(pokemon).size(); i++) {        	
-            	pokemon.addMove(pokeMap.get(pokemon).get(i));
+            for (int i = 0; i < moveMap.get(p).size(); i++) {        	
+            	p.addMove(moveMap.get(p).get(i));
             } 	
         }
-        
-        return pokemon;
 	}
 	/** END MAP MOVES METHOD **/
-		
+
+	/** POKEDEX ARRAYLIST GETTERS **/
 	public static Pokemon getPokemon(int index) { 		
-		Pokemon pokemon = mapMoves(POKEDEX.get(index));
+		Pokemon pokemon = POKEDEX.get(index);		
+		mapMoves(pokemon);		
 		return pokemon; 
 	}	
-	
-	/** POKEDEX ARRAYLIST GETTERS **/
+	public static Pokemon getPokemonByDex(int dexNumber) {
+		
+		Pokemon pokemon = null;
+		
+		for (Pokemon p : POKEDEX) {			
+			if (p.getIndex() == dexNumber) {
+				pokemon = p;
+				break;
+			}
+		}
+		
+		if (pokemon != null) {		
+			mapMoves(pokemon);		
+		}
+		
+		return pokemon;		
+	}	
 	public static Pokemon getPokemon(String name) {
 		
 		for (Pokemon pokemon : POKEDEX) {
@@ -371,7 +390,7 @@ public enum Pokemon {
 	}
 	/** END LIST MOVE SET METHOD **/
 	
-	/** SET NATURE METHOD **/
+	/** NATURE METHODS **/
 	public void setNature() {
 				
 		// random Nature selection
@@ -399,7 +418,9 @@ public enum Pokemon {
 			case (5): speed = Math.rint((double) speed * .90); break;
 		}	
 	}
-	/** END SET NATURE METHOD **/
+	public Nature getNature() { return this.nature; }
+	
+	/** END NATURE METHODS **/
 	
 	/** GETTERS AND SETTERS **/	
 	public String toString() {
@@ -410,9 +431,9 @@ public enum Pokemon {
 	public BufferedImage getBackSprite() { return backSprite; }
 	public BufferedImage getMenuSprite() { return menuSprite; }
 	public String getName() { return name; }
-	public void setName(String name) { this.name = name; }	
+	public String getNickname() { return nickname; }	
+	public void setNickname(String nickname) { this.nickname = nickname; }	
 	public int getIndex() {	return index; }
-	public void setIndex(int index) { this.index = index; }
 	public char getSex() { return sex; }
 	public String printSex() { 			
 		return sex + ""; 
@@ -424,9 +445,7 @@ public enum Pokemon {
 	public void setSex(char sex) { this.sex = sex; }
 
 	public Type getType() { return type; }
-	public void setType(Type type) { this.type = type; }	
 	public List<Type> getTypes() { return types; }	
-	public void setTypes(List<Type> types) { this.types = types; }	
 	public String printTypes() {
 		
 		String s = "";		
@@ -460,9 +479,6 @@ public enum Pokemon {
 			this.bhp = hp;
 		}
 	}
-	
-	public Nature getNature() { return nature; }
-	public void setNature(Nature nature) { this.nature = nature; }
 	
 	public int getXP() { return xp; }
 	public void setXP(int xp) {	this.xp = xp; }
@@ -519,7 +535,7 @@ public enum Pokemon {
 	public void setMoveSet(ArrayList<Move> moveSet) { this.moveSet = moveSet; }
 	
 	public boolean isAlive() { return isAlive; }
-	public void setAlive(boolean isAlive) {	this.isAlive = isAlive; }
+	public void setAlive(boolean isAlive) {	this.isAlive = isAlive; this.setStatus(null); }
 	/** END GETTERS AND SETTERS **/
 	
 	public String changeStat(String stat, int level) {	

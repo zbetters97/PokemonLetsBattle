@@ -50,13 +50,15 @@ public class SoundCard {
 	
 	public int getFile(int category, String file) {
 		
-		for (int i = 0; i < sounds[category].length; i++) {	
-			if (sounds[category][i].contains(file)) {
-				return i;
-			}			
+		if (category > 0 && file != null) {
+			for (int i = 0; i < sounds[category].length; i++) {	
+				if (sounds[category][i].contains(file)) {
+					return i;
+				}			
+			}	
 		}
 		
-		return 0;
+		return 0;		
 	}
 	
 	public void setFile(int category, int record) {		
@@ -79,22 +81,24 @@ public class SoundCard {
 		
 		int duration = 0;
 		
-		String filePath = sounds[category][record];
-		File file = new File(filePath);		
-		AudioInputStream audioInputStream;
-		try {
-			audioInputStream = AudioSystem.getAudioInputStream(file);
-			AudioFormat format = audioInputStream.getFormat();
-			long frames = audioInputStream.getFrameLength();
-			double length = (double) ((frames + 0.0) / format.getFrameRate()); 
-			duration = (int) Math.ceil(60.0 * length);
-			if (duration == 0) duration = 60;
-		} 
-		catch (UnsupportedAudioFileException e) {			
-			e.printStackTrace();
-		} 
-		catch (IOException e) {			
-			e.printStackTrace();
+		if (category > 0 && record > 0) {		
+			String filePath = sounds[category][record];
+			File file = new File(filePath);		
+			AudioInputStream audioInputStream;
+			try {
+				audioInputStream = AudioSystem.getAudioInputStream(file);
+				AudioFormat format = audioInputStream.getFormat();
+				long frames = audioInputStream.getFrameLength();
+				double length = (double) ((frames + 0.0) / format.getFrameRate()); 
+				duration = (int) Math.ceil(60.0 * length);
+				if (duration == 0) duration = 60;
+			} 
+			catch (UnsupportedAudioFileException e) {			
+				e.printStackTrace();
+			} 
+			catch (IOException e) {			
+				e.printStackTrace();
+			}
 		}
 		
 		return duration;

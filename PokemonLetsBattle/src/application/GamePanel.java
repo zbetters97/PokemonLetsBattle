@@ -120,7 +120,7 @@ public class GamePanel extends JPanel implements Runnable {
 		currentArea = outside;
 		currentLocation = town;		
 				
-		setupMusic();
+//		setupMusic();
 		
 		tileM.loadMap();
 		

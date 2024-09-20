@@ -119,7 +119,7 @@ public class BattleManager {
 		trainer[0].pokeParty.add(Pokemon.getPokemon(39));
 		
 		newFighter[0] = trainer[0].pokeParty.get(0);
-						
+		
 		trainer[1] = new NPC(gp);
 		trainer[1].name = "RED";
 		trainer[1].pokeParty.add(Pokemon.getPokemon(3));
@@ -129,7 +129,7 @@ public class BattleManager {
 		battleMode = currentBattle;
 		fightStage = fightStage_Encounter;
 		
-		gp.stopMusic();		
+//		gp.stopMusic();		
 		getBattleMode();
 	}
 	private void getBattleMode() {
@@ -138,8 +138,8 @@ public class BattleManager {
 			
 			fighter[1] = trainer[1].pokeParty.get(0);	
 			gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!");
-					
-			gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30, 120);			
+
+			gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30, 160);		
 			gp.playMusic(1, 0);					
 		}
 		else if (battleMode == trainerBattle) {		
@@ -184,7 +184,8 @@ public class BattleManager {
 		
 		if (ready) {
 			
-			if (fightStage == fightStage_Encounter) {		
+			if (fightStage == fightStage_Encounter) {
+				gp.ui.battleSubState = gp.ui.battle_Dialogue;
 				fightStage = fightStage_Swap;
 			}	
 			else if (fightStage == fightStage_Swap) {
@@ -225,7 +226,7 @@ public class BattleManager {
 				fighter[1] = newFighter[1];
 				
 				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nsent out " + fighter[1].getName() + "!");
-				gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30, 120);	
+				gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 15, 120);	
 				
 				fightStage = fightStage_SwapOut;
 			}		
@@ -236,7 +237,7 @@ public class BattleManager {
 				fighter[0] = newFighter[0];
 				
 				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
-				gp.ui.setSoundFile(cry_SE, fighter[0].getName(), 30, 120);				
+				gp.ui.setSoundFile(cry_SE, fighter[0].getName(), 15, 120);				
 								
 				fightStage = fightStage_SwapOut;
 			}	
@@ -762,6 +763,7 @@ public class BattleManager {
 		if (fighter[atk].getStatusCounter() >= fighter[atk].getStatusLimit()) {
 									
 			gp.ui.addBattleDialogue(fighter[atk].getName() + fighter[atk].getStatus().printRecover());	
+			gp.ui.setDummyFile();
 		
 			fighter[atk].setStatusCounter(0); fighter[atk].setStatusLimit(0);
 			fighter[atk].setStatus(null);
@@ -1390,7 +1392,7 @@ public class BattleManager {
 			g2.drawImage(fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
 		}
 		else if (battleMode == trainerBattle) {
-			g2.drawImage(trainer[1].frontSprite, fighter_two_X, fighter_two_Y, null);
+			g2.drawImage(trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y + 20, null);
 		}
 		
 		x = fighter_one_X - gp.tileSize;
@@ -1403,7 +1405,7 @@ public class BattleManager {
 			fighter_two_X += 6;	
 		}
 		else {
-			gp.ui.battleSubState = gp.ui.battle_Dialogue;
+			gp.ui.battleSubState = gp.ui.battle_Start;
 		}
 	}	
 	private void drawFighters(Graphics2D g2) {					

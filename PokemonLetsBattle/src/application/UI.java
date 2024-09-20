@@ -50,7 +50,7 @@ public class UI {
 	public int charIndex = 0;	
 	public int textSpeed = 2;
 	private int dialogueTimer = 0;
-	public int dialogueTimerMax = 75;
+	public int dialogueTimerMax = 90;
 	private boolean canSkip = false;
 	private BufferedImage dialogue_next;
 	
@@ -80,10 +80,11 @@ public class UI {
 	
 	public int battleSubState;
 	public final int battle_Encounter = 1;
-	public final int battle_Dialogue = 2;
-	public final int battle_Options = 3;
-	public final int battle_Moves = 4;	
-	public final int battle_Swap = 5;
+	public final int battle_Start = 2;
+	public final int battle_Dialogue = 3;
+	public final int battle_Options = 4;
+	public final int battle_Moves = 5;	
+	public final int battle_Swap = 6;
 	
 	public UI(GamePanel gp) {
 		this.gp = gp;
@@ -668,8 +669,12 @@ public class UI {
 		g2.setColor(Color.BLACK);
 		g2.drawString(text, x, y);
 		
+		text = fighter.getNature().getName();
+		x = getXforRightAlignText(text, x + (int) (gp.tileSize * 6.8));		
+		g2.drawString(text, x, y);
+		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));	
-		x += gp.tileSize * 5.2;
+		x = (int) (gp.tileSize * 5.8);
 		y -= gp.tileSize * 1.2;
 		text = "No." + String.format("%03d", fighter.getIndex());	
 		drawText(text, x, y, Color.WHITE, Color.BLACK);
@@ -752,9 +757,11 @@ public class UI {
 	// BATTLE SCREEN
 	private void drawBattleScreen() {
 		
-		switch(battleSubState) {
-		
+		switch(battleSubState) {		
 			case battle_Encounter:
+				drawBattleDialogueWindow();	
+				break;
+			case battle_Start:
 				drawBattleDialogue();
 				break;
 			case battle_Dialogue:	
@@ -1253,6 +1260,7 @@ public class UI {
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
 		
+		// DIALOGUE TO PRINT
 		if (battleDialogue.size() > dialogueIndex && battleDialogue.get(dialogueIndex) != null) {
 
 			if (dialogueCounter >= textSpeed) {
@@ -1265,6 +1273,8 @@ public class UI {
 					currentDialogue = combinedText;					
 					charIndex++;					
 				}				
+				
+				// ALL CHARACTERS PRINTED
 				if (charIndex >= characters.length) {
 					canSkip = true;
 				}
@@ -1275,56 +1285,68 @@ public class UI {
 				dialogueCounter++;		
 			}			
 		}
+		// NO MORE DIALOGUE TO PRINT
 		else {			
 			dialogueIndex = 0;
 			battleDialogue.clear();	
 			gp.btlManager.ready = true;
 		}
 		
-  		for (String line : currentDialogue.split("\n")) {   
+		// PRINT OUT DIALOGUE
+		for (String line : currentDialogue.split("\n")) {   
   			text = line;
   			drawText(text, x, y, battle_white, Color.BLACK);
 			y += gp.tileSize;
 		} 	
-
-  		dialogueTimer++;  		
+		
+		dialogueTimer++;  		
   		if (seTimer.size() > 0) {
-  			canSkip = false;
   			if (dialogueTimer == seTimer.get(0)) playBattleSE();
   		}
-  		
-  		if (canSkip) {
-  			x += (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-  			y -= gp.tileSize * 1.4;
-  			g2.drawImage(dialogue_next, x, y, null);
-
-  			if (gp.keyH.aPressed) {	
-  				advanceDialogue();		
-  			}
+		
+		// IF NO SE AND BATTLE TAKING PLACE
+		if (seTimer.size() == 0 &&
+				(gp.btlManager.fightStage != gp.btlManager.fightStage_Move &&
+				gp.btlManager.fightStage != gp.btlManager.fightStage_Attack)) {
+			
+			// PLAYER CAN ADVANCE DIALOGUE
+			if (canSkip) {
+	  			x += (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+	  			y -= gp.tileSize * 1.4;
+	  			g2.drawImage(dialogue_next, x, y, null);
+	
+	  			if (gp.keyH.aPressed) {		  				
+	  				gp.keyH.playCursorSE();
+	  				advanceDialogue();		
+	  			}
+			}
   		}
-  		else {
-  			if (dialogueTimer >= dialogueTimerMax) {  
-  	  			advanceDialogue();  			
-  	  		}
-  		}
+		else if (dialogueTimer >= dialogueTimerMax) {  
+	  		advanceDialogue();  			
+	  	}
 	}		
 	public void advanceDialogue() {
-		gp.keyH.aPressed = false;
-		canSkip = false;
+		gp.keyH.aPressed = false;		
+		
+		dialogueIndex++;
 		charIndex = 0;
 		combinedText = "";	
 		currentDialogue = "";
-		commandNum = 0;
+				
 		dialogueTimer = 0;
 		dialogueTimerMax = 90;
-		dialogueIndex++;
-		if (seTimer.size() > 0) {
-			seTimer.remove(0);	
-		}
+		
+		canSkip = false;
+		
+		if (seTimer.size() > 0) seTimer.remove(0);			
 	}
 	private void playBattleSE() {	
 		if (category_SE.size() == seTimer.size()) {
-			gp.playSE(category_SE.get(0), record_SE.get(0));  				
+			
+			if (category_SE.get(0) > -1 && record_SE.get(0) > -1) {
+				gp.playSE(category_SE.get(0), record_SE.get(0));  			
+			}
+					
 			category_SE.remove(0);	
 			record_SE.remove(0);	
 		}			
@@ -1352,6 +1374,11 @@ public class UI {
 		dialogueTimerMax = duration;				
 		seTimer.add(timer);
 	}
+	public void setDummyFile() {		
+		category_SE.add(-1);		
+		record_SE.add(-1);
+		seTimer.add(5);
+	}	
 	public void addBattleDialogue(String text) {
 		battleDialogue.add(text);
 	}
