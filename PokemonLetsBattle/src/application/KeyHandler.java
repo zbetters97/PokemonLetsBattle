@@ -271,7 +271,7 @@ public class KeyHandler implements KeyListener {
 				if (0 < gp.ui.fighterNum) {
 					gp.ui.fighterNum--;
 					gp.ui.commandNum = 0;
-					playCursorSE();			
+					gp.playSE(3, gp.btlManager.trainer[0].pokeParty.get(gp.ui.fighterNum).toString());  		
 				}
 			}
 			if (code == gp.btn_R) {				
@@ -279,7 +279,7 @@ public class KeyHandler implements KeyListener {
 				if (gp.ui.fighterNum < maxParty) {
 					gp.ui.fighterNum++;
 					gp.ui.commandNum = 0;
-					playCursorSE();			
+					gp.playSE(3, gp.btlManager.trainer[0].pokeParty.get(gp.ui.fighterNum).toString());  
 				}
 			}
 		}
@@ -321,7 +321,7 @@ public class KeyHandler implements KeyListener {
 				if (0 < gp.ui.fighterNum) {
 					gp.ui.fighterNum--;
 					gp.ui.commandNum = 0;
-					playCursorSE();			
+					gp.playSE(3, gp.btlManager.trainer[0].pokeParty.get(gp.ui.fighterNum).toString());  		
 				}
 			}
 			if (code == gp.btn_R) {				
@@ -329,7 +329,7 @@ public class KeyHandler implements KeyListener {
 				if (gp.ui.fighterNum < maxParty) {
 					gp.ui.fighterNum++;
 					gp.ui.commandNum = 0;
-					playCursorSE();			
+					gp.playSE(3, gp.btlManager.trainer[0].pokeParty.get(gp.ui.fighterNum).toString());  		
 				}
 			}
 		}

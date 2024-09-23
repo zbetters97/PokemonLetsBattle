@@ -145,16 +145,16 @@ public class GamePanel extends JPanel implements Runnable {
 		g2 = (Graphics2D)tempScreen.getGraphics();
 		
 		if (fullScreenOn) setFullScreen();
-/*		
-		btlManager.setBattle(btlManager.trainerBattle);
+		
+/*
+		btlManager.setBattle(btlManager.wildBattle);
 		ui.battleSubState = ui.battle_Encounter;
 		gameState = battleState;
-*/
-/*
+
 		ui.partySubState = ui.party_Main;
-		ui.partySubState = ui.party_Stats;
 		gameState = partyState;
 */
+
 		gameState = playState;
 	}
 	

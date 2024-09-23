@@ -2,123 +2,57 @@ package pokemon;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.imageio.ImageIO;
+import moves.Move;
+import properties.Nature;
+import properties.Status;
+import properties.Type;
 
-import application.GamePanel;
-import moves.*;
-import properties.*;
-
-/*** POKEDEX ENUM CLASS ***/
-public enum Pokemon {
+/*** MOVE CLASS ***/
+public class Pokemon {
 	
-	/*** STAT REFERECE https://www.serebii.net/pokemon/ ***/
-	/*** EXP / EV REFERENCE https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield ***/
-	
-	BULBASAUR ("Bulbasaur", 1, Type.GRASS, 5, 45, 49, 49, 65, 65, 45, 16, 64, 1),
-	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), 16, 60, 62, 63, 80, 80, 60, 32, 141, 2),
-	VENUSAUR ("Venusaur", 3, Arrays.asList(Type.GRASS, Type.POISON), 36, 80, 82, 83, 100, 100, 80, -1, 208, 3),
-	CHARMANDER ("Charmander", 4, Type.FIRE, 5, 39, 52, 43, 60, 50, 65, 16, 65, 1),
-	CHARMELEON ("Charmeleon", 5, Type.FIRE, 16, 58, 64, 58, 80, 65, 80, 36, 142, 2),
-	CHARIZARD ("Charizard", 6, Arrays.asList(Type.FIRE, Type.FLYING), 36, 78, 84, 78, 109, 85, 100, -1, 209, 3),
-	SQUIRTLE ("Squirtle", 7, Type.WATER, 5, 44, 48, 65, 50, 64, 43, 16, 66, 1),
-	WARTORTLE ("Wartortle", 8, Type.WATER, 16, 59, 63, 80, 65, 80, 58, 36, 143, 2),
-	BLASTOISE ("Blastoise", 9, Type.WATER, 36, 79, 83, 100, 85, 105, 78, -1, 210, 3),	
-	PIKACHU ("Pikachu", 25, Type.ELECTRIC, 5, 55, 55, 40, 50, 50, 90, 30, 82, 2),
-	RAICHU ("Raichu", 26, Type.ELECTRIC, 30, 60, 90, 55, 90, 80, 110, -1, 122, 3),
-	ABRA ("Abra", 63, Type.PSYCHIC, 5, 25, 20, 15, 105, 55, 90, 16, 62, 1),
-	KADABRA ("Kadabra", 64, Type.PSYCHIC, 16, 40, 35, 30, 120, 70, 105, 36, 140, 2),
-	ALAKAZAM ("Alakazam", 65, Type.PSYCHIC, 36, 55, 50, 45, 135, 95, 120, -1, 250, 3),
-	MACHOP ("Machop", 66, Type.FIGHTING, 5, 70, 80, 50, 35, 35, 35, 28, 61, 1),
-	MACHOKE ("Machoke", 67, Type.FIGHTING, 28, 80, 100, 70, 50, 60, 45, 40, 142, 2),
-	MACHAMP ("Machamp", 68, Type.FIGHTING, 40, 90, 130, 80, 65, 85, 55, -1, 253, 3),
-	GEODUDE ("Geodude", 74, Arrays.asList(Type.ROCK, Type.GROUND), 5, 40, 80, 100, 30, 30, 20, 25, 60, 1),
-	GRAVELER ("Graveler", 75, Arrays.asList(Type.ROCK, Type.GROUND), 25, 55, 95, 115, 45, 45, 35, 40, 137, 2),
-	GOLEM ("Golem", 76, Arrays.asList(Type.ROCK, Type.GROUND), 40, 80, 120, 130, 55, 65, 45, -1, 248, 3),
-	GASTLY ("Gastly", 92, Arrays.asList(Type.GHOST, Type.POISON), 5, 30, 35, 30, 100, 35, 80, 25, 62, 1),
-	HAUNTER ("Haunter", 93, Arrays.asList(Type.GHOST, Type.POISON), 25, 45, 50, 45, 115, 55, 96, 40, 142, 2),
-	GENGAR ("Gengar", 94, Arrays.asList(Type.GHOST, Type.POISON), 40, 60, 65, 60, 130, 75, 110, -1, 250, 3),
-	HORSEA ("Horsea", 116, Type.WATER, 5, 30, 40, 70, 70, 25, 60, 32, 59, 1),
-	SEADRA ("Seadra", 117, Type.WATER, 32, 55, 65, 95, 95, 45, 85, 45, 154, 2),
-	LAPRAS ("Lapras", 131, Arrays.asList(Type.WATER, Type.ICE), 40, 130, 85, 80, 85, 95, 60, -1, 187, 2),
-	SNORLAX ("Snorlax", 143, Type.NORMAL, 45, 160, 110, 65, 65, 110, 30, -1, 189, 2),
-	KINGDRA ("Kingdra", 230, Arrays.asList(Type.WATER, Type.DRAGON), 40, 75, 95, 95, 95, 95, 85, -1, 270, 3),
-	RAIKOU ("Raikou", 243, Type.ELECTRIC, 40, 90, 85, 75, 115, 100, 115, -1, 290, 3),
-	ENTEI ("Entei", 244, Type.FIRE, 40, 115, 115, 85, 90, 75, 100, -1, 290, 3),
-	SUICUNE ("Suicune", 245, Type.WATER, 40, 100, 75, 115, 90, 115, 85, -1, 290, 3),
-	TREECKO ("Treecko", 252, Type.GRASS, 5, 40, 45, 35, 65, 55, 70, 16, 62, 1),
-	GROVYLE ("Grovyle", 253, Type.GRASS, 16, 50, 65, 45, 85, 65, 95, 36, 142, 2),
-	SCEPTILE ("Sceptile", 254, Type.GRASS, 36, 70, 85, 65, 105, 85, 120, -1, 265, 3),
-	TORCHIC ("Torchic", 255, Type.FIRE, 5, 45, 60, 40, 70, 50, 45, 16, 62, 1),
-	COMBUSKEN ("Combusken", 256, Arrays.asList(Type.FIRE, Type.FIGHTING), 16, 60, 85, 60, 85, 60, 55, 36, 142, 2),
-	BLAZIKEN ("Blaziken", 257, Arrays.asList(Type.FIRE, Type.FIGHTING), 36, 80, 120, 70, 110, 70, 80, -1, 265, 3),
-	MUDKIP ("Mudkip", 258, Type.WATER, 5, 50, 70, 50, 50, 50, 40, 16, 62, 1),
-	MARSHTOMP ("Marshtomp", 259, Arrays.asList(Type.WATER, Type.GROUND), 16, 70, 85, 70, 60, 70, 50, 36, 142, 2),
-	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), 36, 100, 110, 90, 85, 90, 60, -1, 268, 3),
-	KYOGRE ("Kyogre", 382, Type.WATER, 50, 100, 100, 90, 150, 140, 90, -1, 335, 3), 
-	GROUDON ("Groudon", 383, Type.GROUND, 50, 100, 150, 140, 100, 90, 90, -1, 335, 3),
-	RAYQUAZA ("Rayquaza", 384, Arrays.asList(Type.DRAGON, Type.FLYING), 50, 105, 150, 90, 150, 90, 95, -1, 340, 3);
-	/** END INITIALIZE ENUMS **/
-		
-	/** INITIALIZE VALUES**/
-	private final BufferedImage frontSprite, backSprite, menuSprite;
-	private final String name;
-	private String nickname = "";
-	private final int index;
+	/** INITIALIZE VALUES FOR UNIQUE MOVES **/
+	private PokemonBase pokemon;
+	private String nickname = null;
 	private char sex;
-	private final Type type;
 	private Nature nature;
-	private final List<Type> types;
-	private int level, bhp, hp, evLevel, xp, bxp, ev, iv;
+	private int level, bhp, hp, xp, bxp, iv;
 	private double speed, attack, defense, spAttack, spDefense, accuracy;	
 	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg;
 	private Status status;
 	private boolean isAlive;
 	public boolean isHit = false;
-	
 	private int statusCounter, statusLimit;
+	private List<Move> moveSet;
 	/** END INITIALIZE VALUES **/
 	
-	// initialize list to hold moves of given pokemon
-	private List<Move> moveSet;
-	
-	// initialize list to hold all enums in pokemon class
-	private static List<Pokemon> POKEDEX = Arrays.asList(Pokemon.values());
-
 	/** CONSTRUCTORS **/
-	Pokemon(String name, int index, Type type, int level, int hp, int attack, int defense, 
-			int spAttack, int spDefense, int speed, int evLevel, int xp, int ev) {	
+	public Pokemon(PokemonBase pokemon, int level) {		
 		
-		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
-		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
-		this.menuSprite = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
-		
-		// hp calculation reference (GEN IV): https://pokemon.fandom.com/wiki/Individual_Values
-		this.name = name; this.index = index; 
+		this.pokemon = pokemon;
+		this.level = level;		
+		this.xp = pokemon.getXP();
 		
 		// coin flip for Pokemon gender
 		this.sex = Math.random() > 0.5 ? '♂' : '♀';
-		this.type = type; this.level = level;
 		
 		this.iv = 1 + (int)(Math.random() * ((31 - 1) + 1));							
-		this.hp = (int)(Math.floor(((2 * hp + iv + Math.floor(ev / 4)) * level) / 100) + level + 10);
+		
+		// hp calculation reference (GEN IV): https://pokemon.fandom.com/wiki/Individual_Values
+		this.hp = (int)(Math.floor(((2 * pokemon.getHP() + iv + Math.floor(pokemon.getEV() / 4)) * level) / 100) + level + 10);
 		this.bhp = this.hp;
 		
 		Calculate getStat = (stat, IV, EV, lev) -> {
 			return (int)(Math.floor(0.01 * (2 * stat + IV + Math.floor(EV / 4)) * lev)) + 5;
 		};
 		
-		this.speed = getStat.compute(speed, 1 + (int)(Math.random() * ((31 - 1) + 1)), ev, level);
-		this.attack = getStat.compute(attack, 1 + (int)(Math.random() * ((31 - 1) + 1)), ev, level); 
-		this.defense = getStat.compute(defense, 1 + (int)(Math.random() * ((31 - 1) + 1)), ev, level);		
-		this.spAttack = getStat.compute(spAttack, 1 + (int)(Math.random() * ((31 - 1) + 1)), ev, level); 
-		this.spDefense = getStat.compute(spDefense, 1 + (int)(Math.random() * ((31 - 1) + 1)), ev, level);
+		this.speed = getStat.compute(pokemon.getSpeed(), 1 + (int)(Math.random() * ((31 - 1) + 1)), pokemon.getEV(), level);
+		this.attack = getStat.compute(pokemon.getAttack(), 1 + (int)(Math.random() * ((31 - 1) + 1)), pokemon.getEV(), level); 
+		this.defense = getStat.compute(pokemon.getDefense(), 1 + (int)(Math.random() * ((31 - 1) + 1)), pokemon.getEV(), level);		
+		this.spAttack = getStat.compute(pokemon.getSpAttack(), 1 + (int)(Math.random() * ((31 - 1) + 1)), pokemon.getEV(), level); 
+		this.spDefense = getStat.compute(pokemon.getSpDefense(), 1 + (int)(Math.random() * ((31 - 1) + 1)), pokemon.getEV(), level);
 		this.accuracy = 1;	
 		
 		setNature();
@@ -130,7 +64,6 @@ public enum Pokemon {
 		this.spDefenseStg = 0;
 		this.accuracyStg = 0;
 		
-		this.evLevel = evLevel; this.xp = xp; this.bxp = xp; this.ev = ev; this.types = null;	
 		this.status = null;
 		this.isAlive = true;	
 		
@@ -138,266 +71,8 @@ public enum Pokemon {
 		this.statusLimit = 0;
 		
 		moveSet = new ArrayList<>();
-	}
-	Pokemon(String name, int index, List<Type> types, int level, int hp, int attack, int defense, 
-			int spAttack, int spDefense, int speed, int evLevel, int xp, int ev) {			
-		
-		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
-		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
-		this.menuSprite = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
-
-		this.name = name; this.index = index; 
-		
-		// coin flip for Pokemon gender
-		this.sex = Math.random() > 0.5 ? '♂' : '♀';		
-		this.types = types; this.level = level;
-		
-		this.iv = 1 + (int)(Math.random() * ((31 - 1) + 1));							
-		this.hp = (int)(Math.floor(((2 * hp + iv + Math.floor(ev / 4)) * level) / 100) + level + 10);
-		this.bhp = this.hp;
-		
-		Calculate getStat = (stat, IV, EV, lev) -> {
-			return (int)(Math.floor(0.01 * (2 * stat + IV + Math.floor(EV / 4)) * lev)) + 5;
-		};
-		
-		this.speed = getStat.compute(speed, iv, ev, level);
-		this.attack = getStat.compute(attack, iv, ev, level); 
-		this.defense = getStat.compute(defense, iv, ev, level);		
-		this.spAttack = getStat.compute(spAttack, iv, ev, level); 
-		this.spDefense = getStat.compute(spDefense, iv, ev, level);
-		this.accuracy = 1;
-		
-		setNature();
-		
-		this.speedStg = 0;
-		this.attackStg = 0;
-		this.defenseStg = 0;
-		this.spAttackStg= 0;
-		this.spDefenseStg = 0;
-		this.accuracyStg = 0;
-		
-		this.evLevel = evLevel; this.xp = xp; this.bxp = xp; this.ev = ev; this.type = null;
-		this.status = null;
-		this.isAlive = true;	
-		
-		this.statusCounter = 0;
-		this.statusLimit = 0;
-		
-		moveSet = new ArrayList<>();		
-	}
+	}		
 	/** END CONSTRUCTORS **/
-	
-
-	/** POKEMON MOVES STATIC MAP **/
-	private static final Map<Pokemon, List<Move>> moveMap;
-	static {
-		moveMap = new HashMap<>();
-		moveMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
-        moveMap.put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
-        		new Move(Moves.TACKLE)));
-		moveMap.put(VENUSAUR, Arrays.asList(new Move(Moves.PETALBLIZZARD), new Move(Moves.SOLARBEAM, 2), new Move(Moves.TAKEDOWN), 
-				new Move(Moves.DOUBLEEDGE)));
-		
-        moveMap.put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
-		moveMap.put(CHARMELEON, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.EMBER), new Move(Moves.SLASH), 
-				new Move(Moves.GROWL)));
-        moveMap.put(CHARIZARD, Arrays.asList(new Move(Moves.FLAMETHROWER), new Move(Moves.FLAREBLITZ),new Move(Moves.DRAGONBREATH),
-        	new Move(Moves.FLY, 2)));
- 
-		moveMap.put(SQUIRTLE, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.TAILWHIP)));
-        moveMap.put(WARTORTLE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.WATERGUN), new Move(Moves.TAILWHIP)));
-        moveMap.put(BLASTOISE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.AQUATAIL), new Move(Moves.HYDROPUMP), 
-        		new Move(Moves.FLASHCANNON)));
-        
-        moveMap.put(PIKACHU, Arrays.asList(new Move(Moves.THUNDERWAVE), new Move(Moves.THUNDERSHOCK),new Move(Moves.TACKLE),
-        		new Move(Moves.PLAYNICE)));
-        moveMap.put(RAICHU, Arrays.asList(new Move(Moves.THUNDERPUNCH), new Move(Moves.THUNDERBOLT), new Move(Moves.QUICKATTACK), 
-        		new Move(Moves.SLAM)));    
-      
-        moveMap.put(ABRA, Arrays.asList(new Move(Moves.TELEPORT)));
-        moveMap.put(KADABRA, Arrays.asList(new Move(Moves.CONFUSION), new Move(Moves.PSYBEAM), new Move(Moves.KINESIS)));
-        moveMap.put(ALAKAZAM, Arrays.asList(new Move(Moves.PSYCHIC), new Move(Moves.CONFUSION), new Move(Moves.PSYCHOCUT), 
-        		new Move(Moves.CALMMIND)));     
-        
-        moveMap.put(MACHOP, Arrays.asList(new Move(Moves.LOWKICK), new Move(Moves.LOWSWEEP), new Move(Moves.KNOCKOFF))); 
-        moveMap.put(MACHOKE, Arrays.asList(new Move(Moves.LOWKICK), new Move(Moves.LOWSWEEP), new Move(Moves.VITALTHROW),
-        		new Move(Moves.SEISMICTOSS))); 
-        moveMap.put(MACHAMP, Arrays.asList(new Move(Moves.SEISMICTOSS), new Move(Moves.DYNAMICPUNCH), new Move(Moves.CROSSCHOP), 
-        		new Move(Moves.SCARYFACE))); 
-        
-        moveMap.put(GEODUDE, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.TACKLE), new Move(Moves.DEFENSECURL)));
-        moveMap.put(GRAVELER, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.ROLLOUT), new Move(Moves.TACKLE),
-        		new Move(Moves.DEFENSECURL)));
-        moveMap.put(GOLEM, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.DIG, 2), new Move(Moves.HEAVYSLAM), 
-        		new Move(Moves.DOUBLEEDGE)));
-        
-        moveMap.put(GASTLY, Arrays.asList(new Move(Moves.LICK), new Move(Moves.PAYBACK), new Move(Moves.HYPNOSIS)));   
-        moveMap.put(HAUNTER, Arrays.asList(new Move(Moves.PAYBACK), new Move(Moves.HEX), new Move(Moves.DARKPULSE), 
-        		new Move(Moves.CONFUSERAY)));   
-        moveMap.put(GENGAR, Arrays.asList(new Move(Moves.SHADOWBALL), new Move(Moves.SHADOWPUNCH),new Move(Moves.HEX), 
-        		new Move(Moves.DARKPULSE))); 
-        
-        moveMap.put(HORSEA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.BUBBLE), new Move(Moves.LEER))); 
-        moveMap.put(SEADRA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TWISTER), new Move(Moves.HYDROPUMP),
-        		new Move(Moves.AGILITY)));       
-        moveMap.put(KINGDRA, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.DRAGONPULSE),
-        		new Move(Moves.AGILITY))); 
-     
-        moveMap.put(LAPRAS, Arrays.asList(new Move(Moves.ICEBEAM), new Move(Moves.HYDROPUMP), new Move(Moves.SHEERCOLD), 
-        		new Move(Moves.CONFUSERAY)));     
-        
-        moveMap.put(SNORLAX, Arrays.asList(new Move(Moves.BODYSLAM), new Move(Moves.ROLLOUT), new Move(Moves.CRUNCH), 
-        		new Move(Moves.YAWN)));     
-        
-        moveMap.put(RAIKOU, Arrays.asList(new Move(Moves.THUNDERFANG), new Move(Moves.THUNDER), new Move(Moves.CRUNCH),
-        		new Move(Moves.CALMMIND)));
-        moveMap.put(ENTEI, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.FLAMETHROWER), new Move(Moves.EXTRASENSORY),
-        		new Move(Moves.CALMMIND)));
-        moveMap.put(SUICUNE, Arrays.asList(new Move(Moves.ICEFANG), new Move(Moves.AURORABEAM), new Move(Moves.HYDROPUMP),
-        		new Move(Moves.CALMMIND)));
-        
-        moveMap.put(TREECKO, Arrays.asList(new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK), new Move(Moves.LEER))); 
-        moveMap.put(GROVYLE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK),
-        		new Move(Moves.AGILITY))); 
-        moveMap.put(SCEPTILE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.LEAFSTORM), new Move(Moves.GIGADRAIN),
-        		new Move(Moves.AGILITY))); 
-       
-        moveMap.put(TORCHIC, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL))); 
-        moveMap.put(COMBUSKEN, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.DOUBLEKICK), new Move(Moves.SLASH), 
-        		new Move(Moves.GROWL))); 
-        moveMap.put(BLAZIKEN, Arrays.asList(new Move(Moves.FIREPUNCH), new Move(Moves.BLAZEKICK), new Move(Moves.FLAREBLITZ),
-        		new Move(Moves.SKYUPPERCUT))); 
-
-        moveMap.put(MUDKIP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.GROWL))); 
-        moveMap.put(MARSHTOMP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.MUDSHOT), new Move(Moves.MUDSLAP), 
-        		new Move(Moves.TACKLE))); 
-        moveMap.put(SWAMPERT, Arrays.asList(new Move(Moves.SURF), new Move(Moves.MUDDYWATER), new Move(Moves.MUDBOMB),
-        		new Move(Moves.EARTHQUAKE)));
-     
-        moveMap.put(KYOGRE, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.THUNDER),
-        		new Move(Moves.CALMMIND)));
-        moveMap.put(GROUDON, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.FIREFANG), new Move(Moves.DRAGONCLAW), 
-        		new Move(Moves.SOLARBEAM, 2)));
-        moveMap.put(RAYQUAZA, Arrays.asList(new Move(Moves.DRAGONCLAW), new Move(Moves.EXTREMESPEED), new Move(Moves.BLIZZARD), 
-        		new Move(Moves.FLY, 2))); 
-	}
-	/** END POKEMON MOVES STATIC MAP **/
-	
-	/** MAP MOVES METHOD **/
-	private static void mapMoves(Pokemon p) {
-		
-		// if pokemon not already mapped to moveset
-        if (p.getMoveSet().isEmpty()) {
-        	
-        	// add each move to passed in pokemon object
-            for (int i = 0; i < moveMap.get(p).size(); i++) {        	
-            	p.addMove(moveMap.get(p).get(i));
-            } 	
-        }
-	}
-	/** END MAP MOVES METHOD **/
-
-	/** POKEDEX ARRAYLIST GETTERS **/
-	public static Pokemon getPokemon(int index) { 		
-		Pokemon pokemon = POKEDEX.get(index);		
-		mapMoves(pokemon);		
-		return pokemon; 
-	}	
-	public static Pokemon getPokemonByDex(int dexNumber) {
-		
-		Pokemon pokemon = null;
-		
-		for (Pokemon p : POKEDEX) {			
-			if (p.getIndex() == dexNumber) {
-				pokemon = p;
-				break;
-			}
-		}
-		
-		if (pokemon != null) {		
-			mapMoves(pokemon);		
-		}
-		
-		return pokemon;		
-	}	
-	public static Pokemon getPokemon(String name) {
-		
-		Pokemon pokemon = null;
-		
-		for (Pokemon p : POKEDEX) {
-			if (p.getName().equals(name)) {
-				pokemon = p;
-				break;
-			}
-		}
-		
-		if (pokemon != null) {		
-			mapMoves(pokemon);		
-		}
-		
-		return pokemon;
-	}
-	public static List<Pokemon> getPokedex() {
-		return POKEDEX; 
-	}
-	public static int getPokedexSize() { 
-		return POKEDEX.size(); 
-	}	
-	/** END POKEDEX ARRAYLIST GETTERS **/
-	
-	/** CAN EVOLVE METHOD **/
-	public boolean canEvolve() {		
-		
-		// pokemon can't evolve if evLevel is -1
-		return this.getEvLevel() != -1;
-	}
-	/** END CAN EVOLVE METHOD **/
-	
-	/** EVOLVE POKEMON  METHOD **/
-	public Pokemon evolve() {
-		
-		// check if pekemon can evolve to avoid errors
-		if (this.canEvolve()) {
-			
-			// find current position of calling object in pokedex
-			int nextID = POKEDEX.indexOf(this);
-			
-			// evolved form is next position in pokedex
-			Pokemon evolvedPokemon = Pokemon.getPokemon(nextID + 1);
-			
-			return evolvedPokemon;
-		}
-		// pokemon can't evolve
-		else {
-			return null;	
-		}
-	}
-	/** END EVOLVE POKEMON METHOD **/
-	
-	/** ADD NEW MOVE METHOD **/
-	public boolean addMove(Move move) { 
-		
-		if (this.getMoveSet().size() == 4) {
-			return false;
-		}
-		else {
-			this.getMoveSet().add(move);
-			return true;
-		}
-	}
-	/** END ADD NEW MOVE METHOD **/
-	
-	/** LIST MOVE SET FOR GIVEN POKEMON METHOD **/
-	public void listMoves() {			
-		
-		System.out.println("MOVESET FOR " + this.name + ":\n");
-		
-		for (Move move : moveSet) {
-			System.out.println(move.getName() + " : (TYPE: " + move.getType()  + "), (PP: " + move.getpp() + 
-					"), (PWR: " + move.getPower() + ")"	+ ", (ACC: " + move.getAccuracy() + ")");
-		}
-	}
-	/** END LIST MOVE SET METHOD **/
 	
 	/** NATURE METHODS **/
 	public void setNature() {
@@ -427,22 +102,72 @@ public enum Pokemon {
 			case (5): speed = Math.rint((double) speed * .90); break;
 		}	
 	}
-	public Nature getNature() { return this.nature; }
-	
 	/** END NATURE METHODS **/
 	
-	/** GETTERS AND SETTERS **/	
-	public String toString() {
-		return name.toUpperCase();
+
+	/** ADD NEW MOVE METHOD **/
+	public boolean addMove(Move move) { 
+		
+		if (this.getMoveSet().size() == 4) {
+			return false;
+		}
+		else {
+			this.getMoveSet().add(move);
+			return true;
+		}
 	}
+	/** END ADD NEW MOVE METHOD **/
 	
-	public BufferedImage getFrontSprite() { return frontSprite; }
-	public BufferedImage getBackSprite() { return backSprite; }
-	public BufferedImage getMenuSprite() { return menuSprite; }
-	public String getName() { return name; }
+	/** GET POKEMON METHODS **/	
+	public static Pokemon getPokemon(String name, int level) {
+		
+		Pokemon pokemon = null;
+		
+		for (PokemonBase p : PokemonBase.getPOKEDEX()) {
+			if (p.getName().equals(name)) {
+				pokemon = new Pokemon(p, level);
+				break;
+			}
+		}
+		
+		mapMoves(pokemon);		
+		
+		return pokemon;		
+	}	
+	public static Pokemon getPokemonByIndex(int index, int level) {
+		
+		Pokemon pokemon = null;
+		
+		for (PokemonBase p : PokemonBase.getPOKEDEX()) {
+			if (p.getIndex() == index) {
+				pokemon = new Pokemon(p, level);
+				break;
+			}
+		}
+		
+		mapMoves(pokemon);		
+		
+		return pokemon;		
+	}	
+	/** END GET POKEMON METHODS **/
+	
+	/** MAP MOVES METHOD **/
+	private static void mapMoves(Pokemon p) {
+		
+		// if pokemon not already mapped to moveset
+        if (p.getMoveSet().isEmpty()) {
+        	
+        	// add each move to passed in pokemon object
+            for (int i = 0; i < PokemonBase.getMovemap().get(p.pokemon).size(); i++) {        	
+            	p.addMove(PokemonBase.getMovemap().get(p.pokemon).get(i));
+            } 	
+        }
+	}
+	/** END MAP MOVES METHOD **/
+	
+	/** GETTERS AND SETTERS **/	
 	public String getNickname() { return nickname; }	
 	public void setNickname(String nickname) { this.nickname = nickname; }	
-	public int getIndex() {	return index; }
 	public char getSex() { return sex; }
 	public String printSex() { 			
 		return sex + ""; 
@@ -452,39 +177,13 @@ public enum Pokemon {
 		else return Color.RED;		
 	}
 	public void setSex(char sex) { this.sex = sex; }
-
-	public Type getType() { return type; }
-	public List<Type> getTypes() { return types; }	
-	public String printTypes() {
-		
-		String s = "";		
-		int i = types.size() - 1;
-		for (Type t : types) {
-			 s += t.printType();		
-			 if (i-- != 0)
-				 s += " / ";
-		}
-		return s;
-	}
-	public String printTypesShort() {
-		String s = "";		
-		int i = types.size() - 1;
-		for (Type t : types) {
-			 s += t.toString().charAt(0);
-			 s += t.toString().toLowerCase().charAt(1);
-			 if (i-- != 0)
-				 s += "/";
-		}
-		return s;
-	}
 	
 	public int getLevel() {	return level; }	
 	public void setLevel(int level) { 	
 		
-		// don't initiate twice on same pokemon
 		if (level != this.level && level != -1) {
 			this.level = level;			
-			this.hp = (int)(Math.floor(((2 * this.hp + this.iv + Math.floor(ev / 4)) * level) / 100) + level + 10);
+			this.hp = (int)(Math.floor(((2 * this.hp + this.iv + Math.floor(pokemon.getEV() / 4)) * level) / 100) + level + 10);
 			this.bhp = hp;
 		}
 	}
@@ -526,10 +225,6 @@ public enum Pokemon {
 	public int getAccuracyStg() { return accuracyStg; }
 	public void setAccuracyStg(int accuracyStg) { this.accuracyStg = accuracyStg; }
 	
-	public int getEvLevel() { return evLevel; }
-	public void setEvLevel(int evLevel) { this.evLevel = evLevel; }	
-	public int getEV() { return ev; }
-	public void setEV(int ev) { this.ev = ev; }	
 	public int getIV() { return iv; }
 	public void setIV(int iv) { this.iv = iv; }
 
@@ -540,12 +235,35 @@ public enum Pokemon {
 	public int getStatusLimit() { return statusLimit; }
 	public void setStatusLimit(int statusLimit) { this.statusLimit = statusLimit; }
 	
-	public List<Move> getMoveSet() { return moveSet; }
-	public void setMoveSet(ArrayList<Move> moveSet) { this.moveSet = moveSet; }
-	
 	public boolean isAlive() { return isAlive; }
 	public void setAlive(boolean isAlive) {	this.isAlive = isAlive; this.setStatus(null); }
+	
+	public boolean isHit() { return isHit; }
+	public void setHit(boolean isHit) { this.isHit = isHit; }
+	
+	public List<Move> getMoveSet() { return moveSet; }
+	public void setMoveSet(ArrayList<Move> moveSet) { this.moveSet = moveSet; }
 	/** END GETTERS AND SETTERS **/
+	
+	/** GETTERS **/
+	public String toString() { return pokemon.getName(); }
+	public String getName() { 
+		if (nickname != null) {
+			return nickname;
+		}
+		else {
+			return pokemon.getName().toUpperCase();	
+		}
+	}
+	public int getIndex() {	return pokemon.getIndex(); }
+	public Type getType() { return pokemon.getType(); }
+	public List<Type> getTypes() { return pokemon.getTypes(); }	
+	public Nature getNature() { return this.nature; }		
+	
+	public BufferedImage getFrontSprite() { return pokemon.getFrontSprite(); }
+	public BufferedImage getBackSprite() { return pokemon.getBackSprite(); }
+	public BufferedImage getMenuSprite() { return pokemon.getMenuSprite(); }	
+	/** END GETTERS **/
 	
 	public String changeStat(String stat, int level) {	
 		
@@ -555,9 +273,9 @@ public enum Pokemon {
 			case "attack":
 				if (this.attackStg + level > 6 || this.attackStg + level < -6) {
 					if (level >= 1) 
-						output = this.name + "'s attack won't go any higher!";
+						output = getName() + "'s attack won't go any higher!";
 					else if (level <= -1) 
-						output = this.name + "'s attack won't go any lower!";
+						output = getName() + "'s attack won't go any lower!";
 				}
 				else {	
 					this.attackStg += level;
@@ -569,9 +287,9 @@ public enum Pokemon {
 			case "sp. attack":
 				if (this.spAttackStg + level > 6 || this.spAttackStg + level < -6) {
 					if (level >= 1) 
-						output = this.name + "'s sp. attack won't go any higher!";
+						output = getName() + "'s sp. attack won't go any higher!";
 					else if (level <= -1) 
-						output = this.name + "'s sp. attack won't go any lower!";					
+						output = getName() + "'s sp. attack won't go any lower!";					
 				}
 				else {	
 					this.spAttackStg += level;
@@ -583,9 +301,9 @@ public enum Pokemon {
 			case "defense":
 				if (this.defenseStg + level > 6 || this.defenseStg + level < -6) {
 					if (level >= 1) 
-						output = this.name + "'s defense won't go any higher!";
+						output = getName() + "'s defense won't go any higher!";
 					else if (level <= -1) 
-						output = this.name + "'s defense won't go any lower!";
+						output = getName() + "'s defense won't go any lower!";
 				}
 				else {	
 					this.defenseStg += level;
@@ -597,9 +315,9 @@ public enum Pokemon {
 			case "sp. defense":
 				if (this.spDefenseStg + level > 6 || this.spDefenseStg  + level < -6) {
 					if (level >= 1) 
-						output = this.name + "'s sp. defense won't go any higher!";
+						output = getName() + "'s sp. defense won't go any higher!";
 					else if (level <= -1) 
-						output = this.name + "'s sp. defense won't go any lower!";
+						output = getName() + "'s sp. defense won't go any lower!";
 				}
 				else {	
 					this.spDefenseStg  += level;
@@ -611,9 +329,9 @@ public enum Pokemon {
 			case "speed":
 				if (this.speedStg + level > 6 || this.speedStg + level < -6) {
 					if (level >= 1) 
-						output = this.name + "'s speed won't go any higher!";
+						output = getName() + "'s speed won't go any higher!";
 					else if (level <= -1) 
-						output = this.name + "'s speed won't go any lower!";
+						output = getName() + "'s speed won't go any lower!";
 				}
 				else {	
 					this.speedStg += level;					
@@ -625,9 +343,9 @@ public enum Pokemon {
 			case "accuracy":
 				if (this.accuracyStg + level > 6 || this.accuracyStg + level < -6) {
 					if (level >= 1) 
-						output = this.name + "'s accuracy won't go any higher!";
+						output = getName() + "'s accuracy won't go any higher!";
 					else if (level <= -1) 
-						output = this.name + "'s accuracy won't go any lower!";
+						output = getName() + "'s accuracy won't go any lower!";
 				}
 				else {	
 					this.accuracyStg += level;
@@ -644,33 +362,17 @@ public enum Pokemon {
 		
 		String output = "";
 		
-		if (level == 1) output = this.name + "'s " + stat + "\nrose!";
-		else if (level == 2) output = this.name + "'s " + stat + "\ngreatly rose!";
-		else if (level >= 3) output = this.name + "'s " + stat + "\ndrastically rose!";
-		else if (level == -1) output = this.name + "'s " + stat + "\nfell!";
-		else if (level == -2) output = this.name + "'s " + stat + "\ngreatly fell!";
-		else if (level <= -3) output = this.name + "'s " + stat + "\nseverely fell!";
+		if (level == 1) output = getName() + "'s " + stat + "\nrose!";
+		else if (level == 2) output = getName() + "'s " + stat + "\ngreatly rose!";
+		else if (level >= 3) output = getName() + "'s " + stat + "\ndrastically rose!";
+		else if (level == -1) output = getName() + "'s " + stat + "\nfell!";
+		else if (level == -2) output = getName() + "'s " + stat + "\ngreatly fell!";
+		else if (level <= -3) output = getName() + "'s " + stat + "\nseverely fell!";
 		
 		return output;
 	}
-	
-	// IMAGE MANAGERS
-	public BufferedImage setup(String imagePath, int width, int height) {
-		
-		BufferedImage image = null;
-		
-		try {
-			image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
-			image = GamePanel.utility.scaleImage(image, width, height);
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return image;
-	}	
 }
-/*** END POKEDEX CLASS ***/
+/*** END MOVE CLASS ***/
 
 @FunctionalInterface
 interface Calculate {

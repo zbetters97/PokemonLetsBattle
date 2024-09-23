@@ -127,10 +127,9 @@ public class BattleManager {
 	private void getBattleMode() {
 		
 		if (battleMode == wildBattle) {
-
 			gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!");
 
-			gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 30, 160);		
+			gp.ui.setSoundFile(cry_SE, fighter[1].toString(), 30, 160);		
 			gp.playMusic(1, 1);					
 		}
 		else if (battleMode == trainerBattle) {		
@@ -221,7 +220,7 @@ public class BattleManager {
 				fighter[1] = newFighter[1];
 				
 				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nsent out " + fighter[1].getName() + "!");
-				gp.ui.setSoundFile(cry_SE, fighter[1].getName(), 15, 120);	
+				gp.ui.setSoundFile(cry_SE, fighter[1].toString(), 15, 120);	
 				
 				fightStage = fightStage_SwapOut;
 			}		
@@ -232,7 +231,7 @@ public class BattleManager {
 				fighter[0] = newFighter[0];
 				
 				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
-				gp.ui.setSoundFile(cry_SE, fighter[0].getName(), 15, 120);				
+				gp.ui.setSoundFile(cry_SE, fighter[0].toString(), 15, 120);				
 								
 				fightStage = fightStage_SwapOut;
 			}	
@@ -242,7 +241,7 @@ public class BattleManager {
 				fighter[0] = newFighter[0];
 				
 				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
-				gp.ui.setSoundFile(cry_SE, fighter[0].getName(), 30, 120);		
+				gp.ui.setSoundFile(cry_SE, fighter[0].toString(), 30, 120);		
 				
 				fightStage = fightStage_Start;
 			}			
@@ -263,7 +262,26 @@ public class BattleManager {
 	private void getWinningTrainer() {
 						
 		if (battleMode == wildBattle) {
-			endBattle();
+			
+			// TRAINER 1 WINNER
+			if (winner == 0) {				
+				endBattle();	
+			}
+			// WILD POKEMON WINNER
+			else if (winner == 1){
+				
+				// TRAINER 1 HAS MORE POKEMON
+				if (trainer[0].hasPokemon()) {				
+					winner = -1;
+					fightStage = fightStage_Swap;
+					gp.gameState = gp.partyState;
+					gp.ui.partySubState = gp.ui.party_Main;
+				}
+				// TRAINER 1 OUT OF POKEMON
+				else {
+					fightStage = fightStage_Victory;
+				}	
+			}			
 		}
 		else {
 			if (winner == 0) {
@@ -812,7 +830,7 @@ public class BattleManager {
 	}	
 	private void useMove(int atk, int trg, Move atkMove, Move trgMove) {		
 				
-		gp.ui.addBattleDialogue(fighter[atk].toString() + " used\n" + atkMove.toString() + "!"); 		
+		gp.ui.addBattleDialogue(fighter[atk].getName() + " used\n" + atkMove.toString() + "!"); 		
 		
 		// if not delayed move or delayed move is ready
 		if (1 >= atkMove.getTurns()) {	
@@ -830,7 +848,7 @@ public class BattleManager {
 		// delayed move is used for first time
 		else if (atkMove.getTurns() == atkMove.getNumTurns()) {
 						
-			gp.ui.addBattleDialogue(atkMove.getDelay(fighter[atk].getName()));	
+			gp.ui.addBattleDialogue(atkMove.getDelay(fighter[atk].toString()));	
 									
 			// reduce number of turns to wait
 			atkMove.setTurns(atkMove.getTurns() - 1);	
@@ -1361,7 +1379,7 @@ public class BattleManager {
 			int xp = calculateXP(loser);
 			fighter[winner].setXP(fighter[winner].getBXP() + xp);
 			
-			gp.ui.setSoundFile(faint_SE, fighter[loser].getName(), 5);
+			gp.ui.setSoundFile(faint_SE, fighter[loser].toString(), 5);
 			
 			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
 			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + xp + " Exp. Points!");	

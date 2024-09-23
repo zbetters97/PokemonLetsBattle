@@ -173,6 +173,7 @@ public class UI {
 		y += lineHeight;
 		g2.drawString("Time Counter: " + gp.eManager.lighting.dayCounter, x, y);
 		
+		g2.setStroke(new BasicStroke(1));	
 		g2.setColor(Color.RED);
 		g2.drawRect(gp.player.screenX + gp.player.hitbox.x, gp.player.screenY + gp.player.hitbox.y, 
 				gp.player.hitbox.width, gp.player.hitbox.height);
@@ -363,16 +364,16 @@ public class UI {
 		text = "CHOOSE A POKEMON";	
 		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 		
-		x += width + (gp.tileSize * 0.7);
-		y = (int) (gp.tileSize * 10.5);
-		width = gp.tileSize * 3;
+		x += width + (gp.tileSize * 0.4);
+		y = (int) (gp.tileSize * 10.62);
+		width = (int) (gp.tileSize * 3.5);
 		height = (int) (gp.tileSize * 1);			
 		
-		if (fighterNum == 6) { drawSubWindow(x, y, width, height, 25, 6, party_blue, party_red); }
-		else { drawSubWindow(x, y, width, height, 25, 4, party_blue, Color.BLACK); }
+		if (fighterNum == 6) { drawSubWindow(x, y, width, height, 5, 5, party_blue, party_red); }
+		else { drawSubWindow(x, y, width, height, 5, 3, party_blue, Color.BLACK); }
 		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));
-		x += gp.tileSize * 0.55;
+		x += gp.tileSize * 0.8;
 		y += gp.tileSize * 0.8;
 		text = "CANCEL";
 		drawText(text, x, y, battle_white, Color.BLACK);
@@ -404,25 +405,25 @@ public class UI {
 		int height;
 		
 		x = (int) (gp.tileSize * 12.35);
-		y = (int) (gp.tileSize * 8.9);
+		y = (int) (gp.tileSize * 8.85);
 		width = (int) (gp.tileSize * 2.8);
-		height = (int) (gp.tileSize * 2.75);		
+		height = (int) (gp.tileSize * 2.78);		
 		drawSubWindow(x, y, width, height, 4, 4, battle_white, Color.BLACK);
 		
 		x += gp.tileSize * 0.4;
-		y += gp.tileSize * 0.8;
+		y += gp.tileSize * 0.72;
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 40F));	
 		drawText("SELECT", x, y, Color.BLACK, Color.LIGHT_GRAY);
 		
-		y += gp.tileSize * 0.9;
+		y += gp.tileSize * 0.95;
 		drawText("INFO", x, y, Color.BLACK, Color.LIGHT_GRAY);
 		
-		y += gp.tileSize * 0.9;
+		y += gp.tileSize * 0.95;
 		drawText("CANCEL", x, y, Color.BLACK, Color.LIGHT_GRAY);
 		
 		x -= gp.tileSize * 0.38;
-		y -= gp.tileSize * 2.5;
-		height = (int) (gp.tileSize * 0.8);		
+		y -= gp.tileSize * 2.58;
+		height = (int) (gp.tileSize * 0.9);		
 		if (commandNum == 0) {
 			g2.setColor(battle_red);
 			g2.drawRoundRect(x, y, width, height, 4, 4);
@@ -458,7 +459,8 @@ public class UI {
 			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;					
-				partySubState = party_Stats;		
+				partySubState = party_Stats;	
+				gp.playSE(3, gp.btlManager.trainer[0].pokeParty.get(fighterNum).toString());  
 				commandNum = 0;			
 			}
 		}
@@ -488,7 +490,7 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));	
 		x += gp.tileSize * 2;
 		y += gp.tileSize;
-		String text = fighter.name();
+		String text = fighter.getName();
 		drawText(text, x, y, battle_white, Color.BLACK);
 	
 		x += gp.tileSize * 0.9;
@@ -715,7 +717,7 @@ public class UI {
 			drawText(text, textX, textY, battle_white, Color.BLACK);
 			
 			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 50F));
-			text = m.getName();
+			text = m.toString();
 			textX = (int) (frameX + (gp.tileSize * 2.5));
 			textY = (int) (y + (gp.tileSize * 0.85));			
 			drawText(text, textX, textY, battle_white, Color.BLACK);	
@@ -758,8 +760,8 @@ public class UI {
 	private void drawParty_Info() {
 		
 		g2.setColor(battle_white);  
-		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
-						
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);			
+		
 		int x;
 		int y;
 		int width;
@@ -956,7 +958,7 @@ public class UI {
 				
 		x += gp.tileSize * 0.3;
 		y += gp.tileSize * 0.8;
-		text = gp.btlManager.fighter[num].getName().toUpperCase();
+		text = gp.btlManager.fighter[num].getName();
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));
 		g2.drawString(text, x, y);
@@ -1247,6 +1249,7 @@ public class UI {
 		x = gp.tileSize / 2;
 		y = (int) (gp.screenHeight - gp.tileSize * 2);		
 		height = gp.tileSize;
+		String text;
 		
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 50F));		
@@ -1267,14 +1270,16 @@ public class UI {
 			
 			if (gp.btlManager.fighter[0].getMoveSet().size() > i) {
 				
-				if (commandNum == i) {
-					width = (int)g2.getFontMetrics().getStringBounds(gp.btlManager.fighter[0].getMoveSet().get(i).getName(), g2).getWidth();
+				text = gp.btlManager.fighter[0].getMoveSet().get(i).toString();
+				
+				if (commandNum == i) {					
+					width = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
 					g2.setColor(battle_red);
 					g2.drawRect(x - 4, y - (int) (gp.tileSize * 0.85), width + 4, height);
 					g2.setColor(Color.BLACK);
 				}
 				
-				g2.drawString(gp.btlManager.fighter[0].getMoveSet().get(i).getName(), x, y);	
+				g2.drawString(text, x, y);	
 			}
 			else {
 				g2.drawString("-", x, y);	
@@ -1530,8 +1535,6 @@ public class UI {
 		g2.setColor(borderColor);
 		g2.setStroke(new BasicStroke(borderStroke));
 		g2.drawRoundRect(x, y, width, height, curve, curve);
-		
-		g2.setStroke(new BasicStroke(1));
 	}
 	
 	public int getXforRightAlignText(String text, int tailX) {

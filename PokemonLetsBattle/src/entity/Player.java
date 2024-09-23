@@ -60,9 +60,9 @@ public class Player extends Entity {
 	
 	// DEFAULT VALUES
 	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon(39));
-		pokeParty.add(Pokemon.getPokemon(38));
-		pokeParty.add(Pokemon.getPokemon(39));
+		pokeParty.add(Pokemon.getPokemon("Mudkip", 5));
+		pokeParty.add(Pokemon.getPokemon("Marshtomp", 16));
+		pokeParty.add(Pokemon.getPokemon("Swampert", 36));
 	}
 	public void setDefaultValues() {
 					
@@ -232,14 +232,15 @@ public class Player extends Entity {
 	}
 	private void checkWildEncounter() {
 		// random encounter formula reference: https://bulbapedia.bulbagarden.net/wiki/Wild_Pok%C3%A9mon
-		
-		int r = new Random().nextInt(255);
-		
+						
+		int r = new Random().nextInt(255);		
 		if (r < 15) {
 			
 			inGrass = false;
 			
-			Pokemon wildPokemon = Pokemon.getPokemon("Pikachu");
+			int level = new Random().nextInt(8 - 4 + 1) + 4;
+			
+			Pokemon wildPokemon = Pokemon.getPokemon("Pikachu", level);
 			wildPokemon.setAlive(true);
 			wildPokemon.setHP(wildPokemon.getBHP());
 			gp.btlManager.fighter[1] = wildPokemon;
