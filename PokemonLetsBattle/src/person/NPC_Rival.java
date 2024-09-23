@@ -23,6 +23,7 @@ public class NPC_Rival extends NPC {
 		animationSpeed = 10; 
 		
 		hasBattle = true;
+		trainerClass = 5;
 		
 		hitbox = new Rectangle(8, 16, 32, 32); 		
 		hitboxDefaultX = hitbox.x;
@@ -52,18 +53,28 @@ public class NPC_Rival extends NPC {
 	}	
 	public void assignParty() {
 		pokeParty.add(Pokemon.getPokemon(3));
-		pokeParty.add(Pokemon.getPokemon(4));
-		pokeParty.add(Pokemon.getPokemon(5));
+//		pokeParty.add(Pokemon.getPokemon(4));
+//		pokeParty.add(Pokemon.getPokemon(5));
 	}
 	public void setDialogue() {
-		dialogues[0][0] = "Hey, you!\nYou looked at me funny!";
-		dialogues[0][1] = "Let's BATTLE!!!";
+		dialogues[0][0] = "My dad says that my Pokemon\nparty might be the best!";
+		dialogues[0][1] = "I promise I'll go easy on you!";
+		
+		dialogues[1][0] = "Argh! How could I lose to\na little kid like you?";
+		
+		dialogues[2][0] = "You're too tough for your age!";
 	}
 	
 	public void speak() {	
 		
 		gp.ui.npc = this;
-		dialogueSet = 0;		
+		
+		if (hasBattle) {
+			dialogueSet = 0;		
+		}
+		else {
+			dialogueSet = 2;
+		}
 		
 		direction = getOppositeDirection(gp.player.direction);
 		startDialogue(this, dialogueSet);

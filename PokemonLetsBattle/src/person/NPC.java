@@ -29,13 +29,14 @@ public class NPC {
 	public int type;
 	public String name;			
 	public int speed, defaultSpeed, animationSpeed, defaultAnimationSpeed;	
+	public int trainerClass = 1;
 	public boolean drawing = true;
 	public boolean temp = false;
 	public boolean sleep = false;	
 	public boolean collision = true;
-	public boolean collisionOn = false;		
-	public boolean onGround = true;	
+	public boolean collisionOn = false;	
 	public boolean hasBattle = false;
+	public boolean isDefeated = false;
 	
 	// SPRITE HANDLING
 	public int actionLockCounter;
@@ -226,6 +227,7 @@ public class NPC {
 		return oppositeDirection;
 	}
 	public void startDialogue(NPC entity, int setNum) {
+		spriteNum = 1;
 		dialogueSet = setNum;
 		gp.ui.npc = entity;		
 		gp.gameState = gp.dialogueState;

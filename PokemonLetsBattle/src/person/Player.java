@@ -48,6 +48,7 @@ public class Player extends NPC {
 		hitboxDefaultHeight = hitbox.height;
 		
 		name = "ASH";
+		trainerClass = 5;
 	}
 
 /** END PLAYER CONSTRUCTOR **/
@@ -57,9 +58,9 @@ public class Player extends NPC {
 	
 	// DEFAULT VALUES
 	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon(37));
-		pokeParty.add(Pokemon.getPokemon(38));
 		pokeParty.add(Pokemon.getPokemon(39));
+		pokeParty.add(Pokemon.getPokemon(38));
+//		pokeParty.add(Pokemon.getPokemon(39));
 	}
 	public void setDefaultValues() {
 					
@@ -89,10 +90,9 @@ public class Player extends NPC {
 		resetValues();
 	}	
 	public void resetValues() {	
-	
+		
 		gp.keyH.aPressed = false;
 		gp.keyH.bPressed = false;
-		onGround = true;
 		canMove = true;
 		running = false;
 	}

@@ -256,6 +256,8 @@ public class UI {
 	}
 	private void skipDialogue() {		
 		if (gp.keyH.aPressed && canSkip) {
+			gp.keyH.playCursorSE();
+			
 			canSkip = false;
 			charIndex = 0;
 			combinedText = "";
@@ -955,7 +957,7 @@ public class UI {
 				
 		x += gp.tileSize * 0.3;
 		y += gp.tileSize * 0.8;
-		text = gp.btlManager.fighter[num].getName();
+		text = gp.btlManager.fighter[num].getName().toUpperCase();
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));
 		g2.drawString(text, x, y);
@@ -1518,8 +1520,8 @@ public class UI {
 	public void addBattleDialogue(String text) {
 		battleDialogue.add(text);
 	}
-		// SUB WINDOW
-
+	
+	// SUB WINDOW
 	private void drawSubWindow(int x, int y, int width, int height, int curve, int borderStroke, 
 			Color fillCollor, Color borderColor) {
 		

@@ -82,7 +82,9 @@ public class BattleManager {
 	public final int fightStage_Attack = 6;
 	public final int fightStage_End = 7;
 	public final int fightStage_KO = 8;		
-	public final int fightStage_Over = 9;
+	public final int fightStage_Defeat = 9;
+	public final int fightStage_Victory = 10;
+	public final int fightStage_Close = 11;
 			
 	// CONSTRUCTOR
 	public BattleManager(GamePanel gp) {
@@ -110,28 +112,27 @@ public class BattleManager {
 	}
 	
 	// SETUP METHODS
-	public void setBattle(int currentBattle) {	
+	public void setBattle(int currentBattle) {
 		
-		/*
+		/*		
 		trainer[0] = new NPC(gp);
 		trainer[0].name = "ASH";
-		trainer[0].pokeParty.add(Pokemon.getPokemon(37));
-		trainer[0].pokeParty.add(Pokemon.getPokemon(38));
+		trainer[0].pokeParty.add(Pokemon.getPokemon(3));
+		trainer[0].pokeParty.add(Pokemon.getPokemon(4));
 		trainer[0].pokeParty.add(Pokemon.getPokemon(39));
-		
 		*/
-		
+						
 		trainer[0] = gp.player;
 		newFighter[0] = trainer[0].pokeParty.get(0);
-		
+			
 		/*
 		trainer[1] = new NPC(gp);
 		trainer[1].name = "RED";
-		trainer[1].pokeParty.add(Pokemon.getPokemon(3));
-		trainer[1].pokeParty.add(Pokemon.getPokemon(4));
+		trainer[1].pokeParty.add(Pokemon.getPokemon(37));
+		trainer[1].pokeParty.add(Pokemon.getPokemon(38));
 		trainer[1].pokeParty.add(Pokemon.getPokemon(5));
 		*/
-		
+				
 		battleMode = currentBattle;
 		fightStage = fightStage_Encounter;
 		
@@ -212,9 +213,16 @@ public class BattleManager {
 			else if (fightStage == fightStage_End) {
 				checkStatusDamage();								
 			}
-			else if (fightStage == fightStage_Over) {
+			else if (fightStage == fightStage_Victory) {
+				setVictory();
+			}
+			else if (fightStage == fightStage_Close) {
+				gp.stopMusic();
+				gp.setupMusic();
+				fightStage = 0;
 				gp.gameState = gp.playState;
 			}
+			
 		}
 		
 		ready = false;
@@ -286,10 +294,16 @@ public class BattleManager {
 				fightStage = fightStage_SwapOut;	
 			}
 			// TRAINER 2 OUT OF POKEMON
-			else {
-				gp.ui.addBattleDialogue(trainer[1].name + " ran\nout of Pokemon!");
-				gp.ui.addBattleDialogue("Trainer " + trainer[0].name + "\nis victorious!");
-				gp.gameState = gp.playState;
+			else {				
+				fighter_two_X = gp.screenWidth + gp.tileSize;
+				fighter_two_Y = fighter_two_startY;
+				
+				gp.ui.addBattleDialogue("Player defeated\nTrainer " + trainer[1].name + "!");
+				
+				gp.stopMusic();
+				gp.playMusic(1, 0);
+				
+				fightStage = fightStage_Defeat;
 			}	
 		}
 		else if (winner == 1) {
@@ -303,9 +317,7 @@ public class BattleManager {
 			}
 			// TRAINER 1 OUT OF POKEMON
 			else {
-				gp.ui.addBattleDialogue(trainer[0].name + " ran\nout of Pokemon!");
-				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nis victorious!");
-				gp.gameState = gp.playState;
+				fightStage = fightStage_Victory;
 			}		
 		}				
 	}
@@ -483,7 +495,7 @@ public class BattleManager {
 		move1 = fighter[0].getMoveSet().get(selection);
 	}
 	private Move cpuSelectMove() {
-
+		
 		// holds Map of Move and Damage Points
 		Map<Move, Integer> moves = new HashMap<>();
 		
@@ -620,6 +632,8 @@ public class BattleManager {
 		}
 	}
 	public int getDelayedMove() {		
+		
+		// 3 if both, 1 if player 1, 2 if player 2, 0 if neither
 		
 		// if both moves are active
 		if (move1 != null && move2 != null) {	
@@ -799,9 +813,14 @@ public class BattleManager {
 				nextTurn = -1;
 			}
 		}
-		else {			
-			move1 = null;
-			move2 = null;
+		else {		
+			
+			// RESET NON-DELAYED MOVES
+			int delay = getDelayedMove();			
+			if (delay == 0) { move1 = null; move2 = null; }
+			else if (delay == 1) move2 = null;			
+			else if (delay == 2) move1 = null;					
+			
 			fightStage = fightStage_End;				
 		}			
 	}	
@@ -841,6 +860,7 @@ public class BattleManager {
 		
 		int atk = 0;
 		int trg = 0;
+		
 		Move move = null;
 		Move trgMove = null;
 		
@@ -859,6 +879,7 @@ public class BattleManager {
 		
         // if attack lands
 		if (hit(atk, move, trgMove)) {
+			
 			// move has a status affect
 			if (move.getMType().equals(MoveType.STATUS)) {
 				statusMove(trg, move);		
@@ -1363,11 +1384,53 @@ public class BattleManager {
 		}
 	}
 	private int calculateXP(int lsr) {
-		
 		// exp formula reference (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience		
-		int exp = (int) (((( fighter[lsr].getXP() * fighter[lsr].getLevel() ) / 7)) * 1.5);		
+		
+		int exp = (int) (((( fighter[lsr].getXP() * fighter[lsr].getLevel() ) / 7)) * 1.5);	
+		
 		return exp;
 	}	
+	
+	private void setVictory() {
+		
+		// TRAINER 1 WINNER
+		if (winner == 0) {
+			
+			// WILD BATTLE
+			if (battleMode == wildBattle || battleMode == legendaryBattle) {
+				fightStage = 0;
+				gp.gameState = gp.playState;
+			}			
+			// TRAINER BATTLE
+			else {			
+				trainer[loser].isDefeated = true;
+				trainer[loser].hasBattle = false;
+				int dialogueSet = trainer[loser].dialogueSet + 1;
+				gp.ui.addBattleDialogue(trainer[loser].dialogues[dialogueSet][0]);
+				gp.ui.addBattleDialogue(trainer[winner].name + " got $" + getMoney() + "\nfor winning!" );								
+				
+				fightStage = fightStage_Close;
+			}	
+		}
+		// TRAINER 2 WINNER
+		else {
+			// WILD BATTLE
+			if (battleMode == wildBattle || battleMode == legendaryBattle) {				
+			}			
+			// TRAINER BATTLE
+			else {							
+			}	
+		}
+	}
+	private int getMoney() {
+		// money earned formula reference (ALL GEN): https://bulbapedia.bulbagarden.net/wiki/Prize_money
+		
+		int level = trainer[loser].pokeParty.get(trainer[loser].pokeParty.size() - 1).getLevel();
+		int base = trainer[loser].trainerClass;		
+		int payout = base * level;
+		
+		return payout;
+	}
 	
 	// DRAW METHODS
 	public void draw(Graphics2D g2) {
@@ -1382,6 +1445,12 @@ public class BattleManager {
 			animateFighterDefeat();
 			drawFighters(g2);		
 		}
+		else if (fightStage == fightStage_Defeat || fightStage == fightStage_Victory) {
+			animateTrainerDefeat(g2);
+		}
+		else if (fightStage == fightStage_Close) {
+			drawTrainerDefeat(g2);
+		}
 		else {
 			drawFighters(g2);	
 		}		
@@ -1395,10 +1464,10 @@ public class BattleManager {
 		y = (int) (fighter_two_Y + gp.tileSize * 2.3);
 		g2.drawImage(current_arena, x, y, null);	
 		
-		if (battleMode == wildBattle) {
+		if (battleMode == wildBattle || battleMode == legendaryBattle) {
 			g2.drawImage(fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y + 20, null);
 		}
-		else if (battleMode == trainerBattle) {
+		else {
 			g2.drawImage(trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y, null);
 		}
 		
@@ -1441,7 +1510,7 @@ public class BattleManager {
 		}
 	}
 	private void animateFighterDefeat() {		
-		if (gp.btlManager.loser == 0) {
+		if (loser == 0) {
 			if (fighter_one_Y < gp.screenHeight) {
 				fighter_one_Y += 16;
 			}
@@ -1449,7 +1518,7 @@ public class BattleManager {
 				fightStage = fightStage_Swap;
 			}
 		}
-		else if (gp.btlManager.loser == 1) {
+		else if (loser == 1) {
 			if (fighter_two_Y < gp.screenHeight) {
 				fighter_two_Y += 16;
 			}
@@ -1458,7 +1527,34 @@ public class BattleManager {
 			}
 		}		
 	}
+	private void animateTrainerDefeat(Graphics2D g2) {
+				
+		if (loser == 0) {
+			
+		}
+		else if (loser == 1) {
+			
+			if (fighter_two_endX < fighter_two_X) {
+				fighter_two_X -= 6;
+			}
+			else {
+				fightStage = fightStage_Victory;
+			}
+		}		
 		
+		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
+		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
+
+		g2.drawImage(trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y, null);
+		g2.drawImage(fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);			
+	}
+	private void drawTrainerDefeat(Graphics2D g2) {
+		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
+		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
+		
+		g2.drawImage(fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);				
+		g2.drawImage(trainer[1].frontSprite, fighter_two_endX + 25, fighter_two_Y, null);	
+	}
 	
 	// MISC
 	private BufferedImage setup(String imagePath, int width, int height) {
