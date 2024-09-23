@@ -225,7 +225,6 @@ public class UI {
 				
 				skipDialogue();
 				
-				battleSubState = battle_Encounter;
 				gp.gameState = gp.battleState;
 			}
 			else {

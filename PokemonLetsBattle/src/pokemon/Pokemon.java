@@ -322,12 +322,20 @@ public enum Pokemon {
 	}	
 	public static Pokemon getPokemon(String name) {
 		
-		for (Pokemon pokemon : POKEDEX) {
-			if (pokemon.getName().equals(name)) {
-				return pokemon;
+		Pokemon pokemon = null;
+		
+		for (Pokemon p : POKEDEX) {
+			if (p.getName().equals(name)) {
+				pokemon = p;
+				break;
 			}
 		}
-		return null;
+		
+		if (pokemon != null) {		
+			mapMoves(pokemon);		
+		}
+		
+		return pokemon;
 	}
 	public static List<Pokemon> getPokedex() {
 		return POKEDEX; 

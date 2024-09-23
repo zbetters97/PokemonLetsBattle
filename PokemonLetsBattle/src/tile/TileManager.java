@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
@@ -21,9 +22,11 @@ public class TileManager {
 	// [MAP NUMBER][ROW][COL]
 	public int mapTileNum[][][];
 	
-	ArrayList<String> fileNames = new ArrayList<>();
-	ArrayList<String> collisionStatus = new ArrayList<>();
-	ArrayList<String> waterStatus = new ArrayList<>();
+	private ArrayList<String> fileNames = new ArrayList<>();
+	private ArrayList<String> collisionStatus = new ArrayList<>();
+	private ArrayList<String> waterStatus = new ArrayList<>();
+	
+	public ArrayList<Integer> grassTiles = new ArrayList<>();
 	
 	public TileManager(GamePanel gp) {		
 		this.gp = gp;
@@ -36,6 +39,8 @@ public class TileManager {
 		gp.worldHeight = gp.tileSize * 50;
 		
 		mapTileNum = new int[gp.maxMap][50][50];
+		
+		grassTiles.addAll(Arrays.asList(126,127,128));
 	}
 	
 	public void loadMap() {

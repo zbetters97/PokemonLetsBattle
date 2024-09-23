@@ -114,15 +114,22 @@ public class CollisionChecker {
 				entity.collisionOn = false; 
 				return;
 		}		
-		
 		// WATER
 		if (gp.tileM.tile[tileNum1].water || gp.tileM.tile[tileNum2].water) {			
 			entity.collisionOn = true;				
 		}
 		
 		// NORMAL COLLISION
-		if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {	
+		else if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {	
 			entity.collisionOn = true;			
+		}
+		
+		// GRASS
+		else if (gp.tileM.grassTiles.contains(tileNum1) || gp.tileM.grassTiles.contains(tileNum2)) {			
+			entity.inGrass = true;		
+		}
+		else {
+			entity.inGrass = false;
 		}
 	}
 			

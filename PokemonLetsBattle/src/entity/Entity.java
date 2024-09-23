@@ -15,6 +15,11 @@ import pokemon.Pokemon;
 
 public class Entity {
 	
+	public enum EncounterType {
+		COMMON, UNCOMMON, RARE, VERY_RARE,EXTREMELY_RARE,LEGENDARY,SHINY,ELITE
+	}	
+	
+	
 	protected GamePanel gp;
 	
 	// GENERAL ATTRIBUTES
@@ -36,6 +41,7 @@ public class Entity {
 	public boolean sleep = false;	
 	public boolean collision = true;
 	public boolean collisionOn = false;	
+	public boolean inGrass = false;
 	public boolean hasBattle = false;
 	public boolean isDefeated = false;
 	

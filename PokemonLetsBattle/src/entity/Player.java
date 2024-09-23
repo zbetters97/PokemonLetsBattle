@@ -4,7 +4,9 @@ package entity;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 import application.GamePanel;
 import pokemon.Pokemon;
@@ -60,7 +62,7 @@ public class Player extends Entity {
 	public void assignParty() {
 		pokeParty.add(Pokemon.getPokemon(39));
 		pokeParty.add(Pokemon.getPokemon(38));
-//		pokeParty.add(Pokemon.getPokemon(39));
+		pokeParty.add(Pokemon.getPokemon(39));
 	}
 	public void setDefaultValues() {
 					
@@ -222,6 +224,28 @@ public class Player extends Entity {
 				case "left": worldX -= speed; break;
 				case "right": worldX += speed; break;
 			}
+			
+			if (inGrass) {
+				checkWildEncounter();
+			}
+		}
+	}
+	private void checkWildEncounter() {
+		// random encounter formula reference: https://bulbapedia.bulbagarden.net/wiki/Wild_Pok%C3%A9mon
+		
+		int r = new Random().nextInt(255);
+		
+		if (r < 15) {
+			
+			inGrass = false;
+			
+			Pokemon wildPokemon = Pokemon.getPokemon("Pikachu");
+			wildPokemon.setAlive(true);
+			wildPokemon.setHP(wildPokemon.getBHP());
+			gp.btlManager.fighter[1] = wildPokemon;
+			gp.btlManager.setBattle(gp.btlManager.wildBattle);
+			
+			gp.gameState = gp.battleState;
 		}
 	}
 	public void cycleSprites() {
@@ -254,9 +278,9 @@ public class Player extends Entity {
 		
 		// CHECK TILE COLLISION
 		gp.cChecker.checkTile(this);	
-		gp.cChecker.checkEntity(this, gp.npc);
+		gp.cChecker.checkEntity(this, gp.npc);		
 	}	
-	
+			
 	public void interactNPC(int i) {		
 		if (i != -1) {				
 			resetValues();
@@ -359,8 +383,14 @@ public class Player extends Entity {
 				}		
 				break;			
 		}
-			
-		g2.drawImage(image, tempScreenX, tempScreenY, null);
+		
+		if (inGrass) {
+			BufferedImage grassImg = image.getSubimage(0, 0, 48, 36);
+			g2.drawImage(grassImg, tempScreenX, tempScreenY, null);
+		}
+		else {
+			g2.drawImage(image, tempScreenX, tempScreenY, null);
+		}		
 		
 		// RESET OPACITY
 		changeAlpha(g2, 1f);
