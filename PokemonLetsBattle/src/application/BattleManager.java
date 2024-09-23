@@ -1440,7 +1440,7 @@ public class BattleManager {
 		
 		return payout;
 	}
-	private void endBattle() {
+	public void endBattle() {
 		gp.stopMusic();
 		gp.setupMusic();
 		

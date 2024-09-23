@@ -169,14 +169,11 @@ public class Pokemon {
 	public String getNickname() { return nickname; }	
 	public void setNickname(String nickname) { this.nickname = nickname; }	
 	public char getSex() { return sex; }
-	public String printSex() { 			
-		return sex + ""; 
-	}
+	public void setSex(char sex) { this.sex = sex; }	
 	public Color getSexColor() {
 		if (sex == '♂') return Color.BLUE;		
 		else return Color.RED;		
 	}
-	public void setSex(char sex) { this.sex = sex; }
 	
 	public int getLevel() {	return level; }	
 	public void setLevel(int level) { 	
@@ -248,16 +245,12 @@ public class Pokemon {
 	/** GETTERS **/
 	public String toString() { return pokemon.getName(); }
 	public String getName() { 
-		if (nickname != null) {
-			return nickname;
-		}
-		else {
-			return pokemon.getName().toUpperCase();	
-		}
+		if (nickname != null) return nickname;		
+		else return pokemon.getName().toUpperCase();		
 	}
 	public int getIndex() {	return pokemon.getIndex(); }
 	public Type getType() { return pokemon.getType(); }
-	public List<Type> getTypes() { return pokemon.getTypes(); }	
+	public List<Type> getTypes() { return pokemon.getTypes(); }		
 	public Nature getNature() { return this.nature; }		
 	
 	public BufferedImage getFrontSprite() { return pokemon.getFrontSprite(); }

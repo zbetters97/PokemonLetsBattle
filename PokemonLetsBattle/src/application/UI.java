@@ -1234,6 +1234,11 @@ public class UI {
 				gp.gameState = gp.partyState;
 				partySubState = party_Main;				
 			}
+			else if (commandNum == 3) {
+				if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {
+					gp.btlManager.endBattle();	
+				}				
+			}
 			commandNum = 0;	
 		}
 	}

@@ -89,6 +89,11 @@ public enum PokemonBase {
 		this.index = index; 
 		this.type = type; 
 		this.hp = hp;
+		this.attack = attack;
+		this.defense = defense;
+		this.spAttack = spAttack;
+		this.spDefense = spDefense;
+		this.speed = speed;
 		this.xp = xp;
 		this.ev = ev;
 		this.evLevel = evLevel; 
@@ -104,7 +109,13 @@ public enum PokemonBase {
 
 		this.name = name; 
 		this.index = index; 
-		this.types = types; 	
+		this.types = types; 
+		this.hp = hp;
+		this.attack = attack;
+		this.defense = defense;
+		this.spAttack = spAttack;
+		this.spDefense = spDefense;
+		this.speed = speed;
 		this.xp = xp;
 		this.ev = ev;
 		this.evLevel = evLevel; 
@@ -209,46 +220,17 @@ public enum PokemonBase {
 	}
 	/** END POKEMON MOVES STATIC MAP **/
 	
-	/** CAN EVOLVE METHOD **/
-	public boolean canEvolve() {		
-		
-		// pokemon can't evolve if evLevel is -1
-		return this.getEvLevel() != -1;
-	}
-	/** END CAN EVOLVE METHOD **/
+	// pokemon can't evolve if evLevel is -1
+	public boolean canEvolve() { return this.getEvLevel() != -1; }
 			
 	/** GETTERS **/	
 	public BufferedImage getFrontSprite() { return frontSprite; }
 	public BufferedImage getBackSprite() { return backSprite; }
 	public BufferedImage getMenuSprite() { return menuSprite; }
 	public String getName() { return name; }
-	public int getIndex() {	return index; }
-	
+	public int getIndex() {	return index; }	
 	public Type getType() { return type; }
-	public List<Type> getTypes() { return types; }	
-	public String printTypes() {
-		
-		String s = "";		
-		int i = types.size() - 1;
-		for (Type t : types) {
-			 s += t.printType();		
-			 if (i-- != 0)
-				 s += " / ";
-		}
-		return s;
-	}
-	public String printTypesShort() {
-		String s = "";		
-		int i = types.size() - 1;
-		for (Type t : types) {
-			 s += t.toString().charAt(0);
-			 s += t.toString().toLowerCase().charAt(1);
-			 if (i-- != 0)
-				 s += "/";
-		}
-		return s;
-	}
-	
+	public List<Type> getTypes() { return types; }		
 	public int getHP() { return hp; }
 	public int getSpeed() { return speed; }
 	public int getAttack() { return attack; }
