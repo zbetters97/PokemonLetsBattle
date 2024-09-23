@@ -1,4 +1,4 @@
-package person;
+package entity;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
 import application.GamePanel;
 import pokemon.Pokemon;
 
-public class NPC {
+public class Entity {
 	
 	protected GamePanel gp;
 	
@@ -29,6 +29,7 @@ public class NPC {
 	public int type;
 	public String name;			
 	public int speed, defaultSpeed, animationSpeed, defaultAnimationSpeed;	
+	public int money = 0;
 	public int trainerClass = 1;
 	public boolean drawing = true;
 	public boolean temp = false;
@@ -76,7 +77,7 @@ public class NPC {
 	public int hitboxDefaultHeight = hitbox.height;
 
 	// INVENTORY
-	public ArrayList<NPC> inventory = new ArrayList<>();
+	public ArrayList<Entity> inventory = new ArrayList<>();
 	public final int maxInventorySize = 20;
 	
 	// CHARACTER TYPES
@@ -88,7 +89,7 @@ public class NPC {
 	public final int maxPartySize = 6;
 	
 	// CONSTRUCTOR
-	public NPC(GamePanel gp) {
+	public Entity(GamePanel gp) {
 		this.gp = gp;
 		
 		pokeParty = new ArrayList<>();
@@ -226,7 +227,7 @@ public class NPC {
 		
 		return oppositeDirection;
 	}
-	public void startDialogue(NPC entity, int setNum) {
+	public void startDialogue(Entity entity, int setNum) {
 		spriteNum = 1;
 		dialogueSet = setNum;
 		gp.ui.npc = entity;		
@@ -234,25 +235,25 @@ public class NPC {
 	}
 	
 	// PATH FINDING
-	public void isOnPath(NPC target, int distance) {
+	public void isOnPath(Entity target, int distance) {
 		if (getTileDistance(target) < distance) {
 			onPath = true;
 		}
 	}
-	public void isOffPath(NPC target, int distance) {
+	public void isOffPath(Entity target, int distance) {
 		if (getTileDistance(target) > distance || !withinBounds()) {
 			onPath = false;			
 		}
 	}	
-	public int getTileDistance(NPC target) {
+	public int getTileDistance(Entity target) {
 		int tileDistance = (getXdistance(target) + getYdistance(target)) / gp.tileSize;
 		return tileDistance;
 	}
-	public int getXdistance(NPC target) { 
+	public int getXdistance(Entity target) { 
 		int xDistance = Math.abs(getCenterX() - target.getCenterX());
 		return xDistance;
 	}
-	public int getYdistance(NPC target) { 
+	public int getYdistance(Entity target) { 
 		int yDistance = Math.abs(getCenterY() - target.getCenterY());
 		return yDistance;
 	}	
@@ -336,11 +337,11 @@ public class NPC {
 		}
 		
 	}
-	public int getGoalCol(NPC target) {
+	public int getGoalCol(Entity target) {
 		int goalCol = (target.worldX + target.hitbox.x) / gp.tileSize;
 		return goalCol;
 	}
-	public int getGoalRow(NPC target) {
+	public int getGoalRow(Entity target) {
 		int goalRow = (target.worldY + target.hitbox.y) / gp.tileSize;
 		return goalRow;
 	}

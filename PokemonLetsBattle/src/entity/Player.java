@@ -1,4 +1,4 @@
-package person;
+package entity;
 
 /** IMPORTS **/
 import java.awt.AlphaComposite;
@@ -10,7 +10,7 @@ import application.GamePanel;
 import pokemon.Pokemon;
 
 /** PLAYER CLASS **/
-public class Player extends NPC {
+public class Player extends Entity {
 	
 /** PLAYER VARIABLES **/
 		
@@ -26,7 +26,7 @@ public class Player extends NPC {
 	
 	// INVENTORY
 	public final int maxItemInventorySize = 10;
-	public ArrayList<NPC> inventory_item = new ArrayList<>();
+	public ArrayList<Entity> inventory_item = new ArrayList<>();
 	
 /** END PLAYER VARIABLES **/		
 	
@@ -75,8 +75,8 @@ public class Player extends NPC {
 	}	
 	public void setDefaultPosition() {	
 
-		worldX = gp.tileSize * 23;
-		worldY = gp.tileSize * 21;		
+		worldX = gp.tileSize * 21;
+		worldY = gp.tileSize * 30;		
 		defaultWorldX = worldX;
 		defaultWorldY = worldY;
 		safeWorldX = defaultWorldX;

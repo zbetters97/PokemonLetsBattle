@@ -23,6 +23,7 @@ public class TileManager {
 	
 	ArrayList<String> fileNames = new ArrayList<>();
 	ArrayList<String> collisionStatus = new ArrayList<>();
+	ArrayList<String> waterStatus = new ArrayList<>();
 	
 	public TileManager(GamePanel gp) {		
 		this.gp = gp;
@@ -31,10 +32,10 @@ public class TileManager {
 		
 		gp.maxWorldCol = 100;
 		gp.maxWorldRow = 100;
-		gp.worldWidth = gp.tileSize * 100;
-		gp.worldHeight = gp.tileSize * 100;
+		gp.worldWidth = gp.tileSize * 50;
+		gp.worldHeight = gp.tileSize * 50;
 		
-		mapTileNum = new int[gp.maxMap][100][100];
+		mapTileNum = new int[gp.maxMap][50][50];
 	}
 	
 	public void loadMap() {
@@ -83,6 +84,7 @@ public class TileManager {
 			while ((line = br.readLine()) != null) {
 				fileNames.add(line);
 				collisionStatus.add(br.readLine());	
+				waterStatus.add(br.readLine());
 			}						
 			br.close();
 		} 
@@ -101,7 +103,7 @@ public class TileManager {
 		for (int i = 0; i< fileNames.size(); i++) {
 			
 			String fileName;
-			boolean collision;
+			boolean collision, water;
 			
 			// assign each name to fileName
 			fileName = fileNames.get(i);
@@ -111,18 +113,23 @@ public class TileManager {
 				collision = true;
 			else
 				collision = false;
+			if (waterStatus.get(i).equals("true")) 
+				water = true;
+			else
+				water = false;
 						
-			setup(i, fileName, collision);
+			setup(i, fileName, collision, water);
 		}
 	}
 	
-	public void setup(int index, String imageName, boolean collision) {
+	public void setup(int index, String imageName, boolean collision, boolean water) {
 		
 		try {
 			tile[index] = new Tile();
 			tile[index].image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imageName));
 			tile[index].image = GamePanel.utility.scaleImage(tile[index].image, gp.tileSize, gp.tileSize);
 			tile[index].collision = collision;
+			tile[index].water = water;
 		}
 		catch (IOException e) {
 			e.printStackTrace();

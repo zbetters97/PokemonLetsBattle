@@ -1,6 +1,6 @@
 package application;
 
-import person.*;
+import entity.*;
 
 public class CollisionChecker {
 	
@@ -12,7 +12,7 @@ public class CollisionChecker {
 	}
 
 	// TILE COLLISION
-	public void checkTile(NPC entity) {
+	public void checkTile(Entity entity) {
 						
 		// COLLISION BOX (left side, right side, top, bottom)
 		int entityLeftWorldX = entity.worldX + entity.hitbox.x;
@@ -115,6 +115,10 @@ public class CollisionChecker {
 				return;
 		}		
 		
+		// WATER
+		if (gp.tileM.tile[tileNum1].water || gp.tileM.tile[tileNum2].water) {			
+			entity.collisionOn = true;				
+		}
 		
 		// NORMAL COLLISION
 		if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {	
@@ -123,12 +127,12 @@ public class CollisionChecker {
 	}
 			
 	// ENTITY COLLISION
-	public int checkEntity(NPC entity, NPC[][] target) {
+	public int checkEntity(Entity entity, Entity[][] target) {
 		
 		int index = -1;
 		
 		String direction = entity.direction;
-				
+		
 		for (int i  = 0; i < target[1].length; i++) {
 			
 			if (target[gp.currentMap][i] != null) {			
@@ -272,7 +276,7 @@ public class CollisionChecker {
 	}
 
 	// CONTACT PLAYER COLLISION
-	public boolean checkPlayer(NPC entity) {
+	public boolean checkPlayer(Entity entity) {
 				
 		boolean contactPlayer = false;
 		

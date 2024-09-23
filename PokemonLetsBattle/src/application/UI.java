@@ -15,8 +15,8 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import entity.Entity;
 import moves.Move;
-import person.NPC;
 import pokemon.Pokemon;
 import properties.Type;
 
@@ -43,7 +43,7 @@ public class UI {
 	private Color party_faint = new Color(181,87,71);
 		
 	// DIALOGUE HANDLER	
-	public NPC npc;
+	public Entity npc;
 	public String currentDialogue = "";
 	private ArrayList<String> battleDialogue;
 	public String combinedText = "";
@@ -1530,7 +1530,9 @@ public class UI {
 		
 		g2.setColor(borderColor);
 		g2.setStroke(new BasicStroke(borderStroke));
-		g2.drawRoundRect(x, y, width, height, curve, curve);		
+		g2.drawRoundRect(x, y, width, height, curve, curve);
+		
+		g2.setStroke(new BasicStroke(1));
 	}
 	
 	public int getXforRightAlignText(String text, int tailX) {

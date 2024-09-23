@@ -13,9 +13,9 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import entity.Entity;
 import moves.Move;
 import moves.Moves;
-import person.NPC;
 import moves.Move.MoveType;
 import pokemon.Pokemon;
 import properties.Type;
@@ -24,7 +24,7 @@ public class BattleManager {
 		
 	// GENERAL VALUES
 	private GamePanel gp;
-	public NPC[] trainer = new NPC[2];
+	public Entity[] trainer = new Entity[2];
 	public Pokemon[] fighter = new Pokemon[2];
 	public Pokemon[] newFighter = new Pokemon[2];
 	public Move move1, move2;
@@ -1405,9 +1405,13 @@ public class BattleManager {
 			else {			
 				trainer[loser].isDefeated = true;
 				trainer[loser].hasBattle = false;
+				
 				int dialogueSet = trainer[loser].dialogueSet + 1;
 				gp.ui.addBattleDialogue(trainer[loser].dialogues[dialogueSet][0]);
-				gp.ui.addBattleDialogue(trainer[winner].name + " got $" + getMoney() + "\nfor winning!" );								
+				
+				int moneyEarned = getMoney();
+				trainer[winner].money += moneyEarned;
+				gp.ui.addBattleDialogue(trainer[winner].name + " got $" + moneyEarned + "\nfor winning!" );								
 				
 				fightStage = fightStage_Close;
 			}	

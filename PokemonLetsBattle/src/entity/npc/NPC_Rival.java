@@ -1,11 +1,12 @@
-package person;
+package entity.npc;
 
 import java.awt.Rectangle;
 
 import application.GamePanel;
+import entity.Entity;
 import pokemon.Pokemon;
 
-public class NPC_Rival extends NPC {
+public class NPC_Rival extends Entity {
 	
 	public static final String npcName = "May";
 	

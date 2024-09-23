@@ -14,10 +14,11 @@ import java.util.Comparator;
 
 import javax.swing.JPanel;
 
+import entity.Entity;
+import entity.Player;
 import environment.EnvironmentManager;
-import person.NPC;
-import person.Player;
 import tile.TileManager;
+import tile.tile_interactive.InteractiveTile;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -73,7 +74,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public int worldWidth;
 	public int worldHeight;
 	
-	public String[] mapFiles = { "worldmap.txt", "indoor01.txt", "dungeon_01_01.txt", "dungeon_01_02.txt" };
+	public String[] mapFiles = { "petalburg.txt", "worldmap.txt"};
 	public final int maxMap = mapFiles.length;
 	public int currentMap = 0;
 	
@@ -110,9 +111,10 @@ public class GamePanel extends JPanel implements Runnable {
 	public CollisionChecker cChecker = new CollisionChecker(this);	
 	public BattleManager btlManager = new BattleManager(this);	
 	
-	public ArrayList<NPC> npcList = new ArrayList<>();
+	public ArrayList<Entity> npcList = new ArrayList<>();
 	public Player player = new Player(this);	
-	public NPC npc[][] = new NPC[maxMap][10]; 
+	public Entity npc[][] = new Entity[maxMap][10]; 
+	public InteractiveTile iTile[][] = new InteractiveTile[maxMap][100];
 	
 /** CONSTRUCTOR **/	
 	public GamePanel() {
@@ -272,18 +274,18 @@ public class GamePanel extends JPanel implements Runnable {
 			npcList.add(player);						
 			
 			// POPULATE ENTITY LIST
-			for (NPC n : npc[currentMap]) { if (n != null) npcList.add(n); }						
+			for (Entity n : npc[currentMap]) { if (n != null) npcList.add(n); }						
 			
 			// SORT DRAW ORDER BY Y COORD
-			Collections.sort(npcList, new Comparator<NPC>() {
-				public int compare(NPC e1, NPC e2) {					
+			Collections.sort(npcList, new Comparator<Entity>() {
+				public int compare(Entity e1, Entity e2) {					
 					int entityTop = Integer.compare(e1.worldY, e2.worldY);					
 					return entityTop;
 				}
 			});
 			
 			// DRAW ENTITIES
-			for (NPC e : npcList) { e.draw(g2); }
+			for (Entity e : npcList) { e.draw(g2); }
 									
 			// EMPTY ENTITY LIST
 			npcList.clear();			

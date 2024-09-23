@@ -1,6 +1,7 @@
 package application;
 
-import person.NPC_Rival;
+import entity.npc.*;
+import tile.tile_interactive.*;
 
 public class AssetSetter {
 	
@@ -15,7 +16,11 @@ public class AssetSetter {
 		int mapNum = 0;
 		int i = 0;
 						
-		gp.npc[mapNum][i] = new NPC_Rival(gp, 23, 12); i++;	
+		gp.npc[mapNum][i] = new NPC_Rival(gp, 8, 12); i++;	
+		
+		gp.npc[mapNum][i] = new NPC_Sign(gp, 10, 14, 0, "MAY'S HOUSE"); i++;
+		gp.npc[mapNum][i] = new NPC_Sign(gp, 19, 14, 1, "PETALBURG GYM"); i++;	
+		gp.npc[mapNum][i] = new NPC_Sign(gp, 19, 20, 0, "WELCOME TO:\nPetalburg Town"); i++;	
 	}	
 	protected void setObject() {		
 		
