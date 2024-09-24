@@ -30,6 +30,9 @@ public class KeyHandler implements KeyListener {
 		if (gp.gameState == gp.playState) {
 			playState(code);
 		}
+		else if (gp.gameState == gp.pauseState) {
+			pauseState(code);
+		}
 		else if (gp.gameState == gp.dialogueState) {
 			dialogueState(code);
 		}	
@@ -58,7 +61,50 @@ public class KeyHandler implements KeyListener {
 		if (code == gp.btn_R && lock) { rPressed = true; lock = false; }
 		if (code == gp.btn_Z) { zPressed = true; }
 		
-		if (code == gp.btn_START && lock) { startPressed = true; lock = false; }		
+		if (code == gp.btn_START && lock) { 
+			playMenuOpenSE(); 
+			gp.gameState = gp.pauseState; 
+			lock = false;			
+		}			
+		
+		if (code == gp.btn_DEBUG) { if (debug) debug = false; else debug = true; }
+	}
+	// PAUSE
+	private void pauseState(int code) { 		
+
+		if (code == gp.btn_UP) {
+			if (gp.ui.commandNum != 0) {
+				playCursorSE();
+				gp.ui.commandNum--;
+			}
+		}
+		if (code == gp.btn_DOWN) {
+			if (gp.ui.commandNum != 6) {
+				playCursorSE();
+				gp.ui.commandNum++;
+			}
+		}
+		if (code == gp.btn_LEFT) {
+			
+		}
+		if (code == gp.btn_RIGHT) {
+			
+		}
+						
+		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
+		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
+		if (code == gp.btn_X && lock) { xPressed = true; lock = false; }
+		if (code == gp.btn_Y && lock) { yPressed = true; lock = false; }
+		
+		if (code == gp.btn_L && lock) { lPressed = true; lock = false; }
+		if (code == gp.btn_R && lock) { rPressed = true; lock = false; }
+		if (code == gp.btn_Z) { zPressed = true; }
+		
+		if (code == gp.btn_START && lock) { 
+			gp.ui.commandNum = 0;
+			gp.gameState = gp.playState;
+			lock = false;
+		}			
 		
 		if (code == gp.btn_DEBUG) { if (debug) debug = false; else debug = true; }
 	}
@@ -226,8 +272,7 @@ public class KeyHandler implements KeyListener {
 		}
 		if (gp.ui.partySubState == gp.ui.party_Main_Select) {			
 			
-			if (code == gp.btn_A && lock) { 
-				playCursorSE();						
+			if (code == gp.btn_A && lock) { 	
 				aPressed = true; lock = false; 
 			}
 			if (code == gp.btn_B && lock) { 
@@ -250,9 +295,9 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 		}
-		else if (gp.ui.partySubState == gp.ui.party_Stats) {	
+		else if (gp.ui.partySubState == gp.ui.party_Skills) {	
 			
-			int maxParty = gp.btlManager.trainer[0].pokeParty.size() - 1;
+			int maxParty = gp.player.pokeParty.size() - 1;
 			
 			if (code == gp.btn_B && lock) { 
 				playCursorSE();						
@@ -271,7 +316,7 @@ public class KeyHandler implements KeyListener {
 				if (0 < gp.ui.fighterNum) {
 					gp.ui.fighterNum--;
 					gp.ui.commandNum = 0;
-					gp.playSE(3, gp.btlManager.trainer[0].pokeParty.get(gp.ui.fighterNum).toString());  		
+					gp.playSE(3, gp.player.pokeParty.get(gp.ui.fighterNum).toString());  		
 				}
 			}
 			if (code == gp.btn_R) {				
@@ -279,14 +324,14 @@ public class KeyHandler implements KeyListener {
 				if (gp.ui.fighterNum < maxParty) {
 					gp.ui.fighterNum++;
 					gp.ui.commandNum = 0;
-					gp.playSE(3, gp.btlManager.trainer[0].pokeParty.get(gp.ui.fighterNum).toString());  
+					gp.playSE(3, gp.player.pokeParty.get(gp.ui.fighterNum).toString());  
 				}
 			}
 		}
 		else if (gp.ui.partySubState == gp.ui.party_Moves) {			
 			
-			int maxParty = gp.btlManager.trainer[0].pokeParty.size() - 1;
-			int maxMoves = gp.btlManager.trainer[0].pokeParty.get(gp.ui.fighterNum).getMoveSet().size() - 1;
+			int maxParty = gp.player.pokeParty.size() - 1;
+			int maxMoves = gp.player.pokeParty.get(gp.ui.fighterNum).getMoveSet().size() - 1;
 
 			if (code == gp.btn_B && lock) { 
 				playCursorSE();						
@@ -321,7 +366,7 @@ public class KeyHandler implements KeyListener {
 				if (0 < gp.ui.fighterNum) {
 					gp.ui.fighterNum--;
 					gp.ui.commandNum = 0;
-					gp.playSE(3, gp.btlManager.trainer[0].pokeParty.get(gp.ui.fighterNum).toString());  		
+					gp.playSE(3, gp.player.pokeParty.get(gp.ui.fighterNum).toString());  		
 				}
 			}
 			if (code == gp.btn_R) {				
@@ -329,7 +374,7 @@ public class KeyHandler implements KeyListener {
 				if (gp.ui.fighterNum < maxParty) {
 					gp.ui.fighterNum++;
 					gp.ui.commandNum = 0;
-					gp.playSE(3, gp.btlManager.trainer[0].pokeParty.get(gp.ui.fighterNum).toString());  		
+					gp.playSE(3, gp.player.pokeParty.get(gp.ui.fighterNum).toString());  		
 				}
 			}
 		}
@@ -365,11 +410,8 @@ public class KeyHandler implements KeyListener {
 	public void playCursorSE() {
 		gp.playSE(2, 0);
 	}
-	public void playSelectSE() {
-		
-	}
 	public void playErrorSE() {
-	
+		gp.playSE(2, 1);
 	}
 	public void playMenuOpenSE() {
 		

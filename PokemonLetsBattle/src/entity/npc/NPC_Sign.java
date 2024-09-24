@@ -26,7 +26,7 @@ public class NPC_Sign extends Entity {
 		
 		dialogues[0][0] = message;
 		
-		hitbox = new Rectangle(0, 16, 48, 32); 		
+		hitbox = new Rectangle(1, 1, 46, 46); 		
 		hitboxDefaultX = hitbox.x;
 		hitboxDefaultY = hitbox.y;
 		hitboxDefaultWidth = hitbox.width;

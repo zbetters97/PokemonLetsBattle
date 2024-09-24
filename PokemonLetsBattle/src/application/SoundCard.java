@@ -28,7 +28,7 @@ public class SoundCard {
 		sounds[3] = getSounds("pdxcry");	
 		sounds[4] = getSounds("pdxfaint");	
 		sounds[5] = getSounds("moves");
-		sounds[6] = getSounds("battle");				
+		sounds[6] = getSounds("battle");		
 	}	
 	
 	private String[] getSounds(String library) {		

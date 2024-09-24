@@ -105,26 +105,6 @@ public class Entity {
 		getImage();
 	}
 	
-	/*
-	public void getImage() {			
-		up1 = setup("/player/boy_up_1"); 
-		up2 = setup("/player/boy_up_2"); 
-		up3 = setup("/player/boy_up_3"); 
-		down1 = setup("/player/boy_down_1"); 
-		down2 = setup("/player/boy_down_2");
-		down3 = setup("/player/boy_down_3");
-		left1 = setup("/player/boy_left_1"); 
-		left2 = setup("/player/boy_left_2");
-		left3 = setup("/player/boy_left_3");
-		right1 = setup("/player/boy_right_1"); 
-		right2 = setup("/player/boy_right_2");
-		right3 = setup("/player/boy_right_3");		
-		
-		frontSprite = setup("/player/boy_battle_front", gp.tileSize * 4, gp.tileSize * 4);
-		backSprite = setup("/player/boy_battle_back", gp.tileSize * 4, gp.tileSize * 4);
-	}	
-	*/
-	
 	// CHILD ONLY		
 	public void getImage() { }
 	public void assignParty() { }
@@ -137,40 +117,27 @@ public class Entity {
 	public void resetValues() { }	
 	
 	// UPDATER
-	public void update() {
-
-		// CHILD CLASS
-		setAction();
-		
-		move();
-		manageValues();
+	public void update() {						
+		manageValues();	
 	}	
-			
-	public void move() {
+	
+	public void walking() {
 		
 		checkCollision();
-		
-		if (!collisionOn && withinBounds()) { 	
-			
-			switch (direction) {
-				case "up": worldY -= speed; break;
-				case "upleft": worldY -= speed - 1; worldX -= speed - 1; break;
-				case "upright": worldY -= speed - 1; worldX += speed - 1; break;
-				
-				case "down": worldY += speed; break;
-				case "downleft": worldY += speed - 1; worldX -= speed - 1; break;
-				case "downright": worldY += speed; worldX += speed - 1; break;
-				
-				case "left": worldX -= speed; break;
-				case "right": worldX += speed; break;
-			}
-			
-			cycleSprites();
-		}			
+		if (!collisionOn && withinBounds()) { 
+			move(direction);	
+		}
 		else {
 			spriteNum = 1;
 		}
-	}	
+		
+		pixelCounter += speed;		
+		if (pixelCounter >= gp.tileSize) {
+			moving = false;
+			pixelCounter = 0;
+			spriteNum = 1;
+		}
+	}
 	
 	// COLLISION CHECKER
 	protected void checkCollision() {	
@@ -181,31 +148,8 @@ public class Entity {
 		gp.cChecker.checkEntity(this, gp.npc);	
 		gp.cChecker.checkPlayer(this);				
 	}
-
-	public void walking() {
-		getDirection();
-		
-		checkCollision();
-		if (!collisionOn) {
-			switch (direction) {
-				case "up": worldY -= speed; break;		
-				case "down": worldY += speed; break;		
-				case "left": worldX -= speed; break;
-				case "right": worldX += speed; break;
-			}	
 			
-		}
-
-		cycleSprites();
-	}
-	public void getDirection() {
-		
-			if (gp.keyH.upPressed) direction = "up";
-			if (gp.keyH.downPressed) direction = "down";
-			if (gp.keyH.leftPressed) direction = "left";
-			if (gp.keyH.rightPressed) direction = "right";				
-			
-	}
+	
 	public void cycleSprites() {
 		spriteCounter++;
 		if (spriteCounter > animationSpeed && animationSpeed != 0) {
@@ -216,6 +160,23 @@ public class Entity {
 			spriteCounter = 0;
 		}
 	}
+	public void getDirection(int rate) {		
+		
+		actionLockCounter++;			
+		if (actionLockCounter >= rate) {		
+						
+			int dir = 1 + (int)(Math.random() * 4);
+			if (dir == 1) direction = "up";
+			else if (dir == 2) direction = "down";
+			else if (dir == 3) direction = "left";
+			else if (dir == 4) direction = "right";
+			
+			actionLockCounter = 0;
+			
+			moving = true;
+		}		
+	}
+	
 	
 	protected String getOppositeDirection(String direction) {
 		
@@ -327,22 +288,6 @@ public class Entity {
 			
 			actionLockCounter = 0;
 		}
-	}
-	public void getDirection(int rate) {
-		
-		
-		actionLockCounter++;			
-		if (actionLockCounter >= rate) {		
-						
-			int dir = 1 + (int)(Math.random() * 4);
-			if (dir == 1) direction = "up";
-			else if (dir == 2) direction = "down";
-			else if (dir == 3) direction = "left";
-			else if (dir == 4) direction = "right";
-			
-			actionLockCounter = 0;
-		}
-		
 	}
 	public int getGoalCol(Entity target) {
 		int goalCol = (target.worldX + target.hitbox.x) / gp.tileSize;

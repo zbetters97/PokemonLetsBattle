@@ -31,6 +31,7 @@ public class BattleManager {
 	public int winner = -1, loser = -1;
 	private int hitCounter = -1;
 	private BufferedImage current_arena;
+	public boolean active = false;
 		
 	// TURN VALUES
 	public boolean ready = false;
@@ -109,6 +110,8 @@ public class BattleManager {
 	public void setBattle(int currentBattle) {
 		
 		gp.stopMusic();	
+		
+		active = true;
 		
 		fighter_one_X = fighter_one_startX;
 		fighter_two_X = fighter_two_startX;
@@ -1463,6 +1466,8 @@ public class BattleManager {
 		
 		winner = -1;
 		loser = -1;
+		
+		active = false;
 		
 		gp.gameState = gp.playState;
 	}

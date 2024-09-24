@@ -21,12 +21,12 @@ public class NPC_Rival extends Entity {
 		name = npcName;
 		direction = "down";
 		speed = 1; defaultSpeed = speed;
-		animationSpeed = 10; 
+		animationSpeed = 12; 
 		
 		hasBattle = true;
 		trainerClass = 5;
 		
-		hitbox = new Rectangle(8, 16, 32, 32); 		
+		hitbox = new Rectangle(1, 1, 46, 46); 		
 		hitboxDefaultX = hitbox.x;
 		hitboxDefaultY = hitbox.y;
 		hitboxDefaultWidth = hitbox.width;
@@ -81,9 +81,39 @@ public class NPC_Rival extends Entity {
 		startDialogue(this, dialogueSet);
 	}
 	
-	public void setAction() {			
+	public void update() {
+
+		if (moving) {			
+			walking();
+		}
+		else {			
+			setAction();		
+		}
+				
+		manageValues();	
+	}	
+	
+	public void setAction() {
 		getDirection(60);	
 	}
+	
+	public void move(String direction) {
+		
+		switch (direction) {
+			case "up": worldY -= speed; break;
+			case "upleft": worldY -= speed - 1; worldX -= speed - 1; break;
+			case "upright": worldY -= speed - 1; worldX += speed - 1; break;
+			
+			case "down": worldY += speed; break;
+			case "downleft": worldY += speed - 1; worldX -= speed - 1; break;
+			case "downright": worldY += speed; worldX += speed - 1; break;
+			
+			case "left": worldX -= speed; break;
+			case "right": worldX += speed; break;
+		}
+		
+		cycleSprites();		
+	}		
 	
 	public void cycleSprites() {
 		

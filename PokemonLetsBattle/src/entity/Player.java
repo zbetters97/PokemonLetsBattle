@@ -68,7 +68,7 @@ public class Player extends Entity {
 	public void setDefaultValues() {
 					
 		speed = 4; defaultSpeed = speed;
-		animationSpeed = 10; defaultAnimationSpeed = animationSpeed;
+		animationSpeed = 8; defaultAnimationSpeed = animationSpeed;
 		
 		// PLAYER ATTRIBUTES		
 		setDefaultPosition();
@@ -92,12 +92,13 @@ public class Player extends Entity {
 		speed = defaultSpeed;		
 		resetValues();
 	}	
-	public void resetValues() {	
-		
+	public void resetValues() {			
 		gp.keyH.aPressed = false;
 		gp.keyH.bPressed = false;
 		canMove = true;
 		running = false;
+		moving = false;
+		pixelCounter = 0;
 	}
 	
 	// DIALOGUE
@@ -146,12 +147,13 @@ public class Player extends Entity {
 		if (moving) {			
 			walking();
 		}
-		else {
+		else {	
+			
 			running = false;
 			
 			if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) { 
-				
-				moving = true;				
+								
+				moving = true;							
 				if (gp.keyH.bPressed) running = true;				
 				
 				getDirection();
@@ -188,8 +190,6 @@ public class Player extends Entity {
 				animationSpeed = defaultAnimationSpeed;
 			}
 			move(direction);	
-			
-			cycleSprites();	
 		}
 		else {
 			running = false;
@@ -239,6 +239,8 @@ public class Player extends Entity {
 				case "left": worldX -= speed; break;
 				case "right": worldX += speed; break;
 			}
+
+			cycleSprites();	
 		}
 	}
 	private void checkWildEncounter() {
