@@ -66,6 +66,7 @@ public class Entity {
 	public boolean hasCutscene = false;	
 	public boolean canMove = true;
 	public boolean moving = false;
+	public int pixelCounter = 0;
 	public boolean onPath = false;
 	public boolean pathCompleted = false;
 		

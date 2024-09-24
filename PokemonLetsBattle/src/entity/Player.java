@@ -43,7 +43,8 @@ public class Player extends Entity {
 		screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 						
 		// HITBOX (x, y, width, height)
-		hitbox = new Rectangle(8, 12, 32, 36); 
+//		hitbox = new Rectangle(8, 12, 32, 36); 
+		hitbox = new Rectangle(1, 1, 46, 46);
 		hitboxDefaultX = hitbox.x;
 		hitboxDefaultY = hitbox.y;
 		hitboxDefaultWidth = hitbox.width;
@@ -66,7 +67,7 @@ public class Player extends Entity {
 	}
 	public void setDefaultValues() {
 					
-		speed = 3; defaultSpeed = speed;
+		speed = 4; defaultSpeed = speed;
 		animationSpeed = 10; defaultAnimationSpeed = animationSpeed;
 		
 		// PLAYER ATTRIBUTES		
@@ -142,18 +143,27 @@ public class Player extends Entity {
 
 	public void update() {
 		
-		checkCollision();
-				
-		if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) { 
-			walking(); 	
+		if (moving) {			
+			walking();
 		}
 		else {
-			spriteNum = 1;
-		}
-		
-		if (gp.keyH.aPressed) {
-			int npcIndex = gp.cChecker.checkNPC();
-			if (npcIndex != -1) interactNPC(npcIndex);
+			running = false;
+			
+			if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) { 
+				
+				moving = true;				
+				if (gp.keyH.bPressed) running = true;				
+				
+				getDirection();
+			}
+			else {
+				spriteNum = 1;
+			}
+			
+			if (gp.keyH.aPressed) {
+				int npcIndex = gp.cChecker.checkNPC();
+				if (npcIndex != -1) interactNPC(npcIndex);
+			}
 		}
 				
 		manageValues();	
@@ -167,14 +177,8 @@ public class Player extends Entity {
 	// MOVEMENT
 	public void walking() {
 		
-		getDirection();
-		
 		if (!gp.keyH.debug) checkCollision();
-		if (!collisionOn) { 			
-
-			if (gp.keyH.bPressed) running = true;
-			else running = false;
-			
+		if (!collisionOn) { 									
 			if (running) {
 				speed = 6;
 				animationSpeed = 6;
@@ -183,7 +187,6 @@ public class Player extends Entity {
 				speed = defaultSpeed;
 				animationSpeed = defaultAnimationSpeed;
 			}
-			
 			move(direction);	
 			
 			cycleSprites();	
@@ -191,6 +194,16 @@ public class Player extends Entity {
 		else {
 			running = false;
 			spriteNum = 1;
+		}
+		
+		pixelCounter += speed;		
+		if (pixelCounter >= gp.tileSize) {
+			moving = false;
+			pixelCounter = 0;
+			
+			if (inGrass) {
+				checkWildEncounter();
+			}
 		}
 	}
 	public void getDirection() {
@@ -202,10 +215,12 @@ public class Player extends Entity {
 		if (gp.keyH.leftPressed) tempDirection = "left";
 		if (gp.keyH.rightPressed) tempDirection = "right";			
 		
+		/*
 		if (gp.keyH.upPressed && gp.keyH.leftPressed) tempDirection = "upleft";
 		if (gp.keyH.upPressed && gp.keyH.rightPressed) tempDirection = "upright";
 		if (gp.keyH.downPressed && gp.keyH.leftPressed) tempDirection = "downleft";
 		if (gp.keyH.downPressed && gp.keyH.rightPressed) tempDirection = "downright";	
+		*/
 		
 		direction = tempDirection;
 	}
@@ -223,10 +238,6 @@ public class Player extends Entity {
 				
 				case "left": worldX -= speed; break;
 				case "right": worldX += speed; break;
-			}
-			
-			if (inGrass) {
-				checkWildEncounter();
 			}
 		}
 	}

@@ -848,7 +848,7 @@ public class BattleManager {
 		// delayed move is used for first time
 		else if (atkMove.getTurns() == atkMove.getNumTurns()) {
 						
-			gp.ui.addBattleDialogue(atkMove.getDelay(fighter[atk].toString()));	
+			gp.ui.addBattleDialogue(atkMove.getDelay(fighter[atk].getName()));	
 									
 			// reduce number of turns to wait
 			atkMove.setTurns(atkMove.getTurns() - 1);	
@@ -1375,7 +1375,7 @@ public class BattleManager {
 
 			fightStage = fightStage_Swap;
 		}
-		else {
+		else if (winner == 0) {
 			int xp = calculateXP(loser);
 			fighter[winner].setXP(fighter[winner].getBXP() + xp);
 			
@@ -1383,6 +1383,12 @@ public class BattleManager {
 			
 			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
 			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + xp + " Exp. Points!");	
+			
+			fightStage = fightStage_KO;			
+		}
+		else if (winner == 1) {			
+			gp.ui.setSoundFile(faint_SE, fighter[loser].toString(), 5);			
+			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
 			
 			fightStage = fightStage_KO;			
 		}
