@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -77,7 +78,7 @@ public class Entity {
 	public String responses[][] = new String[10][3];
 					
 	// DEFAULT HITBOX
-	public Rectangle hitbox = new Rectangle(0, 0, 60, 60);
+	public Rectangle hitbox = new Rectangle(0, 0, 48, 48);
 	public int hitboxDefaultX = hitbox.x;
 	public int hitboxDefaultY = hitbox.y;
 	public int hitboxDefaultWidth = hitbox.width;
@@ -117,7 +118,14 @@ public class Entity {
 	public void resetValues() { }	
 	
 	// UPDATER
-	public void update() {						
+	public void update() {	
+		if (moving) {			
+			walking();
+		}
+		else {			
+			setAction();		
+		}
+				
 		manageValues();	
 	}	
 	
@@ -126,13 +134,15 @@ public class Entity {
 		checkCollision();
 		if (!collisionOn && withinBounds()) { 
 			move(direction);	
+			
+			pixelCounter += speed;		
+			if (pixelCounter >= gp.tileSize) {
+				moving = false;
+				pixelCounter = 0;
+				spriteNum = 1;
+			}
 		}
 		else {
-			spriteNum = 1;
-		}
-		
-		pixelCounter += speed;		
-		if (pixelCounter >= gp.tileSize) {
 			moving = false;
 			pixelCounter = 0;
 			spriteNum = 1;
@@ -323,7 +333,47 @@ public class Entity {
 		return availablePokemon;
 	}
 	
+	protected void checkWildEncounter() {
+		// random encounter formula reference: https://bulbapedia.bulbagarden.net/wiki/Wild_Pok%C3%A9mon
+						
+		int r = new Random().nextInt(255);		
+		if (r < 15) {
+			
+			inGrass = false;
+						
+			Pokemon wildPokemon = getWildPokemon();
+			
+			if (wildPokemon != null) {
+				wildPokemon.setAlive(true);
+				wildPokemon.setHP(wildPokemon.getBHP());
+				gp.btlManager.fighter[1] = wildPokemon;
+				gp.btlManager.setBattle(gp.btlManager.wildBattle);
+				
+				gp.gameState = gp.battleState;	
+			}
+		}
+	}
 	
+	private Pokemon getWildPokemon() {
+		
+		Pokemon wildPokemon = null;	
+		
+		int chance = new Random().nextInt(10);
+		int total = 0;
+		for (String pokemon : gp.wildEncounters.get(gp.currentLocation - 1).keySet()) {
+			int rate = gp.wildEncounters.get(gp.currentLocation - 1).get(pokemon); 
+			total += rate;
+			if (chance <= total) {	
+				name = pokemon;
+				break;
+			}	
+		}
+		
+		int level = new Random().nextInt(7 - 4 + 1) + 4;
+		wildPokemon = Pokemon.getPokemon(name, level);
+		
+		return wildPokemon;
+	}
 	
 	// MANAGE VALUES
 	public void manageValues() {
@@ -367,7 +417,7 @@ public class Entity {
 	
 	// DRAW
 	public void draw(Graphics2D g2) {
-		
+				
 		BufferedImage image = null;
 								
 		// DRAW TILES WITHIN SCREEN BOUNDARY

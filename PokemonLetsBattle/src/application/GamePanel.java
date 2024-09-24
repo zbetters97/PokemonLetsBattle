@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -96,14 +98,13 @@ public class GamePanel extends JPanel implements Runnable {
 	// AREA STATES
 	public int currentArea;
 	public int nextArea;	
-	public final int outside = 1;
+	public final int town = 1;
 	public final int house = 2;
-	public final int shop = 3;
+	public final int gym = 3;
 	
 	// LOCATION STATES
 	public int currentLocation;
-	public final int town = 1;
-	public final int gym = 2;
+	public final int petalburg = 1;		
 	
 	public TileManager tileM = new TileManager(this);
 	public AssetSetter aSetter = new AssetSetter(this);
@@ -115,6 +116,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public Player player = new Player(this);	
 	public Entity npc[][] = new Entity[maxMap][10]; 
 	public InteractiveTile iTile[][] = new InteractiveTile[maxMap][100];
+	public List<HashMap<String, Integer>> wildEncounters = new ArrayList<>();
 	
 /** CONSTRUCTOR **/	
 	public GamePanel() {
@@ -129,8 +131,8 @@ public class GamePanel extends JPanel implements Runnable {
 	protected void setupGame() {	
 						
 		gameState = playState;
-		currentArea = outside;
-		currentLocation = town;		
+		currentArea = town;
+		currentLocation = petalburg;		
 				
 		setupMusic();
 		
@@ -146,6 +148,13 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		if (fullScreenOn) setFullScreen();
 		
+		HashMap<String, Integer> encounters_petalburg = new HashMap<>();			
+		encounters_petalburg.put("Geodude",5);	
+		encounters_petalburg.put("Machop",3);
+		encounters_petalburg.put("Pikachu",2);		
+		
+		wildEncounters.add(encounters_petalburg);
+		
 /*
 		btlManager.setBattle(btlManager.wildBattle);
 		ui.battleSubState = ui.battle_Encounter;
@@ -159,7 +168,7 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void setupMusic() {		
-		if (currentLocation == town) playMusic(0, 0);
+		if (currentArea == town) playMusic(0, 0);
 	}
 
 	public void playMusic(int category, int record) {		

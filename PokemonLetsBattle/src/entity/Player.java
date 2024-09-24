@@ -2,6 +2,7 @@ package entity;
 
 /** IMPORTS **/
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -43,7 +44,6 @@ public class Player extends Entity {
 		screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
 						
 		// HITBOX (x, y, width, height)
-//		hitbox = new Rectangle(8, 12, 32, 36); 
 		hitbox = new Rectangle(1, 1, 46, 46);
 		hitboxDefaultX = hitbox.x;
 		hitboxDefaultY = hitbox.y;
@@ -86,7 +86,7 @@ public class Player extends Entity {
 		safeWorldY = defaultWorldY;
 		
 		gp.currentMap = 0;
-		gp.currentArea = gp.outside;
+		gp.currentArea = gp.town;
 	}
 	public void restoreStatus() {
 		speed = defaultSpeed;		
@@ -144,10 +144,7 @@ public class Player extends Entity {
 
 	public void update() {
 		
-		if (moving) {			
-			walking();
-		}
-		else {	
+		if (!moving) {	
 			
 			running = false;
 			
@@ -166,6 +163,10 @@ public class Player extends Entity {
 				int npcIndex = gp.cChecker.checkNPC();
 				if (npcIndex != -1) interactNPC(npcIndex);
 			}
+		}
+		
+		if (moving) {
+			walking();
 		}
 				
 		manageValues();	
@@ -215,51 +216,19 @@ public class Player extends Entity {
 		if (gp.keyH.leftPressed) tempDirection = "left";
 		if (gp.keyH.rightPressed) tempDirection = "right";			
 		
-		/*
-		if (gp.keyH.upPressed && gp.keyH.leftPressed) tempDirection = "upleft";
-		if (gp.keyH.upPressed && gp.keyH.rightPressed) tempDirection = "upright";
-		if (gp.keyH.downPressed && gp.keyH.leftPressed) tempDirection = "downleft";
-		if (gp.keyH.downPressed && gp.keyH.rightPressed) tempDirection = "downright";	
-		*/
-		
 		direction = tempDirection;
 	}
 	public void move(String direction) {
 		
 		if (canMove) {
 			switch (direction) {
-				case "up": worldY -= speed; break;
-				case "upleft": worldY -= speed - 0.5; worldX -= speed - 0.5; break;
-				case "upright": worldY -= speed - 0.5; worldX += speed - 0.5; break;
-				
-				case "down": worldY += speed; break;
-				case "downleft": worldY += speed - 0.5; worldX -= speed - 0.5; break;
-				case "downright": worldY += speed; worldX += speed - 0.5; break;
-				
+				case "up": worldY -= speed; break;				
+				case "down": worldY += speed; break;				
 				case "left": worldX -= speed; break;
 				case "right": worldX += speed; break;
 			}
 
 			cycleSprites();	
-		}
-	}
-	private void checkWildEncounter() {
-		// random encounter formula reference: https://bulbapedia.bulbagarden.net/wiki/Wild_Pok%C3%A9mon
-						
-		int r = new Random().nextInt(255);		
-		if (r < 15) {
-			
-			inGrass = false;
-			
-			int level = new Random().nextInt(8 - 4 + 1) + 4;
-			
-			Pokemon wildPokemon = Pokemon.getPokemon("Pikachu", level);
-			wildPokemon.setAlive(true);
-			wildPokemon.setHP(wildPokemon.getBHP());
-			gp.btlManager.fighter[1] = wildPokemon;
-			gp.btlManager.setBattle(gp.btlManager.wildBattle);
-			
-			gp.gameState = gp.battleState;
 		}
 	}
 	public void cycleSprites() {
@@ -342,11 +311,17 @@ public class Player extends Entity {
 		if (!drawing) return;
 		
 		offCenter();
-							
+		
+		if (!inGrass) {
+			g2.setColor(new Color(0,0,0,100));
+			g2.fillOval(tempScreenX + 9, tempScreenY + 40, 30, 10);
+		}
+		else {
+			
+		}
+									
 		switch (direction) {
 			case "up":
-			case "upleft":
-			case "upright":		
 				if (running) {
 					if (spriteNum == 1) image = runUp1;
 					else if (spriteNum == 2) image = runUp2;	
@@ -358,9 +333,7 @@ public class Player extends Entity {
 					else if (spriteNum == 3) image = up3;	
 				}				
 				break;
-			case "down":
-			case "downleft":
-			case "downright":					
+			case "down":				
 				if (running) {
 					if (spriteNum == 1) image = runDown1;
 					else if (spriteNum == 2) image = runDown2;	

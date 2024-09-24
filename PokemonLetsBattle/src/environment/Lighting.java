@@ -31,7 +31,7 @@ public class Lighting {
 	public void update() {
 				
 		// ONLY PASS TIME WHEN OUTSIDE
-		if (gp.currentArea == gp.outside) {
+		if (gp.currentArea == gp.town) {
 		
 			// DAY
 			if (dayState == day) {
@@ -137,7 +137,7 @@ public class Lighting {
 	public void draw(Graphics2D g2) {
 		
 		// ONLY CHANGE LIGHTING WHEN OUTSIDE
-		if (gp.currentArea == gp.outside) {
+		if (gp.currentArea == gp.town) {
 			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, filterAlpha));
 			g2.drawImage(darknessFilter, 0, 0, null);
 			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
