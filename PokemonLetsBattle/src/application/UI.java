@@ -1343,20 +1343,35 @@ public class UI {
 			gp.keyH.aPressed = false;
 			
 			if (commandNum == 0) {
+				gp.keyH.playCursorSE();
 				skipBattleDialogue();	
 				battleSubState = battle_Moves;		
+				commandNum = 0;
 			}
 			else if (commandNum == 2) {
+				gp.keyH.playCursorSE();
 				skipBattleDialogue();
 				gp.gameState = gp.partyState;
-				partySubState = party_Main;				
+				partySubState = party_Main;		
+				commandNum = 0;
 			}
 			else if (commandNum == 3) {
-				if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {
-					gp.btlManager.endBattle();	
+				
+				if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {										
+					gp.btlManager.fightStage = gp.btlManager.fightStage_Close;
+					
+					setSoundFile(6, "run", 3);
+					addBattleDialogue("Got away safely!");
+					
+					battleSubState = battle_Dialogue;
+					
+					dialogueIndex = 0;
+					commandNum = 0;
 				}				
-			}
-			commandNum = 0;	
+				else {
+					gp.keyH.playErrorSE();
+				}
+			}	
 		}
 	}
 	private void drawBattleMovesetWindow() {

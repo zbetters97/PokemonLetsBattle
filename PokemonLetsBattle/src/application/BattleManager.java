@@ -1489,7 +1489,8 @@ public class BattleManager {
 			animateTrainerDefeat(g2);
 		}
 		else if (fightStage == fightStage_Close) {
-			drawTrainerDefeat(g2);
+			if (winner != -1) drawTrainerDefeat(g2);
+			else drawFighters(g2);	
 		}
 		else {
 			drawFighters(g2);	

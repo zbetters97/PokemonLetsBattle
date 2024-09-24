@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 import javax.swing.JPanel;
 
@@ -112,11 +112,14 @@ public class GamePanel extends JPanel implements Runnable {
 	public CollisionChecker cChecker = new CollisionChecker(this);	
 	public BattleManager btlManager = new BattleManager(this);	
 	
-	public ArrayList<Entity> npcList = new ArrayList<>();
+	public ArrayList<Entity> entities = new ArrayList<>();
 	public Player player = new Player(this);	
 	public Entity npc[][] = new Entity[maxMap][10]; 
+	public Entity obj[][] = new Entity[maxMap][20];
+	public Entity obj_i[][] = new Entity[maxMap][20];
 	public InteractiveTile iTile[][] = new InteractiveTile[maxMap][100];
-	public List<HashMap<String, Integer>> wildEncounters = new ArrayList<>();
+	public Map<Integer, Map<String, Integer>> wildEncounters = new HashMap<>();
+	public Map<Integer, Integer> wildLevels = new HashMap<>();
 	
 /** CONSTRUCTOR **/	
 	public GamePanel() {
@@ -141,6 +144,8 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		player.setDefaultValues();	
 		aSetter.setNPC();
+		aSetter.setObject();
+		aSetter.setInteractiveObjects();
 		
 		// TEMP GAME WINDOW (before drawing to window)
 		tempScreen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
@@ -148,22 +153,13 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		if (fullScreenOn) setFullScreen();
 		
-		HashMap<String, Integer> encounters_petalburg = new HashMap<>();			
-		encounters_petalburg.put("Geodude",5);	
-		encounters_petalburg.put("Machop",3);
-		encounters_petalburg.put("Pikachu",2);		
+		Map<String, Integer> encounters_petalburg = new HashMap<>();			
+		encounters_petalburg.put("Geodude", 6);	
+		encounters_petalburg.put("Machop", 3);
+		encounters_petalburg.put("Pikachu", 1);			
+		wildEncounters.put(petalburg, encounters_petalburg);
+		wildLevels.put(petalburg, 4);
 		
-		wildEncounters.add(encounters_petalburg);
-		
-/*
-		btlManager.setBattle(btlManager.wildBattle);
-		ui.battleSubState = ui.battle_Encounter;
-		gameState = battleState;
-
-		ui.partySubState = ui.party_Main;
-		gameState = partyState;
-*/
-
 		gameState = playState;
 	}
 	
@@ -243,6 +239,8 @@ public class GamePanel extends JPanel implements Runnable {
 			eManager.update();
 			player.update();	
 			updateNPC();
+			updateOBJ();
+			updateOBJ_I();
 		}
 		// GAME PAUSED
 		else if (gameState == pauseState) { 
@@ -257,6 +255,20 @@ public class GamePanel extends JPanel implements Runnable {
 		for (int i = 0; i < npc[1].length; i++) {
 			if (npc[currentMap][i] != null) {
 				npc[currentMap][i].update();
+			}				
+		}
+	}	
+	private void updateOBJ() {
+		for (int i = 0; i < obj[1].length; i++) {
+			if (obj[currentMap][i] != null) {
+				obj[currentMap][i].update();
+			}				
+		}
+	}	
+	private void updateOBJ_I() {
+		for (int i = 0; i < obj_i[1].length; i++) {
+			if (obj_i[currentMap][i] != null) {
+				obj_i[currentMap][i].update();
 			}				
 		}
 	}	
@@ -280,13 +292,15 @@ public class GamePanel extends JPanel implements Runnable {
 			ui.draw(g2);	
 						
 			// ALWAYS DRAW DIVING PLAYER FIRST
-			npcList.add(player);						
+			entities.add(player);						
 			
 			// POPULATE ENTITY LIST
-			for (Entity n : npc[currentMap]) { if (n != null) npcList.add(n); }						
+			for (Entity n : npc[currentMap]) { if (n != null) entities.add(n); }			
+			for (Entity o : obj[currentMap]) { if (o != null) entities.add(o); }			
+			for (Entity oi : obj_i[currentMap]) { if (oi != null) entities.add(oi); }			
 			
 			// SORT DRAW ORDER BY Y COORD
-			Collections.sort(npcList, new Comparator<Entity>() {
+			Collections.sort(entities, new Comparator<Entity>() {
 				public int compare(Entity e1, Entity e2) {					
 					int entityTop = Integer.compare(e1.worldY, e2.worldY);					
 					return entityTop;
@@ -294,10 +308,10 @@ public class GamePanel extends JPanel implements Runnable {
 			});
 			
 			// DRAW ENTITIES
-			for (Entity e : npcList) { e.draw(g2); }
+			for (Entity e : entities) { e.draw(g2); }
 									
 			// EMPTY ENTITY LIST
-			npcList.clear();			
+			entities.clear();			
 			
 			// DRAW UI
 			ui.draw(g2);			

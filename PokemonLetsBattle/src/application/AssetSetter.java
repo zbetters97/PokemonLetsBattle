@@ -1,7 +1,10 @@
 package application;
 
 import entity.npc.*;
-import tile.tile_interactive.*;
+import entity.object.*;
+import entity.object.object_interactive.OBJ_Door_Gym;
+import entity.object.object_interactive.OBJ_Door_Store;
+import entity.object.object_interactive.OI_Boulder;
 
 public class AssetSetter {
 	
@@ -26,11 +29,18 @@ public class AssetSetter {
 		
 		int mapNum = 0;
 		int i = 0;	
+		
+		gp.obj[mapNum][i] = new OBJ_Tree(gp, 22, 23); i++;	
 	}	
 	protected void setInteractiveObjects() {
-				
+		
 		int mapNum = 0;
-		int i = 0;		
+		int i = 0;
+				
+		gp.obj_i[mapNum][i] = new OBJ_Door_Store(gp, 30, 25); i++;	
+		gp.obj_i[mapNum][i] = new OBJ_Door_Store(gp, 35, 21); i++;	
+		gp.obj_i[mapNum][i] = new OBJ_Door_Gym(gp, 25, 18); i++;	
+		gp.obj_i[mapNum][i] = new OI_Boulder(gp, 21, 22); i++;	
 	}
 	protected void setInteractiveTiles(boolean reset) {
 				

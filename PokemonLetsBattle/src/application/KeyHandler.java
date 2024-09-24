@@ -7,10 +7,10 @@ public class KeyHandler implements KeyListener {
 
 	private GamePanel gp;
 	private boolean lock = true;
-	public boolean upPressed, downPressed, leftPressed, rightPressed, 
-					dupPressed, ddownPressed, 
+	public boolean upPressed, downPressed, leftPressed, rightPressed,					
 					aPressed, bPressed, xPressed, yPressed, 
 					lPressed, rPressed, zPressed,
+					dupPressed, ddownPressed, 
 					startPressed, selectPressed;
 	public boolean debug = false;
 	public boolean capital = true;
@@ -64,11 +64,12 @@ public class KeyHandler implements KeyListener {
 		if (code == gp.btn_START && lock) { 
 			playMenuOpenSE(); 
 			gp.gameState = gp.pauseState; 
-			lock = false;			
+			lock = false;		
 		}			
 		
 		if (code == gp.btn_DEBUG) { if (debug) debug = false; else debug = true; }
 	}
+	
 	// PAUSE
 	private void pauseState(int code) { 		
 
@@ -108,10 +109,12 @@ public class KeyHandler implements KeyListener {
 		
 		if (code == gp.btn_DEBUG) { if (debug) debug = false; else debug = true; }
 	}
+	
 	// DIALOGUE
 	private void dialogueState(int code) { 
 		if (code == gp.btn_A && lock) {	aPressed = true; lock = false; }
 	}	
+	
 	// BATTLE
 	private void battleState(int code) { 
 		
@@ -124,8 +127,7 @@ public class KeyHandler implements KeyListener {
 		}
 		else if (gp.ui.battleSubState == gp.ui.battle_Options) {			
 			
-			if (code == gp.btn_A && lock) { 
-				playCursorSE();						
+			if (code == gp.btn_A && lock) { 					
 				aPressed = true; lock = false; 
 			}
 			
@@ -223,12 +225,8 @@ public class KeyHandler implements KeyListener {
 				}
 			}			
 		}
-		
-		if (code == gp.btn_START && lock) { 
-			gp.gameState = gp.playState; 
-			lock = false; 
-		}	
 	}
+	
 	// PARTY
 	private void partyState(int code) { 
 		

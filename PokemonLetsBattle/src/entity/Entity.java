@@ -42,9 +42,6 @@ public class Entity {
 	public boolean sleep = false;	
 	public boolean collision = true;
 	public boolean collisionOn = false;	
-	public boolean inGrass = false;
-	public boolean hasBattle = false;
-	public boolean isDefeated = false;
 	
 	// SPRITE HANDLING
 	public int actionLockCounter;
@@ -52,10 +49,10 @@ public class Entity {
 	public int spriteNum = 1;
 	public int spriteCycle = 0;
 	public BufferedImage image, image1, image2, image3,
-							up1, up2, up3, 
-							down1, down2, down3, 
-							left1, left2, left3, 
-							right1, right2, right3,
+							up1, up2, up3, up4,
+							down1, down2, down3, down4,  
+							left1, left2, left3, left4, 
+							right1, right2, right3, right4,
 							runUp1, runUp2, runUp3,
 							runDown1, runDown2, runDown3,
 							runLeft1, runLeft2, runLeft3,
@@ -63,11 +60,15 @@ public class Entity {
 	public BufferedImage frontSprite, backSprite;
 		
 	// CHARACTER ATTRIBUTES	
+	public boolean hasBattle = false;
+	public boolean isDefeated = false;
 	public boolean hasItemToGive = false;	
 	public boolean hasCutscene = false;	
 	public boolean canMove = true;
 	public boolean moving = false;
 	public int pixelCounter = 0;
+	public boolean inGrass = false;
+	protected boolean running = false;	
 	public boolean onPath = false;
 	public boolean pathCompleted = false;
 		
@@ -88,13 +89,18 @@ public class Entity {
 	public ArrayList<Entity> inventory = new ArrayList<>();
 	public final int maxInventorySize = 20;
 	
-	// CHARACTER TYPES
-	public final int type_player = 0;
-	public final int type_npc = 1;
-	
 	// POKEMON PARTY
 	public ArrayList<Pokemon> pokeParty = new ArrayList<>();
 	public final int maxPartySize = 6;
+	
+	// OBJECT ATTRIBUTES
+	protected boolean opening;
+	
+	// CHARACTER TYPES
+	public final int type_player = 0;
+	public final int type_npc = 1;
+	public final int type_obstacle = 2;
+	public final int type_obstacle_i = 3;
 	
 	// CONSTRUCTOR
 	public Entity(GamePanel gp) {
@@ -109,7 +115,6 @@ public class Entity {
 	// CHILD ONLY		
 	public void getImage() { }
 	public void assignParty() { }
-	
 	public void setAction() { }	
 	public void move(String direction) { }
 	public void setPath(int c, int r) { }		
@@ -129,6 +134,7 @@ public class Entity {
 		manageValues();	
 	}	
 	
+	// WALKING
 	public void walking() {
 		
 		checkCollision();
@@ -159,7 +165,7 @@ public class Entity {
 		gp.cChecker.checkPlayer(this);				
 	}
 			
-	
+	// SPRITE CYCLE
 	public void cycleSprites() {
 		spriteCounter++;
 		if (spriteCounter > animationSpeed && animationSpeed != 0) {
@@ -170,6 +176,8 @@ public class Entity {
 			spriteCounter = 0;
 		}
 	}
+	
+	// DIRECTION
 	public void getDirection(int rate) {		
 		
 		actionLockCounter++;			
@@ -186,25 +194,21 @@ public class Entity {
 			moving = true;
 		}		
 	}
-	
-	
 	protected String getOppositeDirection(String direction) {
 		
 		String oppositeDirection = "";
 		
 		switch(direction) {
-			case "up": 
-			case "upleft": 
-			case "upright": oppositeDirection = "down"; break;
-			case "down": 
-			case "downleft": 
-			case "downright": oppositeDirection = "up"; break;
+			case "up": oppositeDirection = "down"; break;
+			case "down": oppositeDirection = "up"; break;
 			case "left": oppositeDirection = "right"; break;
 			case "right": oppositeDirection = "left"; break;
 		}
 		
 		return oppositeDirection;
 	}
+	
+	// DIALOGUE
 	public void startDialogue(Entity entity, int setNum) {
 		spriteNum = 1;
 		dialogueSet = setNum;
@@ -332,44 +336,50 @@ public class Entity {
 		
 		return availablePokemon;
 	}
-	
 	protected void checkWildEncounter() {
 		// random encounter formula reference: https://bulbapedia.bulbagarden.net/wiki/Wild_Pok%C3%A9mon
 						
 		int r = new Random().nextInt(255);		
 		if (r < 15) {
-			
-			inGrass = false;
 						
 			Pokemon wildPokemon = getWildPokemon();
 			
 			if (wildPokemon != null) {
-				wildPokemon.setAlive(true);
-				wildPokemon.setHP(wildPokemon.getBHP());
+				
 				gp.btlManager.fighter[1] = wildPokemon;
 				gp.btlManager.setBattle(gp.btlManager.wildBattle);
-				
+								
 				gp.gameState = gp.battleState;	
 			}
 		}
 	}
-	
 	private Pokemon getWildPokemon() {
 		
 		Pokemon wildPokemon = null;	
 		
+		// RANDOM NUM 0-10
 		int chance = new Random().nextInt(10);
 		int total = 0;
-		for (String pokemon : gp.wildEncounters.get(gp.currentLocation - 1).keySet()) {
-			int rate = gp.wildEncounters.get(gp.currentLocation - 1).get(pokemon); 
+		
+		// FOR EACH LIST OF POKEMON FROM LOCATION
+		for (String pName : gp.wildEncounters.get(gp.currentLocation).keySet()) {
+			
+			// GET PROBABILITY OF POKEMON ENCOUNTER
+			int rate = gp.wildEncounters.get(gp.currentLocation).get(pName); 
 			total += rate;
+			
+			// POKEMON RANDOMLY SELECTED, ASSIGN NAME AND STOP
 			if (chance <= total) {	
-				name = pokemon;
+				name = pName;
 				break;
 			}	
 		}
 		
-		int level = new Random().nextInt(7 - 4 + 1) + 4;
+		// LEVEL RANGE BASED ON LOCATION
+		int minLevel = gp.wildLevels.get(gp.currentLocation);
+		int maxLevel = minLevel + 3;
+		int level = new Random().nextInt(maxLevel - minLevel + 1) + minLevel;
+		
 		wildPokemon = Pokemon.getPokemon(name, level);
 		
 		return wildPokemon;
@@ -424,30 +434,29 @@ public class Entity {
 		if (inFrame() && drawing) {
 									
 			switch (direction) {
-				case "up":
-				case "upleft":
-				case "upright":										
+				case "up":									
 					if (spriteNum == 1) image = up1;
 					else if (spriteNum == 2) image = up2;	
-					else if (spriteNum == 3) image = up3;							
+					else if (spriteNum == 3) image = up3;			
+					else if (spriteNum == 4) image = up4;			
 					break;
-				case "down":
-				case "downleft":
-				case "downright":						
+				case "down":						
 					if (spriteNum == 1) image = down1;
 					else if (spriteNum == 2) image = down2;	
-					else if (spriteNum == 3) image = down3;							
+					else if (spriteNum == 3) image = down3;	
+					else if (spriteNum == 4) image = down4;	
 					break;
 				case "left":										
 					if (spriteNum == 1) image = left1;
 					else if (spriteNum == 2) image = left2;	
-					else if (spriteNum == 3) image = left3;						
+					else if (spriteNum == 3) image = left3;	
+					else if (spriteNum == 4) image = left4;	
 					break;
-				case "right":
-					
+				case "right":					
 					if (spriteNum == 1) image = right1;
 					else if (spriteNum == 2) image = right2;	
-					else if (spriteNum == 3) image = right3;												
+					else if (spriteNum == 3) image = right3;			
+					else if (spriteNum == 4) image = right4;			
 					break;
 			}		
 		

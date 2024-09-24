@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
 import application.GamePanel;
 import pokemon.Pokemon;
@@ -24,8 +23,6 @@ public class Player extends Entity {
 	private int tempScreenY;
 	public int defaultWorldX;
 	public int defaultWorldY;
-	
-	private boolean running = false;
 	
 	// INVENTORY
 	public final int maxItemInventorySize = 10;
@@ -78,8 +75,8 @@ public class Player extends Entity {
 	}	
 	public void setDefaultPosition() {	
 
-		worldX = gp.tileSize * 21;
-		worldY = gp.tileSize * 30;		
+		worldX = gp.tileSize * 40;
+		worldY = gp.tileSize * 26;		
 		defaultWorldX = worldX;
 		defaultWorldY = worldY;
 		safeWorldX = defaultWorldX;
@@ -137,13 +134,13 @@ public class Player extends Entity {
 		runRight2 = setup("/player/boy_run_right_2");
 		runRight3 = setup("/player/boy_run_right_3");
 	}	
+
 /** END DEFAULT HANDLERS **/
 	
 	
 /** UPDATER **/
 
 	public void update() {
-		
 		if (!moving) {	
 			
 			running = false;
@@ -160,8 +157,12 @@ public class Player extends Entity {
 			}
 			
 			if (gp.keyH.aPressed) {
+				
 				int npcIndex = gp.cChecker.checkNPC();
+				int objIndex = gp.cChecker.checkObject(this, true);
+				
 				if (npcIndex != -1) interactNPC(npcIndex);
+				else if (objIndex != -1) interactObject(objIndex);
 			}
 		}
 		
@@ -181,7 +182,7 @@ public class Player extends Entity {
 	public void walking() {
 		
 		if (!gp.keyH.debug) checkCollision();
-		if (!collisionOn) { 									
+		if (!collisionOn) { 		
 			if (running) {
 				speed = 6;
 				animationSpeed = 6;
@@ -203,6 +204,7 @@ public class Player extends Entity {
 			pixelCounter = 0;
 			
 			if (inGrass) {
+				speed = 2;
 				checkWildEncounter();
 			}
 		}
@@ -259,15 +261,36 @@ public class Player extends Entity {
 		
 		if (gp.keyH.debug) return;
 		
-		// CHECK TILE COLLISION
 		gp.cChecker.checkTile(this);	
-		gp.cChecker.checkEntity(this, gp.npc);		
+		gp.cChecker.checkEntity(this, gp.npc);	
+		
+		// CHECK OBJECT COLLISION
+		int objIndex = gp.cChecker.checkObject(this, true);
+		
+		// CHECK INTERACTIVE OBJECTS COLLISION
+		int objIIndex = gp.cChecker.checkObject_I(this, true);
+		if (objIIndex != -1) interactObjectI(objIIndex);	
 	}	
 			
 	public void interactNPC(int i) {		
 		if (i != -1) {				
 			resetValues();
 			gp.npc[gp.currentMap][i].speak();					
+		}	
+	}	
+	public void interactObject(int i) {
+		if (i != -1 && gp.obj[gp.currentMap][i].type == type_obstacle_i) {
+			gp.obj[gp.currentMap][i].interact();	
+		}
+	}
+	public void interactObjectI(int i) {
+		if (gp.obj_i[gp.currentMap][i].type == type_obstacle) {				
+			if (!gp.obj_i[gp.currentMap][i].moving) {	
+				gp.obj_i[gp.currentMap][i].move(direction);	
+			}
+		}	
+		else if (gp.obj_i[gp.currentMap][i].type == type_obstacle_i) {				
+			gp.obj_i[gp.currentMap][i].interact();			
 		}	
 	}	
 
@@ -279,7 +302,7 @@ public class Player extends Entity {
 	public void changeAlpha(Graphics2D g2, float alphaValue) {
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
 	}
-
+	
 	public void offCenter() {
 
 		tempScreenX = screenX;
