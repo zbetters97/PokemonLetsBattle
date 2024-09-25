@@ -6,7 +6,6 @@ import entity.Entity;
 public class OBJ_Door_Gym extends Entity {
 	
 	public static final String objName = "Gym Door";
-	private int openCounter = 0;
 	
 	public OBJ_Door_Gym(GamePanel gp, int worldX, int worldY) {
 		super(gp);

@@ -92,8 +92,9 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int playState = 1;
 	public final int pauseState = 2;	
 	public final int dialogueState = 3;		
-	public final int battleState = 4;
-	public final int partyState = 5;
+	public final int hmState = 4;
+	public final int battleState = 5;
+	public final int partyState = 6;
 	
 	// AREA STATES
 	public int currentArea;
@@ -261,13 +262,16 @@ public class GamePanel extends JPanel implements Runnable {
 	private void updateOBJ() {
 		for (int i = 0; i < obj[1].length; i++) {
 			if (obj[currentMap][i] != null) {
-				obj[currentMap][i].update();
+				if (!obj[currentMap][i].alive)
+					obj[currentMap][i] = null;
+				else 
+					obj[currentMap][i].update();
 			}				
 		}
 	}	
 	private void updateOBJ_I() {
 		for (int i = 0; i < obj_i[1].length; i++) {
-			if (obj_i[currentMap][i] != null) {
+			if (obj_i[currentMap][i] != null) {				
 				obj_i[currentMap][i].update();
 			}				
 		}
@@ -280,7 +284,8 @@ public class GamePanel extends JPanel implements Runnable {
 			ui.draw(g2);
 		}		
 		// PLAY STATE
-		else if (gameState == playState || gameState == dialogueState || gameState == pauseState) {	
+		else if (gameState == playState || gameState == dialogueState || 
+				gameState == hmState ||gameState == pauseState) {	
 			
 			// DRAW TILES
 			tileM.draw(g2);	

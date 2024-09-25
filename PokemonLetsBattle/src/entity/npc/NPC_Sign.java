@@ -45,8 +45,4 @@ public class NPC_Sign extends Entity {
 		
 		startDialogue(this, dialogueSet);
 	}
-	
-	public void cycleSprites() {		
-						
-	}	
 }

@@ -58,9 +58,12 @@ public class Player extends Entity {
 	
 	// DEFAULT VALUES
 	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon("Mudkip", 5));
-		pokeParty.add(Pokemon.getPokemon("Marshtomp", 16));
-		pokeParty.add(Pokemon.getPokemon("Swampert", 36));
+		pokeParty.add(Pokemon.getPokemon("Treecko", 5));
+		pokeParty.add(Pokemon.getPokemon("Grovyle", 16));
+		pokeParty.add(Pokemon.getPokemon("Sceptile", 36));
+		
+		pokeParty.get(1).setHasCut(true);
+		pokeParty.get(0).setHasRockSmash(true);
 	}
 	public void setDefaultValues() {
 					
@@ -75,8 +78,8 @@ public class Player extends Entity {
 	}	
 	public void setDefaultPosition() {	
 
-		worldX = gp.tileSize * 40;
-		worldY = gp.tileSize * 26;		
+		worldX = gp.tileSize * 24;
+		worldY = gp.tileSize * 23;		
 		defaultWorldX = worldX;
 		defaultWorldY = worldY;
 		safeWorldX = defaultWorldX;

@@ -57,30 +57,33 @@ public class UI {
 	private boolean canSkip = false;
 	private BufferedImage dialogue_next;
 	
-	public ArrayList<Integer> seTimer;
-	private ArrayList<Integer> category_SE;
-	private ArrayList<Integer> record_SE;
-	
+	public int commandNum = 0;
+			
 	// FIGHTER HP
 	public int fighter_one_HP;
 	public int fighter_two_HP;
 	private int hpCounter = 0;
-	private BufferedImage ball_empty, ball_active, ball_inactive;
-	
 	public int hpSpeed_one = 1;
 	public int hpSpeed_two = 1;
 	
+	// BATTLE VALUES
+	private BufferedImage ball_empty, ball_active, ball_inactive;	
 	public boolean fighterReady = false;	
-	
-	public int commandNum = 0;
 	public int fighterNum = 0;
 	
+	// BATTLE SE HANDLERS	
+	public ArrayList<Integer> seTimer;
+	private ArrayList<Integer> category_SE;
+	private ArrayList<Integer> record_SE;
+		
+	// PARTY STATES
 	public int partySubState;
 	public final int party_Main = 1;
 	public final int party_Main_Select = 2;
 	public final int party_Skills = 3;
 	public final int party_Moves = 4;
 	
+	// BATTLE STATE
 	public int battleSubState;
 	public final int battle_Encounter = 1;
 	public final int battle_Start = 2;
@@ -129,6 +132,10 @@ public class UI {
 		else if (gp.gameState == gp.dialogueState) {
 			drawHUD();
 			drawDialogueScreen();
+		}
+		else if (gp.gameState == gp.hmState) {
+			drawHUD();
+			drawHMScreen();
 		}
 		else if (gp.gameState == gp.battleState) {
 			drawBattleScreen();
@@ -329,13 +336,21 @@ public class UI {
 				
 				gp.gameState = gp.battleState;
 			}
-			else {
-				// playDialogueFinishSE();				
+			else if (npc.type == npc.type_obstacle_i) {
+				
+				if (playerHasHM()) {
+					gp.gameState = gp.hmState;	
+				}
+				else {
+					gp.gameState = gp.playState;
+				}				
+			}
+			else {			
 				gp.gameState = gp.playState;
-			}	
+			}				
 		}				
 
-		x += gp.tileSize * 0.8;
+		x += gp.tileSize * 0.6;
 		y += gp.tileSize * 1.1;			
 		String lastLine = "";
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
@@ -375,6 +390,86 @@ public class UI {
 		currentDialogue = "";
 		npc = null;		
 		canSkip = false;		
+	}
+	
+	// HM SCREEN
+	public void drawHMScreen() {
+		
+		int x = (int) (gp.tileSize * 2);
+		int y = gp.tileSize * 9;
+		int width =(int) (gp.tileSize * 12);
+		int height = (int) (gp.tileSize * 2.5);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, party_green);		
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
+		x += gp.tileSize * 0.6;
+		y += gp.tileSize * 1.1;		
+		String text = "Would you like to use " + npc.hmType + "?";
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		
+		x = (int) (gp.tileSize * 11.7);
+		y = (int) (gp.tileSize * 6.3);
+		width = (int) (gp.tileSize * 2.3);
+		height = (int) (gp.tileSize * 2.5);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, party_green);
+				
+		x += gp.tileSize * 0.8;						
+		y += gp.tileSize + 5;
+		drawText("YES", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		if (commandNum == 0) {
+			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
+			if (gp.keyH.aPressed) {		
+				gp.keyH.aPressed = false;
+				commandNum = 0;
+				
+				npc.opening = true;
+				gp.gameState = gp.playState;
+			}
+		}		
+		
+		y += gp.tileSize;
+		drawText("NO", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		if (commandNum == 1) {
+			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
+			if (gp.keyH.aPressed) {		
+				gp.keyH.aPressed = false;
+				commandNum = 0;
+				gp.gameState = gp.playState;
+			}
+		}		
+	}
+	private boolean playerHasHM() {
+		
+		boolean playerHasHM = false;
+		
+		switch (npc.hmType) {
+			case "CUT":				
+				for (Pokemon p : gp.player.pokeParty) {
+					if (p.hasCut()) {
+						playerHasHM = true;
+						break;
+					}
+				}				
+				break;
+			case "ROCK SMASH":
+				for (Pokemon p : gp.player.pokeParty) {
+					if (p.hasRockSmash()) {
+						playerHasHM = true;
+						break;
+					}
+				}		
+				break;
+			case "SURF":
+				for (Pokemon p : gp.player.pokeParty) {
+					if (p.hasSurf()) {
+						playerHasHM = true;
+						break;
+					}
+				}		
+				break;
+		}
+		
+		return playerHasHM;		
 	}
 	
 	// PARTY SCREEN
@@ -1683,6 +1778,15 @@ public class UI {
 		int stringWidth = fm.stringWidth(text);
 		int centeredX = (width - stringWidth) / 2;		
 		return centeredX + x;
+	}
+	public <T> int getLength(T[][] arr, int set){
+	    int count = 0;
+	    
+	    for(T el : arr[set])
+	        if (el != null)
+	            ++count;
+	    
+	    return count;
 	}
 	private BufferedImage setup(String imagePath, int width, int height) {
 		

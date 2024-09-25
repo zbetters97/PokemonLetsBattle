@@ -3,11 +3,11 @@ package entity.object;
 import application.GamePanel;
 import entity.Entity;
 
-public class OBJ_Tree extends Entity {
+public class OBJ_Rock extends Entity {
 	
-	public static final String objName = "Tree";
+	public static final String objName = "Rock";
 	
-	public OBJ_Tree(GamePanel gp, int worldX, int worldY) {
+	public OBJ_Rock(GamePanel gp, int worldX, int worldY) {
 		super(gp);
 		this.worldX = worldX *= gp.tileSize;
 		this.worldY = worldY *= gp.tileSize;
@@ -15,16 +15,16 @@ public class OBJ_Tree extends Entity {
 		type = type_obstacle_i;
 		name = objName;
 		collision = true;
-		hmType = "CUT";
+		hmType = "ROCK SMASH";
 		
-		dialogues[0][0] = "This tree looks like it could be\ncut by a Pokemon.";
+		dialogues[0][0] = "This rock looks like it could be\nsmashed by a Pokemon.";
 	}	
 	
 	public void getImage() {
-		down1 = setup("/objects/tree_1");
-		down2 = setup("/objects/tree_2");
-		down3 = setup("/objects/tree_3");
-		down4 = setup("/objects/tree_4");
+		down1 = setup("/objects/rock_1");
+		down2 = setup("/objects/rock_2");
+		down3 = setup("/objects/rock_3");
+		down4 = setup("/objects/rock_4");
 	}
 	
 	public void interact() {

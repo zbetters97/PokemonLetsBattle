@@ -94,7 +94,10 @@ public class Entity {
 	public final int maxPartySize = 6;
 	
 	// OBJECT ATTRIBUTES
-	protected boolean opening;
+	public boolean alive = true;
+	public boolean opening;
+	protected int openCounter = 0;
+	public String hmType;
 	
 	// CHARACTER TYPES
 	public final int type_player = 0;

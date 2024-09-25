@@ -26,6 +26,7 @@ public class Pokemon {
 	public boolean isHit = false;
 	private int statusCounter, statusLimit;
 	private List<Move> moveSet;
+	private boolean hasCut, hasRockSmash, hasSurf = false;
 	/** END INITIALIZE VALUES **/
 	
 	/** CONSTRUCTORS **/
@@ -240,6 +241,13 @@ public class Pokemon {
 	
 	public List<Move> getMoveSet() { return moveSet; }
 	public void setMoveSet(ArrayList<Move> moveSet) { this.moveSet = moveSet; }
+	
+	public boolean hasCut() { return hasCut; }
+	public void setHasCut(boolean hasCut) { this.hasCut = hasCut; }
+	public boolean hasRockSmash() { return hasRockSmash; }
+	public void setHasRockSmash(boolean hasRockSmash) { this.hasRockSmash = hasRockSmash; }
+	public boolean hasSurf() { return hasSurf; }
+	public void setHasSurf(boolean hasSurf) { this.hasSurf = hasSurf; }	
 	/** END GETTERS AND SETTERS **/
 	
 	/** GETTERS **/

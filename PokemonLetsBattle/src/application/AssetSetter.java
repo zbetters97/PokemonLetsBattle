@@ -31,6 +31,7 @@ public class AssetSetter {
 		int i = 0;	
 		
 		gp.obj[mapNum][i] = new OBJ_Tree(gp, 22, 23); i++;	
+		gp.obj[mapNum][i] = new OBJ_Rock(gp, 22, 22); i++;	
 	}	
 	protected void setInteractiveObjects() {
 		
