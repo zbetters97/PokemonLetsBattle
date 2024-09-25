@@ -61,9 +61,6 @@ public class Player extends Entity {
 		pokeParty.add(Pokemon.getPokemon("Treecko", 5));
 		pokeParty.add(Pokemon.getPokemon("Grovyle", 16));
 		pokeParty.add(Pokemon.getPokemon("Sceptile", 36));
-		
-		pokeParty.get(1).setHasCut(true);
-		pokeParty.get(0).setHasRockSmash(true);
 	}
 	public void setDefaultValues() {
 					

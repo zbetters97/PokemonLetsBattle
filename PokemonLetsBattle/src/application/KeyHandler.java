@@ -115,6 +115,7 @@ public class KeyHandler implements KeyListener {
 		if (code == gp.btn_A && lock) {	aPressed = true; lock = false; }		
 	}	
 	
+	// HM
 	private void hmState(int code) {
 		
 		if (code == gp.btn_A && lock) {	aPressed = true; lock = false; }

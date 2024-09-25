@@ -194,7 +194,7 @@ public enum PokemonBase {
         		new Move(Moves.CALMMIND)));
         
         getMovemap().put(TREECKO, Arrays.asList(new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK), new Move(Moves.LEER))); 
-        getMovemap().put(GROVYLE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK),
+        getMovemap().put(GROVYLE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.ABSORB), new Move(Moves.CUT),
         		new Move(Moves.AGILITY))); 
         getMovemap().put(SCEPTILE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.LEAFSTORM), new Move(Moves.GIGADRAIN),
         		new Move(Moves.AGILITY))); 

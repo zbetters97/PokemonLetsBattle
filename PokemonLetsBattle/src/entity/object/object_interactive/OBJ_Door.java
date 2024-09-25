@@ -37,16 +37,15 @@ public class OBJ_Door extends Entity {
 		if (opening) {
 			open();
 		}
+		else if (!opening && !collision) {
+			checkClose();
+		}	
 		else if (closing) {
 			close();
-		}
-		else if (!collision) {
-			checkClose();
-		}		
+		}			
 	}
 	
-	private void open() {
-		
+	private void open() {		
 		spriteCounter++;
 		if (spriteCounter < 5) { 
 			spriteNum = 2; 
@@ -62,14 +61,15 @@ public class OBJ_Door extends Entity {
 		}
 	}
 	
-	private void checkClose() {
-		
+	private void checkClose() {		
 		if (gp.player.worldX == worldX && gp.player.worldY == worldY) {
 			openTimer = 0;
 		}
 		else {
 			openTimer++;
 			if (openTimer >= 60) {
+				closing = true;
+				collision = true;
 				openTimer = 0;
 			}	
 		}		

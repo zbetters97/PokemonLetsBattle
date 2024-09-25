@@ -330,15 +330,13 @@ public class BattleManager {
 	}
 	public boolean swapPokemon(int partySlot) {
 		
-		Pokemon p = trainer[0].pokeParty.get(partySlot);
-		
-		if (fighter[0] == p) {
+		if (fighter[0] == trainer[0].pokeParty.get(partySlot)) {
 			return false;
 		}
 		
-		if (p.isAlive()) {
+		if (trainer[0].pokeParty.get(partySlot).isAlive()) {
 			
-			newFighter[0] = p;
+			newFighter[0] = trainer[0].pokeParty.get(partySlot);
 						
 			if (trainer[0].pokeParty.size() > 1) {
 				Collections.swap(trainer[0].pokeParty, 0, partySlot);	

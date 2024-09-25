@@ -1,4 +1,5 @@
 package event;
+import java.util.Arrays;
 import java.util.List;
 
 import application.GamePanel;
@@ -63,7 +64,7 @@ public class EventHandler {
 			
 			// TELEPORT SPOTS
 			if (hit(0, 30, 25, true)) teleport(1, 22, 32, gp.shop, "up"); // POKEMART ENTRANCE
-			else if (hit(1, 22, 32, "right", 2)) teleport(0, 30, 26, gp.town, "down"); // POKEMART EXIT
+			else if (hit(1, 21, 32, "right", 2, Arrays.asList("down"))) teleport(0, 30, 26, gp.town, "down"); // POKEMART EXIT
 		}
 	}
 	private boolean hit(int map, int col, int row, boolean fullTile) {
@@ -79,37 +80,6 @@ public class EventHandler {
 				eventRect[map][col][row].height = 16;
 			}
 			
-			if (getHit(map, col, row, null))
-				hit = true;
-		}		
-		
-		return hit;		
-	}
-	
-	private boolean hit(int map, int col, int row, String spanDirection, int tiles) {
-		
-		boolean hit = false;
-		
-		if (map == gp.currentMap) {
-									
-			eventRect[map][col][row].x = 0;
-			eventRect[map][col][row].y = 0;
-			eventRect[map][col][row].width = 48;
-			eventRect[map][col][row].height = 48;	
-			
-			switch (spanDirection) {
-				case "down":
-					eventRect[map][col][row].height = 48 * tiles;										
-					break;
-				case "right":
-					eventRect[map][col][row].width = 48 * tiles;							
-					break;
-				case "downright":
-					eventRect[map][col][row].height = 48 * tiles;	
-					eventRect[map][col][row].width = 48 * tiles;					
-					break;					
-			}		
-						
 			if (getHit(map, col, row, null))
 				hit = true;
 		}		
@@ -164,6 +134,38 @@ public class EventHandler {
 		eventRect[map][col][row].height = eventRect[map][col][row].eventRectDefaultHeight;
 		
 		return hit;
+	}
+	
+	private boolean hit(int map, int col, int row, String spanDirection, int tiles, List<String> reqDirection) {
+		
+		boolean hit = false;
+		
+		if (map == gp.currentMap) {
+									
+			eventRect[map][col][row].x = 0;
+			eventRect[map][col][row].y = 0;
+			eventRect[map][col][row].width = 48;
+			eventRect[map][col][row].height = 48;	
+			
+			// EXTEND HEIGHT/WIDTH X NUMBER OF TILES
+			switch (spanDirection) {
+				case "down":
+					eventRect[map][col][row].height = 48 * tiles;										
+					break;
+				case "right":
+					eventRect[map][col][row].width = 48 * tiles;							
+					break;
+				case "downright":
+					eventRect[map][col][row].height = 48 * tiles;	
+					eventRect[map][col][row].width = 48 * tiles;					
+					break;
+			}		
+						
+			if (getHit(map, col, row, reqDirection))
+				hit = true;
+		}		
+		
+		return hit;		
 	}
 		
 	private void teleport(int map, int col, int row, int area, String direction) {		

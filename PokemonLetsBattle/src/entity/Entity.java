@@ -18,8 +18,7 @@ public class Entity {
 	
 	public enum EncounterType {
 		COMMON, UNCOMMON, RARE, VERY_RARE,EXTREMELY_RARE,LEGENDARY,SHINY,ELITE
-	}	
-	
+	}		
 	
 	protected GamePanel gp;
 	
@@ -369,10 +368,10 @@ public class Entity {
 		int total = 0;
 		
 		// FOR EACH LIST OF POKEMON FROM LOCATION
-		for (String pName : gp.wildEncounters.get(gp.currentLocation).keySet()) {
+		for (String pName : gp.wildEncounters.get(gp.currentMap).keySet()) {
 			
 			// GET PROBABILITY OF POKEMON ENCOUNTER
-			int rate = gp.wildEncounters.get(gp.currentLocation).get(pName); 
+			int rate = gp.wildEncounters.get(gp.currentMap).get(pName); 
 			total += rate;
 			
 			// POKEMON RANDOMLY SELECTED, ASSIGN NAME AND STOP
@@ -383,7 +382,7 @@ public class Entity {
 		}
 		
 		// LEVEL RANGE BASED ON LOCATION
-		int minLevel = gp.wildLevels.get(gp.currentLocation);
+		int minLevel = gp.wildLevels.get(gp.currentMap);
 		int maxLevel = minLevel + 3;
 		int level = new Random().nextInt(maxLevel - minLevel + 1) + minLevel;
 		

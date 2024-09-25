@@ -345,7 +345,9 @@ public class UI {
 			}
 			else if (npc.type == npc.type_obstacle_i) {
 				
-				if (playerHasHM()) {
+				Pokemon p = playerHasHM();
+				
+				if (p != null) {
 					gp.gameState = gp.hmState;	
 				}
 				else {
@@ -445,38 +447,44 @@ public class UI {
 			}
 		}		
 	}
-	private boolean playerHasHM() {
+	private Pokemon playerHasHM() {
 		
-		boolean playerHasHM = false;
+		Pokemon hmPokemon = null;
 		
 		switch (npc.hmType) {
 			case "CUT":				
 				for (Pokemon p : gp.player.pokeParty) {
-					if (p.hasCut()) {
-						playerHasHM = true;
-						break;
+					for (Move m : p.getMoveSet()) {
+						if (m.getName().equals("Cut")) {
+							hmPokemon = p;
+							break;	
+						}
 					}
 				}				
 				break;
 			case "ROCK SMASH":
 				for (Pokemon p : gp.player.pokeParty) {
-					if (p.hasRockSmash()) {
-						playerHasHM = true;
-						break;
+					for (Move m : p.getMoveSet()) {
+						if (m.getName().equals("Rock Smash")) {
+							hmPokemon = p;
+							break;	
+						}
 					}
 				}		
 				break;
 			case "SURF":
-				for (Pokemon p : gp.player.pokeParty) {
-					if (p.hasSurf()) {
-						playerHasHM = true;
-						break;
+				for (Pokemon p : gp.player.pokeParty) {					
+					for (Move m : p.getMoveSet()) {
+						if (m.getName().equals("Surf")) {
+							hmPokemon = p;
+							break;	
+						}
 					}
 				}		
 				break;
 		}
 		
-		return playerHasHM;		
+		return hmPokemon;		
 	}
 	
 	// PARTY SCREEN
@@ -604,6 +612,7 @@ public class UI {
 						partySubState = party_Main_Select;		
 					}
 					else {
+						gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  	
 						partySubState = party_Skills;
 					}			
 				}	

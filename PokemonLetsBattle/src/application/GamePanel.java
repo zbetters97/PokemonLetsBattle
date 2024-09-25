@@ -107,8 +107,8 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int gym = 4;
 	
 	// LOCATION STATES
-	public int currentLocation;
-	public final int petalburg = 1;		
+	public final int petalburg = 0;		
+	public final int pokecenter = 1;
 	
 	public TileManager tileM = new TileManager(this);
 	public AssetSetter aSetter = new AssetSetter(this);
@@ -140,8 +140,7 @@ public class GamePanel extends JPanel implements Runnable {
 	protected void setupGame() {	
 						
 		gameState = playState;
-		currentArea = town;
-		currentLocation = petalburg;		
+		currentArea = town;	
 				
 		setupMusic();
 		
@@ -162,15 +161,17 @@ public class GamePanel extends JPanel implements Runnable {
 		Map<String, Integer> encounters_petalburg = new HashMap<>();			
 		encounters_petalburg.put("Geodude", 6);	
 		encounters_petalburg.put("Machop", 3);
-		encounters_petalburg.put("Pikachu", 1);			
+		encounters_petalburg.put("Pikachu", 1);		
+		
 		wildEncounters.put(petalburg, encounters_petalburg);
 		wildLevels.put(petalburg, 4);
 		
 		gameState = playState;
 	}
 	
-	public void setupMusic() {		
-		if (currentArea == town) playMusic(0, 0);
+	public void setupMusic() {					
+		if (currentMap == petalburg) playMusic(0, 0);
+		else if (currentMap == pokecenter) playMusic(0, 1);			
 	}
 
 	public void playMusic(int category, int record) {		
