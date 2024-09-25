@@ -127,31 +127,37 @@ public class Entity {
 	
 	// UPDATER
 	public void update() {	
-		if (moving) {			
-			walking();
-		}
-		else {			
-			setAction();		
-		}
-				
+		setAction();					
 		manageValues();	
-	}	
+	}
 	
-	// WALKING
-	public void walking() {
+	public void move() {
 		
+		speed = 6;
 		checkCollision();
-		if (!collisionOn && withinBounds()) { 
-			move(direction);	
-			
-			pixelCounter += speed;		
-			if (pixelCounter >= gp.tileSize) {
-				moving = false;
-				pixelCounter = 0;
-				spriteNum = 1;
-			}
+		if (!collisionOn && withinBounds()) { 	
+			moving = true;	
+			speed = defaultSpeed;
 		}
-		else {
+		else {						
+			spriteNum = 1;
+		}		
+	}		
+	
+	public void walking() {
+		if (canMove) {			
+			switch (direction) {
+				case "up": worldY -= speed; break;
+				case "down": worldY += speed; break;
+				case "left": worldX -= speed; break;
+				case "right": worldX += speed; break;
+			}
+			
+			cycleSprites();		
+		}
+		
+		pixelCounter += speed;		
+		if (pixelCounter >= gp.tileSize) {
 			moving = false;
 			pixelCounter = 0;
 			spriteNum = 1;
@@ -165,7 +171,8 @@ public class Entity {
 		
 		gp.cChecker.checkTile(this);	
 		gp.cChecker.checkEntity(this, gp.npc);	
-		gp.cChecker.checkPlayer(this);				
+		gp.cChecker.checkPlayer(this);		
+		gp.cChecker.checkObject(this, false);
 	}
 			
 	// SPRITE CYCLE
@@ -193,8 +200,6 @@ public class Entity {
 			else if (dir == 4) direction = "right";
 			
 			actionLockCounter = 0;
-			
-			moving = true;
 		}		
 	}
 	protected String getOppositeDirection(String direction) {

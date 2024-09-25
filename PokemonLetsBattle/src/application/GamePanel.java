@@ -77,7 +77,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public int worldWidth;
 	public int worldHeight;
 	
-	public String[] mapFiles = { "petalburg.txt", "worldmap.txt"};
+	public String[] mapFiles = { "petalburg.txt", "pokemoncenter.txt"};
 	public final int maxMap = mapFiles.length;
 	public int currentMap = 0;
 	
@@ -96,6 +96,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int hmState = 4;
 	public final int battleState = 5;
 	public final int partyState = 6;
+	public final int transitionState = 7;	
 	
 	// AREA STATES
 	public int currentArea;
@@ -274,11 +275,29 @@ public class GamePanel extends JPanel implements Runnable {
 	}	
 	private void updateOBJ_I() {
 		for (int i = 0; i < obj_i[1].length; i++) {
-			if (obj_i[currentMap][i] != null) {				
-				obj_i[currentMap][i].update();
+			if (obj_i[currentMap][i] != null) {			
+				if (!obj_i[currentMap][i].alive)
+					obj_i[currentMap][i] = null;
+				else 
+					obj_i[currentMap][i].update();
 			}				
 		}
 	}	
+	
+	public void changeArea() {
+		
+		player.resetValues();		
+		tileM.loadMap();	
+		
+		if (nextArea != currentArea) {
+			stopMusic();			
+			setupMusic();
+		}					
+		
+		aSetter.setInteractiveObjects();
+		
+		currentArea = nextArea;
+	}
 	
 	private void drawToTempScreen() {
 		
@@ -286,9 +305,23 @@ public class GamePanel extends JPanel implements Runnable {
 		if (gameState == titleState) {
 			ui.draw(g2);
 		}		
+		// BATTLE STATE
+		else if (gameState == battleState) {
+							
+			// DRAW BATTLE MANAGER
+			btlManager.draw(g2);
+			
+			// DRAW UI
+			ui.draw(g2);
+		}
+		// BATTLE STATE
+		else if (gameState == partyState) {
+			
+			// DRAW UI
+			ui.draw(g2);
+		}
 		// PLAY STATE
-		else if (gameState == playState || gameState == dialogueState || 
-				gameState == hmState ||gameState == pauseState) {	
+		else {	
 			
 			// DRAW TILES
 			tileM.draw(g2);	
@@ -324,21 +357,6 @@ public class GamePanel extends JPanel implements Runnable {
 			// DRAW UI
 			ui.draw(g2);			
 		}		
-		// BATTLE STATE
-		else if (gameState == battleState) {
-							
-			// DRAW BATTLE MANAGER
-			btlManager.draw(g2);
-			
-			// DRAW UI
-			ui.draw(g2);
-		}
-		// BATTLE STATE
-		else if (gameState == partyState) {
-			
-			// DRAW UI
-			ui.draw(g2);
-		}
 	}
 	private void drawToScreen() {		
 		Graphics g = getGraphics();

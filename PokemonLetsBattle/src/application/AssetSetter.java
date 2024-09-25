@@ -2,9 +2,7 @@ package application;
 
 import entity.npc.*;
 import entity.object.*;
-import entity.object.object_interactive.OBJ_Door_Gym;
-import entity.object.object_interactive.OBJ_Door_Store;
-import entity.object.object_interactive.OI_Boulder;
+import entity.object.object_interactive.*;
 
 public class AssetSetter {
 	
@@ -38,15 +36,14 @@ public class AssetSetter {
 		int mapNum = 0;
 		int i = 0;
 				
-		gp.obj_i[mapNum][i] = new OBJ_Door_Store(gp, 30, 25); i++;	
-		gp.obj_i[mapNum][i] = new OBJ_Door_Store(gp, 35, 21); i++;	
-		gp.obj_i[mapNum][i] = new OBJ_Door_Gym(gp, 25, 18); i++;	
+		gp.obj_i[mapNum][i] = new OBJ_Door(gp, 30, 25, 0); i++;	
+		gp.obj_i[mapNum][i] = new OBJ_Door(gp, 35, 21, 0); i++;	
+		gp.obj_i[mapNum][i] = new OBJ_Door(gp, 25, 18, 1); i++;	
 		
 		gp.obj_i[mapNum][i] = new OI_Boulder(gp, 21, 22); i++;	
 	}
 	protected void setInteractiveTiles(boolean reset) {
 				
-		int mapNum = 0;
-		int i = 0;
+		
 	}
 }

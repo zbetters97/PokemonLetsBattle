@@ -62,9 +62,8 @@ public class EventHandler {
 		if (canTouchEvent) {
 			
 			// TELEPORT SPOTS
-			if (hit(0, 30, 25, true)) teleport(0, 12, 12, gp.shop, "up");
-			else if (hit(0, 35, 21, true)) teleport(0, 12, 12, gp.shop, "up"); 
-			else if (hit(0, 25, 18, true)) teleport(0, 12, 12, gp.shop, "up"); 
+			if (hit(0, 30, 25, true)) teleport(1, 22, 32, gp.shop, "up"); // POKEMART ENTRANCE
+			else if (hit(1, 22, 32, "right", 2)) teleport(0, 30, 26, gp.town, "down"); // POKEMART EXIT
 		}
 	}
 	private boolean hit(int map, int col, int row, boolean fullTile) {
@@ -80,6 +79,37 @@ public class EventHandler {
 				eventRect[map][col][row].height = 16;
 			}
 			
+			if (getHit(map, col, row, null))
+				hit = true;
+		}		
+		
+		return hit;		
+	}
+	
+	private boolean hit(int map, int col, int row, String spanDirection, int tiles) {
+		
+		boolean hit = false;
+		
+		if (map == gp.currentMap) {
+									
+			eventRect[map][col][row].x = 0;
+			eventRect[map][col][row].y = 0;
+			eventRect[map][col][row].width = 48;
+			eventRect[map][col][row].height = 48;	
+			
+			switch (spanDirection) {
+				case "down":
+					eventRect[map][col][row].height = 48 * tiles;										
+					break;
+				case "right":
+					eventRect[map][col][row].width = 48 * tiles;							
+					break;
+				case "downright":
+					eventRect[map][col][row].height = 48 * tiles;	
+					eventRect[map][col][row].width = 48 * tiles;					
+					break;					
+			}		
+						
 			if (getHit(map, col, row, null))
 				hit = true;
 		}		
@@ -138,11 +168,15 @@ public class EventHandler {
 		
 	private void teleport(int map, int col, int row, int area, String direction) {		
 		
+		canTouchEvent = false;
+		
 		tempMap = map;
 		tempCol = col;
 		tempRow = row;
 		
-		canTouchEvent = false;
+		gp.ui.tDirection = direction;
+		gp.nextArea = area;		
+		gp.gameState = gp.transitionState;
 	}	
 	
 	private void playStairsUpSE() {

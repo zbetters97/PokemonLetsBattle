@@ -84,26 +84,25 @@ public class NPC_Rival extends Entity {
 	}
 	
 	public void setAction() {
-		getDirection(60);	
+		if (!moving) getDirection(60);			
+		if (moving) walking();		
 	}
 	
-	public void move(String direction) {
+	public void getDirection(int rate) {		
 		
-		switch (direction) {
-			case "up": worldY -= speed; break;
-			case "upleft": worldY -= speed - 1; worldX -= speed - 1; break;
-			case "upright": worldY -= speed - 1; worldX += speed - 1; break;
+		actionLockCounter++;			
+		if (actionLockCounter >= rate) {		
+						
+			int dir = 1 + (int)(Math.random() * 4);
+			if (dir == 1) direction = "up";
+			else if (dir == 2) direction = "down";
+			else if (dir == 3) direction = "left";
+			else if (dir == 4) direction = "right";
 			
-			case "down": worldY += speed; break;
-			case "downleft": worldY += speed - 1; worldX -= speed - 1; break;
-			case "downright": worldY += speed; worldX += speed - 1; break;
-			
-			case "left": worldX -= speed; break;
-			case "right": worldX += speed; break;
-		}
-		
-		cycleSprites();		
-	}		
+			actionLockCounter = 0;
+			move();
+		}		
+	}
 	
 	public void cycleSprites() {
 		

@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 public class KeyHandler implements KeyListener {
 
 	private GamePanel gp;
-	private boolean lock = true;
+	public boolean lock = true;
 	public boolean upPressed, downPressed, leftPressed, rightPressed,					
 					aPressed, bPressed, xPressed, yPressed, 
 					lPressed, rPressed, zPressed,
@@ -48,12 +48,12 @@ public class KeyHandler implements KeyListener {
 	}
 			
 	// PLAY
-	private void playState(int code) { 		
+	private void playState(int code) { 	
 
 		if (code == gp.btn_UP) upPressed = true;
 		if (code == gp.btn_DOWN) downPressed = true;
 		if (code == gp.btn_LEFT) leftPressed = true;
-		if (code == gp.btn_RIGHT) rightPressed = true;
+		if (code == gp.btn_RIGHT) rightPressed = true;		
 						
 		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
 		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
@@ -399,10 +399,10 @@ public class KeyHandler implements KeyListener {
 	public void keyReleased(KeyEvent e) {	
 		int code = e.getKeyCode();		
 		
-		if (code == gp.btn_UP) upPressed = false; 
-		if (code == gp.btn_DOWN) downPressed = false;
-		if (code == gp.btn_LEFT) leftPressed = false;
-		if (code == gp.btn_RIGHT) rightPressed = false;
+		if (code == gp.btn_UP) { upPressed = false; lock = true; }
+		if (code == gp.btn_DOWN) { downPressed = false; lock = true; }
+		if (code == gp.btn_LEFT) { leftPressed = false; lock = true; }
+		if (code == gp.btn_RIGHT) { rightPressed = false; lock = true; }
 		
 		if (code == gp.btn_A) { aPressed = false; lock = true; }
 		if (code == gp.btn_B) { bPressed = false; lock = true; }

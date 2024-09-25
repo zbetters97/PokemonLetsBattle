@@ -24,12 +24,15 @@ public class TileManager {
 	
 	private ArrayList<String> fileNames = new ArrayList<>();
 	private ArrayList<String> collisionStatus = new ArrayList<>();
-	private ArrayList<String> waterStatus = new ArrayList<>();
 	
 	public ArrayList<Integer> grassTiles = new ArrayList<>();
+	public ArrayList<Integer> waterTiles = new ArrayList<>();
 	
 	public TileManager(GamePanel gp) {		
 		this.gp = gp;
+		
+		grassTiles.addAll(Arrays.asList(126,127,128));
+		waterTiles.addAll(Arrays.asList(21,22,28,29,30,31,32,33,34,35,36,37,38,39,40));
 		
 		loadTileData();
 		
@@ -39,8 +42,6 @@ public class TileManager {
 		gp.worldHeight = gp.tileSize * 50;
 		
 		mapTileNum = new int[gp.maxMap][50][50];
-		
-		grassTiles.addAll(Arrays.asList(126,127,128));
 	}
 	
 	public void loadMap() {
@@ -89,7 +90,6 @@ public class TileManager {
 			while ((line = br.readLine()) != null) {
 				fileNames.add(line);
 				collisionStatus.add(br.readLine());	
-				waterStatus.add(br.readLine());
 			}						
 			br.close();
 		} 
@@ -108,33 +108,27 @@ public class TileManager {
 		for (int i = 0; i< fileNames.size(); i++) {
 			
 			String fileName;
-			boolean collision, water;
+			boolean collision;
 			
 			// assign each name to fileName
 			fileName = fileNames.get(i);
 			
 			// assign tile status
-			if (collisionStatus.get(i).equals("true")) 
-				collision = true;
-			else
-				collision = false;
-			if (waterStatus.get(i).equals("true")) 
-				water = true;
-			else
-				water = false;
+			if (collisionStatus.get(i).equals("true")) collision = true;
+			else collision = false;
 						
-			setup(i, fileName, collision, water);
+			setup(i, fileName, collision);
 		}
 	}
 	
-	public void setup(int index, String imageName, boolean collision, boolean water) {
+	public void setup(int index, String imageName, boolean collision) {
 		
 		try {
 			tile[index] = new Tile();
 			tile[index].image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imageName));
 			tile[index].image = GamePanel.utility.scaleImage(tile[index].image, gp.tileSize, gp.tileSize);
 			tile[index].collision = collision;
-			tile[index].water = water;
+			if (waterTiles.contains(index)) tile[index].water = true;			
 		}
 		catch (IOException e) {
 			e.printStackTrace();

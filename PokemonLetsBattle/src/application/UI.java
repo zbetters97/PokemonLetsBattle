@@ -58,6 +58,10 @@ public class UI {
 	private BufferedImage dialogue_next;
 	
 	public int commandNum = 0;
+	
+	// TRANSITION
+	private int tCounter = 0;
+	public String tDirection = "";
 			
 	// FIGHTER HP
 	public int fighter_one_HP;
@@ -129,6 +133,9 @@ public class UI {
 		else if (gp.gameState == gp.pauseState) {
 			drawPauseScreen();
 		}
+		else if (gp.gameState == gp.partyState) {
+			drawPartyScreen();
+		}
 		else if (gp.gameState == gp.dialogueState) {
 			drawHUD();
 			drawDialogueScreen();
@@ -139,9 +146,9 @@ public class UI {
 		}
 		else if (gp.gameState == gp.battleState) {
 			drawBattleScreen();
-		}
-		else if (gp.gameState == gp.partyState) {
-			drawPartyScreen();
+		}		
+		else if (gp.gameState == gp.transitionState) {
+			drawTransition();
 		}
 	}
 	
@@ -1749,6 +1756,35 @@ public class UI {
 	}	
 	public void addBattleDialogue(String text) {
 		battleDialogue.add(text);
+	}
+	
+	// TRANSITION
+	private void drawTransition() {
+		
+		// DARKEN SCREEN
+		tCounter++;
+		g2.setColor(new Color(0,0,0, tCounter * 5)); 
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+		
+		// STOP DARKENING SCREEN
+		if (tCounter == 50) {
+			tCounter = 0;			
+			gp.gameState = gp.playState;
+			
+			gp.player.direction = tDirection;
+			gp.currentMap = gp.eHandler.tempMap;
+			
+			gp.player.worldX = gp.tileSize * gp.eHandler.tempCol;
+			gp.player.worldY = gp.tileSize * gp.eHandler.tempRow;
+			
+			gp.player.defaultWorldX = gp.player.worldX;
+			gp.player.defaultWorldY = gp.player.worldY;
+			
+			gp.eHandler.previousEventX = gp.player.worldX;
+			gp.eHandler.previousEventY = gp.player.worldY;
+			
+			gp.changeArea();
+		}		
 	}
 	
 	private void drawText(String text, int x, int y, Color primary, Color shadow) {

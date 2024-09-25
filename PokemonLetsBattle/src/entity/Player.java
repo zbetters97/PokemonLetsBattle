@@ -27,7 +27,7 @@ public class Player extends Entity {
 	// INVENTORY
 	public final int maxItemInventorySize = 10;
 	public ArrayList<Entity> inventory_item = new ArrayList<>();
-	
+		
 /** END PLAYER VARIABLES **/		
 	
 		
@@ -154,14 +154,14 @@ public class Player extends Entity {
 				gp.keyH.bPressed = false;
 				action();
 			}
+			
 			if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) { 		
 				move();
 			}
 			else {
 				spriteNum = 1;
 			}
-		}
-		
+		}		
 		if (moving) {
 			walking();
 		}
@@ -211,7 +211,7 @@ public class Player extends Entity {
 		if (!collisionOn) { 	
 			moving = true;	
 		}
-		else {
+		else {			
 			running = false;
 			spriteNum = 1;
 		}		
