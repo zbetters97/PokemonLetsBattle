@@ -41,14 +41,14 @@ public class OBJ_Rock extends Entity {
 	}
 	
 	public void open() {
-		openCounter++;
-		if (openCounter < 5) { spriteNum = 2; }
-		else if (5 <= openCounter && openCounter < 10) { spriteNum = 3; }
-		else if (10 <= openCounter && openCounter < 15) {
+		spriteCounter++;
+		if (spriteCounter < 5) { spriteNum = 2; }
+		else if (5 <= spriteCounter && spriteCounter < 10) { spriteNum = 3; }
+		else if (10 <= spriteCounter && spriteCounter < 15) {
 			spriteNum = 4;			
 		}
-		else if (15 <= openCounter) {
-			openCounter = 0;						
+		else if (15 <= spriteCounter) {
+			spriteCounter = 0;						
 			opening = false;
 			collision = false;			
 			alive = false;	

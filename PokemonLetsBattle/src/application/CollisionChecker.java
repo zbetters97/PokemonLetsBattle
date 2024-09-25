@@ -1,6 +1,7 @@
 package application;
 
 import entity.*;
+import entity.object.OBJ_Grass;
 
 public class CollisionChecker {
 	
@@ -32,7 +33,7 @@ public class CollisionChecker {
 		if (entityRightCol >= gp.maxWorldCol - 1) return;
 		
 		// detect the two tiles player is interacting with
-		int tileNum1 = 0, tileNum2 = 0;
+		int tileNum = 0;
 		
 		// KNOCKBACK DIRECTION
 		String direction = entity.direction;
@@ -43,50 +44,47 @@ public class CollisionChecker {
 				entityTopRow = (entityTopWorldY - entity.speed) / gp.tileSize;	
 				
 				// tiles at top-left and top-right
-				tileNum1 = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityTopRow];
-				tileNum2 = gp.tileM.mapTileNum[gp.currentMap][entityRightCol][entityTopRow];
+				tileNum = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityTopRow];
 				break;
 			case "down":
 				entityBottomRow = (entityBottomWorldY + entity.speed) / gp.tileSize;
 				
 				// tiles at bottom-left and bottom-right
-				tileNum1 = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityBottomRow];
-				tileNum2 = gp.tileM.mapTileNum[gp.currentMap][entityRightCol][entityBottomRow];
+				tileNum = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityBottomRow];
 				
 				break;
 			case "left":
 				entityLeftCol = (entityLeftWorldX - entity.speed) / gp.tileSize;
 				
 				// tiles at left-top and left-bottom
-				tileNum1 = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityTopRow];
-				tileNum2 = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityBottomRow];
+				tileNum = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityTopRow];
 				
 				break;
 			case "right":
 				entityRightCol = (entityRightWorldX + entity.speed) / gp.tileSize;
 				
 				// tiles at right-top and right-bottom
-				tileNum1 = gp.tileM.mapTileNum[gp.currentMap][entityRightCol][entityTopRow];
-				tileNum2 = gp.tileM.mapTileNum[gp.currentMap][entityRightCol][entityBottomRow];
-				
+				tileNum = gp.tileM.mapTileNum[gp.currentMap][entityRightCol][entityTopRow];
+								
 				break;
 			default: 
 				entity.collisionOn = false; 
 				return;
 		}		
 		// WATER
-		if (gp.tileM.tile[tileNum1].water || gp.tileM.tile[tileNum2].water) {			
+		if (gp.tileM.tile[tileNum].water) {			
 			entity.collisionOn = true;				
 		}
 		
 		// NORMAL COLLISION
-		else if (gp.tileM.tile[tileNum1].collision || gp.tileM.tile[tileNum2].collision) {	
+		else if (gp.tileM.tile[tileNum].collision) {	
 			entity.collisionOn = true;			
 		}
 		
 		// GRASS
-		else if (gp.tileM.grassTiles.contains(tileNum1) || gp.tileM.grassTiles.contains(tileNum2)) {			
+		else if (gp.tileM.grassTiles.contains(tileNum)) {			
 			entity.inGrass = true;		
+			gp.particleList.add(new OBJ_Grass(gp, entity.worldX, entity.worldY));
 		}
 		else {
 			entity.inGrass = false;

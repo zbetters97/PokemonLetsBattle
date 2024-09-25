@@ -6,6 +6,8 @@ import entity.Entity;
 public class OBJ_Door extends Entity {
 	
 	public static final String objName = "Door";
+	private boolean closing = false;
+	private int openTimer = 0;
 	
 	public OBJ_Door(GamePanel gp, int worldX, int worldY, int door) {
 		super(gp);
@@ -15,7 +17,6 @@ public class OBJ_Door extends Entity {
 		type = type_obstacle_i;
 		name = objName;
 		direction = "down";
-		collision = true;
 		
 		if (door == 0) getStoreImage();
 		else if (door == 1) getGymImage();
@@ -36,21 +37,58 @@ public class OBJ_Door extends Entity {
 		if (opening) {
 			open();
 		}
+		else if (closing) {
+			close();
+		}
+		else if (!collision) {
+			checkClose();
+		}		
 	}
 	
-	public void open() {
+	private void open() {
 		
-		openCounter++;
-		if (openCounter < 5) { 
+		spriteCounter++;
+		if (spriteCounter < 5) { 
 			spriteNum = 2; 
 		}
-		else if (5 <= openCounter && openCounter < 10) { 
+		else if (5 <= spriteCounter && spriteCounter < 10) { 
 			spriteNum = 3; 
 		}
-		else if (10 <= openCounter) {
-			openCounter = 0;
+		else if (10 <= spriteCounter) {
+			spriteNum = -1;
+			spriteCounter = 0;
 			opening = false;
-			alive = false;
+			collision = false;
+		}
+	}
+	
+	private void checkClose() {
+		
+		if (gp.player.worldX == worldX && gp.player.worldY == worldY) {
+			openTimer = 0;
+		}
+		else {
+			openTimer++;
+			if (openTimer >= 60) {
+				openTimer = 0;
+			}	
+		}		
+	}
+	
+	private void close() {
+		
+		spriteCounter++;
+		if (spriteCounter < 5) { 
+			collision = true;
+			spriteNum = 3; 
+		}
+		else if (5 <= spriteCounter && spriteCounter < 10) { 
+			spriteNum = 2; 
+		}
+		else if (10 <= spriteCounter) {
+			spriteNum = 1;
+			spriteCounter = 0;
+			closing = false;
 		}
 	}
 	
@@ -58,7 +96,6 @@ public class OBJ_Door extends Entity {
 		if (!opening && collision) {
 			playOpenSE();
 			opening = true;		
-			collision = false;
 		}				
 	}
 	

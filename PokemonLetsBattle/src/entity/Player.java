@@ -251,7 +251,7 @@ public class Player extends Entity {
 				checkWildEncounter();				
 			}
 			
-			checkCollision();
+			gp.eHandler.checkEvent();	
 		}
 	}
 	public void cycleSprites() {

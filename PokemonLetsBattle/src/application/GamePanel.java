@@ -123,6 +123,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public Entity obj[][] = new Entity[maxMap][20];
 	public Entity obj_i[][] = new Entity[maxMap][20];
 	public InteractiveTile iTile[][] = new InteractiveTile[maxMap][100];
+	public ArrayList<Entity> particleList = new ArrayList<>();
 	public Map<Integer, Map<String, Integer>> wildEncounters = new HashMap<>();
 	public Map<Integer, Integer> wildLevels = new HashMap<>();
 	
@@ -246,6 +247,7 @@ public class GamePanel extends JPanel implements Runnable {
 			updateNPC();
 			updateOBJ();
 			updateOBJ_I();
+			updateParticles();
 		}
 		// GAME PAUSED
 		else if (gameState == pauseState) { 
@@ -283,6 +285,15 @@ public class GamePanel extends JPanel implements Runnable {
 			}				
 		}
 	}	
+	private void updateParticles() {
+		for (int i = 0; i < particleList.size(); i++) {
+			if (particleList.get(i) != null) {
+				particleList.get(i).update();	
+				if (!particleList.get(i).alive) 
+					particleList.remove(i);						
+			}
+		}
+	}
 	
 	public void changeArea() {
 		
@@ -338,7 +349,8 @@ public class GamePanel extends JPanel implements Runnable {
 			// POPULATE ENTITY LIST
 			for (Entity n : npc[currentMap]) { if (n != null) entities.add(n); }			
 			for (Entity o : obj[currentMap]) { if (o != null) entities.add(o); }			
-			for (Entity oi : obj_i[currentMap]) { if (oi != null) entities.add(oi); }			
+			for (Entity oi : obj_i[currentMap]) { if (oi != null) entities.add(oi); }	
+			for (Entity pa : particleList) { if (pa != null) entities.add(pa); }			
 			
 			// SORT DRAW ORDER BY Y COORD
 			Collections.sort(entities, new Comparator<Entity>() {

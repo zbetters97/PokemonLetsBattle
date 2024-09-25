@@ -96,7 +96,6 @@ public class Entity {
 	// OBJECT ATTRIBUTES
 	public boolean alive = true;
 	public boolean opening;
-	protected int openCounter = 0;
 	public String hmType;
 	
 	// CHARACTER TYPES
