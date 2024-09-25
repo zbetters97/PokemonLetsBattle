@@ -144,28 +144,21 @@ public class Player extends Entity {
 /** UPDATER **/
 
 	public void update() {
+		
 		if (!moving) {	
 			
 			running = false;
 			
-			if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) { 
-								
-				moving = true;							
-				if (gp.keyH.bPressed) running = true;				
-				
-				getDirection();
+			if (gp.keyH.aPressed) {		
+				gp.keyH.aPressed = false;
+				gp.keyH.bPressed = false;
+				action();
+			}
+			if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) { 		
+				move();
 			}
 			else {
 				spriteNum = 1;
-			}
-			
-			if (gp.keyH.aPressed) {
-				
-				int npcIndex = gp.cChecker.checkNPC();
-				int objIndex = gp.cChecker.checkObject(this, true);
-				
-				if (npcIndex != -1) interactNPC(npcIndex);
-				else if (objIndex != -1) interactObject(objIndex);
 			}
 		}
 		
@@ -181,36 +174,47 @@ public class Player extends Entity {
 	
 /** PLAYER METHODS **/
 	
-	// MOVEMENT
-	public void walking() {
+	public void action() {
+		int npcIndex = gp.cChecker.checkNPC();
+		int objIndex = gp.cChecker.checkObject(this, true);
 		
-		if (!gp.keyH.debug) checkCollision();
-		if (!collisionOn) { 		
-			if (running) {
-				speed = 6;
-				animationSpeed = 6;
-			}
-			else {
-				speed = defaultSpeed;
-				animationSpeed = defaultAnimationSpeed;
-			}
-			move(direction);	
+		if (npcIndex != -1) interactNPC(npcIndex);
+		else if (objIndex != -1) interactObject(objIndex);
+	}	
+	public void interactNPC(int i) {		
+		if (i != -1) {				
+			resetValues();
+			gp.npc[gp.currentMap][i].speak();					
+		}	
+	}	
+	public void interactObject(int i) {
+		if (i != -1 && gp.obj[gp.currentMap][i].type == type_obstacle_i) {
+			gp.obj[gp.currentMap][i].interact();	
+		}
+	}
+	
+	public void move() {
+		
+		if (gp.keyH.bPressed) {
+			running = true;	
+			speed = 6;
+			animationSpeed = 6;			
+		}
+		else {
+			speed = defaultSpeed;
+			animationSpeed = defaultAnimationSpeed;
+		}
+		
+		getDirection();
+		
+		checkCollision();
+		if (!collisionOn) { 	
+			moving = true;	
 		}
 		else {
 			running = false;
 			spriteNum = 1;
-		}
-		
-		pixelCounter += speed;		
-		if (pixelCounter >= gp.tileSize) {
-			moving = false;
-			pixelCounter = 0;
-			
-			if (inGrass) {
-				speed = 2;
-				checkWildEncounter();
-			}
-		}
+		}		
 	}
 	public void getDirection() {
 		
@@ -223,7 +227,8 @@ public class Player extends Entity {
 		
 		direction = tempDirection;
 	}
-	public void move(String direction) {
+	
+	public void walking() {
 		
 		if (canMove) {
 			switch (direction) {
@@ -234,6 +239,19 @@ public class Player extends Entity {
 			}
 
 			cycleSprites();	
+		}
+		
+		pixelCounter += speed;		
+		if (pixelCounter >= gp.tileSize) {
+			moving = false;
+			pixelCounter = 0;
+			
+			if (inGrass) {
+				speed = 2;				
+				checkWildEncounter();				
+			}
+			
+			checkCollision();
 		}
 	}
 	public void cycleSprites() {
@@ -256,36 +274,21 @@ public class Player extends Entity {
 			spriteCounter = 0;
 		}					
 	}	
-	
-	// COLLISION
 	public void checkCollision() {
 				
 		collisionOn = false;
 		
 		if (gp.keyH.debug) return;
 		
+		gp.eHandler.checkEvent();		
 		gp.cChecker.checkTile(this);	
-		gp.cChecker.checkEntity(this, gp.npc);	
-		
-		// CHECK OBJECT COLLISION
-		int objIndex = gp.cChecker.checkObject(this, true);
+		gp.cChecker.checkEntity(this, gp.npc);			
+		gp.cChecker.checkObject(this, true);
 		
 		// CHECK INTERACTIVE OBJECTS COLLISION
 		int objIIndex = gp.cChecker.checkObject_I(this, true);
 		if (objIIndex != -1) interactObjectI(objIIndex);	
 	}	
-			
-	public void interactNPC(int i) {		
-		if (i != -1) {				
-			resetValues();
-			gp.npc[gp.currentMap][i].speak();					
-		}	
-	}	
-	public void interactObject(int i) {
-		if (i != -1 && gp.obj[gp.currentMap][i].type == type_obstacle_i) {
-			gp.obj[gp.currentMap][i].interact();	
-		}
-	}
 	public void interactObjectI(int i) {
 		if (gp.obj_i[gp.currentMap][i].type == type_obstacle) {				
 			if (!gp.obj_i[gp.currentMap][i].moving) {	
@@ -297,11 +300,9 @@ public class Player extends Entity {
 		}	
 	}	
 
-	// CHECKERS
 	public void manageValues() {
 	}
 
-	// IMAGE MANAGER
 	public void changeAlpha(Graphics2D g2, float alphaValue) {
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
 	}
@@ -331,7 +332,6 @@ public class Player extends Entity {
 		}	
 	}
 	
-	// DRAW HANDLER
 	public void draw(Graphics2D g2) {
 		
 		if (!drawing) return;

@@ -41,14 +41,14 @@ public class OBJ_Door_Store extends Entity {
 			spriteNum = 4;
 			openCounter = 0;				
 			opening = false;
-			collision = false;
 		}
 	}
 	
 	public void interact() {	
 		if (!opening && collision) {
 			playOpenSE();
-			opening = true;			
+			opening = true;		
+			collision = false;
 		}				
 	}
 	

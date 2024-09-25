@@ -41,6 +41,7 @@ public class AssetSetter {
 		gp.obj_i[mapNum][i] = new OBJ_Door_Store(gp, 30, 25); i++;	
 		gp.obj_i[mapNum][i] = new OBJ_Door_Store(gp, 35, 21); i++;	
 		gp.obj_i[mapNum][i] = new OBJ_Door_Gym(gp, 25, 18); i++;	
+		
 		gp.obj_i[mapNum][i] = new OI_Boulder(gp, 21, 22); i++;	
 	}
 	protected void setInteractiveTiles(boolean reset) {

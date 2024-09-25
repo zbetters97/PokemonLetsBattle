@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
+import event.EventHandler;
 import tile.TileManager;
 import tile.tile_interactive.InteractiveTile;
 
@@ -101,7 +102,8 @@ public class GamePanel extends JPanel implements Runnable {
 	public int nextArea;	
 	public final int town = 1;
 	public final int house = 2;
-	public final int gym = 3;
+	public final int shop = 3;
+	public final int gym = 4;
 	
 	// LOCATION STATES
 	public int currentLocation;
@@ -111,6 +113,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public AssetSetter aSetter = new AssetSetter(this);
 	public EnvironmentManager eManager = new EnvironmentManager(this);
 	public CollisionChecker cChecker = new CollisionChecker(this);	
+	public EventHandler eHandler = new EventHandler(this);	
 	public BattleManager btlManager = new BattleManager(this);	
 	
 	public ArrayList<Entity> entities = new ArrayList<>();

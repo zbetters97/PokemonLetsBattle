@@ -26,7 +26,7 @@ public class OBJ_Door_Gym extends Entity {
 	}
 	
 	public void update() {
-		if (opening) {
+		if (opening) {			
 			spriteNum = 2;
 			open();
 		}
@@ -39,8 +39,7 @@ public class OBJ_Door_Gym extends Entity {
 		else if (10 <= openCounter) {
 			spriteNum = 4;
 			openCounter = 0;				
-			opening = false;
-			collision = false;
+			opening = false;			
 		}
 	}
 	
@@ -48,6 +47,7 @@ public class OBJ_Door_Gym extends Entity {
 		if (!opening && collision) {
 			playOpenSE();
 			opening = true;			
+			collision = false;
 		}			
 	}
 	
