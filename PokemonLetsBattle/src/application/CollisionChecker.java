@@ -14,57 +14,45 @@ public class CollisionChecker {
 
 	// TILE COLLISION
 	public void checkTile(Entity entity) {
-						
-		// COLLISION BOX (left side, right side, top, bottom)
-		int entityLeftWorldX = entity.worldX + entity.hitbox.x;
-		int entityRightWorldX = entity.worldX + entity.hitbox.x + entity.hitbox.width;
-		int entityTopWorldY = entity.worldY + entity.hitbox.y;
-		int entityBottomWorldY = entity.worldY + entity.hitbox.y + entity.hitbox.height;
 		
-		int entityLeftCol = entityLeftWorldX / gp.tileSize;
-		int entityRightCol = entityRightWorldX / gp.tileSize;
-		int entityTopRow = entityTopWorldY / gp.tileSize;
-		int entityBottomRow = entityBottomWorldY / gp.tileSize;
+		int x;
+		int y;
 		
-		// PREVENT COLLISION DETECTION OUT OF BOUNDS
-		if (entityTopRow <= 0) return;		
-		if (entityBottomRow >= gp.maxWorldRow - 1) return;		
-		if (entityLeftCol <= 0) return;		
-		if (entityRightCol >= gp.maxWorldCol - 1) return;
+		// detect the tile player is interacting with
+		int tile = 0;
 		
-		// detect the two tiles player is interacting with
-		int tileNum = 0;
-		
-		// KNOCKBACK DIRECTION
-		String direction = entity.direction;
-		
-		// find tile player will interact with, factoring in speed
-		switch (direction) {
+		// find tile entity will interact with
+		switch (entity.direction) {
 			case "up":
-				entityTopRow = (entityTopWorldY - entity.speed) / gp.tileSize;	
 				
-				// tiles at top-left and top-right
-				tileNum = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityTopRow];
+				// tile above entity
+				x = entity.worldX / gp.tileSize;
+				y = (entity.worldY - gp.tileSize) / gp.tileSize;
+				tile = gp.tileM.mapTileNum[gp.currentMap][x][y];
+				
 				break;
 			case "down":
-				entityBottomRow = (entityBottomWorldY + entity.speed) / gp.tileSize;
 				
-				// tiles at bottom-left and bottom-right
-				tileNum = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityBottomRow];
+				// tile below entity
+				x = entity.worldX / gp.tileSize;
+				y = (entity.worldY + gp.tileSize) / gp.tileSize;
+				tile = gp.tileM.mapTileNum[gp.currentMap][x][y];
 				
 				break;
 			case "left":
-				entityLeftCol = (entityLeftWorldX - entity.speed) / gp.tileSize;
 				
-				// tiles at left-top and left-bottom
-				tileNum = gp.tileM.mapTileNum[gp.currentMap][entityLeftCol][entityTopRow];
+				// tile left of entity
+				x = (entity.worldX - gp.tileSize)/ gp.tileSize;
+				y = entity.worldY / gp.tileSize;
+				tile = gp.tileM.mapTileNum[gp.currentMap][x][y];
 				
 				break;
 			case "right":
-				entityRightCol = (entityRightWorldX + entity.speed) / gp.tileSize;
-				
-				// tiles at right-top and right-bottom
-				tileNum = gp.tileM.mapTileNum[gp.currentMap][entityRightCol][entityTopRow];
+
+				// tile right of entity
+				x = (entity.worldX + gp.tileSize)/ gp.tileSize;
+				y = entity.worldY / gp.tileSize;
+				tile = gp.tileM.mapTileNum[gp.currentMap][x][y];
 								
 				break;
 			default: 
@@ -72,19 +60,35 @@ public class CollisionChecker {
 				return;
 		}		
 		// WATER
-		if (gp.tileM.tile[tileNum].water) {			
+		if (gp.tileM.tile[tile].water) {			
 			entity.collisionOn = true;				
 		}
 		
 		// NORMAL COLLISION
-		else if (gp.tileM.tile[tileNum].collision) {	
+		else if (gp.tileM.tile[tile].collision) {	
 			entity.collisionOn = true;			
 		}
 		
 		// GRASS
-		else if (gp.tileM.grassTiles.contains(tileNum)) {			
+		else if (!gp.tileM.tile[tile].grass) {		
+			entity.inGrass = false;
+		}
+	}
+	
+	// GRASS COLLISION
+	public void checkGrass(Entity entity) {
+		
+		// X,Y OF CURRENT TILE
+		int x = entity.worldX / gp.tileSize;
+		int y = entity.worldY / gp.tileSize;
+		
+		// detect the tile player is interacting with
+		int tile = gp.tileM.mapTileNum[gp.currentMap][x][y];
+		
+		// GRASS
+		if (gp.tileM.tile[tile].grass) {			
 			entity.inGrass = true;		
-			gp.particleList.add(new OBJ_Grass(gp, entity.worldX, entity.worldY));
+			gp.particleList.add(new OBJ_Grass(gp, x, y));
 		}
 		else {
 			entity.inGrass = false;
@@ -109,21 +113,11 @@ public class CollisionChecker {
 				target[gp.currentMap][i].hitbox.y = target[gp.currentMap][i].worldY + target[gp.currentMap][i].hitbox.y;
 			
 				switch (direction) {
-					case "up":					
-						entity.hitbox.y -= entity.speed;
-						break;		
-					case "down":					
-						entity.hitbox.y += entity.speed;
-						break;
-					case "left":					
-						entity.hitbox.x -= entity.speed;
-						break;
-					case "right":					
-						entity.hitbox.x += entity.speed;
-						break;	
-					default: 
-						entity.collision = true; 
-						return index;
+					case "up": entity.hitbox.y -= entity.speed;	break;
+					case "down": entity.hitbox.y += entity.speed; break;
+					case "left": entity.hitbox.x -= entity.speed; break;
+					case "right": entity.hitbox.x += entity.speed; break;
+					default: entity.collision = true; return index;
 				}
 				
 				if (entity.hitbox.intersects(target[gp.currentMap][i].hitbox)) {	
@@ -172,20 +166,11 @@ public class CollisionChecker {
 				// find where gp.player will be after moving in a direction
 				// ask if gp.npc and gp.player intersect 
 				switch (direction) {
-					case "up":					
-						gp.player.hitbox.y -= speed;
-						break;	
-					case "down":					
-						gp.player.hitbox.y += speed;
-						break;
-					case "left":					
-						gp.player.hitbox.x -= speed;
-						break;
-					case "right":					
-						gp.player.hitbox.x += speed;
-						break;	
-					default: 
-						return index;
+					case "up": gp.player.hitbox.y -= speed; break;	
+					case "down": gp.player.hitbox.y += speed; break;
+					case "left": gp.player.hitbox.x -= speed; break;
+					case "right": gp.player.hitbox.x += speed; break;	
+					default: return index;
 				}
 				
 				if (gp.player.hitbox.intersects(gp.npc[gp.currentMap][i].hitbox)) {	
@@ -228,21 +213,11 @@ public class CollisionChecker {
 				// find where entity will be after moving in a direction
 				// ask if object and entity intersect 
 				switch (entity.direction) {
-					case "up":					
-						entity.hitbox.y -= entity.speed;						
-						break;
-					case "down":					
-						entity.hitbox.y += entity.speed;
-						break;
-					case "left":					
-						entity.hitbox.x -= entity.speed;
-						break;
-					case "right":					
-						entity.hitbox.x += entity.speed;
-						break;
-					default: 
-						entity.collision = true; 
-						return index;
+				case "up": entity.hitbox.y -= entity.speed;	break;
+					case "down": entity.hitbox.y += entity.speed; break;
+					case "left": entity.hitbox.x -= entity.speed; break;
+					case "right": entity.hitbox.x += entity.speed; break;
+					default: entity.collision = true; return index;
 				}
 				
 				if (entity.hitbox.intersects(gp.obj[gp.currentMap][i].hitbox)) {
@@ -291,21 +266,11 @@ public class CollisionChecker {
 				// find where entity will be after moving in a direction
 				// ask if obj_iect and entity intersect 
 				switch (entity.direction) {
-					case "up":					
-						entity.hitbox.y -= entity.speed;						
-						break;
-					case "down":					
-						entity.hitbox.y += entity.speed;
-						break;
-					case "left":					
-						entity.hitbox.x -= entity.speed;
-						break;
-					case "right":					
-						entity.hitbox.x += entity.speed;
-						break;
-					default: 
-						entity.collision = true; 
-						return index;
+					case "up": entity.hitbox.y -= entity.speed;	break;
+					case "down": entity.hitbox.y += entity.speed; break;
+					case "left": entity.hitbox.x -= entity.speed; break;
+					case "right": entity.hitbox.x += entity.speed; break;
+					default: entity.collision = true; return index;
 				}
 								
 				if (entity.hitbox.intersects(gp.obj_i[gp.currentMap][i].hitbox)) {						

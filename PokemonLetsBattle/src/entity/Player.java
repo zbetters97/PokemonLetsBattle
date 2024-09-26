@@ -243,12 +243,9 @@ public class Player extends Entity {
 			moving = false;
 			pixelCounter = 0;
 			
-			if (inGrass) {
-				speed = 2;				
-				checkWildEncounter();				
-			}
-			
-			gp.eHandler.checkEvent();	
+			gp.cChecker.checkGrass(this);			
+			if (inGrass) checkWildEncounter();	
+			else gp.eHandler.checkEvent();	
 		}
 	}
 	public void cycleSprites() {

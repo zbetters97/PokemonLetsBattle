@@ -12,24 +12,22 @@ public class OBJ_Grass extends Entity {
 	public OBJ_Grass(GamePanel gp, int x, int y) {		
 		super(gp);
 		
-		worldX = x;
-		worldY = y;	
+		worldX = x * gp.tileSize;
+		worldY = y * gp.tileSize;	
 		
 		direction = "down";
 		
-		down1 = setup("/tiles_interactive/grass_1"); 
-		down2 = setup("/tiles_interactive/grass_2"); 
-		down3 = setup("/tiles_interactive/grass_3"); 
-		down4 = setup("/tiles_interactive/grass_4"); 
+		down1 = setup("/objects/grass_1"); 
+		down2 = setup("/objects/grass_2"); 
+		down3 = setup("/objects/grass_3"); 
 	}
 	
 	public void update() {
 		spriteCounter++;
-		if (spriteCounter < 5) spriteNum = 1; 
-		else if (5 <= spriteCounter && spriteCounter < 10) spriteNum = 2; 
-		else if (10 <= spriteCounter && spriteCounter < 15) spriteNum = 3;
-		else if (15 <= spriteCounter && spriteCounter < 20) spriteNum = 4;
-		else if (20 <= spriteCounter) alive = false;
+		if (spriteCounter < 8) spriteNum = 1; 
+		else if (8 <= spriteCounter && spriteCounter < 16) spriteNum = 2; 
+		else if (16 <= spriteCounter && spriteCounter < 24) spriteNum = 3;
+		else if (24 <= spriteCounter) alive = false;
 	}
 	
 	public void draw(Graphics2D g2) {

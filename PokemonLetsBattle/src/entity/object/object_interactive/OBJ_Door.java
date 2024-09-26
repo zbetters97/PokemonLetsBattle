@@ -6,6 +6,7 @@ import entity.Entity;
 public class OBJ_Door extends Entity {
 	
 	public static final String objName = "Door";
+	private boolean open = false;
 	private boolean closing = false;
 	private int openTimer = 0;
 	
@@ -34,10 +35,11 @@ public class OBJ_Door extends Entity {
 	}
 	
 	public void update() {
+		
 		if (opening) {
 			open();
 		}
-		else if (!opening && !collision) {
+		else if (open) {
 			checkClose();
 		}	
 		else if (closing) {
@@ -57,6 +59,7 @@ public class OBJ_Door extends Entity {
 			spriteNum = -1;
 			spriteCounter = 0;
 			opening = false;
+			open = true;
 			collision = false;
 		}
 	}
@@ -69,6 +72,7 @@ public class OBJ_Door extends Entity {
 			openTimer++;
 			if (openTimer >= 60) {
 				closing = true;
+				open = false;
 				collision = true;
 				openTimer = 0;
 			}	

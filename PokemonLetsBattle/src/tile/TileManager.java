@@ -128,7 +128,8 @@ public class TileManager {
 			tile[index].image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imageName));
 			tile[index].image = GamePanel.utility.scaleImage(tile[index].image, gp.tileSize, gp.tileSize);
 			tile[index].collision = collision;
-			if (waterTiles.contains(index)) tile[index].water = true;			
+			if (waterTiles.contains(index)) tile[index].water = true;		
+			if (grassTiles.contains(index)) tile[index].grass = true;		
 		}
 		catch (IOException e) {
 			e.printStackTrace();
