@@ -1,7 +1,5 @@
 package entity.npc;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 import application.GamePanel;
@@ -124,11 +122,4 @@ public class NPC_Rival extends Entity {
 			spriteCounter = 0;
 		}					
 	}	
-	
-	public void draw(Graphics2D g2) {
-		g2.setColor(new Color(0,0,0,100));
-		g2.fillOval(tempScreenX + 9, tempScreenY + 40, 30, 10);
-		
-		super.draw(g2);
-	}
 }

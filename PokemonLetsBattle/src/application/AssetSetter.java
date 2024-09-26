@@ -21,7 +21,11 @@ public class AssetSetter {
 		
 		gp.npc[mapNum][i] = new NPC_Sign(gp, 18, 19, 0, "MAY'S HOUSE"); i++;
 		gp.npc[mapNum][i] = new NPC_Sign(gp, 27, 19, 1, "PETALBURG GYM"); i++;	
-		gp.npc[mapNum][i] = new NPC_Sign(gp, 27, 25, 0, "WELCOME TO:\nPetalburg Town"); i++;	
+		gp.npc[mapNum][i] = new NPC_Sign(gp, 27, 25, 0, "WELCOME TO:\nPetalburg Town"); i++;
+		
+		mapNum = 1;
+		i = 0;
+		gp.npc[mapNum][i] = new NPC_Nurse(gp, 22, 26); i++;	
 	}	
 	protected void setObject() {		
 		

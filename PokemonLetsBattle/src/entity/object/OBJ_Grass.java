@@ -16,6 +16,7 @@ public class OBJ_Grass extends Entity {
 		worldY = y * gp.tileSize;	
 		
 		direction = "down";
+		hasShadow = false;
 		
 		down1 = setup("/objects/grass_1"); 
 		down2 = setup("/objects/grass_2"); 

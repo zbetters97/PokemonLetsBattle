@@ -18,6 +18,7 @@ public class OBJ_Door extends Entity {
 		type = type_obstacle_i;
 		name = objName;
 		direction = "down";
+		hasShadow = false;
 		
 		if (door == 0) getStoreImage();
 		else if (door == 1) getGymImage();

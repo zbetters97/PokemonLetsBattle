@@ -15,6 +15,8 @@ public class OBJ_Tree extends Entity {
 		type = type_obstacle_i;
 		name = objName;
 		collision = true;
+		hasShadow = false;
+		
 		hmType = "CUT";
 		
 		dialogues[0][0] = "This tree looks like it could be\ncut by a Pokemon.";

@@ -92,11 +92,12 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int titleState = 0;
 	public final int playState = 1;
 	public final int pauseState = 2;	
-	public final int dialogueState = 3;		
-	public final int hmState = 4;
-	public final int battleState = 5;
-	public final int partyState = 6;
-	public final int transitionState = 7;	
+	public final int dialogueState = 3;	
+	public final int healState = 4;
+	public final int hmState = 5;
+	public final int battleState = 6;
+	public final int partyState = 7;
+	public final int transitionState = 8;	
 	
 	// AREA STATES
 	public int currentArea;
@@ -299,13 +300,15 @@ public class GamePanel extends JPanel implements Runnable {
 	public void changeArea() {
 		
 		player.resetValues();		
+		particleList.clear();
+		
 		tileM.loadMap();	
 		
 		if (nextArea != currentArea) {
 			stopMusic();			
 			setupMusic();
 		}					
-		
+			
 		aSetter.setInteractiveObjects();
 		
 		currentArea = nextArea;

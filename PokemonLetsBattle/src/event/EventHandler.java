@@ -3,6 +3,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import application.GamePanel;
+import entity.Entity;
 
 public class EventHandler {
 	
@@ -63,24 +64,23 @@ public class EventHandler {
 		if (canTouchEvent) {
 			
 			// TELEPORT SPOTS
-			if (hit(0, 30, 25, true)) teleport(1, 22, 32, gp.shop, "up"); // POKEMART ENTRANCE
+			if (hit(0, 30, 25, Arrays.asList("up"))) teleport(1, 22, 32, gp.shop, "up"); // POKEMART ENTRANCE
 			else if (hit(1, 21, 32, "right", 2, Arrays.asList("down"))) teleport(0, 30, 26, gp.town, "down"); // POKEMART EXIT
+			else if (hit(1, 22, 28, Arrays.asList("up"))) speak(gp.npc[1][0]); // NURSE JOY TALK
 		}
 	}
-	private boolean hit(int map, int col, int row, boolean fullTile) {
+	private boolean hit(int map, int col, int row, List<String> reqDirection) {
 		
 		boolean hit = false;
 		
 		if (map == gp.currentMap) {
 
-			if (fullTile) {
-				eventRect[map][col][row].x = 16;
-				eventRect[map][col][row].y = 16;
-				eventRect[map][col][row].width = 16;
-				eventRect[map][col][row].height = 16;
-			}
+			eventRect[map][col][row].x = 16;
+			eventRect[map][col][row].y = 16;
+			eventRect[map][col][row].width = 16;
+			eventRect[map][col][row].height = 16;			
 			
-			if (getHit(map, col, row, null))
+			if (getHit(map, col, row, reqDirection))
 				hit = true;
 		}		
 		
@@ -181,10 +181,9 @@ public class EventHandler {
 		gp.gameState = gp.transitionState;
 	}	
 	
-	private void playStairsUpSE() {
-		
-	}
-	private void playStairsDownSE() {
-		
+	private void speak(Entity npc) {		
+		if (gp.keyH.aPressed) {
+			npc.speak();
+		}
 	}
 }

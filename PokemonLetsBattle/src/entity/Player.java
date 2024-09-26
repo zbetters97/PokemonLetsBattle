@@ -141,8 +141,10 @@ public class Player extends Entity {
 /** UPDATER **/
 
 	public void update() {
-		
+				
 		if (!moving) {	
+			
+			gp.eHandler.checkEvent();	
 			
 			running = false;
 			
@@ -245,7 +247,8 @@ public class Player extends Entity {
 			
 			gp.cChecker.checkGrass(this);			
 			if (inGrass) checkWildEncounter();	
-			else gp.eHandler.checkEvent();	
+			
+			gp.eHandler.checkEvent();	
 		}
 	}
 	public void cycleSprites() {
@@ -335,9 +338,6 @@ public class Player extends Entity {
 		if (!inGrass) {
 			g2.setColor(new Color(0,0,0,100));
 			g2.fillOval(tempScreenX + 9, tempScreenY + 40, 30, 10);
-		}
-		else {
-			
 		}
 									
 		switch (direction) {

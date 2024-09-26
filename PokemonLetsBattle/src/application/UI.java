@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import entity.Entity;
+import entity.npc.NPC_Nurse;
 import moves.Move;
 import pokemon.Pokemon;
 import properties.Type;
@@ -58,6 +59,7 @@ public class UI {
 	private BufferedImage dialogue_next;
 	
 	public int commandNum = 0;
+	public int subState = 0;
 	
 	// TRANSITION
 	private int tCounter = 0;
@@ -81,14 +83,14 @@ public class UI {
 	private ArrayList<Integer> record_SE;
 		
 	// PARTY STATES
-	public int partySubState;
+	public int partyState;
 	public final int party_Main = 1;
 	public final int party_Main_Select = 2;
 	public final int party_Skills = 3;
 	public final int party_Moves = 4;
 	
 	// BATTLE STATE
-	public int battleSubState;
+	public int battleState;
 	public final int battle_Encounter = 1;
 	public final int battle_Start = 2;
 	public final int battle_Dialogue = 3;
@@ -143,6 +145,10 @@ public class UI {
 		else if (gp.gameState == gp.hmState) {
 			drawHUD();
 			drawHMScreen();
+		}
+		else if (gp.gameState == gp.healState) {
+			drawHUD();
+			drawHealScreen();
 		}
 		else if (gp.gameState == gp.battleState) {
 			drawBattleScreen();
@@ -235,7 +241,7 @@ public class UI {
 				gp.keyH.aPressed = false;
 				commandNum = 0;				
 				gp.gameState = gp.partyState;
-				partySubState = party_Main;
+				partyState = party_Main;
 			}
 		}
 		
@@ -298,7 +304,7 @@ public class UI {
 	}
 	
 	// DIALOGUE	
-	public void drawDialogueScreen() {
+	private void drawDialogueScreen() {
 						
 		int x = (int) (gp.tileSize * 2);
 		int y = gp.tileSize * 9;
@@ -354,9 +360,12 @@ public class UI {
 					gp.gameState = gp.playState;
 				}				
 			}
-			else {			
+			else if (npc.name.equals(NPC_Nurse.npcName) && npc.dialogueSet == 0){			
+				gp.gameState = gp.healState;
+			}	
+			else {
 				gp.gameState = gp.playState;
-			}				
+			}
 		}				
 
 		x += gp.tileSize * 0.6;
@@ -401,8 +410,73 @@ public class UI {
 		canSkip = false;		
 	}
 	
+	// HEAL SCREEN
+	private void drawHealScreen() {
+		
+		if (subState == 0) {
+			drawHealDialogue();
+		}
+		
+	}
+	private void drawHealDialogue() {
+		
+		int x = (int) (gp.tileSize * 2);
+		int y = gp.tileSize * 9;
+		int width =(int) (gp.tileSize * 12);
+		int height = (int) (gp.tileSize * 2.5);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, party_green);		
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
+		x += gp.tileSize * 0.6;
+		y += gp.tileSize * 1.1;		
+		String text = "Would you like to heal your\nPokemon team?";
+		for (String line : text.split("\n")) {   			
+  			drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
+  			y += 40;
+		} 
+		
+		x = (int) (gp.tileSize * 11.7);
+		y = (int) (gp.tileSize * 6.3);
+		width = (int) (gp.tileSize * 2.3);
+		height = (int) (gp.tileSize * 2.5);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, party_green);
+				
+		x += gp.tileSize * 0.8;						
+		y += gp.tileSize + 5;
+		drawText("YES", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		if (commandNum == 0) {
+			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
+			if (gp.keyH.aPressed) {		
+				gp.keyH.aPressed = false;
+				commandNum = 0;
+				
+				if (gp.player.healPokemonParty()) {
+					npc.dialogueSet = 1;
+				}
+				else {
+					npc.dialogueSet = 2;	
+				}
+				
+				gp.gameState = gp.dialogueState;
+			}
+		}		
+		
+		y += gp.tileSize;
+		drawText("NO", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		if (commandNum == 1) {
+			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
+			if (gp.keyH.aPressed) {		
+				gp.keyH.aPressed = false;
+				commandNum = 0;
+				
+				npc.dialogueSet = 3;
+				gp.gameState = gp.dialogueState;
+			}
+		}		
+	}
+	
 	// HM SCREEN
-	public void drawHMScreen() {
+	private void drawHMScreen() {
 		
 		int x = (int) (gp.tileSize * 2);
 		int y = gp.tileSize * 9;
@@ -490,7 +564,7 @@ public class UI {
 	// PARTY SCREEN
 	private void drawPartyScreen() {
 		
-		switch(partySubState) {
+		switch(partyState) {
 			case party_Main:
 				drawParty_Main();
 				break;
@@ -589,7 +663,7 @@ public class UI {
 		text = "CANCEL";
 		drawText(text, x, y, battle_white, Color.BLACK);
 		
-		if (partySubState == party_Main) {			
+		if (partyState == party_Main) {			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
 				
@@ -597,7 +671,7 @@ public class UI {
 					
 					if (gp.btlManager.active) {
 						gp.gameState = gp.battleState;
-						battleSubState = battle_Options;
+						battleState = battle_Options;
 						fighterNum = 0;	
 					}
 					else {
@@ -609,11 +683,11 @@ public class UI {
 				else if (gp.player.pokeParty.size() > fighterNum){	
 					
 					if (gp.btlManager.active) {
-						partySubState = party_Main_Select;		
+						partyState = party_Main_Select;		
 					}
 					else {
 						gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  	
-						partySubState = party_Skills;
+						partyState = party_Skills;
 					}			
 				}	
 			}
@@ -664,11 +738,11 @@ public class UI {
 					
 					if (gp.btlManager.fighter[0].isAlive()) {
 						gp.btlManager.fighter[0] = gp.btlManager.newFighter[0];								
-						gp.btlManager.fightStage = gp.btlManager.fightStage_Swap;
+						gp.btlManager.fightStage = gp.btlManager.fight_Swap;
 					}
 					
 					gp.gameState = gp.battleState;
-					battleSubState = battle_Dialogue;
+					battleState = battle_Dialogue;
 					commandNum = 0;
 					fighterNum = 0;					
 				}	
@@ -687,7 +761,7 @@ public class UI {
 			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;					
-				partySubState = party_Skills;	
+				partyState = party_Skills;	
 				gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  
 				commandNum = 0;			
 			}
@@ -700,14 +774,14 @@ public class UI {
 			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;					
-				partySubState = party_Main;	
+				partyState = party_Main;	
 				commandNum = 0;	
 			}
 		}
 		
 		if (gp.keyH.bPressed) {			
 			gp.keyH.bPressed = false;
-			partySubState = party_Main;
+			partyState = party_Main;
 			commandNum = 0;	
 		}
 	}
@@ -865,11 +939,11 @@ public class UI {
 		
 		if (gp.keyH.rightPressed) {
 			commandNum = 0;
-			partySubState = party_Moves;				
+			partyState = party_Moves;				
 		}
 		if (gp.keyH.bPressed) {
 			commandNum = 0;
-			partySubState = party_Main;
+			partyState = party_Main;
 			gp.keyH.bPressed = false;
 		}
 	}
@@ -977,11 +1051,11 @@ public class UI {
 		
 		if (gp.keyH.leftPressed) {
 			commandNum = 0;
-			partySubState = party_Skills;			
+			partyState = party_Skills;			
 		}
 		if (gp.keyH.bPressed) {			
 			commandNum = 0;
-			partySubState = party_Main;
+			partyState = party_Main;
 			gp.keyH.bPressed = false;
 		}
 	}
@@ -1120,7 +1194,7 @@ public class UI {
 	// BATTLE SCREEN
 	private void drawBattleScreen() {
 		
-		switch(battleSubState) {		
+		switch(battleState) {		
 			case battle_Encounter:
 				drawBattleDialogueWindow();	
 				break;
@@ -1456,25 +1530,25 @@ public class UI {
 			if (commandNum == 0) {
 				gp.keyH.playCursorSE();
 				skipBattleDialogue();	
-				battleSubState = battle_Moves;		
+				battleState = battle_Moves;		
 				commandNum = 0;
 			}
 			else if (commandNum == 2) {
 				gp.keyH.playCursorSE();
 				skipBattleDialogue();
 				gp.gameState = gp.partyState;
-				partySubState = party_Main;		
+				partyState = party_Main;		
 				commandNum = 0;
 			}
 			else if (commandNum == 3) {
 				
 				if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {										
-					gp.btlManager.fightStage = gp.btlManager.fightStage_Close;
+					gp.btlManager.fightStage = gp.btlManager.fight_Close;
 					
 					setSoundFile(6, "run", 3);
 					addBattleDialogue("Got away safely!");
 					
-					battleSubState = battle_Dialogue;
+					battleState = battle_Dialogue;
 					
 					dialogueIndex = 0;
 					commandNum = 0;
@@ -1537,12 +1611,12 @@ public class UI {
 		if (gp.keyH.aPressed) {		
 			gp.btlManager.setPlayerMove(commandNum);
 			skipBattleDialogue();		
-			battleSubState = battle_Dialogue;	
+			battleState = battle_Dialogue;	
 			commandNum = 0;	
 		}
 		else if (gp.keyH.bPressed) {			
 			skipBattleDialogue();
-			battleSubState = battle_Options;	
+			battleState = battle_Options;	
 			commandNum = 0;	
 		}
 	}	
@@ -1627,11 +1701,11 @@ public class UI {
 			
 			if (commandNum == 0) {		
 				gp.gameState = gp.partyState;
-				partySubState = party_Main;
+				partyState = party_Main;
 			}
 			else {
-				gp.btlManager.fightStage = gp.btlManager.fightStage_Swap;
-				battleSubState = battle_Dialogue;
+				gp.btlManager.fightStage = gp.btlManager.fight_Swap;
+				battleState = battle_Dialogue;
 			}
 			
 			commandNum = 0;	
@@ -1696,8 +1770,8 @@ public class UI {
 		
 		// IF NO SE AND BATTLE TAKING PLACE
 		if (seTimer.size() == 0 &&
-				(gp.btlManager.fightStage != gp.btlManager.fightStage_Move &&
-				gp.btlManager.fightStage != gp.btlManager.fightStage_Attack)) {
+				(gp.btlManager.fightStage != gp.btlManager.fight_Move &&
+				gp.btlManager.fightStage != gp.btlManager.fight_Attack)) {
 			
 			// PLAYER CAN ADVANCE DIALOGUE
 			if (canSkip) {
@@ -1715,7 +1789,7 @@ public class UI {
 			skipBattleDialogue();  			
 	  	}
 	}		
-	public void skipBattleDialogue() {
+	private void skipBattleDialogue() {
 		gp.keyH.aPressed = false;		
 		
 		dialogueIndex++;
@@ -1778,21 +1852,27 @@ public class UI {
 		// STOP DARKENING SCREEN
 		if (tCounter == 50) {
 			tCounter = 0;			
-			gp.gameState = gp.playState;
 			
-			gp.player.direction = tDirection;
-			gp.currentMap = gp.eHandler.tempMap;
-			
-			gp.player.worldX = gp.tileSize * gp.eHandler.tempCol;
-			gp.player.worldY = gp.tileSize * gp.eHandler.tempRow;
-			
-			gp.player.defaultWorldX = gp.player.worldX;
-			gp.player.defaultWorldY = gp.player.worldY;
-			
-			gp.eHandler.previousEventX = gp.player.worldX;
-			gp.eHandler.previousEventY = gp.player.worldY;
-			
-			gp.changeArea();
+			if (gp.btlManager.active) {
+				gp.gameState = gp.battleState;	
+			}
+			else {
+				gp.player.direction = tDirection;
+				gp.currentMap = gp.eHandler.tempMap;
+				
+				gp.player.worldX = gp.tileSize * gp.eHandler.tempCol;
+				gp.player.worldY = gp.tileSize * gp.eHandler.tempRow;
+				
+				gp.player.defaultWorldX = gp.player.worldX;
+				gp.player.defaultWorldY = gp.player.worldY;
+				
+				gp.eHandler.previousEventX = gp.player.worldX;
+				gp.eHandler.previousEventY = gp.player.worldY;
+				
+				gp.changeArea();
+				
+				gp.gameState = gp.playState;
+			}
 		}		
 	}
 	
@@ -1823,15 +1903,6 @@ public class UI {
 		int stringWidth = fm.stringWidth(text);
 		int centeredX = (width - stringWidth) / 2;		
 		return centeredX + x;
-	}
-	public <T> int getLength(T[][] arr, int set){
-	    int count = 0;
-	    
-	    for(T el : arr[set])
-	        if (el != null)
-	            ++count;
-	    
-	    return count;
 	}
 	private BufferedImage setup(String imagePath, int width, int height) {
 		

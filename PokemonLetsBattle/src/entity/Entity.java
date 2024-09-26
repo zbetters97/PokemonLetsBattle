@@ -41,6 +41,7 @@ public class Entity {
 	public boolean sleep = false;	
 	public boolean collision = true;
 	public boolean collisionOn = false;	
+	protected boolean hasShadow = true;
 	
 	// SPRITE HANDLING
 	public int actionLockCounter;
@@ -355,7 +356,7 @@ public class Entity {
 				gp.btlManager.fighter[1] = wildPokemon;
 				gp.btlManager.setBattle(gp.btlManager.wildBattle);
 								
-				gp.gameState = gp.battleState;	
+				gp.gameState = gp.transitionState;	
 			}
 		}
 	}
@@ -390,6 +391,21 @@ public class Entity {
 		
 		return wildPokemon;
 	}
+	public boolean healPokemonParty() {
+		
+		if (pokeParty.size() > 0) {
+			for (Pokemon p : pokeParty) {				
+				p.setAlive(true);
+				p.setHP(p.getBHP());
+				p.setStatus(null);				
+			}
+			
+			return true;
+		}
+		else {
+			return false;
+		}		
+	}	
 	
 	// MANAGE VALUES
 	public void manageValues() {
@@ -438,7 +454,12 @@ public class Entity {
 								
 		// DRAW TILES WITHIN SCREEN BOUNDARY
 		if (inFrame() && drawing) {
-									
+			
+			if (hasShadow) {
+				g2.setColor(new Color(0,0,0,100));
+				g2.fillOval(tempScreenX + 9, tempScreenY + 40, 30, 10);	
+			}
+			
 			switch (direction) {
 				case "up":									
 					if (spriteNum == 1) image = up1;

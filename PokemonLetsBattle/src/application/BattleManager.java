@@ -74,17 +74,17 @@ public class BattleManager {
 	
 	// FIGHT STAGES
 	public int fightStage;
-	public final int fightStage_Encounter = 1;	
-	public final int fightStage_Swap = 2;
-	public final int fightStage_SwapOut = 3;
-	public final int fightStage_Start = 4;
-	public final int fightStage_Move = 5;
-	public final int fightStage_Attack = 6;
-	public final int fightStage_End = 7;
-	public final int fightStage_KO = 8;		
-	public final int fightStage_Defeat = 9;
-	public final int fightStage_Victory = 10;
-	public final int fightStage_Close = 11;
+	public final int fight_Encounter = 1;	
+	public final int fight_Swap = 2;
+	public final int fight_SwapOut = 3;
+	public final int fight_Start = 4;
+	public final int fight_Move = 5;
+	public final int fight_Attack = 6;
+	public final int fight_End = 7;
+	public final int fight_KO = 8;		
+	public final int fight_Defeat = 9;
+	public final int fight_Victory = 10;
+	public final int fight_Close = 11;
 			
 	// CONSTRUCTOR
 	public BattleManager(GamePanel gp) {
@@ -122,8 +122,8 @@ public class BattleManager {
 		newFighter[0] = trainer[0].pokeParty.get(0);
 				
 		battleMode = currentBattle;
-		fightStage = fightStage_Encounter;
-		gp.ui.battleSubState = gp.ui.battle_Encounter;
+		fightStage = fight_Encounter;
+		gp.ui.battleState = gp.ui.battle_Encounter;
 		
 		getBattleMode();
 	}
@@ -177,32 +177,32 @@ public class BattleManager {
 		
 		if (ready) {
 			
-			if (fightStage == fightStage_Encounter) {
-				gp.ui.battleSubState = gp.ui.battle_Dialogue;
-				fightStage = fightStage_Swap;
+			if (fightStage == fight_Encounter) {
+				gp.ui.battleState = gp.ui.battle_Dialogue;
+				fightStage = fight_Swap;
 			}	
-			else if (fightStage == fightStage_Swap) {
+			else if (fightStage == fight_Swap) {
 				swapFighters();
 			}
-			else if (fightStage == fightStage_SwapOut) {				
+			else if (fightStage == fight_SwapOut) {				
 				setSwap();					
 			}
-			else if (fightStage == fightStage_Start) {
+			else if (fightStage == fight_Start) {
 				checkTurn();
 			}
-			else if (fightStage == fightStage_Move) {
+			else if (fightStage == fight_Move) {
 				startMove();				
 			}
-			else if (fightStage == fightStage_Attack) {
+			else if (fightStage == fight_Attack) {
 				attack();
 			}
-			else if (fightStage == fightStage_End) {
+			else if (fightStage == fight_End) {
 				checkStatusDamage();								
 			}
-			else if (fightStage == fightStage_Victory) {
+			else if (fightStage == fight_Victory) {
 				setVictory();
 			}
-			else if (fightStage == fightStage_Close) {
+			else if (fightStage == fight_Close) {
 				endBattle();
 			}
 			
@@ -225,7 +225,7 @@ public class BattleManager {
 				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nsent out " + fighter[1].getName() + "!");
 				gp.ui.setSoundFile(cry_SE, fighter[1].toString(), 15, 120);	
 				
-				fightStage = fightStage_SwapOut;
+				fightStage = fight_SwapOut;
 			}		
 			// TRAINER 1 FORCE SWAP OUT
 			if ((fighter[0] == null || !fighter[0].isAlive()) ||
@@ -236,7 +236,7 @@ public class BattleManager {
 				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
 				gp.ui.setSoundFile(cry_SE, fighter[0].toString(), 15, 120);				
 								
-				fightStage = fightStage_SwapOut;
+				fightStage = fight_SwapOut;
 			}	
 			// TRAINER 1 SWAP OUT (SAME TRAINER 2 FIGHTER)
 			else if (newFighter[0] != null && newFighter[1] == null) {
@@ -246,7 +246,7 @@ public class BattleManager {
 				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
 				gp.ui.setSoundFile(cry_SE, fighter[0].toString(), 30, 120);		
 				
-				fightStage = fightStage_Start;
+				fightStage = fight_Start;
 			}			
 
 			newFighter[0] = null;
@@ -276,13 +276,13 @@ public class BattleManager {
 				// TRAINER 1 HAS MORE POKEMON
 				if (trainer[0].hasPokemon()) {				
 					winner = -1;
-					fightStage = fightStage_Swap;
+					fightStage = fight_Swap;
 					gp.gameState = gp.partyState;
-					gp.ui.partySubState = gp.ui.party_Main;
+					gp.ui.partyState = gp.ui.party_Main;
 				}
 				// TRAINER 1 OUT OF POKEMON
 				else {
-					fightStage = fightStage_Victory;
+					fightStage = fight_Victory;
 				}	
 			}			
 		}
@@ -297,7 +297,7 @@ public class BattleManager {
 					if (trainer[0].getAvailablePokemon() > 1) {
 						gp.ui.addBattleDialogue("Trainer " + trainer[1].name + " is about\nto sent out " + newFighter[1].getName() + "!");
 					}
-					fightStage = fightStage_SwapOut;	
+					fightStage = fight_SwapOut;	
 				}
 				// TRAINER 2 OUT OF POKEMON
 				else {				
@@ -309,7 +309,7 @@ public class BattleManager {
 					gp.stopMusic();
 					gp.playMusic(1, 0);
 					
-					fightStage = fightStage_Defeat;
+					fightStage = fight_Defeat;
 				}	
 			}
 			else if (winner == 1) {
@@ -317,13 +317,13 @@ public class BattleManager {
 				// TRAINER 1 HAS MORE POKEMON
 				if (trainer[0].hasPokemon()) {				
 					winner = -1;
-					fightStage = fightStage_Swap;
+					fightStage = fight_Swap;
 					gp.gameState = gp.partyState;
-					gp.ui.partySubState = gp.ui.party_Main;
+					gp.ui.partyState = gp.ui.party_Main;
 				}
 				// TRAINER 1 OUT OF POKEMON
 				else {
-					fightStage = fightStage_Victory;
+					fightStage = fight_Victory;
 				}		
 			}		
 		}
@@ -480,15 +480,15 @@ public class BattleManager {
 		
 		// POKEMON ALREADY SWAPPED OUT
 		if (winner == -1) {			
-			fightStage = fightStage_Start;
-			gp.ui.battleSubState = gp.ui.battle_Options;	
+			fightStage = fight_Start;
+			gp.ui.battleState = gp.ui.battle_Options;	
 		}
 		// INITIATE SWAP OUT
 		else {								
-			fightStage = fightStage_Swap;
+			fightStage = fight_Swap;
 			
 			if (trainer[0].getAvailablePokemon() > 1) {
-				gp.ui.battleSubState = gp.ui.battle_Swap;	
+				gp.ui.battleState = gp.ui.battle_Swap;	
 			}
 			
 			winner = -1;
@@ -555,13 +555,13 @@ public class BattleManager {
 		
 		// INITIATE MOVE
 		if (canMove()) {
-			fightStage = fightStage_Move;
+			fightStage = fight_Move;
 		}
 		// SKIP CURRENT TURN
 		else {
 			currentTurn = nextTurn;
 			nextTurn = -1;
-			fightStage = fightStage_Move;
+			fightStage = fight_Move;
 		}	
 	}	
 	private void setRotation() {		
@@ -826,7 +826,7 @@ public class BattleManager {
 			else if (delay == 1) move2 = null;			
 			else if (delay == 2) move1 = null;					
 			
-			fightStage = fightStage_End;				
+			fightStage = fight_End;				
 		}			
 	}	
 	private void useMove(int atk, int trg, Move atkMove, Move trgMove) {		
@@ -844,7 +844,7 @@ public class BattleManager {
 			// decrease move pp
 			atkMove.setpp(atkMove.getpp() - 1);
 			
-			fightStage = fightStage_Attack;
+			fightStage = fight_Attack;
 		}
 		// delayed move is used for first time
 		else if (atkMove.getTurns() == atkMove.getNumTurns()) {
@@ -856,7 +856,7 @@ public class BattleManager {
 			
 			currentTurn = nextTurn;	
 			nextTurn = -1;
-			fightStage = fightStage_Move;
+			fightStage = fight_Move;
 		}		
 	}		
 	
@@ -921,7 +921,7 @@ public class BattleManager {
 			nextTurn = -1;
 		}			
 		
-		fightStage = fightStage_Move;
+		fightStage = fight_Move;
 	}		
 	private boolean hit(int atk, Move move, Move trgMove) {
 				
@@ -1284,11 +1284,11 @@ public class BattleManager {
 			nextTurn = -1;
 			
 			if (getDelayedMove() == 1 || getDelayedMove() == 3) {				
-				fightStage = fightStage_Start;
+				fightStage = fight_Start;
 			}
 			else {
-				fightStage = fightStage_Start;
-				gp.ui.battleSubState = gp.ui.battle_Options;		
+				fightStage = fight_Start;
+				gp.ui.battleState = gp.ui.battle_Options;		
 			}
 		}
 		// CHECK BOTH STATUS CONDITIONS
@@ -1308,7 +1308,7 @@ public class BattleManager {
 					getWinningPokemon();	
 				}
 				else {
-					fightStage = fightStage_End;
+					fightStage = fight_End;
 				}
 			}
 		}
@@ -1374,7 +1374,7 @@ public class BattleManager {
 			gp.ui.addBattleDialogue(fighter[1].getName() + " fainted!");
 			gp.ui.addBattleDialogue("It's a draw!");
 
-			fightStage = fightStage_Swap;
+			fightStage = fight_Swap;
 		}
 		else if (winner == 0) {
 			int xp = calculateXP(loser);
@@ -1385,13 +1385,13 @@ public class BattleManager {
 			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
 			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + xp + " Exp. Points!");	
 			
-			fightStage = fightStage_KO;			
+			fightStage = fight_KO;			
 		}
 		else if (winner == 1) {			
 			gp.ui.setSoundFile(faint_SE, fighter[loser].toString(), 5);			
 			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
 			
-			fightStage = fightStage_KO;			
+			fightStage = fight_KO;			
 		}
 	}
 	private int calculateXP(int lsr) {
@@ -1425,7 +1425,7 @@ public class BattleManager {
 				trainer[winner].money += moneyEarned;
 				gp.ui.addBattleDialogue(trainer[winner].name + " got $" + moneyEarned + "\nfor winning!" );								
 				
-				fightStage = fightStage_Close;
+				fightStage = fight_Close;
 			}	
 		}
 		// TRAINER 2 WINNER
@@ -1467,6 +1467,7 @@ public class BattleManager {
 		
 		active = false;
 		
+		gp.particleList.clear();
 		gp.gameState = gp.playState;
 	}
 	
@@ -1476,17 +1477,17 @@ public class BattleManager {
 		g2.setColor(new Color(234,233,246));  
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 		
-		if (fightStage == fightStage_Encounter) {
+		if (fightStage == fight_Encounter) {
 			animateEntrance(g2);
 		}
-		else if (fightStage == fightStage_KO) {			
+		else if (fightStage == fight_KO) {			
 			animateFighterDefeat();
 			drawFighters(g2);		
 		}
-		else if (fightStage == fightStage_Defeat || fightStage == fightStage_Victory) {
+		else if (fightStage == fight_Defeat || fightStage == fight_Victory) {
 			animateTrainerDefeat(g2);
 		}
-		else if (fightStage == fightStage_Close) {
+		else if (fightStage == fight_Close) {
 			if (winner != -1) drawTrainerDefeat(g2);
 			else drawFighters(g2);	
 		}
@@ -1520,7 +1521,7 @@ public class BattleManager {
 			fighter_two_X += 6;	
 		}
 		else {
-			gp.ui.battleSubState = gp.ui.battle_Start;
+			gp.ui.battleState = gp.ui.battle_Start;
 		}
 	}	
 	private void drawFighters(Graphics2D g2) {					
@@ -1554,7 +1555,7 @@ public class BattleManager {
 				fighter_one_Y += 16;
 			}
 			else {
-				fightStage = fightStage_Swap;
+				fightStage = fight_Swap;
 			}
 		}
 		else if (loser == 1) {
@@ -1562,7 +1563,7 @@ public class BattleManager {
 				fighter_two_Y += 16;
 			}
 			else {				
-				fightStage = fightStage_Swap;								
+				fightStage = fight_Swap;								
 			}
 		}		
 	}
@@ -1577,7 +1578,7 @@ public class BattleManager {
 				fighter_two_X -= 6;
 			}
 			else {
-				fightStage = fightStage_Victory;
+				fightStage = fight_Victory;
 			}
 		}		
 		

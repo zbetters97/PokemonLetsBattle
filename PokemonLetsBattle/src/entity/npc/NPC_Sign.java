@@ -20,6 +20,7 @@ public class NPC_Sign extends Entity {
 		name = npcName;
 		speed = 0; defaultSpeed = speed;
 		animationSpeed = 0; 	
+		hasShadow = false;
 								
 		if (sign == 0) direction = "up";
 		else if (sign == 1) direction = "down";
