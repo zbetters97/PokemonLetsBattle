@@ -283,7 +283,7 @@ public class Player extends Entity {
 		gp.cChecker.checkObject(this, true);
 		
 		// CHECK INTERACTIVE OBJECTS COLLISION
-		int objIIndex = gp.cChecker.checkObject_I(this, true);
+		int objIIndex = gp.cChecker.checkObject_I(this);
 		if (objIIndex != -1) interactObjectI(objIIndex);	
 	}	
 	public void interactObjectI(int i) {

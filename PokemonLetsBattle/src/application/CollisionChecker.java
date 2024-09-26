@@ -100,23 +100,21 @@ public class CollisionChecker {
 		
 		int index = -1;
 		
-		String direction = entity.direction;
-		
 		for (int i  = 0; i < target[1].length; i++) {
 			
 			if (target[gp.currentMap][i] != null) {			
 												
-				entity.hitbox.x = entity.worldX + entity.hitbox.x;
-				entity.hitbox.y = entity.worldY + entity.hitbox.y;
+				entity.hitbox.x = entity.worldX;
+				entity.hitbox.y = entity.worldY;
 								
-				target[gp.currentMap][i].hitbox.x = target[gp.currentMap][i].worldX + target[gp.currentMap][i].hitbox.x;
-				target[gp.currentMap][i].hitbox.y = target[gp.currentMap][i].worldY + target[gp.currentMap][i].hitbox.y;
+				target[gp.currentMap][i].hitbox.x = target[gp.currentMap][i].worldX;
+				target[gp.currentMap][i].hitbox.y = target[gp.currentMap][i].worldY;
 			
-				switch (direction) {
-					case "up": entity.hitbox.y -= entity.speed;	break;
-					case "down": entity.hitbox.y += entity.speed; break;
-					case "left": entity.hitbox.x -= entity.speed; break;
-					case "right": entity.hitbox.x += entity.speed; break;
+				switch (entity.direction) {
+					case "up": entity.hitbox.y -= gp.tileSize;	break;
+					case "down": entity.hitbox.y += gp.tileSize; break;
+					case "left": entity.hitbox.x -= gp.tileSize; break;
+					case "right": entity.hitbox.x += gp.tileSize; break;
 					default: entity.collision = true; return index;
 				}
 				
@@ -147,29 +145,26 @@ public class CollisionChecker {
 	public int checkNPC() {
 		
 		int index = -1;
-		int speed = 30;
-		
-		String direction = gp.player.direction;
 			
 		for (int i  = 0; i < gp.npc[1].length; i++) {
 			
 			if (gp.npc[gp.currentMap][i] != null) {			
 				
 				// get gp.player's solid area position
-				gp.player.hitbox.x = gp.player.worldX + gp.player.hitbox.x;
-				gp.player.hitbox.y = gp.player.worldY + gp.player.hitbox.y;
+				gp.player.hitbox.x = gp.player.worldX;
+				gp.player.hitbox.y = gp.player.worldY;
 				
 				// get object's solid area position
-				gp.npc[gp.currentMap][i].hitbox.x = gp.npc[gp.currentMap][i].worldX + gp.npc[gp.currentMap][i].hitbox.x;
-				gp.npc[gp.currentMap][i].hitbox.y = gp.npc[gp.currentMap][i].worldY + gp.npc[gp.currentMap][i].hitbox.y;
+				gp.npc[gp.currentMap][i].hitbox.x = gp.npc[gp.currentMap][i].worldX;
+				gp.npc[gp.currentMap][i].hitbox.y = gp.npc[gp.currentMap][i].worldY;
 				
 				// find where gp.player will be after moving in a direction
 				// ask if gp.npc and gp.player intersect 
-				switch (direction) {
-					case "up": gp.player.hitbox.y -= speed; break;	
-					case "down": gp.player.hitbox.y += speed; break;
-					case "left": gp.player.hitbox.x -= speed; break;
-					case "right": gp.player.hitbox.x += speed; break;	
+				switch (gp.player.direction) {
+					case "up": gp.player.hitbox.y -= gp.tileSize; break;	
+					case "down": gp.player.hitbox.y += gp.tileSize; break;
+					case "left": gp.player.hitbox.x -= gp.tileSize; break;
+					case "right": gp.player.hitbox.x += gp.tileSize; break;	
 					default: return index;
 				}
 				
@@ -203,20 +198,20 @@ public class CollisionChecker {
 			if (gp.obj[gp.currentMap][i] != null) {
 				
 				// get entity's solid area position
-				entity.hitbox.x = entity.worldX + entity.hitbox.x;
-				entity.hitbox.y = entity.worldY + entity.hitbox.y;
+				entity.hitbox.x = entity.worldX;
+				entity.hitbox.y = entity.worldY;
 				
 				// get object's solid area position
-				gp.obj[gp.currentMap][i].hitbox.x = gp.obj[gp.currentMap][i].worldX + gp.obj[gp.currentMap][i].hitbox.x;
-				gp.obj[gp.currentMap][i].hitbox.y = gp.obj[gp.currentMap][i].worldY + gp.obj[gp.currentMap][i].hitbox.y;
+				gp.obj[gp.currentMap][i].hitbox.x = gp.obj[gp.currentMap][i].worldX;
+				gp.obj[gp.currentMap][i].hitbox.y = gp.obj[gp.currentMap][i].worldY;
 				
 				// find where entity will be after moving in a direction
 				// ask if object and entity intersect 
 				switch (entity.direction) {
-				case "up": entity.hitbox.y -= entity.speed;	break;
-					case "down": entity.hitbox.y += entity.speed; break;
-					case "left": entity.hitbox.x -= entity.speed; break;
-					case "right": entity.hitbox.x += entity.speed; break;
+					case "up": entity.hitbox.y -= gp.tileSize;	break;
+					case "down": entity.hitbox.y += gp.tileSize; break;
+					case "left": entity.hitbox.x -= gp.tileSize; break;
+					case "right": entity.hitbox.x += gp.tileSize; break;
 					default: entity.collision = true; return index;
 				}
 				
@@ -247,7 +242,7 @@ public class CollisionChecker {
 	}
 	
 	// INTERACTIVE OBJECT COLLISION
-	public int checkObject_I(Entity entity, boolean player) {
+	public int checkObject_I(Entity entity) {
 		
 		int index = -1;
 		
@@ -256,28 +251,28 @@ public class CollisionChecker {
 			if (gp.obj_i[gp.currentMap][i] != null) {
 				
 				// get entity's solid area position
-				entity.hitbox.x = entity.worldX + entity.hitbox.x;
-				entity.hitbox.y = entity.worldY + entity.hitbox.y;
+				entity.hitbox.x = entity.worldX;
+				entity.hitbox.y = entity.worldY;
 				
 				// get obj_iect's solid area position
-				gp.obj_i[gp.currentMap][i].hitbox.x = gp.obj_i[gp.currentMap][i].worldX + gp.obj_i[gp.currentMap][i].hitbox.x;
-				gp.obj_i[gp.currentMap][i].hitbox.y = gp.obj_i[gp.currentMap][i].worldY + gp.obj_i[gp.currentMap][i].hitbox.y;
+				gp.obj_i[gp.currentMap][i].hitbox.x = gp.obj_i[gp.currentMap][i].worldX;
+				gp.obj_i[gp.currentMap][i].hitbox.y = gp.obj_i[gp.currentMap][i].worldY;
 				
 				// find where entity will be after moving in a direction
 				// ask if obj_iect and entity intersect 
 				switch (entity.direction) {
-					case "up": entity.hitbox.y -= entity.speed;	break;
-					case "down": entity.hitbox.y += entity.speed; break;
-					case "left": entity.hitbox.x -= entity.speed; break;
-					case "right": entity.hitbox.x += entity.speed; break;
+					case "up": entity.hitbox.y -= gp.tileSize;	break;
+					case "down": entity.hitbox.y += gp.tileSize; break;
+					case "left": entity.hitbox.x -= gp.tileSize; break;
+					case "right": entity.hitbox.x += gp.tileSize; break;
 					default: entity.collision = true; return index;
 				}
 								
 				if (entity.hitbox.intersects(gp.obj_i[gp.currentMap][i].hitbox)) {						
-					if (gp.obj_i[gp.currentMap][i].collision) 
+					if (gp.obj_i[gp.currentMap][i].collision) {
 						entity.collisionOn = true;	
-					if (player) 
 						index = i;			
+					}
 				}
 				
 				// reset entity solid area
@@ -296,8 +291,6 @@ public class CollisionChecker {
 	public boolean checkPlayer(Entity entity) {
 				
 		boolean contactPlayer = false;
-		
-		String direction = entity.direction;
 				
 		entity.hitbox.x = entity.worldX + entity.hitbox.x;
 		entity.hitbox.y = entity.worldY + entity.hitbox.y;
@@ -305,11 +298,11 @@ public class CollisionChecker {
 		gp.player.hitbox.x = gp.player.worldX + gp.player.hitbox.x;
 		gp.player.hitbox.y = gp.player.worldY + gp.player.hitbox.y;
 			
-		switch (direction) {
-			case "up": entity.hitbox.y -= entity.speed; break;		
-			case "down": entity.hitbox.y += entity.speed; break;
-			case "left": entity.hitbox.x -= entity.speed; break;
-			case "right": entity.hitbox.x += entity.speed; break;	
+		switch (entity.direction) {
+			case "up": entity.hitbox.y -= gp.tileSize;	break;
+			case "down": entity.hitbox.y += gp.tileSize; break;
+			case "left": entity.hitbox.x -= gp.tileSize; break;
+			case "right": entity.hitbox.x += gp.tileSize; break;
 			default: entity.collision = true; return false;
 		}
 		

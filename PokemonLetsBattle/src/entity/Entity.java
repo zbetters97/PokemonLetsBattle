@@ -169,9 +169,10 @@ public class Entity {
 		collisionOn = false;
 		
 		gp.cChecker.checkTile(this);	
-		gp.cChecker.checkEntity(this, gp.npc);	
+		gp.cChecker.checkEntity(this, gp.npc);		
 		gp.cChecker.checkPlayer(this);		
 		gp.cChecker.checkObject(this, false);
+		gp.cChecker.checkObject_I(this);
 	}
 			
 	// SPRITE CYCLE
