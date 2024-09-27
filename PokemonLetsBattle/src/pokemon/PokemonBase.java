@@ -16,7 +16,7 @@ import properties.*;
 /*** POKEDEX ENUM CLASS ***/
 public enum PokemonBase {
 	
-	/*** STAT REFERECE https://www.serebii.net/pokemon/ ***/
+	/*** STAT REFERECE https://www.serebii.net/pokemon/
 	/*** EXP & EV REFERENCE https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield_in_Generation_IV ***/
 	/*** XP GROWTH REFERENCE https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_experience_type ***/
 	
@@ -60,6 +60,9 @@ public enum PokemonBase {
 	MUDKIP ("Mudkip", 258, Type.WATER, 50, 70, 50, 50, 50, 40, 16, 65, 3, 1),
 	MARSHTOMP ("Marshtomp", 259, Arrays.asList(Type.WATER, Type.GROUND), 70, 85, 70, 60, 70, 50, 36, 143, 3, 2),
 	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), 100, 110, 90, 85, 90, 60, -1, 210, 3, 3),
+	SPHEAL("Spheal", 363, Arrays.asList(Type.ICE, Type.WATER), 70, 40, 50, 55, 50, 25, 32, 75, 3, 1),
+	SEALEO("Sealeo", 364, Arrays.asList(Type.ICE, Type.WATER), 90, 60, 70, 75, 70, 45, 44, 128, 3, 2),
+	WALREIN("Walrein", 365, Arrays.asList(Type.ICE, Type.WATER), 110, 80, 90, 95, 90, 65, -1, 192, 3, 3),
 	KYOGRE ("Kyogre", 382, Type.WATER, 100, 100, 90, 150, 140, 90, -1, 218, 5, 3), 
 	GROUDON ("Groudon", 383, Type.GROUND, 100, 150, 140, 100, 90, 90, -1, 218, 5, 3),
 	RAYQUAZA ("Rayquaza", 384, Arrays.asList(Type.DRAGON, Type.FLYING), 105, 150, 90, 150, 90, 95, -1, 220, 5, 3);
@@ -212,6 +215,12 @@ public enum PokemonBase {
         		new Move(Moves.TACKLE))); 
         getMovemap().put(SWAMPERT, Arrays.asList(new Move(Moves.SURF), new Move(Moves.MUDDYWATER), new Move(Moves.MUDBOMB),
         		new Move(Moves.EARTHQUAKE)));
+        
+        getMovemap().put(SPHEAL, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.DEFENSECURL), new Move(Moves.GROWL))); 
+        getMovemap().put(SEALEO, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.AURORABEAM), new Move(Moves.BODYSLAM), 
+        		new Move(Moves.YAWN))); 
+        getMovemap().put(WALREIN, Arrays.asList(new Move(Moves.AURORABEAM), new Move(Moves.BLIZZARD), new Move(Moves.SHEERCOLD),
+        		new Move(Moves.SURF)));
      
         getMovemap().put(KYOGRE, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.THUNDER),
         		new Move(Moves.CALMMIND)));
