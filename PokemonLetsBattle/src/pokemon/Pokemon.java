@@ -18,7 +18,8 @@ public class Pokemon {
 	private String nickname = null;
 	private char sex;
 	private Nature nature;
-	private int level, bhp, hp, xp, bxp, iv;
+	private int level, bhp, hp, xp, nxp;
+	private int hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV;
 	private double speed, attack, defense, spAttack, spDefense, accuracy;	
 	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg;
 	private Status status;
@@ -29,31 +30,41 @@ public class Pokemon {
 	/** END INITIALIZE VALUES **/
 	
 	/** CONSTRUCTORS **/
-	public Pokemon(PokemonBase pokemon, int level) {		
+	public Pokemon(PokemonBase pokemon, int level) {	
+		// STAT FORMULA REFERENCE: https://pokemon.fandom.com/wiki/Statistics
 		
 		this.pokemon = pokemon;
-		this.level = level;		
-		this.xp = pokemon.getXP();
+		this.level = level;	
+		this.xp = getXP(level);
+		this.nxp = getNextXP();
 		
 		// coin flip for Pokemon gender
 		this.sex = Math.random() > 0.5 ? '♂' : '♀';
 		
-		this.iv = 1 + (int)(Math.random() * ((31 - 1) + 1));							
+		hpIV = 1 + (int)(Math.random() * ((31 - 1) + 1));			
+		attackIV = 1 + (int)(Math.random() * ((31 - 1) + 1));
+		defenseIV = 1 + (int)(Math.random() * ((31 - 1) + 1));
+		spAttackIV = 1 + (int)(Math.random() * ((31 - 1) + 1));
+		spDefenseIV = 1 + (int)(Math.random() * ((31 - 1) + 1));
+		speedIV = 1 + (int)(Math.random() * ((31 - 1) + 1));			
 		
-		// hp calculation reference (GEN IV): https://pokemon.fandom.com/wiki/Individual_Values
-		this.hp = (int)(Math.floor(((2 * pokemon.getHP() + iv + Math.floor(pokemon.getEV() / 4)) * level) / 100) + level + 10);
+		this.hp = (int)(Math.floor(((2 * pokemon.getHP() + hpIV + Math.floor(0.25 * pokemon.getEV())) * level) / 100) + level + 10);
 		this.bhp = this.hp;
 		
-		Calculate getStat = (stat, IV, EV, lev) -> {
-			return (int)(Math.floor(0.01 * (2 * stat + IV + Math.floor(EV / 4)) * lev)) + 5;
-		};
+		Calculate getStat = (base, IV, EV, lev) -> {
+			return (int)(Math.floor(0.01 * (2 * base + IV + Math.floor(0.25 * EV)) * lev)) + 5;
+		};		
 		
-		this.speed = getStat.compute(pokemon.getSpeed(), 1 + (int)(Math.random() * ((31 - 1) + 1)), pokemon.getEV(), level);
-		this.attack = getStat.compute(pokemon.getAttack(), 1 + (int)(Math.random() * ((31 - 1) + 1)), pokemon.getEV(), level); 
-		this.defense = getStat.compute(pokemon.getDefense(), 1 + (int)(Math.random() * ((31 - 1) + 1)), pokemon.getEV(), level);		
-		this.spAttack = getStat.compute(pokemon.getSpAttack(), 1 + (int)(Math.random() * ((31 - 1) + 1)), pokemon.getEV(), level); 
-		this.spDefense = getStat.compute(pokemon.getSpDefense(), 1 + (int)(Math.random() * ((31 - 1) + 1)), pokemon.getEV(), level);
+		this.attack = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
+		this.defense = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
+		this.spAttack = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
+		this.spDefense = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
+		this.speed = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
 		this.accuracy = 1;	
+		
+		// random Nature selection
+		int num = 0 + (int)(Math.random() * ((Nature.getNatures().size() - 0) + 0));
+		nature = Nature.getNatures().get(num);
 		
 		setNature();
 				
@@ -73,14 +84,10 @@ public class Pokemon {
 		moveSet = new ArrayList<>();
 	}		
 	/** END CONSTRUCTORS **/
-	
+			
 	/** NATURE METHODS **/
 	public void setNature() {
-				
-		// random Nature selection
-		int num = 0 + (int)(Math.random() * ((Nature.getNatures().size() - 0) + 0));
-		nature = Nature.getNatures().get(num);
-				
+								
 		// find which values to increase/decrease
 		int increase = nature.increase();
 		int decrease = nature.decrease();
@@ -104,6 +111,111 @@ public class Pokemon {
 	}
 	/** END NATURE METHODS **/
 	
+	/** EXP METHODS **/
+	private int getXP(int level) {		
+		/*** XP CALULCATOR REFERENCE https://bulbapedia.bulbagarden.net/wiki/Experience#Experience_at_each_level ***/
+		
+		double xp = 0;		
+		
+		int growth = pokemon.getGrowth();
+		
+		double n = level;
+		double n2 = Math.pow(level, 2);
+		double n3 = Math.pow(level, 3);
+		
+		switch (growth) {
+		
+			// MEDIUM FAST
+			case 0:
+				xp = n3;
+				break;
+				
+			// ERRATIC
+			case 1:				
+				if (1 < level && level < 50) {
+					xp = Math.floor( (n3 * (100.0 - n)) / 50.0 );
+				}
+				else if (50 <= level && level < 68) {
+					xp = Math.floor( (n3 * (150.0 - level)) / 100.0 );
+				}
+				else if (68 <= level && level < 98) {
+					xp = n3 * (Math.floor(1911 - (10 * n)) / 3);
+				}
+				else if (98 <= level && level <= 100) {
+					xp = Math.floor( (n3 * (160.0 - level)) / 100.0 );
+				}
+				break;
+				
+			// FLUCTUATING
+			case 2:
+				if (1 < level && level < 15) {
+					xp = Math.floor( (n3 * (Math.floor((n + 1.0) / 3.0 ) + 24.0)) / 50.0 );
+				}
+				else if (15 <= level && level < 36) {
+					xp = Math.floor( (n3 * (n + 14.0)) / 50.0 );
+				}
+				else if (36 <= level && level <= 100) {
+					xp = Math.floor( (n3 * (Math.floor(n / 2.0) + 32.0)) / 50.0 );
+				}				
+				break;
+				
+			// MEDIUM SLOW
+			case 3:				
+				xp = ((6.0 / 5.0) * n3) + (-15 * n2) + (100 * n) - 140;				
+				break;
+				
+			// FAST
+			case 4:
+				xp = Math.floor( (4.0 * n3) / 5.0 );
+				break;
+				
+			// SLOW
+			case 5:
+				xp = Math.floor( (5.0 * n3) / 4.0 );
+				break;
+		}
+		
+		if (xp < 0 || level == 1) xp = 0.0;		
+		
+		return (int) Math.floor(xp);		
+	}
+	public int getNextXP() {		
+		int nextXP = getXP(level + 1) - getXP(level);		
+		if (nextXP < 0) nextXP = 0;
+		return nextXP;		
+	}
+	public boolean checkLevelUp(int gainedXP) {
+		
+		boolean leveledUp = false;
+				
+		if (getNextXP() <= xp + gainedXP) {			
+			leveledUp = true;
+		}
+		
+		return leveledUp;		
+	}
+	public boolean canEvolve() {
+		
+		boolean canEvolve = false;
+		
+		if (pokemon.canEvolve() && pokemon.getEvLevel() <= level) {
+			canEvolve = true;
+		}
+		else {
+			canEvolve = false;
+		}
+		
+		return canEvolve;
+	}
+	public Pokemon evolve() {
+		
+		Pokemon newPokemon = null;
+		
+		newPokemon = getPokemonByIndex(pokemon.getIndex() + 1, level);
+		
+		return newPokemon;		
+	}
+	/** END EXP METHODS **/
 
 	/** ADD NEW MOVE METHOD **/
 	public boolean addMove(Move move) { 
@@ -176,19 +288,28 @@ public class Pokemon {
 	}
 	
 	public int getLevel() {	return level; }	
-	public void setLevel(int level) { 	
+	public void levelUp() { 	
 		
-		if (level != this.level && level != -1) {
-			this.level = level;			
-			this.hp = (int)(Math.floor(((2 * this.hp + this.iv + Math.floor(pokemon.getEV() / 4)) * level) / 100) + level + 10);
-			this.bhp = hp;
-		}
+		level++;
+		
+		this.bhp = (int)(Math.floor(((2 * pokemon.getHP() + hpIV + Math.floor(pokemon.getEV() / 4)) * level) / 100) + level + 10);
+		
+		Calculate getStat = (stat, IV, EV, lev) -> {
+			return (int)(Math.floor(0.01 * (2 * stat + IV + Math.floor(EV / 4)) * lev)) + 5;
+		};		
+		
+		attack = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
+		defense = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
+		spAttack = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
+		spDefense = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
+		speed = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
+		
+		setNature();	
 	}
 	
 	public int getXP() { return xp; }
 	public void setXP(int xp) {	this.xp = xp; }
-	public int getBXP() { return bxp; }
-	public void setBXP(int bxp) {	this.bxp = bxp; }
+	public int getNXP() { return nxp; }
 
 	public int getHP() { return hp; }
 	public void setHP(int hp) {	this.hp = hp; }	
@@ -222,8 +343,12 @@ public class Pokemon {
 	public int getAccuracyStg() { return accuracyStg; }
 	public void setAccuracyStg(int accuracyStg) { this.accuracyStg = accuracyStg; }
 	
-	public int getIV() { return iv; }
-	public void setIV(int iv) { this.iv = iv; }
+	public int getHPIV() { return hpIV; }
+	public int getAttackIV() { return attackIV; }
+	public int getDefenseIV() { return defenseIV; }
+	public int getSpAttackIV() { return spAttackIV; }
+	public int getSpDefenseIV() { return spDefenseIV; }
+	public int getSpeedIV() { return speedIV; }
 
 	public Status getStatus() { return status; }
 	public void setStatus(Status status) { this.status = status; }	

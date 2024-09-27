@@ -181,7 +181,7 @@ public class Player extends Entity {
 		else if (objIndex != -1) interactObject(objIndex);
 	}	
 	public void interactNPC(int i) {		
-		if (i != -1) {				
+		if (i != -1 && !gp.npc[gp.currentMap][i].moving) {		
 			resetValues();
 			gp.npc[gp.currentMap][i].speak();					
 		}	

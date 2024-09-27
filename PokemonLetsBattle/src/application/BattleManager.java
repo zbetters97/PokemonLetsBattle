@@ -1377,14 +1377,31 @@ public class BattleManager {
 			fightStage = fight_Swap;
 		}
 		else if (winner == 0) {
-			int xp = calculateXP(loser);
-			fighter[winner].setXP(fighter[winner].getBXP() + xp);
+			int newXP = calculateXP(loser);
 			
 			gp.ui.setSoundFile(faint_SE, fighter[loser].toString(), 5);
-			
 			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
-			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + xp + " Exp. Points!");	
 			
+			fighter[winner].setXP(newXP);
+			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + newXP + " Exp. Points!");	
+			
+			// FOR EACH TIME NEW XP IS MORE THAN XP TO NEXT LEVEL
+			while (fighter[winner].getNextXP() <= newXP) {	
+				
+				// ASSIGN NEW XP TO DIFFERENCE
+				newXP -= fighter[winner].getNextXP();		
+				
+				// INCREASE LEVEL
+				fighter[winner].levelUp();					
+				gp.ui.addBattleDialogue(fighter[winner].getName() + " increased\nto level " + fighter[winner].getLevel() + "!");	
+				
+				if (fighter[winner].canEvolve()) {
+					String oldName = fighter[winner].getName();
+					fighter[winner] = fighter[winner].evolve();
+					gp.ui.addBattleDialogue(oldName + " evolved into\n" + fighter[winner].getName() + "!");
+				}
+			}
+						
 			fightStage = fight_KO;			
 		}
 		else if (winner == 1) {			
@@ -1397,7 +1414,7 @@ public class BattleManager {
 	private int calculateXP(int lsr) {
 		// exp formula reference (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience		
 		
-		int exp = (int) (((( fighter[lsr].getXP() * fighter[lsr].getLevel() ) / 7)) * 1.5);	
+		int exp = (int) (((( fighter[lsr].getXP() * fighter[lsr].getLevel() ) / 7.0)) * 1.5);	
 		
 		return exp;
 	}	

@@ -53,7 +53,7 @@ public class NPC_Rival extends Entity {
 		backSprite = setup("/npc/rival_battle_back", gp.tileSize * 4, gp.tileSize * 4);
 	}	
 	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon("Torchic", 5));
+		pokeParty.add(Pokemon.getPokemon("Mudkip", 5));
 		pokeParty.add(Pokemon.getPokemon("Combusken", 16));
 		pokeParty.add(Pokemon.getPokemon("Blaziken", 36));
 	}
