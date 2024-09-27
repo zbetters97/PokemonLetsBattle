@@ -34,6 +34,7 @@ public class UI {
 	private Color battle_green = new Color(111,163,161);
 	private Color battle_red = new Color(165,71,74);	
 	private Color battle_yellow = new Color(250,254,219);
+	private Color battle_blue = new Color(62,211,255);
 	private Color hp_green = new Color(105,233,160);
 	private Color hp_yellow = new Color(222,202,43);
 	private Color hp_red = new Color(200,65,65);
@@ -71,6 +72,10 @@ public class UI {
 	private int hpCounter = 0;
 	public int hpSpeed_one = 1;
 	public int hpSpeed_two = 1;
+	
+	// FIGHTER EXP
+	public int fighter_one_EXP;	
+	private int expCounter = 0;
 	
 	// BATTLE VALUES
 	private BufferedImage ball_empty, ball_active, ball_inactive;	
@@ -867,40 +872,68 @@ public class UI {
 		
 		int frameX = (int) (gp.tileSize * 7.9);
 		int frameY = (int) (gp.tileSize * 2.9);
-						
-		x = frameX;
-		y = frameY;		
+		
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));
+		g2.setColor(Color.BLACK);
+		x = frameX + gp.tileSize * 4;
+		y = (int) (frameY * 0.9);				
+		
+		text = "STAT"; g2.drawString(text, x, y); x += gp.tileSize * 1.8;
+		text = "IV"; g2.drawString(text, x, y);
+			
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 40F));	
-
-		text = "HP"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
-		text = "ATTACK"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
-		text = "DEFENSE"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
-		text = "SP. ATK"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
-		text = "SP. DEF"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
-		text = "SPEED"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
+		x = frameX + gp.tileSize;
+		y = (int) (frameY + gp.tileSize * 0.6);	
+		text = "HP"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
+		text = "ATTACK"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
+		text = "DEFENSE"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
+		text = "SP. ATK"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
+		text = "SP. DEF"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
+		text = "SPEED"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		
 		Pokemon fighter = gp.player.pokeParty.get(fighterNum);
 		
-		x = frameX += gp.tileSize * 5;
-		y = frameY;		
+		x = frameX + gp.tileSize * 5;
+		y = (int) (frameY + gp.tileSize * 0.6);		
 		text = fighter.getHP() + "/" + fighter.getBHP(); 
 		frameX = getXforRightAlignText(text, x);	
-		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		text = Integer.toString((int) fighter.getAttack()); 
 		frameX = getXforRightAlignText(text, x);	
-		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		text = Integer.toString((int) fighter.getDefense()); 
 		frameX = getXforRightAlignText(text, x);	
-		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		text = Integer.toString((int) fighter.getSpAttack()); 
 		frameX = getXforRightAlignText(text, x);	
-		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		text = Integer.toString((int) fighter.getSpDefense()); 
 		frameX = getXforRightAlignText(text, x);	
-		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		text = Integer.toString((int) fighter.getSpeed()); 
 		frameX = getXforRightAlignText(text, x);	
-		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.9;
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
+		
+		x = frameX + gp.tileSize * 2;
+		y = (int) (frameY + gp.tileSize * 0.6);	
+		text = Integer.toString((int) fighter.getHPIV()); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
+		text = Integer.toString((int) fighter.getAttackIV()); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
+		text = Integer.toString((int) fighter.getDefenseIV()); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
+		text = Integer.toString((int) fighter.getSpAttackIV()); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
+		text = Integer.toString((int) fighter.getSpDefenseIV()); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
+		text = Integer.toString((int) fighter.getSpeedIV()); 
+		frameX = getXforRightAlignText(text, x);	
+		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 				
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));	
 		int textX;
@@ -1228,16 +1261,65 @@ public class UI {
 		
 		if (gp.btlManager.fighter[0] != null) {
 			x = (int) (gp.tileSize * 9.25);
-			y = (int) (gp.tileSize * 5.85);
+			y = (int) (gp.tileSize * 5.5);
 			drawFighterWindow(x, y, 0);		
+			drawEXPBar(x, y);
 		}
 		
 		if (gp.btlManager.fighter[1] != null) {
 			x = (int) (gp.tileSize * 0.5);
 			y = (int) (gp.tileSize * 0.8);
-			drawFighterWindow(x, y, 1);		
+			drawFighterWindow(x, y, 1);				
 		}
 	}
+	
+	private void drawEXPBar(int x, int y) {
+		
+		g2.setColor(Color.BLACK);
+		x += gp.tileSize * 0.8;
+		y += gp.tileSize * 2.3;
+		int width = (int) (gp.tileSize * 5.5);
+		int height = (int) (gp.tileSize * 0.4);
+		g2.fillRoundRect(x, y, width, height, 15, 15);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20F));
+		g2.setColor(battle_white);		
+		String text = "EXP";		
+		x += gp.tileSize * 0.25;
+		y += gp.tileSize * 0.33;
+		g2.drawString(text, x, y);
+		
+		x += gp.tileSize * 0.55;
+		y -= gp.tileSize * 0.26;
+		width -= gp.tileSize;
+		height -= gp.tileSize * 0.1;
+		g2.setColor(battle_gray);
+		g2.fillRect(x, y, width, height);
+						
+		int tempEXP = fighter_one_EXP;
+							
+		if (tempEXP < gp.btlManager.fighter[0].getXP()) {
+			if (2 <= expCounter) {
+				tempEXP++;
+				expCounter = 0;
+			}
+			else {
+				expCounter++;			
+			}	
+		}
+		
+		double currentXP = tempEXP - gp.btlManager.fighter[0].getBXP();
+		double nextXP = (double) gp.btlManager.fighter[0].getNextXP();
+		double remainXP = currentXP / nextXP ;
+		
+		width *= remainXP;
+		
+		g2.setColor(battle_blue);
+		g2.fillRect(x, y, width, height);
+				
+		fighter_one_EXP = tempEXP;	
+	}
+	
 	private void drawFighterWindow(int x, int y, int num) {
 		
 		if (num == 0) {
@@ -1275,8 +1357,7 @@ public class UI {
 		text = "Lv" + gp.btlManager.fighter[num].getLevel();		
 		length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();		
 		x = (int) (tempX + width - length - gp.tileSize * 0.4);
-		g2.drawString(text, x, y);
-		
+		g2.drawString(text, x, y);		
 		
 		if (gp.btlManager.fighter[num].getStatus() != null) {			
 			drawFighterStatus((int) (tempX + gp.tileSize * 0.3), (int) (y + gp.tileSize * 0.2), gp.btlManager.fighter[num], 32F);
@@ -1303,7 +1384,7 @@ public class UI {
 			
 			startX = (int) (gp.tileSize * 12.45);
 			x = startX;
-			y = (int) (gp.tileSize * 5.35);		
+			y = (int) (gp.tileSize * 5.0);		
 			
 			for (int i = 0; i < 6; i++) {
 				g2.drawImage(ball_empty, x, y, null);			
@@ -1806,7 +1887,7 @@ public class UI {
 	}
 	private void playBattleSE() {	
 		if (category_SE.size() == seTimer.size()) {
-			
+
 			if (category_SE.get(0) > -1 && record_SE.get(0) > -1) {
 				gp.playSE(category_SE.get(0), record_SE.get(0));  			
 			}
@@ -1819,7 +1900,6 @@ public class UI {
 	public void setSoundFile(int cat, String soundFile, int timer) {		
 		category_SE.add(cat);		
 		record_SE.add(gp.se.getFile(cat, soundFile));
-		
 		int soundDuration = gp.se.getSoundDuration(cat, gp.se.getFile(cat, soundFile));		
 		dialogueTimerMax = 30 + soundDuration;		
 		

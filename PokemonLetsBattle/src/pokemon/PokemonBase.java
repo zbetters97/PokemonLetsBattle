@@ -17,52 +17,52 @@ import properties.*;
 public enum PokemonBase {
 	
 	/*** STAT REFERECE https://www.serebii.net/pokemon/ ***/
-	/*** EV REFERENCE https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield ***/
+	/*** EXP & EV REFERENCE https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield_in_Generation_IV ***/
 	/*** XP GROWTH REFERENCE https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_experience_type ***/
 	
-	BULBASAUR ("Bulbasaur", 1, Type.GRASS, 45, 49, 49, 65, 65, 45, 16, 3, 1),
-	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), 60, 62, 63, 80, 80, 60, 32, 3, 2),
-	VENUSAUR ("Venusaur", 3, Arrays.asList(Type.GRASS, Type.POISON), 80, 82, 83, 100, 100, 80, -1, 3, 3),
-	CHARMANDER ("Charmander", 4, Type.FIRE, 39, 52, 43, 60, 50, 65, 16, 3, 1),
-	CHARMELEON ("Charmeleon", 5, Type.FIRE, 58, 64, 58, 80, 65, 80, 36, 3, 2),
-	CHARIZARD ("Charizard", 6, Arrays.asList(Type.FIRE, Type.FLYING), 78, 84, 78, 109, 85, 100, -1, 3, 3),
-	SQUIRTLE ("Squirtle", 7, Type.WATER, 44, 48, 65, 50, 64, 43, 16, 3, 1),
-	WARTORTLE ("Wartortle", 8, Type.WATER, 59, 63, 80, 65, 80, 58, 36, 3, 2),
-	BLASTOISE ("Blastoise", 9, Type.WATER, 79, 83, 100, 85, 105, 78, -1, 3, 3),	
-	PIKACHU ("Pikachu", 25, Type.ELECTRIC, 55, 55, 40, 50, 50, 90, 30, 0, 2),
-	RAICHU ("Raichu", 26, Type.ELECTRIC, 60, 90, 55, 90, 80, 110, -1, 0, 3),
-	ABRA ("Abra", 63, Type.PSYCHIC, 25, 20, 15, 105, 55, 90, 16, 3, 1),
-	KADABRA ("Kadabra", 64, Type.PSYCHIC, 40, 35, 30, 120, 70, 105, 36, 3, 2),
-	ALAKAZAM ("Alakazam", 65, Type.PSYCHIC, 55, 50, 45, 135, 95, 120, -1, 3, 3),
-	MACHOP ("Machop", 66, Type.FIGHTING, 70, 80, 50, 35, 35, 35, 28, 3, 1),
-	MACHOKE ("Machoke", 67, Type.FIGHTING, 80, 100, 70, 50, 60, 45, 40, 3, 2),
-	MACHAMP ("Machamp", 68, Type.FIGHTING, 90, 130, 80, 65, 85, 55, -1, 3, 3),
-	GEODUDE ("Geodude", 74, Arrays.asList(Type.ROCK, Type.GROUND), 40, 80, 100, 30, 30, 20, 25, 3, 1),
-	GRAVELER ("Graveler", 75, Arrays.asList(Type.ROCK, Type.GROUND), 55, 95, 115, 45, 45, 35, 40, 3, 2),
-	GOLEM ("Golem", 76, Arrays.asList(Type.ROCK, Type.GROUND), 80, 120, 130, 55, 65, 45, -1, 3, 3),
-	GASTLY ("Gastly", 92, Arrays.asList(Type.GHOST, Type.POISON), 30, 35, 30, 100, 35, 80, 25, 3, 1),
-	HAUNTER ("Haunter", 93, Arrays.asList(Type.GHOST, Type.POISON), 45, 50, 45, 115, 55, 96, 40, 3, 2),
-	GENGAR ("Gengar", 94, Arrays.asList(Type.GHOST, Type.POISON), 60, 65, 60, 130, 75, 110, -1, 3, 3),
-	HORSEA ("Horsea", 116, Type.WATER, 30, 40, 70, 70, 25, 60, 32, 0, 1),
-	SEADRA ("Seadra", 117, Type.WATER, 55, 65, 95, 95, 45, 85, 45, 0, 2),
-	LAPRAS ("Lapras", 131, Arrays.asList(Type.WATER, Type.ICE), 130, 85, 80, 85, 95, 60, -1, 5, 2),
-	SNORLAX ("Snorlax", 143, Type.NORMAL, 160, 110, 65, 65, 110, 30, -1, 5, 2),
-	KINGDRA ("Kingdra", 230, Arrays.asList(Type.WATER, Type.DRAGON), 75, 95, 95, 95, 95, 85, -1, 0, 3),
-	RAIKOU ("Raikou", 243, Type.ELECTRIC, 90, 85, 75, 115, 100, 115, -1, 5, 3),
-	ENTEI ("Entei", 244, Type.FIRE, 115, 115, 85, 90, 75, 100, -1, 5, 3),
-	SUICUNE ("Suicune", 245, Type.WATER, 100, 75, 115, 90, 115, 85, -1, 5, 3),
-	TREECKO ("Treecko", 252, Type.GRASS, 40, 45, 35, 65, 55, 70, 16, 3, 1),
-	GROVYLE ("Grovyle", 253, Type.GRASS, 50, 65, 45, 85, 65, 95, 36, 3, 2),
-	SCEPTILE ("Sceptile", 254, Type.GRASS, 70, 85, 65, 105, 85, 120, -1, 3, 3),
-	TORCHIC ("Torchic", 255, Type.FIRE, 45, 60, 40, 70, 50, 45, 16, 3, 1),
-	COMBUSKEN ("Combusken", 256, Arrays.asList(Type.FIRE, Type.FIGHTING), 60, 85, 60, 85, 60, 55, 36, 3, 2),
-	BLAZIKEN ("Blaziken", 257, Arrays.asList(Type.FIRE, Type.FIGHTING), 80, 120, 70, 110, 70, 80, -1, 3, 3),
-	MUDKIP ("Mudkip", 258, Type.WATER, 50, 70, 50, 50, 50, 40, 16, 3, 1),
-	MARSHTOMP ("Marshtomp", 259, Arrays.asList(Type.WATER, Type.GROUND), 70, 85, 70, 60, 70, 50, 36, 3, 2),
-	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), 100, 110, 90, 85, 90, 60, -1, 3, 3),
-	KYOGRE ("Kyogre", 382, Type.WATER, 100, 100, 90, 150, 140, 90, -1, 5, 3), 
-	GROUDON ("Groudon", 383, Type.GROUND, 100, 150, 140, 100, 90, 90, -1, 5, 3),
-	RAYQUAZA ("Rayquaza", 384, Arrays.asList(Type.DRAGON, Type.FLYING), 105, 150, 90, 150, 90, 95, -1, 5, 3);
+	BULBASAUR ("Bulbasaur", 1, Type.GRASS, 45, 49, 49, 65, 65, 45, 16, 64, 3, 1),
+	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), 60, 62, 63, 80, 80, 60, 32, 141, 3, 2),
+	VENUSAUR ("Venusaur", 3, Arrays.asList(Type.GRASS, Type.POISON), 80, 82, 83, 100, 100, 80, -1, 208, 3, 3),
+	CHARMANDER ("Charmander", 4, Type.FIRE, 39, 52, 43, 60, 50, 65, 16, 65, 3, 1),
+	CHARMELEON ("Charmeleon", 5, Type.FIRE, 58, 64, 58, 80, 65, 80, 36, 142, 3, 2),
+	CHARIZARD ("Charizard", 6, Arrays.asList(Type.FIRE, Type.FLYING), 78, 84, 78, 109, 85, 100, -1, 209, 3, 3),
+	SQUIRTLE ("Squirtle", 7, Type.WATER, 44, 48, 65, 50, 64, 43, 16, 66, 3, 1),
+	WARTORTLE ("Wartortle", 8, Type.WATER, 59, 63, 80, 65, 80, 58, 36, 143, 3, 2),
+	BLASTOISE ("Blastoise", 9, Type.WATER, 79, 83, 100, 85, 105, 78, -1, 210, 3, 3),	
+	PIKACHU ("Pikachu", 25, Type.ELECTRIC, 55, 55, 40, 50, 50, 90, 30, 82, 0, 2),
+	RAICHU ("Raichu", 26, Type.ELECTRIC, 60, 90, 55, 90, 80, 110, -1, 122, 0, 3),
+	ABRA ("Abra", 63, Type.PSYCHIC, 25, 20, 15, 105, 55, 90, 16, 75, 3, 1),
+	KADABRA ("Kadabra", 64, Type.PSYCHIC, 40, 35, 30, 120, 70, 105, 36, 145, 3, 2),
+	ALAKAZAM ("Alakazam", 65, Type.PSYCHIC, 55, 50, 45, 135, 95, 120, -1, 186, 3, 3),
+	MACHOP ("Machop", 66, Type.FIGHTING, 70, 80, 50, 35, 35, 35, 28, 75, 3, 1),
+	MACHOKE ("Machoke", 67, Type.FIGHTING, 80, 100, 70, 50, 60, 45, 40, 146, 3, 2),
+	MACHAMP ("Machamp", 68, Type.FIGHTING, 90, 130, 80, 65, 85, 55, -1, 193, 3, 3),
+	GEODUDE ("Geodude", 74, Arrays.asList(Type.ROCK, Type.GROUND), 40, 80, 100, 30, 30, 20, 25, 73, 3, 1),
+	GRAVELER ("Graveler", 75, Arrays.asList(Type.ROCK, Type.GROUND), 55, 95, 115, 45, 45, 35, 40, 134, 3, 2),
+	GOLEM ("Golem", 76, Arrays.asList(Type.ROCK, Type.GROUND), 80, 120, 130, 55, 65, 45, -1, 177, 3, 3),
+	GASTLY ("Gastly", 92, Arrays.asList(Type.GHOST, Type.POISON), 30, 35, 30, 100, 35, 80, 25, 95, 3, 1),
+	HAUNTER ("Haunter", 93, Arrays.asList(Type.GHOST, Type.POISON), 45, 50, 45, 115, 55, 96, 40, 126, 3, 2),
+	GENGAR ("Gengar", 94, Arrays.asList(Type.GHOST, Type.POISON), 60, 65, 60, 130, 75, 110, -1, 190, 3, 3),
+	HORSEA ("Horsea", 116, Type.WATER, 30, 40, 70, 70, 25, 60, 32, 83, 0, 1),
+	SEADRA ("Seadra", 117, Type.WATER, 55, 65, 95, 95, 45, 85, 45, 155, 0, 2),
+	LAPRAS ("Lapras", 131, Arrays.asList(Type.WATER, Type.ICE), 130, 85, 80, 85, 95, 60, -1, 219, 5, 2),
+	SNORLAX ("Snorlax", 143, Type.NORMAL, 160, 110, 65, 65, 110, 30, -1, 154, 5, 2),
+	KINGDRA ("Kingdra", 230, Arrays.asList(Type.WATER, Type.DRAGON), 75, 95, 95, 95, 95, 85, -1, 207, 0, 3),
+	RAIKOU ("Raikou", 243, Type.ELECTRIC, 90, 85, 75, 115, 100, 115, -1, 216, 5, 3),
+	ENTEI ("Entei", 244, Type.FIRE, 115, 115, 85, 90, 75, 100, -1, 217, 5, 3),
+	SUICUNE ("Suicune", 245, Type.WATER, 100, 75, 115, 90, 115, 85, -1, 215, 5, 3),
+	TREECKO ("Treecko", 252, Type.GRASS, 40, 45, 35, 65, 55, 70, 16, 65, 3, 1),
+	GROVYLE ("Grovyle", 253, Type.GRASS, 50, 65, 45, 85, 65, 95, 36, 141, 3, 2),
+	SCEPTILE ("Sceptile", 254, Type.GRASS, 70, 85, 65, 105, 85, 120, -1, 208, 3, 3),
+	TORCHIC ("Torchic", 255, Type.FIRE, 45, 60, 40, 70, 50, 45, 16, 65, 3, 1),
+	COMBUSKEN ("Combusken", 256, Arrays.asList(Type.FIRE, Type.FIGHTING), 60, 85, 60, 85, 60, 55, 36, 142, 3, 2),
+	BLAZIKEN ("Blaziken", 257, Arrays.asList(Type.FIRE, Type.FIGHTING), 80, 120, 70, 110, 70, 80, -1, 209, 3, 3),
+	MUDKIP ("Mudkip", 258, Type.WATER, 50, 70, 50, 50, 50, 40, 16, 65, 3, 1),
+	MARSHTOMP ("Marshtomp", 259, Arrays.asList(Type.WATER, Type.GROUND), 70, 85, 70, 60, 70, 50, 36, 143, 3, 2),
+	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), 100, 110, 90, 85, 90, 60, -1, 210, 3, 3),
+	KYOGRE ("Kyogre", 382, Type.WATER, 100, 100, 90, 150, 140, 90, -1, 218, 5, 3), 
+	GROUDON ("Groudon", 383, Type.GROUND, 100, 150, 140, 100, 90, 90, -1, 218, 5, 3),
+	RAYQUAZA ("Rayquaza", 384, Arrays.asList(Type.DRAGON, Type.FLYING), 105, 150, 90, 150, 90, 95, -1, 220, 5, 3);
 	/** END INITIALIZE ENUMS **/
 		
 	/** INITIALIZE VALUES**/
@@ -71,7 +71,7 @@ public enum PokemonBase {
 	private final int index;
 	private final Type type;
 	private final List<Type> types;
-	private int hp, speed, attack, defense, spAttack, spDefense, accuracy, evLevel, growth, ev;	
+	private int hp, speed, attack, defense, spAttack, spDefense, accuracy, evLevel, ey, growth, ev;	
 	/** END INITIALIZE VALUES **/
 		
 	// initialize list to hold all enums in pokemon class
@@ -79,7 +79,7 @@ public enum PokemonBase {
 
 	/** CONSTRUCTORS **/
 	PokemonBase(String name, int index, Type type, int hp, int attack, int defense, 
-			int spAttack, int spDefense, int speed, int evLevel, int growth, int ev) {	
+			int spAttack, int spDefense, int speed, int evLevel, int ey, int growth, int ev) {	
 		
 		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
 		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
@@ -94,6 +94,7 @@ public enum PokemonBase {
 		this.spAttack = spAttack;
 		this.spDefense = spDefense;
 		this.speed = speed;
+		this.ey = ey;
 		this.growth = growth;
 		this.ev = ev;
 		this.evLevel = evLevel; 
@@ -101,7 +102,7 @@ public enum PokemonBase {
 		this.types = null;	
 	}
 	PokemonBase(String name, int index, List<Type> types, int hp, int attack, int defense, 
-			int spAttack, int spDefense, int speed, int evLevel, int growth, int ev) {			
+			int spAttack, int spDefense, int speed, int evLevel, int ey, int growth, int ev) {			
 		
 		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
 		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
@@ -116,6 +117,7 @@ public enum PokemonBase {
 		this.spAttack = spAttack;
 		this.spDefense = spDefense;
 		this.speed = speed;
+		this.ey = ey;
 		this.growth = growth;
 		this.ev = ev;
 		this.evLevel = evLevel; 
@@ -238,6 +240,7 @@ public enum PokemonBase {
 	public int getSpAttack() { return spAttack; }
 	public int getSpDefense() {	return spDefense; }
 	public int getAccuracy() { return accuracy; }
+	public int getEXPYeild() { return ey; }
 	public int getGrowth() { return growth; }
 	public int getEvLevel() { return evLevel; }
 	public int getEV() { return ev; }		

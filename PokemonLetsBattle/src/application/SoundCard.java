@@ -81,7 +81,7 @@ public class SoundCard {
 		
 		int duration = 0;
 		
-		if (category > 0 && record > 0) {		
+		if (category >= 0 && record >= 0) {		
 			String filePath = sounds[category][record];
 			File file = new File(filePath);		
 			AudioInputStream audioInputStream;

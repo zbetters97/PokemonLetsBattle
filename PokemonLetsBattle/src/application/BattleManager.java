@@ -14,6 +14,7 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import entity.Entity;
+import entity.npc.NPC_Rival;
 import moves.Move;
 import moves.Moves;
 import moves.Move.MoveType;
@@ -170,6 +171,8 @@ public class BattleManager {
 		if (fighter[1].getHP() > 100) gp.ui.hpSpeed_two = 1;
 		else if (fighter[1].getHP() > 50) gp.ui.hpSpeed_two = 2;
 		else gp.ui.hpSpeed_two = 3;
+		
+		gp.ui.fighter_one_EXP = gp.btlManager.fighter[0].getXP();
 	}
 	
 	// UPDATE METHOD
@@ -835,7 +838,6 @@ public class BattleManager {
 		
 		// if not delayed move or delayed move is ready
 		if (1 >= atkMove.getTurns()) {	
-			
 			gp.ui.setSoundFile(moves_SE, atkMove.getName(), 45);
 			
 			// reset turns to wait
@@ -1382,7 +1384,7 @@ public class BattleManager {
 			gp.ui.setSoundFile(faint_SE, fighter[loser].toString(), 5);
 			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
 			
-			fighter[winner].setXP(newXP);
+			fighter[winner].setXP(fighter[winner].getXP() + newXP);
 			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + newXP + " Exp. Points!");	
 			
 			// FOR EACH TIME NEW XP IS MORE THAN XP TO NEXT LEVEL
@@ -1393,12 +1395,12 @@ public class BattleManager {
 				
 				// INCREASE LEVEL
 				fighter[winner].levelUp();					
-				gp.ui.addBattleDialogue(fighter[winner].getName() + " increased\nto level " + fighter[winner].getLevel() + "!");	
+				gp.ui.addBattleDialogue(fighter[winner].getName() + " grew to\nLV. " + fighter[winner].getLevel() + "!");	
 				
 				if (fighter[winner].canEvolve()) {
 					String oldName = fighter[winner].getName();
 					fighter[winner] = fighter[winner].evolve();
-					gp.ui.addBattleDialogue(oldName + " evolved into\n" + fighter[winner].getName() + "!");
+					gp.ui.addBattleDialogue("Congratulations! Your + " + oldName + "\nevolved into " + fighter[winner].getName() + "!");
 				}
 			}
 						
@@ -1412,11 +1414,18 @@ public class BattleManager {
 		}
 	}
 	private int calculateXP(int lsr) {
-		// exp formula reference (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience		
+		// EXP FORMULA REFERENCE (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience		
 		
-		int exp = (int) (((( fighter[lsr].getXP() * fighter[lsr].getLevel() ) / 7.0)) * 1.5);	
+		double b = fighter[lsr].getEXPYeild();
+		double L = fighter[lsr].getLevel();
+		double s = 1.0;
+		double e = 1.0;
+		double a = battleMode == wildBattle ? 1.0 : 1.5;
+		double t = 1.0;
 		
-		return exp;
+		double exp = Math.floor( (b * L) / 7 ) * Math.floor(1 / s) * e * a * t;
+				
+		return (int) exp;
 	}	
 	
 	// BATTLE END METHODS
