@@ -58,7 +58,7 @@ public class Player extends Entity {
 	
 	// DEFAULT VALUES
 	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon("Treecko", 5));
+		pokeParty.add(Pokemon.getPokemon("Treecko", 6));
 		pokeParty.add(Pokemon.getPokemon("Grovyle", 16));
 		pokeParty.add(Pokemon.getPokemon("Sceptile", 36));
 	}

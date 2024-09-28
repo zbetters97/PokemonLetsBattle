@@ -45,6 +45,9 @@ public class KeyHandler implements KeyListener {
 		else if (gp.gameState == gp.partyState) {
 			partyState(code);
 		}
+		else if (gp.gameState == gp.evolveState) {
+			evolveState(code);
+		}	
 	}
 			
 	// PLAY
@@ -112,7 +115,7 @@ public class KeyHandler implements KeyListener {
 	
 	// DIALOGUE
 	private void dialogueState(int code) { 
-		if (code == gp.btn_A && lock) {	aPressed = true; lock = false; }		
+		if (code == gp.btn_A && lock) {	aPressed = true; lock = false; }	
 	}	
 	
 	// HM
@@ -392,6 +395,23 @@ public class KeyHandler implements KeyListener {
 					gp.playSE(3, gp.player.pokeParty.get(gp.ui.fighterNum).toString());  		
 				}
 			}
+		}
+	}
+	
+	// EVOLVE
+	private void evolveState(int code) { 
+		if (code == gp.btn_A && lock) {	aPressed = true; lock = false; }	
+		if (code == gp.btn_B && lock) {	bPressed = true; lock = false; }	
+		
+		if (code == gp.btn_UP) { 				
+			gp.ui.commandNum--;
+			if (gp.ui.commandNum < 0) gp.ui.commandNum = 0;
+			else playCursorSE(); 
+		}
+		if (code == gp.btn_DOWN) { 
+			gp.ui.commandNum++;
+			if (gp.ui.commandNum > 1) gp.ui.commandNum = 1;
+			else playCursorSE(); 
 		}
 	}
 	

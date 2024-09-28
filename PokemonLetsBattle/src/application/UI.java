@@ -103,6 +103,12 @@ public class UI {
 	public final int battle_Moves = 5;	
 	public final int battle_Swap = 6;
 	
+	private Pokemon oldEvolve, newEvolve = null;
+	private int evolveIndex = -1;
+	private int evolveNum = 0;
+	private int evolveTimer = 1;
+	private String evolveText;
+	
 	public UI(GamePanel gp) {
 		this.gp = gp;
 		
@@ -157,6 +163,9 @@ public class UI {
 		}
 		else if (gp.gameState == gp.battleState) {
 			drawBattleScreen();
+		}		
+		else if (gp.gameState == gp.evolveState) {
+			drawEvolveScreen();
 		}		
 		else if (gp.gameState == gp.transitionState) {
 			drawTransition();
@@ -1920,6 +1929,155 @@ public class UI {
 	public void addBattleDialogue(String text) {
 		battleDialogue.add(text);
 	}
+	
+	// EVOLVE SCREEN	
+	private void drawEvolveScreen() {
+		
+		g2.setColor(new Color(234,233,246));  
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+		
+		int x = (int) (gp.tileSize * 5.5);
+		int y = (int) (gp.tileSize * 2.2);
+		
+		switch(subState) {		
+			case 0: evolveStage_Check(x, y); break;
+			case 1:	evolveStage_Evolving(x, y); break;
+			case 2:	evolveStage_Stop(x, y); break;
+			case 3:	evolveStage_Complete(x, y);	break;
+			case 4:	evolveStage_Close(x, y); break;
+		}
+	}
+	private void evolveStage_Check(int x, int y) {
+		
+		for (int i = 0; i < gp.player.pokeParty.size(); i++) {					
+			if (gp.player.pokeParty.get(i).canEvolve()) {
+				
+				evolveIndex = i;
+				
+				oldEvolve = gp.player.pokeParty.get(i);
+				newEvolve = Pokemon.evolvePokemon(oldEvolve);
+				
+				gp.playSE(3, gp.se.getFile(3, oldEvolve.toString()));
+				gp.playMusic(1, 0);	
+											
+				subState = 1;
+				break;
+			}					
+		}
+		
+		if (evolveIndex == -1) {
+			gp.setupMusic();
+			gp.gameState = gp.playState;
+		}			
+	}
+	private void evolveStage_Evolving(int x, int y) {
+		
+		evolveText = "What?\n" + oldEvolve.getName() + " is evolving?";	
+		drawEvolveDialogue();	
+		
+		if (evolveNum == 0) g2.drawImage(oldEvolve.getFrontSprite(), x, y, null);					
+		else g2.drawImage(newEvolve.getFrontSprite(), x, y, null);							
+		
+		if (evolveTimer < 1000) {
+			if (evolveTimer % 300 == 0) {
+				if (evolveNum == 0) evolveNum = 1;
+				else evolveNum = 0;
+			}
+		}
+		else if (1000 <= evolveTimer && evolveTimer < 1550) {
+			if (evolveTimer % 150 == 0) {
+				if (evolveNum == 0) evolveNum = 1;
+				else evolveNum = 0;
+			}
+		}
+		else if (1550 <= evolveTimer && evolveTimer < 1900) {
+			if (evolveTimer % 75 == 0) {
+				if (evolveNum == 0) evolveNum = 1;
+				else evolveNum = 0;
+			}
+		}
+		else if (1900 <= evolveTimer) {
+			if (evolveTimer % 10 == 0) {
+				if (evolveNum == 0) evolveNum = 1;
+				else evolveNum = 0;
+			}
+		}
+		
+		evolveTimer++;
+		if (evolveTimer >= 2355) {					
+			gp.playSE(3, gp.se.getFile(3, newEvolve.toString()));					
+			subState = 3;					
+		}		
+		else if (gp.keyH.bPressed) {
+			gp.stopMusic();
+			subState = 2;
+		}
+	}
+	private void evolveStage_Stop(int x, int y) {
+		
+		g2.drawImage(oldEvolve.getFrontSprite(), x, y, null);	
+		
+		evolveText = "Oh?\n" + oldEvolve.getName() + " stopped evolving...";	
+		subState = 4;
+	}
+	private void evolveStage_Complete(int x, int y) {
+		
+		g2.drawImage(newEvolve.getFrontSprite(), x, y, null);				
+		
+		evolveText = "Congratulations! Your " +  oldEvolve.getName() + 
+				"\nevolved into " + newEvolve.getName() + "!";	
+		
+		gp.player.pokeParty.set(evolveIndex, newEvolve);
+		
+		subState = 4;
+	}
+	private void evolveStage_Close(int x, int y) {
+		
+		g2.drawImage(gp.player.pokeParty.get(evolveIndex).getFrontSprite(), x, y, null);
+		
+		if (gp.keyH.aPressed) {
+			gp.stopMusic();
+			
+			evolveIndex = -1;
+			
+			oldEvolve = null;
+			newEvolve = null;					
+			
+			evolveNum = 0;
+			evolveTimer = 0;					
+			subState = 0;
+			
+			gp.setupMusic();
+			gp.gameState = gp.playState;
+		}
+		
+		drawEvolveDialogue();		
+	}
+	private void drawEvolveDialogue() {
+		
+		drawEvolveDialogueWindow();
+		
+		int x = gp.tileSize / 2;
+		int y = gp.screenHeight - gp.tileSize * 2;
+		
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
+		
+		// PRINT OUT DIALOGUE
+		for (String line : evolveText.split("\n")) {  
+  			drawText(line, x, y, battle_white, Color.BLACK);
+			y += gp.tileSize;
+		} 		
+	}
+	private void drawEvolveDialogueWindow() {
+		
+		int width = (int) (gp.screenWidth - (gp.tileSize * 0.15));
+		int height = (int) (gp.tileSize * 3.5);
+		int x = (int) (gp.tileSize * 0.1);
+		int y = (int) (gp.screenHeight - (height * 1.02)); 
+		
+		drawSubWindow(x, y, width, height, 12, 10, battle_green, battle_red);
+	}	
 	
 	// TRANSITION
 	private void drawTransition() {

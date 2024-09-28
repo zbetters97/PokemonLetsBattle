@@ -14,7 +14,6 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import entity.Entity;
-import entity.npc.NPC_Rival;
 import moves.Move;
 import moves.Moves;
 import moves.Move.MoveType;
@@ -134,14 +133,14 @@ public class BattleManager {
 			gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!");
 
 			gp.ui.setSoundFile(cry_SE, fighter[1].toString(), 30, 160);		
-			gp.playMusic(1, 1);					
+			gp.playMusic(1, 2);					
 		}
 		else if (battleMode == trainerBattle) {		
 
 			gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nwould like to battle!");				
 			newFighter[1] = trainer[1].pokeParty.get(0);
 			
-			gp.playMusic(1, 2);
+			gp.playMusic(1, 3);
 		}
 		else if (battleMode == rivalBattle) {					
 			
@@ -1213,6 +1212,8 @@ public class BattleManager {
 	}
 	private void dealDamage(int atk, int trg, Move move, int damage) {		
 		
+		damage = 100;
+		
 		// subtract damage dealt from total hp
 		int result = fighter[trg].getHP() - (int)damage;		
 		
@@ -1387,7 +1388,7 @@ public class BattleManager {
 			fighter[winner].setXP(fighter[winner].getXP() + newXP);
 			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + newXP + " Exp. Points!");	
 			
-			// FOR EACH TIME NEW XP IS MORE THAN XP TO NEXT LEVEL
+			// FOR EACH TIME NEWXP IS MORE THAN XP TO NEXT LEVEL
 			while (fighter[winner].getNextXP() <= newXP) {	
 				
 				// ASSIGN NEW XP TO DIFFERENCE
@@ -1396,12 +1397,6 @@ public class BattleManager {
 				// INCREASE LEVEL
 				fighter[winner].levelUp();					
 				gp.ui.addBattleDialogue(fighter[winner].getName() + " grew to\nLV. " + fighter[winner].getLevel() + "!");	
-				
-				if (fighter[winner].canEvolve()) {
-					String oldName = fighter[winner].getName();
-					fighter[winner] = fighter[winner].evolve();
-					gp.ui.addBattleDialogue("Congratulations! Your + " + oldName + "\nevolved into " + fighter[winner].getName() + "!");
-				}
 			}
 						
 			fightStage = fight_KO;			
@@ -1475,7 +1470,6 @@ public class BattleManager {
 	}
 	public void endBattle() {
 		gp.stopMusic();
-		gp.setupMusic();
 		
 		currentTurn = -1;
 		nextTurn = -1;
@@ -1494,7 +1488,8 @@ public class BattleManager {
 		active = false;
 		
 		gp.particleList.clear();
-		gp.gameState = gp.playState;
+		
+		gp.gameState = gp.evolveState;
 	}
 	
 	// DRAW METHODS

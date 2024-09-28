@@ -30,17 +30,17 @@ public class Pokemon {
 	/** END INITIALIZE VALUES **/
 	
 	/** CONSTRUCTORS **/
-	public Pokemon(PokemonBase pokemon, int level) {	
+	public Pokemon(PokemonBase p, int lvl) {	
 		// STAT FORMULA REFERENCE: https://pokemon.fandom.com/wiki/Statistics
 		
-		this.pokemon = pokemon;
-		this.level = level;	
-		this.bxp = getXP(level);
-		this.xp = this.bxp;
-		this.nxp = getNextXP();
+		pokemon = p;
+		level = lvl;	
+		bxp = getXP(level);
+		xp = bxp;
+		nxp = getNextXP();
 		
 		// coin flip for Pokemon gender
-		this.sex = Math.random() > 0.5 ? '♂' : '♀';
+		sex = Math.random() > 0.5 ? '♂' : '♀';
 		
 		hpIV = 1 + (int)(Math.random() * ((31 - 1) + 1));			
 		attackIV = 1 + (int)(Math.random() * ((31 - 1) + 1));
@@ -49,19 +49,19 @@ public class Pokemon {
 		spDefenseIV = 1 + (int)(Math.random() * ((31 - 1) + 1));
 		speedIV = 1 + (int)(Math.random() * ((31 - 1) + 1));			
 		
-		this.hp = (int)(Math.floor(((2 * pokemon.getHP() + hpIV + Math.floor(0.25 * pokemon.getEV())) * level) / 100) + level + 10);
-		this.bhp = this.hp;
+		hp = (int)(Math.floor(((2 * pokemon.getHP() + hpIV + Math.floor(0.25 * pokemon.getEV())) * level) / 100) + level + 10);
+		bhp = hp;
 		
 		Calculate getStat = (base, IV, EV, lev) -> {
 			return (int)(Math.floor(0.01 * (2 * base + IV + Math.floor(0.25 * EV)) * lev)) + 5;
 		};		
 		
-		this.attack = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
-		this.defense = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
-		this.spAttack = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
-		this.spDefense = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
-		this.speed = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
-		this.accuracy = 1;	
+		attack = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
+		defense = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
+		spAttack = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
+		spDefense = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
+		speed = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
+		accuracy = 1;	
 		
 		// random Nature selection
 		int num = 0 + (int)(Math.random() * ((Nature.getNatures().size() - 0) + 0));
@@ -69,20 +69,69 @@ public class Pokemon {
 		
 		setNature();
 				
-		this.speedStg = 0;
-		this.attackStg = 0;
-		this.defenseStg = 0;
-		this.spAttackStg= 0;
-		this.spDefenseStg = 0;
-		this.accuracyStg = 0;
+		speedStg = 0;
+		attackStg = 0;
+		defenseStg = 0;
+		spAttackStg= 0;
+		spDefenseStg = 0;
+		accuracyStg = 0;
 		
-		this.status = null;
-		this.isAlive = true;	
+		status = null;
+		isAlive = true;	
 		
-		this.statusCounter = 0;
-		this.statusLimit = 0;
+		statusCounter = 0;
+		statusLimit = 0;
 		
 		moveSet = new ArrayList<>();
+	}		
+	public Pokemon(Pokemon old, PokemonBase p) {	
+		// STAT FORMULA REFERENCE: https://pokemon.fandom.com/wiki/Statistics
+		
+		pokemon = p;
+		level = old.level;	
+		bxp = old.bxp;
+		xp = bxp;
+		nxp = getNextXP();
+		sex = old.sex;
+		
+		hpIV = old.hpIV;		
+		attackIV = old.attackIV;
+		defenseIV = old.defenseIV;
+		spAttackIV = old.spAttackIV;
+		spDefenseIV = old.spDefenseIV;
+		speedIV = old.speedIV;		
+		
+		hp = (int)(Math.floor(((2 * pokemon.getHP() + hpIV + Math.floor(0.25 * pokemon.getEV())) * level) / 100) + level + 10);
+		bhp = hp;
+		
+		Calculate getStat = (base, IV, EV, lev) -> {
+			return (int)(Math.floor(0.01 * (2 * base + IV + Math.floor(0.25 * EV)) * lev)) + 5;
+		};		
+		
+		attack = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
+		defense = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
+		spAttack = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
+		spDefense = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
+		speed = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
+		accuracy = 1;	
+		
+		nature = old.getNature();		
+		setNature();
+				
+		speedStg = 0;
+		attackStg = 0;
+		defenseStg = 0;
+		spAttackStg= 0;
+		spDefenseStg = 0;
+		accuracyStg = 0;
+		
+		status = old.getStatus();
+		isAlive = old.isAlive;
+		
+		statusCounter = 0;
+		statusLimit = 0;
+		
+		moveSet = old.getMoveSet();
 	}		
 	/** END CONSTRUCTORS **/
 			
@@ -228,13 +277,20 @@ public class Pokemon {
 		
 		return canEvolve;
 	}
-	public Pokemon evolve() {
+	public static Pokemon evolvePokemon(Pokemon oldPokemon) {
 		
-		Pokemon newPokemon = null;
+		Pokemon evolvedForm = null;
 		
-		newPokemon = getPokemonByIndex(pokemon.getIndex() + 1, level);
+		int nextIndex = oldPokemon.getIndex() + 1;
 		
-		return newPokemon;		
+		for (PokemonBase base : PokemonBase.getPOKEDEX()) {
+			if (base.getIndex() == nextIndex) {
+				evolvedForm = new Pokemon(oldPokemon, base);				
+				break;
+			}
+		}		
+		
+		return evolvedForm;
 	}
 	/** END EXP METHODS **/
 
