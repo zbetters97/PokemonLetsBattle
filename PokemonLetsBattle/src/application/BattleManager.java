@@ -2,6 +2,7 @@ package application;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -82,9 +83,10 @@ public class BattleManager {
 	public final int fight_Attack = 6;
 	public final int fight_End = 7;
 	public final int fight_KO = 8;		
-	public final int fight_Defeat = 9;
-	public final int fight_Victory = 10;
-	public final int fight_Close = 11;
+	public final int fight_LevelUp = 9;
+	public final int fight_Defeat = 10;
+	public final int fight_Victory = 11;
+	public final int fight_Close = 12;
 			
 	// CONSTRUCTOR
 	public BattleManager(GamePanel gp) {
@@ -171,7 +173,7 @@ public class BattleManager {
 		else if (fighter[1].getHP() > 50) gp.ui.hpSpeed_two = 2;
 		else gp.ui.hpSpeed_two = 3;
 		
-		gp.ui.fighter_one_EXP = gp.btlManager.fighter[0].getXP();
+		gp.ui.fighter_one_EXP = fighter[0].getXP();
 	}
 	
 	// UPDATE METHOD
@@ -183,8 +185,8 @@ public class BattleManager {
 				gp.ui.battleState = gp.ui.battle_Dialogue;
 				fightStage = fight_Swap;
 			}	
-			else if (fightStage == fight_Swap) {
-				swapFighters();
+			else if (fightStage == fight_Swap) {				
+				swapFighters();					
 			}
 			else if (fightStage == fight_SwapOut) {				
 				setSwap();					
@@ -200,6 +202,11 @@ public class BattleManager {
 			}
 			else if (fightStage == fight_End) {
 				checkStatusDamage();								
+			}
+			else if (fightStage == fight_LevelUp) {	
+				gp.ui.addBattleDialogue(fighter[0].getName() + " grew to\nLV. " + fighter[0].getLevel() + "!");
+				gp.ui.battleState = gp.ui.battle_LevelUp;	
+				fightStage = fight_Swap;
 			}
 			else if (fightStage == fight_Victory) {
 				setVictory();
@@ -1386,20 +1393,9 @@ public class BattleManager {
 			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
 			
 			fighter[winner].setXP(fighter[winner].getXP() + newXP);
-			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + newXP + " Exp. Points!");	
+			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + newXP + " Exp. Points!");				
 			
-			// FOR EACH TIME NEWXP IS MORE THAN XP TO NEXT LEVEL
-			while (fighter[winner].getNextXP() <= newXP) {	
-				
-				// ASSIGN NEW XP TO DIFFERENCE
-				newXP -= fighter[winner].getNextXP();		
-				
-				// INCREASE LEVEL
-				fighter[winner].levelUp();					
-				gp.ui.addBattleDialogue(fighter[winner].getName() + " grew to\nLV. " + fighter[winner].getLevel() + "!");	
-			}
-						
-			fightStage = fight_KO;			
+			fightStage = fight_KO;							
 		}
 		else if (winner == 1) {			
 			gp.ui.setSoundFile(faint_SE, fighter[loser].toString(), 5);			
@@ -1583,8 +1579,14 @@ public class BattleManager {
 			if (fighter_two_Y < gp.screenHeight) {
 				fighter_two_Y += 16;
 			}
-			else {				
-				fightStage = fight_Swap;								
+			else {
+				if (fighter[0].getXP() > fighter[0].getBXP() + fighter[0].getNextXP()) {	
+					fightStage = fight_LevelUp;		
+				}
+				else {
+					fightStage = fight_Swap;
+				}
+							
 			}
 		}		
 	}

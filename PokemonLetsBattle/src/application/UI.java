@@ -74,7 +74,7 @@ public class UI {
 	public int hpSpeed_two = 1;
 	
 	// FIGHTER EXP
-	public int fighter_one_EXP;	
+	public int fighter_one_EXP = 0;	
 	private int expCounter = 0;
 	
 	// BATTLE VALUES
@@ -102,6 +102,7 @@ public class UI {
 	public final int battle_Options = 4;
 	public final int battle_Moves = 5;	
 	public final int battle_Swap = 6;
+	public final int battle_LevelUp = 7;
 	
 	private Pokemon oldEvolve, newEvolve = null;
 	private int evolveIndex = -1;
@@ -1243,7 +1244,7 @@ public class UI {
 			case battle_Start:
 				drawBattleDialogue();
 				break;
-			case battle_Dialogue:	
+			case battle_Dialogue:					
 				drawFighterWindows();
 				drawBattleDialogue();
 				break;
@@ -1260,9 +1261,13 @@ public class UI {
 				drawFighterWindows();
 				drawSwapOptionsWindow();
 				break;
+			case battle_LevelUp:
+				drawFighterWindows();
+				drawLevelUpWindow();
+				drawBattleDialogue();
+				break;
 		}
 	}
-	
 	private void drawFighterWindows() {
 		
 		int x; 
@@ -1280,55 +1285,7 @@ public class UI {
 			y = (int) (gp.tileSize * 0.8);
 			drawFighterWindow(x, y, 1);				
 		}
-	}
-	
-	private void drawEXPBar(int x, int y) {
-		
-		g2.setColor(Color.BLACK);
-		x += gp.tileSize * 0.8;
-		y += gp.tileSize * 2.3;
-		int width = (int) (gp.tileSize * 5.5);
-		int height = (int) (gp.tileSize * 0.4);
-		g2.fillRoundRect(x, y, width, height, 15, 15);
-		
-		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20F));
-		g2.setColor(battle_white);		
-		String text = "EXP";		
-		x += gp.tileSize * 0.25;
-		y += gp.tileSize * 0.33;
-		g2.drawString(text, x, y);
-		
-		x += gp.tileSize * 0.55;
-		y -= gp.tileSize * 0.26;
-		width -= gp.tileSize;
-		height -= gp.tileSize * 0.1;
-		g2.setColor(battle_gray);
-		g2.fillRect(x, y, width, height);
-						
-		int tempEXP = fighter_one_EXP;
-							
-		if (tempEXP < gp.btlManager.fighter[0].getXP()) {
-			if (2 <= expCounter) {
-				tempEXP++;
-				expCounter = 0;
-			}
-			else {
-				expCounter++;			
-			}	
-		}
-		
-		double currentXP = tempEXP - gp.btlManager.fighter[0].getBXP();
-		double nextXP = (double) gp.btlManager.fighter[0].getNextXP();
-		double remainXP = currentXP / nextXP ;
-		
-		width *= remainXP;
-		
-		g2.setColor(battle_blue);
-		g2.fillRect(x, y, width, height);
-				
-		fighter_one_EXP = tempEXP;	
-	}
-	
+	}	
 	private void drawFighterWindow(int x, int y, int num) {
 		
 		if (num == 0) {
@@ -1532,6 +1489,53 @@ public class UI {
 			hpCounter = 0;
 		}
 	}
+	private void drawEXPBar(int x, int y) {
+		
+		g2.setColor(Color.BLACK);
+		x += gp.tileSize * 0.8;
+		y += gp.tileSize * 2.3;
+		int width = (int) (gp.tileSize * 5.5);
+		int height = (int) (gp.tileSize * 0.4);
+		g2.fillRoundRect(x, y, width, height, 15, 15);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20F));
+		g2.setColor(battle_white);		
+		String text = "EXP";		
+		x += gp.tileSize * 0.25;
+		y += gp.tileSize * 0.33;
+		g2.drawString(text, x, y);
+		
+		x += gp.tileSize * 0.55;
+		y -= gp.tileSize * 0.26;
+		width -= gp.tileSize;
+		height -= gp.tileSize * 0.1;
+		g2.setColor(battle_gray);
+		g2.fillRect(x, y, width, height);
+						
+		int tempEXP = fighter_one_EXP;
+							
+		if (tempEXP < gp.btlManager.fighter[0].getXP()) {
+			if (2 <= expCounter) {
+				tempEXP++;
+				expCounter = 0;
+			}
+			else {
+				expCounter++;			
+			}	
+		}
+		if (tempEXP > gp.btlManager.fighter[0].getBXP() + gp.btlManager.fighter[0].getNextXP()) {
+			gp.btlManager.fighter[0].levelUp();
+		}
+		
+		double remainXP = (double) (tempEXP - gp.btlManager.fighter[0].getBXP()) / (double) gp.btlManager.fighter[0].getNextXP();
+		
+		width *= remainXP;		
+		
+		g2.setColor(battle_blue);
+		g2.fillRect(x, y, width, height);
+				
+		fighter_one_EXP = tempEXP;	
+	}
 	
 	private void drawBattleDialogueWindow() {
 		
@@ -1732,7 +1736,6 @@ public class UI {
 		text = gp.btlManager.fighter[0].getMoveSet().get(commandNum).getType().getName();
 		drawText(text, x, y, battle_white, Color.BLACK);
 	}		
-	
 	private void drawSwapOptionsWindow() {
 		
 		drawBattleDialogueWindow();
@@ -1905,7 +1908,6 @@ public class UI {
 			record_SE.remove(0);	
 		}			
 	}
-
 	public void setSoundFile(int cat, String soundFile, int timer) {		
 		category_SE.add(cat);		
 		record_SE.add(gp.se.getFile(cat, soundFile));
@@ -1928,6 +1930,57 @@ public class UI {
 	}	
 	public void addBattleDialogue(String text) {
 		battleDialogue.add(text);
+	}
+	
+	private void drawLevelUpWindow() {		
+		
+		Pokemon p = gp.btlManager.fighter[0];
+		
+		int x = gp.tileSize * 9;
+		int y = gp.tileSize * 3;
+		int width = (int) (gp.tileSize * 6.8);
+		int height = (int) (gp.tileSize * 5.2);
+		int frameX;
+		String text;
+				
+		drawSubWindow(x, y, width, height, 15, 4, battle_white, Color.BLACK);
+				
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 42F));
+		
+		x += gp.tileSize * 0.5;
+		y += gp.tileSize * 0.9;
+		text = "BASE HP"; g2.drawString(text, x, y); y += gp.tileSize * 0.8;
+		text = "ATTACK"; g2.drawString(text, x, y); y += gp.tileSize * 0.8;
+		text = "DEFENSE"; g2.drawString(text, x, y); y += gp.tileSize * 0.8;
+		text = "SP. ATK"; g2.drawString(text, x, y); y += gp.tileSize * 0.8;
+		text = "SP. DEF"; g2.drawString(text, x, y); y += gp.tileSize * 0.8;
+		text = "SPEED"; g2.drawString(text, x, y); y += gp.tileSize * 0.8;
+		
+		frameX = (int) (gp.tileSize * 15.5);
+		y = (int) (gp.tileSize * 3.9);
+		text = Integer.toString(p.getBHP()); 
+		x = getXforRightAlignText(text, frameX);
+		g2.drawString(text, x, y); y += gp.tileSize * 0.8;
+		
+		text = Integer.toString((int) p.getAttack()); 
+		x = getXforRightAlignText(text, frameX);
+		g2.drawString(text, x, y); y += gp.tileSize * 0.8;		
+		
+		text = Integer.toString((int) p.getDefense()); 
+		x = getXforRightAlignText(text, frameX);		
+		g2.drawString(text, x, y); y += gp.tileSize * 0.8;
+		
+		text = Integer.toString((int) p.getSpAttack()); 
+		x = getXforRightAlignText(text, frameX);
+		g2.drawString(text, x, y); y += gp.tileSize * 0.8;
+		text = Integer.toString((int) p.getSpDefense()); 
+		x = getXforRightAlignText(text, frameX);
+		g2.drawString(text, x, y); y += gp.tileSize * 0.8;
+		
+		text = Integer.toString((int) p.getSpeed()); 
+		x = getXforRightAlignText(text, frameX);
+		g2.drawString(text, x, y); y += gp.tileSize * 0.8;
 	}
 	
 	// EVOLVE SCREEN	
@@ -2120,7 +2173,7 @@ public class UI {
 		g2.setColor(primary);
 		g2.drawString(text, x-2, y-2);		
 	}
-	private void drawSubWindow(int x, int y, int width, int height, int curve, int borderStroke, 
+	public void drawSubWindow(int x, int y, int width, int height, int curve, int borderStroke, 
 			Color fillCollor, Color borderColor) {
 		
 		g2.setColor(fillCollor);

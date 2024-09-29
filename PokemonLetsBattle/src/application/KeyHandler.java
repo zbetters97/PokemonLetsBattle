@@ -139,7 +139,8 @@ public class KeyHandler implements KeyListener {
 	private void battleState(int code) { 
 		
 		if (gp.ui.battleState == gp.ui.battle_Dialogue ||
-				gp.ui.battleState == gp.ui.battle_Start) {				
+				gp.ui.battleState == gp.ui.battle_Start || 
+				gp.ui.battleState == gp.ui.battle_LevelUp) {				
 			if (code == gp.btn_A && lock) { 
 				aPressed = true; 
 				lock = false; 
