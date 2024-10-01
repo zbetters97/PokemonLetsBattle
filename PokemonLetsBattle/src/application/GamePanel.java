@@ -161,14 +161,18 @@ public class GamePanel extends JPanel implements Runnable {
 		if (fullScreenOn) setFullScreen();
 		
 		Map<String, Integer> encounters_petalburg = new HashMap<>();			
-		encounters_petalburg.put("Geodude", 6);	
-		encounters_petalburg.put("Machop", 3);
-		encounters_petalburg.put("Pikachu", 1);		
+		encounters_petalburg.put("Geodude", 65);	
+		encounters_petalburg.put("Machop", 30);
+		encounters_petalburg.put("Pikachu", 5);		
 		
 		wildEncounters.put(petalburg, encounters_petalburg);
 		wildLevels.put(petalburg, 4);
 		
 		gameState = playState;
+		
+		btlManager.setBattle(btlManager.wildBattle);
+		ui.battleState = ui.battle_Options;
+		gameState = battleState;
 	}
 	
 	public void setupMusic() {					
@@ -226,7 +230,6 @@ public class GamePanel extends JPanel implements Runnable {
 			lastTime = currentTime;
 			
 			if (delta >= 1) {
-				
 				// UPDATE GAME INFORMATION
 				update();
 				
@@ -258,7 +261,7 @@ public class GamePanel extends JPanel implements Runnable {
 		}	
 		// BATTLE STATE
 		else if (gameState == battleState) {
-			btlManager.update();
+//			btlManager.update();
 		}
 	}
 	private void updateNPC() {
@@ -325,7 +328,7 @@ public class GamePanel extends JPanel implements Runnable {
 		else if (gameState == battleState) {
 							
 			// DRAW BATTLE MANAGER
-			btlManager.draw(g2);
+//			btlManager.draw(g2);
 			
 			// DRAW UI
 			ui.draw(g2);

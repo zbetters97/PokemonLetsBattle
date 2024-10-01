@@ -51,27 +51,27 @@ public enum Status {
 		switch (this.abr) {  	
 			case ("PAR"): 				
 				gp.ui.addBattleDialogue(fighter + " is paralyzed\nand unable to move!");
-				gp.ui.setSoundFile(6, condition, 5, 120);	
+				gp.playSE(6, condition);	
 				break;
 	    	case ("PSN"): 
 	    		gp.ui.addBattleDialogue(fighter + " is hurt\nfrom the poison!"); 
-	    		gp.ui.setSoundFile(6, condition, 5, 120);	
+	    		gp.playSE(6, condition);	
 	    		break;
 	    	case ("CNF"): 
 	    		gp.ui.addBattleDialogue(fighter + " hurt\nitself in confusion!"); 
-	    		gp.ui.setSoundFile(6, "hit-normal", 5, 120);	
+	    		gp.playSE(6, "hit-normal");	
 	    		break;
 	    	case ("BRN"): 
 	    		gp.ui.addBattleDialogue(fighter + " is hurt\nfrom the burn!"); 
-	    		gp.ui.setSoundFile(6, condition, 5, 120);	
+	    		gp.playSE(6, condition);	
 	    		break;
 	    	case ("FRZ"): 
 	    		gp.ui.addBattleDialogue(fighter + " is frozen\nsolid!"); 
-	    		gp.ui.setSoundFile(6, condition, 5, 120);	
+	    		gp.playSE(6, condition);	
 	    		break;
 	    	case ("SLP"): 
 	    		gp.ui.addBattleDialogue(fighter + " is fast\nasleep!"); 
-	    		gp.ui.setSoundFile(6, condition, 5, 120);	
+	    		gp.playSE(6, condition);	
 	    		break;
 		}				
 	}

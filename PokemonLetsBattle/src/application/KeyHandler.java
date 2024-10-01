@@ -138,20 +138,14 @@ public class KeyHandler implements KeyListener {
 	// BATTLE
 	private void battleState(int code) { 
 		
-		if (gp.ui.battleState == gp.ui.battle_Dialogue ||
-				gp.ui.battleState == gp.ui.battle_Start || 
-				gp.ui.battleState == gp.ui.battle_LevelUp) {				
-			if (code == gp.btn_A && lock) { 
-				aPressed = true; 
-				lock = false; 
-			}
+		if (code == gp.btn_A && lock) { 					
+			aPressed = true; lock = false; 
 		}
-		else if (gp.ui.battleState == gp.ui.battle_Options) {			
-			
-			if (code == gp.btn_A && lock) { 					
-				aPressed = true; lock = false; 
-			}
-			
+		if (code == gp.btn_B && lock) { 					
+			bPressed = true; lock = false; 
+		}
+		
+		if (gp.ui.battleState == gp.ui.battle_Options) {
 			if (code == gp.btn_UP) {				
 				upPressed = true;
 				if (gp.ui.commandNum > 1) {
@@ -178,21 +172,12 @@ public class KeyHandler implements KeyListener {
 				if (gp.ui.commandNum < 3) {
 					playCursorSE();		
 					gp.ui.commandNum++;
-				}
+				}			
 			}
 		}
 		else if (gp.ui.battleState == gp.ui.battle_Moves) {
-			
-			int maxMoves = gp.btlManager.fighter[0].getMoveSet().size() - 1;
-			
-			if (code == gp.btn_A && lock) { 	
-				playCursorSE();					
-				aPressed = true; lock = false;										
-			}			
-			if (code == gp.btn_B && lock) { 
-				playCursorSE();						
-				bPressed = true; lock = false; 	
-			}			
+				
+			int maxMoves = gp.btlManager.fighter[0].getMoveSet().size() - 1;		
 			
 			if (code == gp.btn_UP) {
 				upPressed = true;
@@ -224,28 +209,6 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 		}		
-		else if (gp.ui.battleState == gp.ui.battle_Swap) {			
-			
-			if (code == gp.btn_A && lock) { 
-				playCursorSE();						
-				aPressed = true; lock = false; 
-			}
-			
-			if (code == gp.btn_UP) {				
-				upPressed = true;
-				if (gp.ui.commandNum != 0) {
-					playCursorSE();		
-					gp.ui.commandNum--;
-				}
-			}
-			if (code == gp.btn_DOWN) {				
-				downPressed = true;
-				if (gp.ui.commandNum != 1) {
-					playCursorSE();		
-					gp.ui.commandNum++;
-				}
-			}			
-		}
 	}
 	
 	// PARTY

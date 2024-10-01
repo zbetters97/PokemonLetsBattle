@@ -365,8 +365,8 @@ public class Entity {
 		
 		Pokemon wildPokemon = null;	
 		
-		// RANDOM NUM 0-10
-		int chance = new Random().nextInt(10);
+		// RANDOM NUM 0-100
+		int chance = new Random().nextInt(100);
 		int total = 0;
 		
 		// FOR EACH LIST OF POKEMON FROM LOCATION
