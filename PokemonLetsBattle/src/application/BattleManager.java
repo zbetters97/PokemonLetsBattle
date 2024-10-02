@@ -127,7 +127,6 @@ public class BattleManager extends Thread {
 				
 				gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!", true);	
 				gp.playSE(cry_SE, fighter[1].toString());	
-				gp.ui.fighter_two_HP = fighter[1].getHP();
 				
 				break;
 			case trainerBattle: 
@@ -157,7 +156,6 @@ public class BattleManager extends Thread {
 			if (fighter[1] == null || !fighter[1].isAlive()) {		
 												
 				fighter[1] = newFighter[1];
-				gp.ui.fighter_two_HP = fighter[1].getHP();
 				
 				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nsent out " + fighter[1].getName() + "!");
 				gp.playSE(cry_SE, fighter[1].toString());	
@@ -168,8 +166,6 @@ public class BattleManager extends Thread {
 					(newFighter[0] != null && newFighter[1] != null)) {	
 				
 				fighter[0] = newFighter[0];
-				gp.ui.fighter_one_HP = fighter[0].getHP();
-				gp.ui.fighter_one_EXP = fighter[0].getXP();
 				
 				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
 				gp.playSE(cry_SE, fighter[0].toString());		
@@ -186,8 +182,6 @@ public class BattleManager extends Thread {
 			else if (newFighter[0] != null && newFighter[1] == null) {
 				
 				fighter[0] = newFighter[0];
-				gp.ui.fighter_one_HP = fighter[0].getHP();
-				gp.ui.fighter_one_EXP = fighter[0].getXP();
 				
 				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
 				gp.playSE(cry_SE, fighter[0].toString());
@@ -197,7 +191,15 @@ public class BattleManager extends Thread {
 				newFighter[1] = null;
 				
 				fightStage = fight_Start;
-			}						
+			}			
+			else {
+				newFighter[0] = null;
+				newFighter[1] = null;
+				
+				running = false;	
+				
+				gp.ui.battleState = gp.ui.battle_Options;
+			}
 		}				
 		// TRAINER HAS WON
 		else {							
@@ -1079,7 +1081,7 @@ public class BattleManager extends Thread {
 	
 	// POST MOVE METHODS
 	private void dealDamage(int atk, int trg, Move move, int damage, double crit) throws InterruptedException {		
-		damage = 100;
+
 		// subtract damage dealt from total hp
 		int result = fighter[trg].getHP() - (int)damage;								
 		
@@ -1100,11 +1102,14 @@ public class BattleManager extends Thread {
 			}			
 		}
 		
-		fighter[trg].setHP(result);
-		fighter[trg].isHit = true;
-		
 		String hitEffectiveness = getHitSE(effectiveness(trg, move.getType()));
 		gp.playSE(battle_SE, hitEffectiveness);
+		
+		fighter[trg].isHit = true;
+		while (fighter[trg].getHP() > result) {			
+			fighter[trg].setHP(fighter[trg].getHP() - 1);
+			pause(50);
+		}		
 		
 		if (hitEffectiveness.equals("hit-super")) {
 			gp.ui.addBattleDialogue("It's super effective!");
@@ -1345,8 +1350,9 @@ public class BattleManager extends Thread {
 			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + newXP + " Exp. Points!");	
 			
 			while (fighter[winner].getXP() < xp) {
+				
 				fighter[winner].setXP(fighter[winner].getXP() + 1);
-				pause(50);
+				pause(25);
 				
 				// FIGHTER LEVELED UP
 				if (fighter[winner].getXP() >= gp.btlManager.fighter[0].getBXP() + gp.btlManager.fighter[0].getNextXP()) {			
@@ -1357,13 +1363,10 @@ public class BattleManager extends Thread {
 					gp.btlManager.fighter[0].levelUp();			
 					gp.ui.battleState = gp.ui.battle_LevelUp;
 					pause(1600);
-					
-					gp.ui.battleState = gp.ui.battle_Turn;
 				}	
 			}
 			
-			running = false;
-			
+			gp.ui.battleState = gp.ui.battle_Turn;
 			fightStage = fight_Swap;
 		}
 		else if (winner == 1) {			

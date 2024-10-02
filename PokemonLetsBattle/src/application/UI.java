@@ -61,23 +61,13 @@ public class UI {
 	// TRANSITION
 	private int tCounter = 0;
 	public String tDirection = "";
-			
-	// FIGHTER HP
-	public int fighter_one_HP;
-	public int fighter_two_HP;
-	private int hpCounter = 0;
-	public int hpSpeed_one = 4;
-	public int hpSpeed_two = 4;
-	
-	// FIGHTER EXP
-	public int fighter_one_EXP = 0;	
-	private int expCounter = 0;
 	
 	// BATTLE VALUES
 	private BufferedImage current_arena;
 	private BufferedImage ball_empty, ball_active, ball_inactive;	
 	public int fighterNum = 0;	
 	private int hitCounter = -1;
+	private int hpCounter = 0;
 
 	// FIGHTER X/Y VALUES
 	public int fighter_one_X;
@@ -798,11 +788,6 @@ public class UI {
 				// NEW FIGHTER SELECTED
 				if (gp.btlManager.swapPokemon(fighterNum)) {					
 					gp.keyH.playCursorSE();	
-					
-					if (gp.btlManager.fighter[0].isAlive()) {
-						fighter_one_HP = gp.btlManager.newFighter[0].getHP();
-						fighter_one_EXP = gp.btlManager.newFighter[0].getXP();
-					}
 					
 					commandNum = 0;
 					fighterNum = 0;			
@@ -1566,10 +1551,7 @@ public class UI {
 		width = (int) (gp.tileSize * 3.8);
 		height = (int) (gp.tileSize * 0.33);
 		
-		double remainHP = 0.0;
-		
-		if (num == 0) { remainHP = getRemainingHP(fighter_one_HP, hpSpeed_one, gp.btlManager.fighter[0], 0); }
-		else { remainHP = getRemainingHP(fighter_two_HP, hpSpeed_two, gp.btlManager.fighter[1], 1); }
+		double remainHP = (double)gp.btlManager.fighter[num].getHP() / (double)gp.btlManager.fighter[num].getBHP();	
 					
 		if (remainHP >= .50) g2.setColor(hp_green);
 		else if (remainHP >= .25) g2.setColor(hp_yellow);
@@ -1588,36 +1570,6 @@ public class UI {
 		x = getXforRightAlignText(text, (int) (x + gp.tileSize * 3.65));		
 		y += gp.tileSize * 0.9;
 		g2.drawString(text, x, y);	
-	}	
-	private double getRemainingHP(int hp, int hpSpeed, Pokemon pokemon, int num) {
-		
-		double remainingHP = 0.0;
-		
-		if (hp > pokemon.getHP()) {			
-			if (hpCounter >= hpSpeed) {
-				hp--;	
-				hpCounter = 0;
-			}
-			else {
-				hpCounter++;			
-			}	
-		}
-		else if (hp < pokemon.getHP()) {			
-			if (hpCounter >= hpSpeed) {
-				hp++;
-				hpCounter = 0;
-			}
-			else {
-				hpCounter++;			
-			}	
-		}
-		
-		remainingHP = (double)hp / (double)pokemon.getBHP();			
-
-		if (num == 0) fighter_one_HP = hp;
-		else fighter_two_HP = hp;	
-		
-		return remainingHP;
 	}
 	private void playLowHPSE(double remainHP) {
 		
