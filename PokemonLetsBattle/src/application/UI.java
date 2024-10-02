@@ -1653,32 +1653,9 @@ public class UI {
 		width -= gp.tileSize;
 		height -= gp.tileSize * 0.1;
 		g2.setColor(battle_gray);
-		g2.fillRect(x, y, width, height);
-		
-		int tempEXP = fighter_one_EXP;
-					
-		if (tempEXP < gp.btlManager.fighter[0].getXP()) {
-			if (2 <= expCounter) {
-				tempEXP++;
-				expCounter = 0;
-			}
-			else {
-				expCounter++;			
-			}	
-		}
-		// FIGHTER LEVELED UP
-		if (tempEXP >= gp.btlManager.fighter[0].getBXP() + gp.btlManager.fighter[0].getNextXP()) {			
-			
-			addBattleDialogue(gp.btlManager.fighter[0].getName() + " grew to\nLv. " + 
-					(gp.btlManager.fighter[0].getLevel() + 1) + "!", true);
-			
-			gp.btlManager.fighter[0].levelUp();			
-			battleState = battle_LevelUp;
-		}	
-		
-		fighter_one_EXP = tempEXP;			
+		g2.fillRect(x, y, width, height);		
 				
-		double remainXP = (double) (fighter_one_EXP - gp.btlManager.fighter[0].getBXP()) / (double) gp.btlManager.fighter[0].getNextXP();
+		double remainXP = (double) (gp.btlManager.fighter[0].getXP() - gp.btlManager.fighter[0].getBXP()) / (double) gp.btlManager.fighter[0].getNextXP();
 		
 		width *= remainXP;		
 		

@@ -1079,7 +1079,7 @@ public class BattleManager extends Thread {
 	
 	// POST MOVE METHODS
 	private void dealDamage(int atk, int trg, Move move, int damage, double crit) throws InterruptedException {		
-		
+		damage = 100;
 		// subtract damage dealt from total hp
 		int result = fighter[trg].getHP() - (int)damage;								
 		
@@ -1341,8 +1341,27 @@ public class BattleManager extends Thread {
 			gp.ui.battleState = gp.ui.battle_KO;
 			pause(1400);			
 			
-			fighter[winner].setXP(fighter[winner].getXP() + newXP);
+			int xp = fighter[winner].getXP() + newXP;
 			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + newXP + " Exp. Points!");	
+			
+			while (fighter[winner].getXP() < xp) {
+				fighter[winner].setXP(fighter[winner].getXP() + 1);
+				pause(50);
+				
+				// FIGHTER LEVELED UP
+				if (fighter[winner].getXP() >= gp.btlManager.fighter[0].getBXP() + gp.btlManager.fighter[0].getNextXP()) {			
+					
+					gp.ui.addBattleDialogue(fighter[0].getName() + " grew to\nLv. " + 
+							(fighter[0].getLevel() + 1) + "!");
+					
+					gp.btlManager.fighter[0].levelUp();			
+					gp.ui.battleState = gp.ui.battle_LevelUp;
+					pause(1600);
+					
+					gp.ui.battleState = gp.ui.battle_Turn;
+				}	
+			}
+			
 			running = false;
 			
 			fightStage = fight_Swap;
