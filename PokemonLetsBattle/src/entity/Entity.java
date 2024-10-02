@@ -355,7 +355,7 @@ public class Entity {
 			if (wildPokemon != null) {
 				
 				gp.btlManager.fighter[1] = wildPokemon;
-				gp.btlManager.setBattle(gp.btlManager.wildBattle);
+				gp.btlManager.setup(gp.btlManager.wildBattle, null, wildPokemon);
 								
 				gp.gameState = gp.transitionState;	
 			}

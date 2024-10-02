@@ -208,7 +208,23 @@ public class KeyHandler implements KeyListener {
 					gp.ui.commandNum++;
 				}
 			}
-		}		
+		}
+		else if (gp.ui.battleState == gp.ui.battle_Swap) {
+			if (code == gp.btn_UP) {				
+				upPressed = true;
+				if (gp.ui.commandNum > 0) {
+					playCursorSE();		
+					gp.ui.commandNum--;
+				}
+			}
+			if (code == gp.btn_DOWN) {				
+				downPressed = true;
+				if (gp.ui.commandNum < 1) {
+					playCursorSE();		
+					gp.ui.commandNum++;
+				}
+			}
+		}
 	}
 	
 	// PARTY
@@ -216,12 +232,10 @@ public class KeyHandler implements KeyListener {
 		
 		if (gp.ui.partyState == gp.ui.party_Main) {			
 			
-			if (code == gp.btn_A && lock) { 
-				playCursorSE();						
+			if (code == gp.btn_A && lock) { 		
 				aPressed = true; lock = false; 
 			}
-			if (code == gp.btn_B && lock) { 
-				playCursorSE();						
+			if (code == gp.btn_B && lock) { 	
 				bPressed = true; lock = false; 	
 			}
 			
@@ -257,8 +271,7 @@ public class KeyHandler implements KeyListener {
 			if (code == gp.btn_A && lock) { 	
 				aPressed = true; lock = false; 
 			}
-			if (code == gp.btn_B && lock) { 
-				playCursorSE();						
+			if (code == gp.btn_B && lock) { 		
 				bPressed = true; lock = false; 	
 			}
 			

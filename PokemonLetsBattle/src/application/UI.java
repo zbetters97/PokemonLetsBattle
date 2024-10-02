@@ -72,7 +72,6 @@ public class UI {
 	// FIGHTER EXP
 	public int fighter_one_EXP = 0;	
 	private int expCounter = 0;
-	public boolean expReady = true;
 	
 	// BATTLE VALUES
 	private BufferedImage current_arena;
@@ -105,10 +104,13 @@ public class UI {
 	
 	// BATTLE STATE
 	public int battleState;
-	public final int battle_Start = 1;
-	public final int battle_Options = 2;
-	public final int battle_Moves = 3;
-	public final int battle_Turn = 4;
+	public final int battle_Encounter = 1;
+	public final int battle_Swap = 2;
+	public final int battle_Options = 3;
+	public final int battle_Moves = 4;
+	public final int battle_Turn = 5;
+	public final int battle_KO = 6;
+	public final int battle_LevelUp = 7;
 	
 	private Pokemon oldEvolve, newEvolve = null;
 	private int evolveIndex = -1;
@@ -377,11 +379,13 @@ public class UI {
 			
 			// PLAYER HAS DIALOGUE RESPONSE
 			if (npc.hasBattle) {
-				gp.btlManager.trainer[1] = npc;
-				gp.btlManager.setBattle(gp.btlManager.trainerBattle);
 				
 				skipDialogue();
 				
+				gp.btlManager.setup(gp.btlManager.trainerBattle, npc, null);
+				new Thread(gp.btlManager).start();	
+				battleState = battle_Encounter;
+								
 				gp.gameState = gp.battleState;
 			}
 			else if (npc.type == npc.type_obstacle_i) {
@@ -704,29 +708,51 @@ public class UI {
 				
 				if (fighterNum == 6) {
 					
-					//if (gp.btlManager.active) {
-						gp.gameState = gp.battleState;
-						battleState = battle_Options;
-						fighterNum = 0;	
-					//}
-					//else {
+					if (gp.btlManager.active) {
+						
+						if (battleState == battle_Options) {
+							gp.keyH.playCursorSE();
+							
+							fighterNum = 0;	
+							commandNum = 2;
+							gp.gameState = gp.battleState;								
+						}
+						else if (!gp.btlManager.fighter[0].isAlive()) {							
+							gp.keyH.playErrorSE();
+						}
+						else {						
+							gp.keyH.playCursorSE();
+							
+							fighterNum = 0;	
+							commandNum = 0;
+							gp.btlManager.running = true;
+							new Thread(gp.btlManager).start();	
+							gp.gameState = gp.battleState;		
+						}						
+					}
+					else {
+						gp.keyH.playCursorSE();
+						
 						fighterNum = 0;	
 						commandNum = 1;
 						gp.gameState = gp.pauseState;
-					//}
+					}
 				}
-				else if (gp.player.pokeParty.size() > fighterNum){	
+				else if (gp.player.pokeParty.size() > fighterNum) {	
 					
-					//if (gp.btlManager.active) {
+					if (gp.btlManager.active) {
+						gp.keyH.playCursorSE();
 						partyState = party_Main_Select;		
-					//}
-					//else {
+					}
+					else {
 						gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  	
 						partyState = party_Skills;
-					//}			
+					}			
 				}	
 			}
 			if (gp.keyH.bPressed) {			
+				gp.keyH.playCursorSE();
+				
 				gp.keyH.bPressed = false;
 				fighterNum = 6;				
 			}
@@ -758,26 +784,34 @@ public class UI {
 		
 		x -= gp.tileSize * 0.38;
 		y -= gp.tileSize * 2.58;
-		height = (int) (gp.tileSize * 0.9);		
+		height = (int) (gp.tileSize * 0.9);	
 		if (commandNum == 0) {
 			g2.setColor(battle_red);
 			g2.drawRoundRect(x, y, width, height, 4, 4);
 			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
+			
+				fighter_one_Y = fighter_one_startY;
+				fighter_two_Y = fighter_two_startY;	
 				
 				// NEW FIGHTER SELECTED
-				if (gp.btlManager.swapPokemon(fighterNum)) {
-					
+				if (gp.btlManager.swapPokemon(fighterNum)) {					
 					gp.keyH.playCursorSE();	
 					
 					if (gp.btlManager.fighter[0].isAlive()) {
-						gp.btlManager.fighter[0] = gp.btlManager.newFighter[0];	
+						fighter_one_HP = gp.btlManager.newFighter[0].getHP();
+						fighter_one_EXP = gp.btlManager.newFighter[0].getXP();
 					}
 					
-					gp.gameState = gp.battleState;
 					commandNum = 0;
-					fighterNum = 0;					
+					fighterNum = 0;			
+					
+					gp.btlManager.running = true;
+					gp.btlManager.fightStage = gp.btlManager.fight_Swap;
+					new Thread(gp.btlManager).start();
+					
+					gp.gameState = gp.battleState;
 				}	
 				
 				// UNABLE TO SELECT FIGHTER
@@ -806,13 +840,15 @@ public class UI {
 			g2.drawRoundRect(x, y, width, height, 4, 4);
 			
 			if (gp.keyH.aPressed) {
+				gp.keyH.playCursorSE();
 				gp.keyH.aPressed = false;					
 				partyState = party_Main;	
 				commandNum = 0;	
 			}
 		}
 		
-		if (gp.keyH.bPressed) {			
+		if (gp.keyH.bPressed) {		
+			gp.keyH.playCursorSE();
 			gp.keyH.bPressed = false;
 			partyState = party_Main;
 			commandNum = 0;	
@@ -1259,9 +1295,10 @@ public class UI {
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 		
 		switch(battleState) {		
-			case battle_Start:
+		
+			case battle_Encounter:
 				animateBattleEntrance();
-				drawBattle_DialogueWindow();
+				drawBattle_Dialogue();
 				break;
 			case battle_Options:				
 				drawBattle_Fighters();				
@@ -1277,6 +1314,23 @@ public class UI {
 				drawBattle_Fighters();
 				drawBattle_Dialogue();
 				drawBattle_HUD();
+				break;
+			case battle_KO:
+				drawBattle_Fighters();
+				animateFighterDefeat();
+				drawBattle_Dialogue();
+				drawBattle_HUD();
+				break;
+			case battle_LevelUp:
+				drawBattle_Fighters();
+				drawBattle_Dialogue();
+				drawBattle_HUD();
+				drawBattle_LevelUp();
+				break;
+			case battle_Swap:				
+				drawBattle_Fighters();				
+				drawBattle_HUD();
+				drawBattle_Swap();
 				break;
 		}
 	}
@@ -1334,11 +1388,26 @@ public class UI {
 		if (fighter_one_X > fighter_one_endX && fighter_two_X < fighter_two_endX) {
 			fighter_one_X -= 6;	
 			fighter_two_X += 6;	
-		}
-		else {
-			battleState = battle_Options;
 		}		
 	}	
+	private void animateFighterDefeat() {
+		if (gp.btlManager.loser == 0) {
+			if (fighter_one_Y < gp.screenHeight) {
+				fighter_one_Y += 16;
+			}
+			else {
+				
+			}
+		}
+		else if (gp.btlManager.loser == 1) {
+			if (fighter_two_Y < gp.screenHeight) {
+				fighter_two_Y += 16;
+			}
+			else {
+				
+			}
+		}		
+	}
 	
 	private void drawBattle_HUD() {
 		
@@ -1588,35 +1657,36 @@ public class UI {
 		
 		int tempEXP = fighter_one_EXP;
 					
-		if (expReady) {
-			if (tempEXP < gp.btlManager.fighter[0].getXP()) {
-				if (2 <= expCounter) {
-					tempEXP++;
-					expCounter = 0;
-				}
-				else {
-					expCounter++;			
-				}	
+		if (tempEXP < gp.btlManager.fighter[0].getXP()) {
+			if (2 <= expCounter) {
+				tempEXP++;
+				expCounter = 0;
 			}
-			// FIGHTER LEVELED UP
-			if (tempEXP > gp.btlManager.fighter[0].getBXP() + gp.btlManager.fighter[0].getNextXP()) {
-				gp.btlManager.fighter[0].levelUp();
-				expReady = false;
+			else {
+				expCounter++;			
 			}	
 		}
+		// FIGHTER LEVELED UP
+		if (tempEXP >= gp.btlManager.fighter[0].getBXP() + gp.btlManager.fighter[0].getNextXP()) {			
+			
+			addBattleDialogue(gp.btlManager.fighter[0].getName() + " grew to\nLv. " + 
+					(gp.btlManager.fighter[0].getLevel() + 1) + "!", true);
+			
+			gp.btlManager.fighter[0].levelUp();			
+			battleState = battle_LevelUp;
+		}	
+		
+		fighter_one_EXP = tempEXP;			
 				
-		double remainXP = (double) (tempEXP - gp.btlManager.fighter[0].getBXP()) / (double) gp.btlManager.fighter[0].getNextXP();
+		double remainXP = (double) (fighter_one_EXP - gp.btlManager.fighter[0].getBXP()) / (double) gp.btlManager.fighter[0].getNextXP();
 		
 		width *= remainXP;		
 		
 		g2.setColor(battle_blue);
 		g2.fillRect(x, y, width, height);
-				
-		fighter_one_EXP = tempEXP;	
 	}
 	
 	private void drawBattle_Dialogue() {
-		
 		drawBattle_DialogueWindow();	
 		
 		int x = gp.tileSize / 2;
@@ -1628,35 +1698,50 @@ public class UI {
 		
 		if (battleDialogue != null) {
 		
-		// DIALOGUE TO PRINT
-		if (dialogueCounter >= battleTextSpeed) {
-			
-			char characters[] = battleDialogue.toCharArray();
-									
-			if (charIndex < characters.length) {					
-				String s = String.valueOf(characters[charIndex]);				
-				combinedText += s;
-				currentDialogue = combinedText;					
-				charIndex++;					
-			}				
-			
-			// ALL CHARACTERS PRINTED
-			if (charIndex >= characters.length) {
+			// DIALOGUE TO PRINT
+			if (dialogueCounter >= battleTextSpeed) {
 				
+				char characters[] = battleDialogue.toCharArray();
+										
+				if (charIndex < characters.length) {					
+					String s = String.valueOf(characters[charIndex]);				
+					combinedText += s;
+					currentDialogue = combinedText;					
+					charIndex++;					
+				}				
+				
+				// ALL CHARACTERS PRINTED
+				if (charIndex >= characters.length) {	
+				}
+				
+				dialogueCounter = 0;
 			}
+			else {
+				dialogueCounter++;		
+			}						
 			
-			dialogueCounter = 0;
-		}
-		else {
-			dialogueCounter++;		
-		}						
-		
-		// PRINT OUT DIALOGUE
-		for (String line : currentDialogue.split("\n")) {   
-  			text = line;
-  			drawText(text, x, y, battle_white, Color.BLACK);
-			y += gp.tileSize;
-		} 		
+			// PRINT OUT DIALOGUE
+			for (String line : currentDialogue.split("\n")) {   
+	  			text = line;
+	  			drawText(text, x, y, battle_white, Color.BLACK);
+				y += gp.tileSize;
+			} 		
+			
+			// PLAYER CAN ADVANCE DIALOGUE
+			if (canSkip && charIndex >= battleDialogue.toCharArray().length) {
+				
+	  			x += (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+	  			y -= gp.tileSize * 1.4;
+	  			g2.drawImage(dialogue_next, x, y, null);
+	
+	  			if (gp.keyH.aPressed) {		  
+	  				gp.keyH.aPressed = false;
+	  				gp.keyH.playCursorSE();
+	  				gp.btlManager.running = true;
+	  				new Thread(gp.btlManager).start();	
+	  				canSkip = false;
+	  			}
+			}
 		}
 	}		
 	private void drawBattle_DialogueWindow() {
@@ -1673,6 +1758,13 @@ public class UI {
 		combinedText = "";
 		currentDialogue = "";
 		charIndex = 0;
+	}	
+	public void addBattleDialogue(String text, boolean skip) {
+		battleDialogue = text;
+		combinedText = "";
+		currentDialogue = "";
+		charIndex = 0;
+		canSkip = skip;
 	}	
 	
 	private void drawBattle_Options() {	
@@ -1764,6 +1856,10 @@ public class UI {
 			}
 			else if (commandNum == 2) {
 				gp.keyH.aPressed = false;
+				
+				gp.gameState = gp.partyState;
+				partyState = party_Main;	
+				
 				commandNum = 0;
 			}
 			else if (commandNum == 3) {
@@ -1836,8 +1932,8 @@ public class UI {
 			gp.keyH.aPressed = false;
 			
 			gp.btlManager.setPlayerMove(commandNum);
-			gp.btlManager.running = true;
-			new Thread(gp.btlManager).start();			
+			gp.btlManager.running = true;			
+			new Thread(gp.btlManager).start();	
 			battleState = battle_Turn;
 			
 			commandNum = 0;
@@ -1929,11 +2025,19 @@ public class UI {
 		if (gp.keyH.aPressed) {
 			gp.keyH.aPressed = false;
 			
+			fighter_one_Y = fighter_one_startY;
+			fighter_two_Y = fighter_two_startY;	
+			
+			battleState = battle_Turn;
+			gp.btlManager.fightStage = gp.btlManager.fight_Swap;
+			
 			if (commandNum == 0) {		
-				
+				gp.gameState = gp.partyState;
+				partyState = party_Main;
 			}
-			else {
-				
+			else {				
+				gp.btlManager.running = true;
+				new Thread(gp.btlManager).start();	
 			}
 			
 			commandNum = 0;	
@@ -2152,10 +2256,12 @@ public class UI {
 		if (tCounter == 50) {
 			tCounter = 0;			
 			
-			//if (gp.btlManager.active) {
+			if (gp.btlManager.running) {
+				new Thread(gp.btlManager).start();	
+				battleState = battle_Encounter;
 				gp.gameState = gp.battleState;	
-			//}
-			//else {
+			}
+			else {
 				gp.player.direction = tDirection;
 				gp.currentMap = gp.eHandler.tempMap;
 				
@@ -2171,7 +2277,7 @@ public class UI {
 				gp.changeArea();
 				
 				gp.gameState = gp.playState;
-			//}
+			}
 		}		
 	}
 	

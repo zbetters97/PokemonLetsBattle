@@ -169,10 +169,6 @@ public class GamePanel extends JPanel implements Runnable {
 		wildLevels.put(petalburg, 4);
 		
 		gameState = playState;
-		
-		btlManager.setBattle(btlManager.wildBattle);
-		ui.battleState = ui.battle_Options;
-		gameState = battleState;
 	}
 	
 	public void setupMusic() {					

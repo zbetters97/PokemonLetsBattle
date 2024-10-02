@@ -11,12 +11,12 @@ import moves.Move;
 import moves.Moves;
 import moves.Move.MoveType;
 import pokemon.Pokemon;
-import properties.Status;
 import properties.Type;
 
-public class BattleManager implements Runnable {
+public class BattleManager extends Thread {
 	
 	private GamePanel gp;
+	public boolean active = false;
 	public boolean running = true;
 	
 	// GENERAL VALUES		
@@ -50,51 +50,28 @@ public class BattleManager implements Runnable {
 	
 	// FIGHT STAGES
 	public int fightStage;
-	public final int fight_Start = 1;
-	public final int fight_Move = 2;
-	public final int fight_Over = 3;
+	public final int fight_Encounter = 1;
+	public final int fight_Swap = 2;
+	public final int fight_Start = 3;
+	public final int fight_Move = 4;
+	public final int fight_Over = 5;	
 			
 	// CONSTRUCTOR
 	public BattleManager(GamePanel gp) {
 		this.gp = gp;
 	}
-			
-	// SETUP
-	public void setBattle(int currentBattle) {
-		
-		gp.stopMusic();	
-								
-		trainer[0] = gp.player;
-		fighter[0] = trainer[0].pokeParty.get(0);
-		fighter[1] = Pokemon.getPokemon("Torchic", 4);
+	public void setup(int currentBattle, Entity trainer, Pokemon pokemon) {
 		
 		battleMode = currentBattle;
-		fightStage = fight_Start;		
-		
-		getBattleMode();
-		
-		gp.ui.fighter_one_HP = fighter[0].getHP();
-		gp.ui.fighter_two_HP = fighter[1].getHP();
+						
+		if (trainer != null) this.trainer[1] = trainer;	
+		else if (pokemon != null) fighter[1] = pokemon;
+
+		active = true;
+		running = true;		
+		fightStage = fight_Encounter;
 	}
-	private void getBattleMode() {
-		
-		switch(battleMode) {
-			case wildBattle:
-//				gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!");	
-				gp.playSE(cry_SE, fighter[1].toString());		
-				gp.playMusic(1, 2);		
-				
-				break;
-			case trainerBattle: {
-//				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nwould like to battle!");				
-				newFighter[1] = trainer[1].pokeParty.get(0);				
-				gp.playMusic(1, 3);
-				
-				break;
-			}
-		}
-	}
-	
+			
 	/** RUN METHOD **/
 	public void run() {		
 		
@@ -102,20 +79,200 @@ public class BattleManager implements Runnable {
 			
 			switch (fightStage) {	
 			
+				case fight_Encounter:
+					try { setBattle(); } 
+					catch (InterruptedException e) { e.printStackTrace(); }					
+					break;
+			
+				case fight_Swap:
+					try { swapFighters(); } 
+					catch (InterruptedException e) { e.printStackTrace(); }
+					break;
+			
 				case fight_Start:					
 					try { checkTurn(); } 
 					catch (InterruptedException e) { e.printStackTrace(); }
 					break;
+					
 				case fight_Move:
 					try { startMove(); } 
 					catch (InterruptedException e) { e.printStackTrace(); }
 					break;
 					
 				case fight_Over:
+					try { getWinningTrainer(); } 
+					catch (InterruptedException e) { e.printStackTrace(); }
+					break;					
+			}		
+		}
+		
+	}
+	
+	private void setBattle() throws InterruptedException {
+		
+		gp.stopMusic();	
+		
+		trainer[0] = gp.player;
+		newFighter[0] = trainer[0].pokeParty.get(0);			
+				
+		getBattleMode();
+	}	
+	private void getBattleMode() throws InterruptedException {
+		
+		switch(battleMode) {
+			case wildBattle:
+				
+				gp.playMusic(1, 2);				
+				pause(1400);
+				
+				gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!", true);	
+				gp.playSE(cry_SE, fighter[1].toString());	
+				gp.ui.fighter_two_HP = fighter[1].getHP();
+				
+				break;
+			case trainerBattle: 
+				
+				gp.playMusic(1, 3);				
+				pause(1400);		
+				
+				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nwould like to battle!", true);				
+				newFighter[1] = trainer[1].pokeParty.get(0);
+				
+				break;			
+		}
+				
+		running = false;
+		fightStage = fight_Swap;
+	}
+	
+	// SWAP POKEMON METHODS
+	private void swapFighters() throws InterruptedException {
+				
+		// WINNER NOT YET DECIDED
+		if (winner == -1) {
+			
+			gp.ui.battleState = gp.ui.battle_Turn;
+									
+			// TRAINER 2 FORCE SWAP OUT
+			if (fighter[1] == null || !fighter[1].isAlive()) {		
+												
+				fighter[1] = newFighter[1];
+				gp.ui.fighter_two_HP = fighter[1].getHP();
+				
+				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nsent out " + fighter[1].getName() + "!");
+				gp.playSE(cry_SE, fighter[1].toString());	
+				pause(1800);
+			}		
+			// TRAINER 1 FORCE SWAP OUT
+			if ((fighter[0] == null || !fighter[0].isAlive()) ||
+					(newFighter[0] != null && newFighter[1] != null)) {	
+				
+				fighter[0] = newFighter[0];
+				gp.ui.fighter_one_HP = fighter[0].getHP();
+				gp.ui.fighter_one_EXP = fighter[0].getXP();
+				
+				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
+				gp.playSE(cry_SE, fighter[0].toString());		
+				pause(1400);
+				
+				newFighter[0] = null;
+				newFighter[1] = null;
+				
+				running = false;		
+				
+				gp.ui.battleState = gp.ui.battle_Options;
+			}	
+			// TRAINER 1 SWAP OUT (SAME TRAINER 2 FIGHTER)
+			else if (newFighter[0] != null && newFighter[1] == null) {
+				
+				fighter[0] = newFighter[0];
+				gp.ui.fighter_one_HP = fighter[0].getHP();
+				gp.ui.fighter_one_EXP = fighter[0].getXP();
+				
+				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
+				gp.playSE(cry_SE, fighter[0].toString());
+				pause(1400);
+				
+				newFighter[0] = null;
+				newFighter[1] = null;
+				
+				fightStage = fight_Start;
+			}						
+		}				
+		// TRAINER HAS WON
+		else {							
+			getWinningTrainer();
+		}
+	}
+	private void getWinningTrainer() throws InterruptedException {
+		
+		if (battleMode == wildBattle) {
+			
+			// TRAINER 1 WINNER
+			if (winner == 0) {				
+				endBattle();	
+			}
+			// WILD POKEMON WINNER
+			else if (winner == 1){
+				
+				// TRAINER 1 HAS MORE POKEMON
+				if (trainer[0].hasPokemon()) {				
+					winner = -1;					
+					gp.ui.partyState = gp.ui.party_Main;
+					gp.gameState = gp.partyState;
+				}
+				// TRAINER 1 OUT OF POKEMON
+				else {
+					
+				}	
+			}			
+		}
+		else {			
+			gp.ui.battleState = gp.ui.battle_Turn;
+			
+			if (winner == 0) {
+				
+				// GET NEW FIGHTER
+				newFighter[1] = cpuSelectNextFighter();	
+				
+				// TRAINER 2 HAS MORE POKEMON
+				if (newFighter[1] != null) {
+					
+					winner = -1;
+					
+					if (trainer[0].getAvailablePokemon() > 1) {
+						gp.ui.addBattleDialogue("Trainer " + trainer[1].name + " is about\nto sent out " + newFighter[1].getName() + "!");
+						pause(1800);						
+						
+						running = false;
+						gp.ui.battleState = gp.ui.battle_Swap;
+					}
+				}
+				// TRAINER 2 OUT OF POKEMON
+				else {									
+					gp.ui.addBattleDialogue("Player defeated\nTrainer " + trainer[1].name + "!");
+					pause(1600);
+					
+					gp.stopMusic();
+					gp.playMusic(1, 0);
+				}	
+			}
+			else if (winner == 1) {
+				
+				// TRAINER 1 HAS MORE POKEMON
+				if (trainer[0].hasPokemon()) {
+					
+					winner = -1;				
+					
 					running = false;
-					fightStage = fight_Start;
-					gp.ui.battleState = gp.ui.battle_Options;
-					break;
+					fightStage = fight_Swap;
+					gp.ui.partyState = gp.ui.party_Main;
+					gp.gameState = gp.partyState;
+				}
+				// TRAINER 1 OUT OF POKEMON
+				else {
+					
+				}		
 			}		
 		}
 	}
@@ -380,105 +537,6 @@ public class BattleManager implements Runnable {
 		}
 	}
 	
-	// SWAP POKEMON METHODS
-	private void swapFighters() {
-		
-		// WINNER NOT YET DECIDED
-		if (winner == -1) {
-			
-			// TRAINER 2 FORCE SWAP OUT
-			if (fighter[1] == null || !fighter[1].isAlive()) {		
-												
-				fighter[1] = newFighter[1];
-				
-//				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nsent out " + fighter[1].getName() + "!");
-				gp.playSE(cry_SE, fighter[1].toString());	
-			}		
-			// TRAINER 1 FORCE SWAP OUT
-			if ((fighter[0] == null || !fighter[0].isAlive()) ||
-					(newFighter[0] != null && newFighter[1] != null)) {	
-				
-				fighter[0] = newFighter[0];
-				
-				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
-				gp.playSE(cry_SE, fighter[0].toString());		
-			}	
-			// TRAINER 1 SWAP OUT (SAME TRAINER 2 FIGHTER)
-			else if (newFighter[0] != null && newFighter[1] == null) {
-				
-				fighter[0] = newFighter[0];
-				
-				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
-				gp.playSE(cry_SE, fighter[0].toString());
-			}			
-
-			newFighter[0] = null;
-			newFighter[1] = null;
-		}		
-		
-		// TRAINER HAS WON
-		else {							
-			getWinningTrainer();
-		}
-	}
-	private void getWinningTrainer() {
-						
-		if (battleMode == wildBattle) {
-			
-			// TRAINER 1 WINNER
-			if (winner == 0) {				
-				endBattle();	
-			}
-			// WILD POKEMON WINNER
-			else if (winner == 1){
-				
-				// TRAINER 1 HAS MORE POKEMON
-				if (trainer[0].hasPokemon()) {				
-					winner = -1;
-					gp.gameState = gp.partyState;
-					gp.ui.partyState = gp.ui.party_Main;
-				}
-				// TRAINER 1 OUT OF POKEMON
-				else {
-					
-				}	
-			}			
-		}
-		else {
-			if (winner == 0) {
-				
-				// GET NEW FIGHTER
-				newFighter[1] = cpuSelectNextFighter();	
-				
-				// TRAINER 2 HAS MORE POKEMON
-				if (newFighter[1] != null) {
-					if (trainer[0].getAvailablePokemon() > 1) {
-						gp.ui.addBattleDialogue("Trainer " + trainer[1].name + " is about\nto sent out " + newFighter[1].getName() + "!");
-					}
-				}
-				// TRAINER 2 OUT OF POKEMON
-				else {									
-					gp.ui.addBattleDialogue("Player defeated\nTrainer " + trainer[1].name + "!");
-					
-					gp.stopMusic();
-					gp.playMusic(1, 0);
-				}	
-			}
-			else if (winner == 1) {
-				
-				// TRAINER 1 HAS MORE POKEMON
-				if (trainer[0].hasPokemon()) {				
-					winner = -1;
-					gp.gameState = gp.partyState;
-					gp.ui.partyState = gp.ui.party_Main;
-				}
-				// TRAINER 1 OUT OF POKEMON
-				else {
-					
-				}		
-			}		
-		}
-	}
 	public boolean swapPokemon(int partySlot) {
 		
 		if (fighter[0] == trainer[0].pokeParty.get(partySlot)) {
@@ -626,22 +684,6 @@ public class BattleManager implements Runnable {
 			bestPokemon = Collections.max(pokemonList.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
 			return bestPokemon;
 		}
-	}
-	private void setSwap() {
-		
-		// POKEMON ALREADY SWAPPED OUT
-		if (winner == -1) {			
-			gp.ui.battleState = gp.ui.battle_Options;	
-		}
-		// INITIATE SWAP OUT
-		else {							
-			
-			if (trainer[0].getAvailablePokemon() > 1) {
-				
-			}
-			
-			winner = -1;
-		}		
 	}
 	
 	// SELECT MOVE METHODS
@@ -1197,10 +1239,12 @@ public class BattleManager implements Runnable {
 			nextTurn = -1;
 			
 			if (getDelayedMove() == 1 || getDelayedMove() == 3) {		
-				
+				fightStage = fight_Start;
 			}
 			else {				
-				fightStage = fight_Over;
+				running = false;
+				fightStage = fight_Start;
+				gp.ui.battleState = gp.ui.battle_Options;
 			}
 		}
 		// CHECK BOTH STATUS CONDITIONS
@@ -1220,7 +1264,7 @@ public class BattleManager implements Runnable {
 					getWinningPokemon();	
 				}
 				else {
-					
+
 				}
 			}
 		}
@@ -1281,7 +1325,7 @@ public class BattleManager implements Runnable {
 			return false;
 		}
 	}
-	public void getWinningPokemon() {
+	public void getWinningPokemon() throws InterruptedException {
 		
 		// TIE GAME
 		if (winner == 2) {
@@ -1293,14 +1337,23 @@ public class BattleManager implements Runnable {
 			int newXP = calculateXP(loser);
 			
 			gp.playSE(faint_SE, fighter[loser].toString());
-			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");			
+			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");		
+			gp.ui.battleState = gp.ui.battle_KO;
+			pause(1400);			
 			
 			fighter[winner].setXP(fighter[winner].getXP() + newXP);
-			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + newXP + " Exp. Points!");									
+			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + newXP + " Exp. Points!");	
+			running = false;
+			
+			fightStage = fight_Swap;
 		}
 		else if (winner == 1) {			
 			gp.playSE(faint_SE, fighter[loser].toString());			
 			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");	
+			gp.ui.battleState = gp.ui.battle_KO;
+			pause(1400);
+
+			fightStage = fight_Over;
 		}
 	}
 	private int calculateXP(int lsr) {
@@ -1393,7 +1446,6 @@ public class BattleManager implements Runnable {
 		
 		double soundDuration = (double)gp.se.getSoundDuration(cat, gp.se.getFile(cat, name));	
 		soundDuration /= 0.06;	
-		soundDuration += 100;
 		
 		Thread.sleep((int) soundDuration);
 	}
