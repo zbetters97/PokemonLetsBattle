@@ -20,6 +20,7 @@ import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
 import event.EventHandler;
+import pokemon.Pokedex;
 import tile.TileManager;
 import tile.tile_interactive.InteractiveTile;
 
@@ -126,7 +127,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public Entity obj_i[][] = new Entity[maxMap][20];
 	public InteractiveTile iTile[][] = new InteractiveTile[maxMap][100];
 	public ArrayList<Entity> particleList = new ArrayList<>();
-	public Map<Integer, Map<String, Integer>> wildEncounters = new HashMap<>();
+	public Map<Integer, Map<Pokedex, Integer>> wildEncounters = new HashMap<>();
 	public Map<Integer, Integer> wildLevels = new HashMap<>();
 	
 /** CONSTRUCTOR **/	
@@ -160,10 +161,10 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		if (fullScreenOn) setFullScreen();
 		
-		Map<String, Integer> encounters_petalburg = new HashMap<>();			
-		encounters_petalburg.put("Geodude", 65);	
-		encounters_petalburg.put("Machop", 30);
-		encounters_petalburg.put("Pikachu", 5);		
+		Map<Pokedex, Integer> encounters_petalburg = new HashMap<>();			
+		encounters_petalburg.put(Pokedex.GEODUDE, 65);	
+		encounters_petalburg.put(Pokedex.MACHOP, 30);
+		encounters_petalburg.put(Pokedex.PIKACHU, 5);		
 		
 		wildEncounters.put(petalburg, encounters_petalburg);
 		wildLevels.put(petalburg, 4);

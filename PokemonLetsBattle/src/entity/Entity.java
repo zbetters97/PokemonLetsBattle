@@ -12,6 +12,7 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import application.GamePanel;
+import pokemon.Pokedex;
 import pokemon.Pokemon;
 
 public class Entity {
@@ -363,6 +364,7 @@ public class Entity {
 	}
 	private Pokemon getWildPokemon() {
 		
+		Pokedex randomPokemon = null;
 		Pokemon wildPokemon = null;	
 		
 		// RANDOM NUM 0-100
@@ -370,15 +372,15 @@ public class Entity {
 		int total = 0;
 		
 		// FOR EACH LIST OF POKEMON FROM LOCATION
-		for (String pName : gp.wildEncounters.get(gp.currentMap).keySet()) {
+		for (Pokedex p : gp.wildEncounters.get(gp.currentMap).keySet()) {
 			
 			// GET PROBABILITY OF POKEMON ENCOUNTER
-			int rate = gp.wildEncounters.get(gp.currentMap).get(pName); 
+			int rate = gp.wildEncounters.get(gp.currentMap).get(p); 
 			total += rate;
 			
 			// POKEMON RANDOMLY SELECTED, ASSIGN NAME AND STOP
 			if (chance <= total) {	
-				name = pName;
+				randomPokemon = p;
 				break;
 			}	
 		}
@@ -388,7 +390,7 @@ public class Entity {
 		int maxLevel = minLevel + 3;
 		int level = new Random().nextInt(maxLevel - minLevel + 1) + minLevel;
 		
-		wildPokemon = Pokemon.getPokemon(name, level);
+		wildPokemon = Pokemon.getPokemon(randomPokemon, level);
 		
 		return wildPokemon;
 	}

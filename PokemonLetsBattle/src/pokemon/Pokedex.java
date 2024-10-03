@@ -14,12 +14,11 @@ import moves.*;
 import properties.*;
 
 /*** POKEDEX ENUM CLASS ***/
-public enum PokemonBase {
+public enum Pokedex {
 	
 	/*** STAT REFERECE https://www.serebii.net/pokemon/
 	/*** EXP & EV REFERENCE https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield_in_Generation_IV ***/
-	/*** XP GROWTH REFERENCE https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_experience_type ***/
-	
+	/*** XP GROWTH REFERENCE https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_experience_type ***/	
 	BULBASAUR ("Bulbasaur", 1, Type.GRASS, 45, 49, 49, 65, 65, 45, 16, 64, 3, 1),
 	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), 60, 62, 63, 80, 80, 60, 32, 141, 3, 2),
 	VENUSAUR ("Venusaur", 3, Arrays.asList(Type.GRASS, Type.POISON), 80, 82, 83, 100, 100, 80, -1, 208, 3, 3),
@@ -67,7 +66,7 @@ public enum PokemonBase {
 	GROUDON ("Groudon", 383, Type.GROUND, 100, 150, 140, 100, 90, 90, -1, 218, 5, 3),
 	RAYQUAZA ("Rayquaza", 384, Arrays.asList(Type.DRAGON, Type.FLYING), 105, 150, 90, 150, 90, 95, -1, 220, 5, 3);
 	/** END INITIALIZE ENUMS **/
-		
+				
 	/** INITIALIZE VALUES**/
 	private final BufferedImage frontSprite, backSprite, menuSprite;
 	private final String name;
@@ -77,11 +76,8 @@ public enum PokemonBase {
 	private int hp, speed, attack, defense, spAttack, spDefense, accuracy, evLevel, ey, growth, ev;	
 	/** END INITIALIZE VALUES **/
 		
-	// initialize list to hold all enums in pokemon class
-	private static List<PokemonBase> POKEDEX = Arrays.asList(PokemonBase.values());
-
 	/** CONSTRUCTORS **/
-	PokemonBase(String name, int index, Type type, int hp, int attack, int defense, 
+	Pokedex(String name, int index, Type type, int hp, int attack, int defense, 
 			int spAttack, int spDefense, int speed, int evLevel, int ey, int growth, int ev) {	
 		
 		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
@@ -104,7 +100,7 @@ public enum PokemonBase {
 		
 		this.types = null;	
 	}
-	PokemonBase(String name, int index, List<Type> types, int hp, int attack, int defense, 
+	Pokedex(String name, int index, List<Type> types, int hp, int attack, int defense, 
 			int spAttack, int spDefense, int speed, int evLevel, int ey, int growth, int ev) {			
 		
 		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
@@ -129,9 +125,11 @@ public enum PokemonBase {
 	}
 	/** END CONSTRUCTORS **/
 	
-
+	// LIST TO HOLD ALL POKEMON ENUMS
+	private static List<Pokedex> PokemonList = Arrays.asList(Pokedex.values());
+	
 	/** POKEMON MOVES STATIC MAP **/
-	private static final Map<PokemonBase, List<Move>> moveMap;
+	private static final Map<Pokedex, List<Move>> moveMap;
 	static {
 		moveMap = new HashMap<>();
 		getMovemap().put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
@@ -198,10 +196,7 @@ public enum PokemonBase {
         getMovemap().put(SUICUNE, Arrays.asList(new Move(Moves.ICEFANG), new Move(Moves.AURORABEAM), new Move(Moves.HYDROPUMP),
         		new Move(Moves.CALMMIND)));
         
-        getMovemap().put(TREECKO, Arrays.asList(new Move(Moves.QUICKATTACK), new Move(Moves.CONFUSERAY), new Move(Moves.FLY), 
-        		new Move(Moves.AGILITY))); 
-        
-//      getMovemap().put(TREECKO, Arrays.asList(new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK), new Move(Moves.LEER)));      
+        getMovemap().put(TREECKO, Arrays.asList(new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK), new Move(Moves.LEER)));      
         getMovemap().put(GROVYLE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.ABSORB), new Move(Moves.CUT),
         		new Move(Moves.AGILITY))); 
         getMovemap().put(SCEPTILE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.LEAFSTORM), new Move(Moves.GIGADRAIN),
@@ -235,34 +230,34 @@ public enum PokemonBase {
 	/** END POKEMON MOVES STATIC MAP **/
 	
 	// pokemon can't evolve if evLevel is -1
-	public boolean canEvolve() { return this.getEvLevel() != -1; }
+	protected boolean canEvolve() { return this.getEvLevel() != -1; }
 			
 	/** GETTERS **/	
-	public BufferedImage getFrontSprite() { return frontSprite; }
-	public BufferedImage getBackSprite() { return backSprite; }
-	public BufferedImage getMenuSprite() { return menuSprite; }
+	protected BufferedImage getFrontSprite() { return frontSprite; }
+	protected BufferedImage getBackSprite() { return backSprite; }
+	protected BufferedImage getMenuSprite() { return menuSprite; }
 	public String getName() { return name; }
-	public int getIndex() {	return index; }	
-	public Type getType() { return type; }
-	public List<Type> getTypes() { return types; }		
-	public int getHP() { return hp; }
-	public int getSpeed() { return speed; }
-	public int getAttack() { return attack; }
-	public int getDefense() { return defense; }
-	public int getSpAttack() { return spAttack; }
-	public int getSpDefense() {	return spDefense; }
-	public int getAccuracy() { return accuracy; }
-	public int getEXPYeild() { return ey; }
-	public int getGrowth() { return growth; }
-	public int getEvLevel() { return evLevel; }
-	public int getEV() { return ev; }		
+	protected int getIndex() {	return index; }	
+	protected Type getType() { return type; }
+	protected List<Type> getTypes() { return types; }		
+	protected int getHP() { return hp; }
+	protected int getSpeed() { return speed; }
+	protected int getAttack() { return attack; }
+	protected int getDefense() { return defense; }
+	protected int getSpAttack() { return spAttack; }
+	protected int getSpDefense() {	return spDefense; }
+	protected int getAccuracy() { return accuracy; }
+	protected int getEXPYeild() { return ey; }
+	protected int getGrowth() { return growth; }
+	protected int getEvLevel() { return evLevel; }
+	protected int getEV() { return ev; }		
 	
-	public static List<PokemonBase> getPOKEDEX() { return POKEDEX; }
-	public static Map<PokemonBase, List<Move>> getMovemap() { return moveMap; }	
+	protected static List<Pokedex> getPokemonList() { return PokemonList; }
+	protected static Map<Pokedex, List<Move>> getMovemap() { return moveMap; }	
 	/** END GETTERS **/
 	
 	// IMAGE MANAGERS
-	public BufferedImage setup(String imagePath, int width, int height) {
+	protected BufferedImage setup(String imagePath, int width, int height) {
 		
 		BufferedImage image = null;
 		

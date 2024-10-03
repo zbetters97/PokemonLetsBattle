@@ -329,7 +329,7 @@ public class BattleManager extends Thread {
 			// 1 if trainer 1 moves first, 2 if trainer 2 moves first
 			// 3 if only trainer 2, 4 if only trainer 1, 5 if neither
 			int numTurn = getFirst();	
-
+			
 			if (numTurn == 1) { 
 				currentTurn = playerTurn;
 				nextTurn = cpuTurn;
@@ -381,15 +381,17 @@ public class BattleManager extends Thread {
 				return 2;
 			else {
 				// if fighter_one is faster
-				if (fighter[0].getSpeed() > fighter[1].getSpeed())
+				if (fighter[0].getSpeed() > fighter[1].getSpeed()) {
 					return 1;
+				}
 				// if both pokemon have equal speed, coin flip decides
 				else if (fighter[0].getSpeed() == fighter[1].getSpeed()) {
-					Random r = new Random();
+					Random r = new Random();					
 					return (r.nextFloat() <= ((float) 1 / 2)) ? 1 : 2;
 				}
-				else
+				else {
 					return 2;
+				}
 			}
 		}
 	}
@@ -442,11 +444,11 @@ public class BattleManager extends Thread {
 	}
 	private boolean asleep(int atk) throws InterruptedException {
 		
-		// if number of moves under condition hit limit, remove condition
-		if (recoverCondition(atk)) {			
+		// if number of moves under status hit limit, remove status
+		if (recoverStatus(atk)) {			
 			return true;
 		}
-		// pokemon still under status condition
+		// pokemon still under status status
 		else {
 			
 			// increase counter
@@ -458,14 +460,14 @@ public class BattleManager extends Thread {
 	}
 	private boolean confused(int atk) throws InterruptedException {
 		
-		gp.playSE(battle_SE, fighter[atk].getStatus().getCondition());
-		typeDialogue(fighter[atk].getName() + " is\n" + fighter[atk].getStatus().getCondition() + "...");
+		gp.playSE(battle_SE, fighter[atk].getStatus().getStatus());
+		typeDialogue(fighter[atk].getName() + " is\n" + fighter[atk].getStatus().getStatus() + "...");
 		
-		// if number of moves under condition hit limit, remove condition
-		if (recoverCondition(atk)) {			
+		// if number of moves under status hit limit, remove status
+		if (recoverStatus(atk)) {			
 			return true;
 		}
-		// pokemon still under status condition
+		// pokemon still under status status
 		else {
 			
 			// increase counter
@@ -503,7 +505,7 @@ public class BattleManager extends Thread {
 				hp = 0;					
 			}									
 			
-			fighter[atk].isHit = true;
+			fighter[atk].setHit(true);
 			gp.playSE(battle_SE, "hit-normal");	
 			decreaseHP(atk, hp);	
 			fighter[atk].getStatus().printStatus(gp, fighter[atk].getName());
@@ -514,14 +516,14 @@ public class BattleManager extends Thread {
 			return false;
 		}
 	}
-	private boolean recoverCondition(int atk) throws InterruptedException {
+	private boolean recoverStatus(int atk) throws InterruptedException {
 		
-		// if first move under condition, set number of moves until free (1-5)
+		// if first move under status, set number of moves until free (1-5)
 		if (fighter[atk].getStatusLimit() == 0) {
 			fighter[atk].setStatusLimit((int)(Math.random() * 5));	
 		}
 		
-		// if number of moves under condition hit limit, remove condition
+		// if number of moves under status hit limit, remove status
 		if (fighter[atk].getStatusCounter() >= fighter[atk].getStatusLimit()) {									
 			
 			Status status = fighter[atk].getStatus();
@@ -880,14 +882,14 @@ public class BattleManager extends Thread {
 			
 			fighter[trg].setStatus(move.getEffect());				
 			
-			gp.playSE(battle_SE, fighter[trg].getStatus().getCondition());
+			gp.playSE(battle_SE, fighter[trg].getStatus().getStatus());
 			typeDialogue(fighter[trg].getName() + " is\n" + 
-					fighter[trg].getStatus().getCondition() + "!");
+					fighter[trg].getStatus().getStatus() + "!");
 		}
 		// pokemon already has status affect
 		else {
 			typeDialogue(fighter[trg].getName() + " is\nalready " + 
-					fighter[trg].getStatus().getCondition() + "!");
+					fighter[trg].getStatus().getStatus() + "!");
 		}
 	}
 	private void attributeMove(int atk, int trg, Move move) throws InterruptedException {
@@ -914,8 +916,7 @@ public class BattleManager extends Thread {
 		else {
 			// loop through each specified attribute to be changed
 			for (String stat : move.getStats()) {
-				typeDialogue(fighter[trg].changeStat(stat, move.getLevel()));
-				
+								
 				// attributes raised
 				if (move.getLevel() > 0) {
 					gp.playSE(battle_SE, "stat-up");
@@ -924,6 +925,8 @@ public class BattleManager extends Thread {
 				else  {
 					gp.playSE(battle_SE, "stat-down");
 				}
+				
+				typeDialogue(fighter[trg].changeStat(stat, move.getLevel()));
 			}
 		}
 	}
@@ -944,7 +947,6 @@ public class BattleManager extends Thread {
 		// no damage dealt
 		if (damage <= 0) {
 			typeDialogue("It had no effect!");
-			pause(1000);
 		}
 		else {							
 			dealDamage(atk, trg, move, damage, crit);
@@ -962,9 +964,11 @@ public class BattleManager extends Thread {
 			chance = 4;
 		
 		Random r = new Random();		
-		return (r.nextFloat() <= ((float) chance / 25)) ? 1.5 : 1;
+		return (r.nextFloat() <= ((float) chance / 25)) ? 1.5 : 1.0;
 	}
 	private int calculateDamage(int atk, int trg, Move move, double crit, boolean cpu) throws InterruptedException {
+		
+		int damage = 0;
 		
 		double level = fighter[atk].getLevel();		
 		double power = (move.getPower() == -1) ? level : move.getPower();		
@@ -992,20 +996,20 @@ public class BattleManager extends Thread {
 				}
 			}
 		}
-		else
+		else {
 			STAB = move.getType() == fighter[atk].getType() ? 1.5 : 1.0;
-
+		}
 		
-
 		// damage formula reference: https://bulbapedia.bulbagarden.net/wiki/Damage (GEN IV)
-		int damageDealt = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
+		damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
 			power * (A / D)) / 50)) + 2) * crit * STAB * type);
 
 		// keep damage dealt less than or equal to remaining HP
-		if (damageDealt > fighter[trg].getHP())
-			damageDealt = fighter[trg].getHP();
+		if (damage > fighter[trg].getHP()) {
+			damage = fighter[trg].getHP();
+		}
 		
-		return damageDealt;
+		return damage;
 	}
 	private double effectiveness(int trg, Type type) {
 		
@@ -1070,28 +1074,11 @@ public class BattleManager extends Thread {
 	private void dealDamage(int atk, int trg, Move move, int damage, double crit) throws InterruptedException {		
 
 		// subtract damage dealt from total hp
-		int result = fighter[trg].getHP() - (int)damage;								
-		
-		// set HP to 0 if below 0
-		if (result <= 0) {
-			result = 0;
-			currentTurn = -1;
-			nextTurn = -1;		
-		}
-		else {
-			applyEffect(atk, trg, move);
-			if (nextTurn != -1) {
-				getFlinch(trg, move);
-			}
-			else {
-				currentTurn = nextTurn;	
-				nextTurn = -1;	
-			}			
-		}		
+		int result = fighter[trg].getHP() - (int)damage;									
 		
 		String hitEffectiveness = getHitSE(effectiveness(trg, move.getType()));		
 		gp.playSE(battle_SE, hitEffectiveness);
-		fighter[trg].isHit = true;
+		fighter[trg].setHit(true);
 		
 		decreaseHP(trg, result);
 		
@@ -1108,6 +1095,23 @@ public class BattleManager extends Thread {
 		}
 		
 		typeDialogue(fighter[trg].getName() + " took\n" + damage + " damage!");	
+		
+		// set HP to 0 if below 0
+		if (result <= 0) {
+			result = 0;
+			currentTurn = -1;
+			nextTurn = -1;		
+		}
+		else {
+			applyEffect(atk, trg, move);
+			if (nextTurn != -1) {
+				getFlinch(trg, move);
+			}
+			else {
+				currentTurn = nextTurn;	
+				nextTurn = -1;	
+			}			
+		}	
 	}
 	private String getHitSE(double effectiveness) throws InterruptedException {
 		
@@ -1148,7 +1152,6 @@ public class BattleManager extends Thread {
 				}
 				
 				typeDialogue(fighter[atk].getName() + "\nabsorbed " + gainedHP + " HP!");
-				pause(1400);
 			}
 		}
 	}
@@ -1186,12 +1189,12 @@ public class BattleManager extends Thread {
 				else {			
 					// if not already affected by a status effect
 					if (fighter[trg].getStatus() == null) {
+						
 						fighter[trg].setStatus(move.getEffect());
 						
+						gp.playSE(battle_SE, fighter[trg].getStatus().getStatus());
 						typeDialogue(fighter[trg].getName() + " is\n" + 
-							fighter[trg].getStatus().getCondition() + "!");
-						
-						pause(1400);
+							fighter[trg].getStatus().getStatus() + "!");						
 					}
 				}
 			}							
@@ -1272,7 +1275,7 @@ public class BattleManager extends Thread {
 					newHP = 0;
 				}
 				
-				fighter[atk].isHit = true;
+				fighter[atk].setHit(true);
 				decreaseHP(atk, newHP);
 				fighter[atk].getStatus().printStatus(gp, fighter[atk].getName());
 			}		

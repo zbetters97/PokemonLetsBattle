@@ -209,8 +209,7 @@ public enum Moves {
 	private boolean goFirst, toSelf, isProtected;	
 	private double probability, damageToSelf, flinch;		
 	private List<String> stats;
-	/** END INITIALIZE VALUES **/
-	
+	/** END INITIALIZE VALUES **/	
 		
 	/** CONSTRUCTORS **/
 	Moves (String name, MoveType mType, Type type, 

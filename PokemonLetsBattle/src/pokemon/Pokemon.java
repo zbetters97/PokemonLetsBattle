@@ -14,7 +14,7 @@ import properties.Type;
 public class Pokemon {
 	
 	/** INITIALIZE VALUES FOR UNIQUE MOVES **/
-	private PokemonBase pokemon;
+	private Pokedex pokemon;
 	private String nickname = null;
 	private char sex;
 	private Nature nature;
@@ -24,13 +24,13 @@ public class Pokemon {
 	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg;
 	private Status status;
 	private boolean isAlive;
-	public boolean isHit = false;
+	private boolean hit = false;
 	private int statusCounter, statusLimit;
 	private List<Move> moveSet;
 	/** END INITIALIZE VALUES **/
 	
 	/** CONSTRUCTORS **/
-	public Pokemon(PokemonBase p, int lvl) {	
+	public Pokemon(Pokedex p, int lvl) {	
 		// STAT FORMULA REFERENCE: https://pokemon.fandom.com/wiki/Statistics
 		
 		pokemon = p;
@@ -77,14 +77,14 @@ public class Pokemon {
 		accuracyStg = 0;
 		
 		status = null;
-		isAlive = true;	
-		
 		statusCounter = 0;
 		statusLimit = 0;
 		
+		isAlive = true;	
+		
 		moveSet = new ArrayList<>();
 	}		
-	public Pokemon(Pokemon old, PokemonBase p) {	
+	public Pokemon(Pokemon old, Pokedex p) {	
 		// STAT FORMULA REFERENCE: https://pokemon.fandom.com/wiki/Statistics
 		
 		pokemon = p;
@@ -126,17 +126,17 @@ public class Pokemon {
 		accuracyStg = 0;
 		
 		status = old.getStatus();
-		isAlive = old.isAlive;
-		
 		statusCounter = 0;
 		statusLimit = 0;
+		
+		isAlive = old.isAlive;		
 		
 		moveSet = old.getMoveSet();
 	}		
 	/** END CONSTRUCTORS **/
 			
 	/** NATURE METHODS **/
-	public void setNature() {
+	private void setNature() {
 								
 		// find which values to increase/decrease
 		int increase = nature.increase();
@@ -162,7 +162,7 @@ public class Pokemon {
 	/** END NATURE METHODS **/
 	
 	/** EXP METHODS **/
-	public int getXP(int level) {		
+	private int getXP(int level) {		
 		/*** XP CALULCATOR REFERENCE https://bulbapedia.bulbagarden.net/wiki/Experience#Experience_at_each_level ***/
 		
 		double xp = 0;		
@@ -283,7 +283,7 @@ public class Pokemon {
 		
 		int nextIndex = oldPokemon.getIndex() + 1;
 		
-		for (PokemonBase base : PokemonBase.getPOKEDEX()) {
+		for (Pokedex base : Pokedex.getPokemonList()) {
 			if (base.getIndex() == nextIndex) {
 				evolvedForm = new Pokemon(oldPokemon, base);				
 				break;
@@ -308,12 +308,12 @@ public class Pokemon {
 	/** END ADD NEW MOVE METHOD **/
 	
 	/** GET POKEMON METHODS **/	
-	public static Pokemon getPokemon(String name, int level) {
+	public static Pokemon getPokemon(Pokedex poke, int level) {
 		
 		Pokemon pokemon = null;
 		
-		for (PokemonBase p : PokemonBase.getPOKEDEX()) {
-			if (p.getName().equals(name)) {
+		for (Pokedex p : Pokedex.getPokemonList()) {
+			if (p == poke) {
 				pokemon = new Pokemon(p, level);
 				break;
 			}
@@ -327,7 +327,7 @@ public class Pokemon {
 		
 		Pokemon pokemon = null;
 		
-		for (PokemonBase p : PokemonBase.getPOKEDEX()) {
+		for (Pokedex p : Pokedex.getPokemonList()) {
 			if (p.getIndex() == index) {
 				pokemon = new Pokemon(p, level);
 				break;
@@ -347,8 +347,8 @@ public class Pokemon {
         if (p.getMoveSet().isEmpty()) {
         	
         	// add each move to passed in pokemon object
-            for (int i = 0; i < PokemonBase.getMovemap().get(p.pokemon).size(); i++) {        	
-            	p.addMove(PokemonBase.getMovemap().get(p.pokemon).get(i));
+            for (int i = 0; i < Pokedex.getMovemap().get(p.pokemon).size(); i++) {        	
+            	p.addMove(Pokedex.getMovemap().get(p.pokemon).get(i));
             } 	
         }
 	}
@@ -422,10 +422,10 @@ public class Pokemon {
 	public void setStatusLimit(int statusLimit) { this.statusLimit = statusLimit; }
 	
 	public boolean isAlive() { return isAlive; }
-	public void setAlive(boolean isAlive) {	this.isAlive = isAlive; this.setStatus(null); }
+	public void setAlive(boolean isAlive) {	this.isAlive = isAlive; this.status = null; }
 	
-	public boolean isHit() { return isHit; }
-	public void setHit(boolean isHit) { this.isHit = isHit; }
+	public boolean getHit() { return hit; }
+	public void setHit(boolean hit) { this.hit = hit; }
 	
 	public List<Move> getMoveSet() { return moveSet; }
 	public void setMoveSet(ArrayList<Move> moveSet) { this.moveSet = moveSet; }

@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import application.GamePanel;
+import pokemon.Pokedex;
 import pokemon.Pokemon;
 
 /** PLAYER CLASS **/
@@ -58,9 +59,9 @@ public class Player extends Entity {
 	
 	// DEFAULT VALUES
 	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon("Treecko", 5));
-		pokeParty.add(Pokemon.getPokemon("Grovyle", 16));
-		pokeParty.add(Pokemon.getPokemon("Sceptile", 36));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.TREECKO, 5));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.GROVYLE, 16));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.SCEPTILE, 36));
 	}
 	public void setDefaultValues() {
 					

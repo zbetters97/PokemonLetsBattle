@@ -15,19 +15,19 @@ public enum Status {
 	FREEZE ("Freeze", "frozen", "FRZ"),
 	SLEEP ("Sleep", "asleep", "SLP");
 
-    private String name, condition, abr;
+    private String name, status, abr;
     
     /** CONSTRUCTOR **/
-    Status(String name, String condition, String abr) {    
+    Status(String name, String status, String abr) {    
     	this.name = name;
-    	this.condition = condition;        
+    	this.status = status;        
     	this.abr = abr;    	
     }
     /** END CONSTRUCTOR **/
 	
 	/** GETTERS **/
     public String getName() { return this.name; }
-    public String getCondition() { return this.condition; }
+    public String getStatus() { return this.status; }
 	public String getAbreviation() { return this.abr; }
 	
 	public Color getColor() {
@@ -50,26 +50,26 @@ public enum Status {
 	
 		switch (this.abr) {  	
 			case ("PAR"): 				
-				gp.playSE(6, condition);
+				gp.playSE(6, status);
 				gp.btlManager.typeDialogue(fighter + " is paralyzed\nand unable to move!");					
 				break;
 	    	case ("PSN"): 	    	
-	    		gp.playSE(6, condition);	
+	    		gp.playSE(6, status);	
 	    		gp.btlManager.typeDialogue(fighter + " is hurt\nfrom the poison!"); 	    	
 	    		break;
 	    	case ("CNF"): 
 	    		gp.btlManager.typeDialogue(fighter + " hurt\nitself in confusion!");	    		
 	    		break;
 	    	case ("BRN"): 
-	    		gp.playSE(6, condition);
+	    		gp.playSE(6, status);
 	    		gp.btlManager.typeDialogue(fighter + " is hurt\nfrom the burn!"); 	    			
 	    		break;
 	    	case ("FRZ"): 
-	    		gp.playSE(6, condition);	
+	    		gp.playSE(6, status);	
 	    		gp.btlManager.typeDialogue(fighter + " is frozen\nsolid!");	    		
 	    		break;
 	    	case ("SLP"): 
-	    		gp.playSE(6, condition);
+	    		gp.playSE(6, status);
 	    		gp.btlManager.typeDialogue(fighter + " is fast\nasleep!"); 	    			
 	    		break;
 		}				
