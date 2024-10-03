@@ -16,7 +16,6 @@ public class Move {
 	private Moves move;
 	private int pp;
 	private int bpp;
-	private int numTurns;
 	private int turns;
 	/** END INITIALIZE VALUES **/
 	
@@ -25,14 +24,8 @@ public class Move {
 		this.move = move;
 		this.pp = move.getpp();
 		this.bpp = pp;
+		this.turns = move.getNumTurns();
 	}	
-	public Move (Moves move, int numTurns) {
-		this.move = move;
-		this.pp = move.getpp();
-		this.bpp = pp;
-		this.numTurns = numTurns;
-		this.turns = numTurns;
-	}
 	/** END CONSTRUCTORS **/
 	
 	/** GETTERS AND SETTERS **/	
@@ -51,8 +44,7 @@ public class Move {
 	public int getTurns() {	return turns; }
 	public void setTurns(int turns) { this.turns = turns; }
 	
-	public int getNumTurns() {	return numTurns; }
-	public void setNumTurns(int numTurns) {	this.numTurns = numTurns; }	
+	public int getNumTurns() {	return move.getNumTurns(); }
 	/** END GETTERS AND SETTERS **/
 	
 	/** GETTERS **/

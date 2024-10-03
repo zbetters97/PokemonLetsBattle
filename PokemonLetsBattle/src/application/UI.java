@@ -46,13 +46,13 @@ public class UI {
 	// DIALOGUE HANDLER	
 	public Entity npc;
 	public String currentDialogue = "";
-	private String battleDialogue;
+	String battleDialogue;
 	public String combinedText = "";
 	public int dialogueCounter = 0;	
 	public int charIndex = 0;	
 	public int textSpeed = 2;
 	public int battleTextSpeed = 1;
-	private boolean canSkip = false;
+	boolean canSkip = false;
 	private BufferedImage dialogue_next;
 	
 	public int commandNum = 0;
@@ -1279,8 +1279,7 @@ public class UI {
 		g2.setColor(new Color(234,233,246));  
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
 		
-		switch(battleState) {		
-		
+		switch(battleState) {				
 			case battle_Encounter:
 				animateBattleEntrance();
 				drawBattle_Dialogue();
@@ -1625,51 +1624,20 @@ public class UI {
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
 		
-		if (battleDialogue != null) {
-		
-			// DIALOGUE TO PRINT
-			if (dialogueCounter >= battleTextSpeed) {
-				
-				char characters[] = battleDialogue.toCharArray();
-										
-				if (charIndex < characters.length) {					
-					String s = String.valueOf(characters[charIndex]);				
-					combinedText += s;
-					currentDialogue = combinedText;					
-					charIndex++;					
-				}				
-				
-				// ALL CHARACTERS PRINTED
-				if (charIndex >= characters.length) {	
-				}
-				
-				dialogueCounter = 0;
-			}
-			else {
-				dialogueCounter++;		
-			}						
+		if (battleDialogue != null) {		
 			
 			// PRINT OUT DIALOGUE
-			for (String line : currentDialogue.split("\n")) {   
+			for (String line : battleDialogue.split("\n")) {   
 	  			text = line;
 	  			drawText(text, x, y, battle_white, Color.BLACK);
 				y += gp.tileSize;
 			} 		
 			
-			// PLAYER CAN ADVANCE DIALOGUE
-			if (canSkip && charIndex >= battleDialogue.toCharArray().length) {
-				
+			// ADVANCE DIALOGUE ICON
+			if (canSkip) {				
 	  			x += (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
 	  			y -= gp.tileSize * 1.4;
-	  			g2.drawImage(dialogue_next, x, y, null);
-	
-	  			if (gp.keyH.aPressed) {		  
-	  				gp.keyH.aPressed = false;
-	  				gp.keyH.playCursorSE();
-	  				gp.btlManager.running = true;
-	  				new Thread(gp.btlManager).start();	
-	  				canSkip = false;
-	  			}
+	  			g2.drawImage(dialogue_next, x, y, null);	  			
 			}
 		}
 	}		
@@ -1682,19 +1650,6 @@ public class UI {
 		
 		drawSubWindow(x, y, width, height, 12, 10, battle_green, battle_red);
 	}		
-	public void addBattleDialogue(String text) {
-		battleDialogue = text;
-		combinedText = "";
-		currentDialogue = "";
-		charIndex = 0;
-	}	
-	public void addBattleDialogue(String text, boolean skip) {
-		battleDialogue = text;
-		combinedText = "";
-		currentDialogue = "";
-		charIndex = 0;
-		canSkip = skip;
-	}	
 	
 	private void drawBattle_Options() {	
 		
@@ -1859,6 +1814,7 @@ public class UI {
 		
 		if (gp.keyH.aPressed) {		
 			gp.keyH.aPressed = false;
+			gp.keyH.playCursorSE();
 			
 			gp.btlManager.setPlayerMove(commandNum);
 			gp.btlManager.running = true;			
@@ -1918,8 +1874,8 @@ public class UI {
 			y += gp.tileSize;
 		}
 		
-		x = (int) (gp.tileSize * 12.5);
-		y = (int) (gp.tileSize * 5.2);
+		x = (int) (gp.tileSize * 12.4);
+		y = (int) (gp.tileSize * 5);
 		width = (int) (gp.tileSize * 3.45);
 		height = (int) (gp.tileSize * 3.2);
 		
@@ -1954,8 +1910,10 @@ public class UI {
 		if (gp.keyH.aPressed) {
 			gp.keyH.aPressed = false;
 			
+			fighter_one_X = fighter_one_startX;
+			fighter_two_X = fighter_two_startX;
 			fighter_one_Y = fighter_one_startY;
-			fighter_two_Y = fighter_two_startY;	
+			fighter_two_Y = fighter_two_startY;			
 			
 			battleState = battle_Turn;
 			gp.btlManager.fightStage = gp.btlManager.fight_Swap;
@@ -2186,8 +2144,17 @@ public class UI {
 			tCounter = 0;			
 			
 			if (gp.btlManager.running) {
-				new Thread(gp.btlManager).start();	
+				
+				battleDialogue = "";
 				battleState = battle_Encounter;
+				
+				fighter_one_X = fighter_one_startX;
+				fighter_two_X = fighter_two_startX;
+				fighter_one_Y = fighter_one_startY;
+				fighter_two_Y = fighter_two_startY;		
+				
+				new Thread(gp.btlManager).start();	
+				
 				gp.gameState = gp.battleState;	
 			}
 			else {

@@ -43,8 +43,8 @@ public enum Moves {
 			"The user releases a horrible aura imbued with dark thoughts. It may also make the target flinch."),
 	DEFENSECURL ("Defense Curl", MoveType.ATTRIBUTE, Type.NORMAL, true, 40, -1, 1, Arrays.asList("defense"), 
 			"The user curls up to conceal weak spots and raise its Defense stat."),
-	DIG ("Dig", MoveType.PHYSICAL, Type.GROUND, 10, 80, 100, false, 
-			"dug\ninto the ground!", "The user burrows, then attacks on the second turn. It can also be used to exit dungeons."),
+	DIG ("Dig", MoveType.PHYSICAL, Type.GROUND, 10, 80, 100, 2, false, "dug\ninto the ground!", 
+			"The user burrows, then attacks on the second turn. It can also be used to exit dungeons."),
 	DOUBLEEDGE ("Double Edge", MoveType.PHYSICAL, Type.STEEL, 10, 80, 100, 0.25, 
 			"A reckless, life- risking tackle. It also damages the user by a fairly large amount, however."),
 	DOUBLEKICK ("Double Kick", MoveType.PHYSICAL, Type.FIGHTING, 35, 60, 100, 
@@ -75,7 +75,7 @@ public enum Moves {
 			"The foe is scorched with\nan intense blast of fire.\nThe target may also be\nleft with a burn."),
 	FLASHCANNON ("Flash Cannon", MoveType.SPECIAL, Type.STEEL, 10, 80, 100, 
 			"The user gathers all its light energy and releases it at once."),
-	FLY ("Fly", MoveType.PHYSICAL, Type.FLYING, 15, 90, 95, false, "took\nflight!", 
+	FLY ("Fly", MoveType.PHYSICAL, Type.FLYING, 15, 90, 95, 2, false, "took\nflight!", 
 			"The user soars, then\nstrikes on the second turn.\nIt can also be used for\nflying to any familiar town."),
 	GIGADRAIN ("Giga Drain", MoveType.SPECIAL, Type.GRASS, 10, 60, 100, 
 			"A nutrient-draining attack. The user's HP is restored by half the damage taken by the target."),
@@ -159,7 +159,7 @@ public enum Moves {
 			"The foe is slammed with a long tail, vines, etc., to inflict damage."),
 	SLASH ("Slash", MoveType.PHYSICAL, Type.NORMAL, 20, 70, 100, 1, 
 			"The foe is attacked with a\nslash of claws, etc.\nIt has a high critical-hit\nratio."),
-	SOLARBEAM ("Solar Beam", MoveType.SPECIAL, Type.GRASS, 10, 180, 100, true, 
+	SOLARBEAM ("Solar Beam", MoveType.SPECIAL, Type.GRASS, 10, 180, 100, 2, true, 
 			"is\ncharging a light beam...", "A two-turn attack. The user gathers light, then blasts a bundled beam on the second turn."),
 	STRUGGLE ("Struggle", MoveType.PHYSICAL, Type.NORMAL, 10, 50, 100, 0.25, "Struggles"),
 	SURF ("Surf", MoveType.SPECIAL, Type.WATER, 15, 95, 100, 
@@ -205,7 +205,7 @@ public enum Moves {
 	private MoveType mType;
 	private Type type;
 	private Status effect;
-	private int pp, power, accuracy, level, crit;
+	private int pp, power, accuracy, level, crit, numTurns;
 	private boolean goFirst, toSelf, isProtected;	
 	private double probability, damageToSelf, flinch;		
 	private List<String> stats;
@@ -216,7 +216,7 @@ public enum Moves {
 	Moves (String name, MoveType mType, Type type, 
 			Status effect, double probability,
 			List<String> stats, boolean toSelf,  
-			int pp, int power, int accuracy, int level, int crit,
+			int pp, int power, int accuracy, int level, int crit, int numTurns,
 			double damageToSelf, double flinch,		
 			boolean goFirst, boolean isProtected,
 			String delay, String info) {
@@ -235,6 +235,7 @@ public enum Moves {
 		this.accuracy = accuracy;
 		this.level = level;
 		this.crit = crit;
+		this.numTurns = numTurns;
 		
 		this.goFirst = goFirst;
 		this.isProtected = isProtected;
@@ -250,7 +251,7 @@ public enum Moves {
 		this(name, mType, type, 
 				null, 0.0, 
 				null, false, 
-				pp, power, accuracy, 0, 0, 
+				pp, power, accuracy, 0, 0, 0,
 				0.0, 0.0, 
 				false, false, 
 				"", info);
@@ -260,7 +261,7 @@ public enum Moves {
 		this(name, mType, type, 
 				null, 0.0, 
 				null, false, 
-				pp, power, accuracy, 0, 0, 
+				pp, power, accuracy, 0, 0, 0,
 				0.0, flinch, 
 				false, false, 
 				"", info);
@@ -269,7 +270,7 @@ public enum Moves {
 		this(name, mType, type, 
 				null, 0.0, 
 				null, false, 
-				pp, power, accuracy, 0, 0, 
+				pp, power, accuracy, 0, 0, 0,
 				damageToSelf, 0.0, 
 				false, false, 
 				"", info);
@@ -278,7 +279,7 @@ public enum Moves {
 		this(name, mType, type, 
 				null, 0.0, 
 				null, false, 
-				pp, power, accuracy, 0, crit, 
+				pp, power, accuracy, 0, crit, 0,
 				0.0, 0.0, 
 				false, false, 
 				"", info);
@@ -287,16 +288,16 @@ public enum Moves {
 		this(name, mType, type, 
 				null, 0.0, 
 				null, false, 
-				pp, power, accuracy, 0, 0, 
+				pp, power, accuracy, 0, 0, 0,
 				0.0, 0.0, 
 				goFirst, false, 
 				"", info);
 	}	
-	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, boolean isProtected, String delay, String info) {
+	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, int numTurns, boolean isProtected, String delay, String info) {
 		this(name, mType, type, 
 				null, 0.0, 
 				null, false, 
-				pp, power, accuracy, 0, 0, 
+				pp, power, accuracy, 0, 0, numTurns,
 				0.0, 0.0, 
 				false, isProtected, 
 				delay, info);
@@ -305,7 +306,7 @@ public enum Moves {
 		this(name, mType, type, 
 				effect, 0.0, 
 				null, false, 
-				pp, 0, accuracy, 0, 0, 
+				pp, 0, accuracy, 0, 0, 0,
 				0.0, 0.0, 
 				false, false, 
 				"", info);
@@ -314,7 +315,7 @@ public enum Moves {
 		this(name, mType, type, 
 				effect, probability, 
 				null, false, 
-				pp, power, accuracy, 0, 0, 
+				pp, power, accuracy, 0, 0, 0,
 				0.0, 0.0, 
 				false, false, 
 				"", info);
@@ -323,7 +324,7 @@ public enum Moves {
 		this(name, mType, type, 
 				effect, probability, 
 				null, false, 
-				pp, power, accuracy, 0, 0, 
+				pp, power, accuracy, 0, 0, 0,
 				0.0, flinch, 
 				false, false, 
 				"", info);
@@ -332,7 +333,7 @@ public enum Moves {
 		this(name, mType, type, 
 				effect, probability, 
 				null, false, 
-				pp, power, accuracy, 0, crit, 
+				pp, power, accuracy, 0, crit, 0,
 				0.0, 0.0, 
 				false, false, 
 				"", info);
@@ -341,7 +342,7 @@ public enum Moves {
 		this(name, mType, type, 
 				null, 0.0, 
 				stats, toSelf, 
-				pp, 0, accuracy, level, 0, 
+				pp, 0, accuracy, level, 0, 0,
 				0.0, 0.0, 
 				false, false, 
 				"", info);
@@ -350,7 +351,7 @@ public enum Moves {
 		this(name, mType, type, 
 				null, probability, 
 				stats, toSelf, 
-				pp, power, accuracy, level, 0, 
+				pp, power, accuracy, level, 0, 0,
 				0.0, 0.0, 
 				false, false, 
 				"", info);
@@ -372,6 +373,7 @@ public enum Moves {
 		else return accuracy; 
 	}
 	public int getPower() {	return power; }	
+	public int getNumTurns() { return numTurns; }
 	public boolean getGoFirst() { return goFirst; }	
 	public boolean getIsProtected() { return isProtected; }	
 	public String getDelay(String name) { return name + " " + delay; }	

@@ -46,32 +46,31 @@ public enum Status {
 	}
 	/** END GETTERS **/
 		
-	public void printStatus(GamePanel gp, String fighter) {
+	public void printStatus(GamePanel gp, String fighter) throws InterruptedException {
 	
 		switch (this.abr) {  	
 			case ("PAR"): 				
-				gp.ui.addBattleDialogue(fighter + " is paralyzed\nand unable to move!");
-				gp.playSE(6, condition);	
+				gp.playSE(6, condition);
+				gp.btlManager.typeDialogue(fighter + " is paralyzed\nand unable to move!");					
 				break;
-	    	case ("PSN"): 
-	    		gp.ui.addBattleDialogue(fighter + " is hurt\nfrom the poison!"); 
+	    	case ("PSN"): 	    	
 	    		gp.playSE(6, condition);	
+	    		gp.btlManager.typeDialogue(fighter + " is hurt\nfrom the poison!"); 	    	
 	    		break;
 	    	case ("CNF"): 
-	    		gp.ui.addBattleDialogue(fighter + " hurt\nitself in confusion!"); 
-	    		gp.playSE(6, "hit-normal");	
+	    		gp.btlManager.typeDialogue(fighter + " hurt\nitself in confusion!");	    		
 	    		break;
 	    	case ("BRN"): 
-	    		gp.ui.addBattleDialogue(fighter + " is hurt\nfrom the burn!"); 
-	    		gp.playSE(6, condition);	
+	    		gp.playSE(6, condition);
+	    		gp.btlManager.typeDialogue(fighter + " is hurt\nfrom the burn!"); 	    			
 	    		break;
 	    	case ("FRZ"): 
-	    		gp.ui.addBattleDialogue(fighter + " is frozen\nsolid!"); 
 	    		gp.playSE(6, condition);	
+	    		gp.btlManager.typeDialogue(fighter + " is frozen\nsolid!");	    		
 	    		break;
 	    	case ("SLP"): 
-	    		gp.ui.addBattleDialogue(fighter + " is fast\nasleep!"); 
-	    		gp.playSE(6, condition);	
+	    		gp.playSE(6, condition);
+	    		gp.btlManager.typeDialogue(fighter + " is fast\nasleep!"); 	    			
 	    		break;
 		}				
 	}

@@ -11,6 +11,7 @@ import moves.Move;
 import moves.Moves;
 import moves.Move.MoveType;
 import pokemon.Pokemon;
+import properties.Status;
 import properties.Type;
 
 public class BattleManager extends Thread {
@@ -107,9 +108,8 @@ public class BattleManager extends Thread {
 		}
 		
 	}
-	
-	private void setBattle() throws InterruptedException {
 		
+	private void setBattle() throws InterruptedException {		
 		gp.stopMusic();	
 		
 		trainer[0] = gp.player;
@@ -125,8 +125,8 @@ public class BattleManager extends Thread {
 				gp.playMusic(1, 2);				
 				pause(1400);
 				
-				gp.ui.addBattleDialogue("A wild " + fighter[1].getName() + "\nappeared!", true);	
 				gp.playSE(cry_SE, fighter[1].toString());	
+				typeDialogue("A wild " + fighter[1].getName() + "\nappeared!", true);	
 				
 				break;
 			case trainerBattle: 
@@ -134,13 +134,12 @@ public class BattleManager extends Thread {
 				gp.playMusic(1, 3);				
 				pause(1400);		
 				
-				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nwould like to battle!", true);				
+				typeDialogue("Trainer " + trainer[1].name + "\nwould like to battle!", true);				
 				newFighter[1] = trainer[1].pokeParty.get(0);
 				
 				break;			
 		}
-				
-		running = false;
+		
 		fightStage = fight_Swap;
 	}
 	
@@ -157,9 +156,9 @@ public class BattleManager extends Thread {
 												
 				fighter[1] = newFighter[1];
 				
-				gp.ui.addBattleDialogue("Trainer " + trainer[1].name + "\nsent out " + fighter[1].getName() + "!");
 				gp.playSE(cry_SE, fighter[1].toString());	
-				pause(1800);
+				typeDialogue("Trainer " + trainer[1].name + "\nsent out " + fighter[1].getName() + "!");				
+				pause(100);
 			}		
 			// TRAINER 1 FORCE SWAP OUT
 			if ((fighter[0] == null || !fighter[0].isAlive()) ||
@@ -167,9 +166,9 @@ public class BattleManager extends Thread {
 				
 				fighter[0] = newFighter[0];
 				
-				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
-				gp.playSE(cry_SE, fighter[0].toString());		
-				pause(1400);
+				gp.playSE(cry_SE, fighter[0].toString());	
+				typeDialogue("GO, " + fighter[0].getName() + "!");					
+				pause(100);
 				
 				newFighter[0] = null;
 				newFighter[1] = null;
@@ -183,9 +182,9 @@ public class BattleManager extends Thread {
 				
 				fighter[0] = newFighter[0];
 				
-				gp.ui.addBattleDialogue("GO, " + fighter[0].getName() + "!");
 				gp.playSE(cry_SE, fighter[0].toString());
-				pause(1400);
+				typeDialogue("GO, " + fighter[0].getName() + "!");	
+				pause(100);
 				
 				newFighter[0] = null;
 				newFighter[1] = null;
@@ -211,7 +210,8 @@ public class BattleManager extends Thread {
 		if (battleMode == wildBattle) {
 			
 			// TRAINER 1 WINNER
-			if (winner == 0) {				
+			if (winner == 0) {		
+				pause(1000);
 				endBattle();	
 			}
 			// WILD POKEMON WINNER
@@ -225,7 +225,8 @@ public class BattleManager extends Thread {
 				}
 				// TRAINER 1 OUT OF POKEMON
 				else {
-					
+					pause(1000);
+					endBattle();	
 				}	
 			}			
 		}
@@ -243,17 +244,15 @@ public class BattleManager extends Thread {
 					winner = -1;
 					
 					if (trainer[0].getAvailablePokemon() > 1) {
-						gp.ui.addBattleDialogue("Trainer " + trainer[1].name + " is about\nto sent out " + newFighter[1].getName() + "!");
-						pause(1800);						
-						
+						typeDialogue("Trainer " + trainer[1].name + " is about\nto sent out " + newFighter[1].getName() + "!", true);
+												
 						running = false;
 						gp.ui.battleState = gp.ui.battle_Swap;
 					}
 				}
 				// TRAINER 2 OUT OF POKEMON
 				else {									
-					gp.ui.addBattleDialogue("Player defeated\nTrainer " + trainer[1].name + "!");
-					pause(1600);
+					typeDialogue("Player defeated\nTrainer " + trainer[1].name + "!", true);
 					
 					gp.stopMusic();
 					gp.playMusic(1, 0);
@@ -420,7 +419,6 @@ public class BattleManager extends Thread {
 		int val = 1 + (int)(Math.random() * 4);
 		if (val == 1) {		
 			fighter[atk].getStatus().printStatus(gp, fighter[atk].getName());
-			pause(1400);
 			return false;
 		} 
 		else {
@@ -432,13 +430,13 @@ public class BattleManager extends Thread {
 		// 1/4 chance attacker can thaw from ice
 		int val = 1 + (int)(Math.random() * 4);
 		if (val == 1) {
-			gp.ui.addBattleDialogue(fighter[atk].getName() + "" + fighter[atk].getStatus().printRecover());
+			Status status = fighter[atk].getStatus();
 			fighter[atk].setStatus(null);
+			typeDialogue(fighter[atk].getName() + "" + status.printRecover());			
 			return true;
 		}
 		else {	
 			fighter[atk].getStatus().printStatus(gp, fighter[atk].getName());
-			pause(1400);
 			return false;		
 		}
 	}
@@ -454,16 +452,14 @@ public class BattleManager extends Thread {
 			// increase counter
 			fighter[atk].setStatusCounter(fighter[atk].getStatusCounter() + 1);
 			fighter[atk].getStatus().printStatus(gp, fighter[atk].getName());
-			pause(1400);
 			
 			return false;
 		}
 	}
 	private boolean confused(int atk) throws InterruptedException {
 		
-		gp.ui.addBattleDialogue(fighter[atk].getName() + " is\n" + fighter[atk].getStatus().getCondition() + "...");
 		gp.playSE(battle_SE, fighter[atk].getStatus().getCondition());
-		pause(1400);
+		typeDialogue(fighter[atk].getName() + " is\n" + fighter[atk].getStatus().getCondition() + "...");
 		
 		// if number of moves under condition hit limit, remove condition
 		if (recoverCondition(atk)) {			
@@ -504,12 +500,13 @@ public class BattleManager extends Thread {
 			
 			// pokemon defeated itself in confusion damage
 			if (hp <= 0) {
-				hp = 0;						
-			}
+				hp = 0;					
+			}									
 			
-			fighter[atk].setHP(hp);					
+			fighter[atk].isHit = true;
+			gp.playSE(battle_SE, "hit-normal");	
+			decreaseHP(atk, hp);	
 			fighter[atk].getStatus().printStatus(gp, fighter[atk].getName());
-			pause(1400);
 			
 			return true;	
 		}
@@ -525,12 +522,13 @@ public class BattleManager extends Thread {
 		}
 		
 		// if number of moves under condition hit limit, remove condition
-		if (fighter[atk].getStatusCounter() >= fighter[atk].getStatusLimit()) {
-									
-			gp.ui.addBattleDialogue(fighter[atk].getName() + fighter[atk].getStatus().printRecover());	
-			fighter[atk].setStatusCounter(0); fighter[atk].setStatusLimit(0);
+		if (fighter[atk].getStatusCounter() >= fighter[atk].getStatusLimit()) {									
+			
+			Status status = fighter[atk].getStatus();
+			fighter[atk].setStatusCounter(0); 
+			fighter[atk].setStatusLimit(0);			
 			fighter[atk].setStatus(null);
-			pause(1400);
+			typeDialogue(fighter[atk].getName() + status.printRecover());				
 			
 			return true;
 		}
@@ -765,11 +763,9 @@ public class BattleManager extends Thread {
 	}	
 	private void useMove(int atk, int trg, Move atkMove, Move trgMove) throws InterruptedException {		
 				
-		gp.ui.addBattleDialogue(fighter[atk].getName() + " used\n" + atkMove.toString() + "!"); 
-		pause(800); 
-		
 		// if not delayed move or delayed move is ready
-		if (1 >= atkMove.getTurns()) {	
+		if (atkMove.getTurns() <= 1) {	
+			typeDialogue(fighter[atk].getName() + " used\n" + atkMove.toString() + "!", false); 
 			playSE(moves_SE, atkMove.getName());
 			
 			// reset turns to wait
@@ -782,10 +778,9 @@ public class BattleManager extends Thread {
 		}
 		// delayed move is used for first time
 		else if (atkMove.getTurns() == atkMove.getNumTurns()) {
-					
-			gp.ui.addBattleDialogue(atkMove.getDelay(fighter[atk].getName()));	
-			pause(1300);
-									
+			typeDialogue(fighter[atk].getName() + " used\n" + atkMove.toString() + "!");
+			typeDialogue(atkMove.getDelay(fighter[atk].getName()));				
+			
 			// reduce number of turns to wait
 			atkMove.setTurns(atkMove.getTurns() - 1);	
 			
@@ -850,8 +845,7 @@ public class BattleManager extends Thread {
 		}
 		// attack missed
 		else {
-			gp.ui.addBattleDialogue("The attack missed!");
-			pause(1400);
+			typeDialogue("The attack missed!");
 			currentTurn = nextTurn;	
 			nextTurn = -1;
 		}			
@@ -884,21 +878,17 @@ public class BattleManager extends Thread {
 		// if pokemon does not already have status affect
 		if (fighter[trg].getStatus() == null) {
 			
-			fighter[trg].setStatus(move.getEffect());	
-			
-			
-			gp.ui.addBattleDialogue(fighter[trg].getName() + " is\n" + 
-					fighter[trg].getStatus().getCondition() + "!");
+			fighter[trg].setStatus(move.getEffect());				
 			
 			gp.playSE(battle_SE, fighter[trg].getStatus().getCondition());
+			typeDialogue(fighter[trg].getName() + " is\n" + 
+					fighter[trg].getStatus().getCondition() + "!");
 		}
 		// pokemon already has status affect
 		else {
-			gp.ui.addBattleDialogue(fighter[trg].getName() + " is\nalready " + 
+			typeDialogue(fighter[trg].getName() + " is\nalready " + 
 					fighter[trg].getStatus().getCondition() + "!");
 		}
-		
-		pause(1400);
 	}
 	private void attributeMove(int atk, int trg, Move move) throws InterruptedException {
 		
@@ -906,8 +896,7 @@ public class BattleManager extends Thread {
 		if (move.isToSelf()) {
 			
 			// loop through each specified attribute to be changed
-			for (String stat : move.getStats()) {
-				gp.ui.addBattleDialogue(fighter[atk].changeStat(stat, move.getLevel()));	
+			for (String stat : move.getStats()) {				
 				
 				// attributes raised
 				if (move.getLevel() > 0) {
@@ -918,14 +907,14 @@ public class BattleManager extends Thread {
 					gp.playSE(battle_SE, "stat-down");
 				}
 				
-				pause(1400);
+				typeDialogue(fighter[atk].changeStat(stat, move.getLevel()));	
 			}
 		}
 		// if move changes target attributes
 		else {
 			// loop through each specified attribute to be changed
 			for (String stat : move.getStats()) {
-				gp.ui.addBattleDialogue(fighter[trg].changeStat(stat, move.getLevel()));
+				typeDialogue(fighter[trg].changeStat(stat, move.getLevel()));
 				
 				// attributes raised
 				if (move.getLevel() > 0) {
@@ -935,8 +924,6 @@ public class BattleManager extends Thread {
 				else  {
 					gp.playSE(battle_SE, "stat-down");
 				}
-				
-				pause(1400);
 			}
 		}
 	}
@@ -956,8 +943,8 @@ public class BattleManager extends Thread {
 	
 		// no damage dealt
 		if (damage <= 0) {
-			gp.ui.addBattleDialogue("It had no effect!");
-			pause(1400);
+			typeDialogue("It had no effect!");
+			pause(1000);
 		}
 		else {							
 			dealDamage(atk, trg, move, damage, crit);
@@ -1100,34 +1087,27 @@ public class BattleManager extends Thread {
 				currentTurn = nextTurn;	
 				nextTurn = -1;	
 			}			
-		}
-		
-		String hitEffectiveness = getHitSE(effectiveness(trg, move.getType()));
-		gp.playSE(battle_SE, hitEffectiveness);
-		
-		fighter[trg].isHit = true;
-		while (fighter[trg].getHP() > result) {			
-			fighter[trg].setHP(fighter[trg].getHP() - 1);
-			pause(50);
 		}		
 		
+		String hitEffectiveness = getHitSE(effectiveness(trg, move.getType()));		
+		gp.playSE(battle_SE, hitEffectiveness);
+		fighter[trg].isHit = true;
+		
+		decreaseHP(trg, result);
+		
 		if (hitEffectiveness.equals("hit-super")) {
-			gp.ui.addBattleDialogue("It's super effective!");
-			pause(1400);
+			typeDialogue("It's super effective!");
 		}
 		else if (hitEffectiveness.equals("hit-weak")) {
-			gp.ui.addBattleDialogue("It's not very effective...");
-			pause(1400);
+			typeDialogue("It's not very effective...");
 		}
 		
 		// if critical hit
 		if (crit == 1.5) {
-			gp.ui.addBattleDialogue("A critical hit!");
-			pause(1400);
+			typeDialogue("A critical hit!");
 		}
 		
-		gp.ui.addBattleDialogue(fighter[trg].getName() + " took\n" + damage + " damage!");	
-		pause(1200);
+		typeDialogue(fighter[trg].getName() + " took\n" + damage + " damage!");	
 	}
 	private String getHitSE(double effectiveness) throws InterruptedException {
 		
@@ -1150,6 +1130,7 @@ public class BattleManager extends Thread {
 				move.getName().equals(Moves.GIGADRAIN.getName())) {
 			
 			int gainedHP = (damage / 2);
+			int result = fighter[atk].getHP() + gainedHP;
 			
 			// if attacker not at full health
 			if (fighter[atk].getHP() != fighter[atk].getBHP()) {
@@ -1158,20 +1139,20 @@ public class BattleManager extends Thread {
 				if (gainedHP + fighter[atk].getHP() > fighter[atk].getBHP()) {
 					
 					// gained hp is set to amount need to hit hp limit									
-					gainedHP = fighter[atk].getBHP() - fighter[atk].getHP();
+					gainedHP = fighter[atk].getBHP() - fighter[atk].getHP();					
 					
-					// refill hp to limit
-					fighter[atk].setHP(fighter[atk].getBHP());
+					increaseHP(atk, fighter[atk].getBHP());					
 				}
-				else 
-					fighter[atk].setHP(gainedHP + fighter[atk].getHP()); 
+				else {		
+					increaseHP(atk, result);
+				}
 				
-				gp.ui.addBattleDialogue(fighter[atk].getName() + "\nabsorbed " + gainedHP + " HP!");
+				typeDialogue(fighter[atk].getName() + "\nabsorbed " + gainedHP + " HP!");
 				pause(1400);
 			}
 		}
 	}
-	private void getRecoil(int atk, int trg, Move move, int damage) {
+	private void getRecoil(int atk, int trg, Move move, int damage) throws InterruptedException {
 		
 		if (move.getSelfInflict() != 0.0) {	
 			
@@ -1187,8 +1168,8 @@ public class BattleManager extends Thread {
 				nextTurn = -1;		
 			}
 			
-			fighter[atk].setHP(result);
-			gp.ui.addBattleDialogue(fighter[atk].getName() + " was hit\nwith recoil damage!");	
+			decreaseHP(atk, result);
+			typeDialogue(fighter[atk].getName() + " was hit\nwith recoil damage!");	
 		}
 	}
 	private void applyEffect(int atk, int trg, Move move) throws InterruptedException {
@@ -1207,7 +1188,7 @@ public class BattleManager extends Thread {
 					if (fighter[trg].getStatus() == null) {
 						fighter[trg].setStatus(move.getEffect());
 						
-						gp.ui.addBattleDialogue(fighter[trg].getName() + " is\n" + 
+						typeDialogue(fighter[trg].getName() + " is\n" + 
 							fighter[trg].getStatus().getCondition() + "!");
 						
 						pause(1400);
@@ -1216,13 +1197,13 @@ public class BattleManager extends Thread {
 			}							
 		}
 	}
-	private void getFlinch(int trg, Move move) {
+	private void getFlinch(int trg, Move move) throws InterruptedException {
 		
 		if (move.getFlinch() != 0.0) {
 			
 			// chance for move to cause flinch
 			if (new Random().nextDouble() <= move.getFlinch()) {
-				gp.ui.addBattleDialogue(fighter[trg].getName() + " flinched!");
+				typeDialogue(fighter[trg].getName() + " flinched!");
 				
 				currentTurn = -1;	
 				nextTurn = -1;	
@@ -1291,9 +1272,9 @@ public class BattleManager extends Thread {
 					newHP = 0;
 				}
 				
-				fighter[atk].setHP(newHP);	
+				fighter[atk].isHit = true;
+				decreaseHP(atk, newHP);
 				fighter[atk].getStatus().printStatus(gp, fighter[atk].getName());
-				pause(1400);
 			}		
 		}	
 	}
@@ -1334,35 +1315,37 @@ public class BattleManager extends Thread {
 		
 		// TIE GAME
 		if (winner == 2) {
-			gp.ui.addBattleDialogue(fighter[0].getName() + " fainted!");
-			gp.ui.addBattleDialogue(fighter[1].getName() + " fainted!");
-			gp.ui.addBattleDialogue("It's a draw!");
+			typeDialogue(fighter[0].getName() + " fainted!");
+			typeDialogue(fighter[1].getName() + " fainted!");
+			typeDialogue("It's a draw!");
 		}
 		else if (winner == 0) {
 			int newXP = calculateXP(loser);
 			
-			gp.playSE(faint_SE, fighter[loser].toString());
-			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");		
 			gp.ui.battleState = gp.ui.battle_KO;
-			pause(1400);			
+			
+			gp.playSE(faint_SE, fighter[loser].toString());
+			typeDialogue(fighter[loser].getName() + " fainted!");	
 			
 			int xp = fighter[winner].getXP() + newXP;
-			gp.ui.addBattleDialogue(fighter[winner].getName() + " gained\n" + newXP + " Exp. Points!");	
+			typeDialogue(fighter[winner].getName() + " gained\n" + newXP + " Exp. Points!");	
 			
 			while (fighter[winner].getXP() < xp) {
 				
 				fighter[winner].setXP(fighter[winner].getXP() + 1);
-				pause(25);
+				pause(35);
 				
 				// FIGHTER LEVELED UP
 				if (fighter[winner].getXP() >= gp.btlManager.fighter[0].getBXP() + gp.btlManager.fighter[0].getNextXP()) {			
 					
-					gp.ui.addBattleDialogue(fighter[0].getName() + " grew to\nLv. " + 
-							(fighter[0].getLevel() + 1) + "!");
-					
-					gp.btlManager.fighter[0].levelUp();			
+					gp.btlManager.fighter[0].levelUp();	
 					gp.ui.battleState = gp.ui.battle_LevelUp;
-					pause(1600);
+					
+					typeDialogue(fighter[0].getName() + " grew to\nLv. " + 
+							(fighter[0].getLevel()) + "!", true);						
+					
+					
+					gp.ui.battleState = gp.ui.battle_Turn;
 				}	
 			}
 			
@@ -1370,10 +1353,11 @@ public class BattleManager extends Thread {
 			fightStage = fight_Swap;
 		}
 		else if (winner == 1) {			
-			gp.playSE(faint_SE, fighter[loser].toString());			
-			gp.ui.addBattleDialogue(fighter[loser].getName() + " fainted!");	
+			
 			gp.ui.battleState = gp.ui.battle_KO;
-			pause(1400);
+			
+			gp.playSE(faint_SE, fighter[loser].toString());			
+			typeDialogue(fighter[loser].getName() + " fainted!");				
 
 			fightStage = fight_Over;
 		}
@@ -1394,7 +1378,7 @@ public class BattleManager extends Thread {
 	}	
 	
 	// BATTLE END METHODS
-	private void setVictory() {
+	private void setVictory() throws InterruptedException {
 		
 		// TRAINER 1 WINNER
 		if (winner == 0) {
@@ -1410,11 +1394,11 @@ public class BattleManager extends Thread {
 				trainer[loser].hasBattle = false;
 				
 				int dialogueSet = trainer[loser].dialogueSet + 1;
-				gp.ui.addBattleDialogue(trainer[loser].dialogues[dialogueSet][0]);
+				typeDialogue(trainer[loser].dialogues[dialogueSet][0]);
 				
 				int moneyEarned = getMoney();
 				trainer[winner].money += moneyEarned;
-				gp.ui.addBattleDialogue(trainer[winner].name + " got $" + moneyEarned + "\nfor winning!" );								
+				typeDialogue(trainer[winner].name + " got $" + moneyEarned + "\nfor winning!" );								
 			}	
 		}
 		// TRAINER 2 WINNER
@@ -1438,7 +1422,7 @@ public class BattleManager extends Thread {
 	}
 	public void endBattle() {
 		gp.stopMusic();
-		
+				
 		currentTurn = -1;
 		nextTurn = -1;
 		
@@ -1446,6 +1430,8 @@ public class BattleManager extends Thread {
 		fighter[1] = null;
 		newFighter[0] = null;
 		newFighter[1] = null;
+		trainer[0] = null;
+		trainer[1] = null;
 		
 		move1 = null;
 		move2 = null;
@@ -1453,12 +1439,62 @@ public class BattleManager extends Thread {
 		winner = -1;
 		loser = -1;
 		
-		gp.particleList.clear();
+		fightStage = fight_Encounter;
 		
+		active = false;
+		running = false;
+		
+		gp.particleList.clear();
 		gp.gameState = gp.evolveState;
 	}
 	
 	// MISC HANDLERS
+	public void typeDialogue(String dialogue) throws InterruptedException {
+		
+		gp.ui.battleDialogue = "";
+		
+		for (char letter : dialogue.toCharArray()) {
+			gp.ui.battleDialogue += letter;
+			pause(35);
+		}		
+		
+		pause(1000);
+	}
+	public void typeDialogue(String dialogue, boolean canSkip) throws InterruptedException {
+		
+		gp.ui.battleDialogue = "";
+		
+		for (char letter : dialogue.toCharArray()) {
+			gp.ui.battleDialogue += letter;
+			pause(35);
+		}		
+		
+		if (canSkip) {
+			gp.ui.canSkip = true;
+			waitForKeyPress();
+			gp.ui.canSkip = false;
+			gp.keyH.aPressed = false;
+		}
+	}
+	private void waitForKeyPress() throws InterruptedException {
+		while (!gp.keyH.aPressed) {
+			pause(5);
+		}
+	}	
+	private void increaseHP(int target, int newHP) throws InterruptedException {
+		
+		while (fighter[target].getHP() < newHP) {			
+			fighter[target].setHP(fighter[target].getHP() + 1);
+			pause(50);
+		}	 
+	}
+	private void decreaseHP(int target, int newHP) throws InterruptedException {
+		
+		while (newHP < fighter[target].getHP()) {			
+			fighter[target].setHP(fighter[target].getHP() - 1);
+			pause(50);
+		}	 
+	}
 	private void pause(int time) throws InterruptedException {
 		Thread.sleep(time); 
 	}

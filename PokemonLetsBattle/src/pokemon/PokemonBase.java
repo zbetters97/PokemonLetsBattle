@@ -137,14 +137,14 @@ public enum PokemonBase {
 		getMovemap().put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
         getMovemap().put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
         		new Move(Moves.TACKLE)));
-		getMovemap().put(VENUSAUR, Arrays.asList(new Move(Moves.PETALBLIZZARD), new Move(Moves.SOLARBEAM, 2), new Move(Moves.TAKEDOWN), 
+		getMovemap().put(VENUSAUR, Arrays.asList(new Move(Moves.PETALBLIZZARD), new Move(Moves.SOLARBEAM), new Move(Moves.TAKEDOWN), 
 				new Move(Moves.DOUBLEEDGE)));
 		
         getMovemap().put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
 		getMovemap().put(CHARMELEON, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.EMBER), new Move(Moves.SLASH), 
 				new Move(Moves.GROWL)));
         getMovemap().put(CHARIZARD, Arrays.asList(new Move(Moves.FLAMETHROWER), new Move(Moves.FLAREBLITZ),new Move(Moves.DRAGONBREATH),
-        	new Move(Moves.FLY, 2)));
+        	new Move(Moves.FLY)));
  
 		getMovemap().put(SQUIRTLE, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.TAILWHIP)));
         getMovemap().put(WARTORTLE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.WATERGUN), new Move(Moves.TAILWHIP)));
@@ -170,7 +170,7 @@ public enum PokemonBase {
         getMovemap().put(GEODUDE, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.TACKLE), new Move(Moves.DEFENSECURL)));
         getMovemap().put(GRAVELER, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.ROLLOUT), new Move(Moves.TACKLE),
         		new Move(Moves.DEFENSECURL)));
-        getMovemap().put(GOLEM, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.DIG, 2), new Move(Moves.HEAVYSLAM), 
+        getMovemap().put(GOLEM, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.DIG), new Move(Moves.HEAVYSLAM), 
         		new Move(Moves.DOUBLEEDGE)));
         
         getMovemap().put(GASTLY, Arrays.asList(new Move(Moves.LICK), new Move(Moves.PAYBACK), new Move(Moves.HYPNOSIS)));   
@@ -198,7 +198,10 @@ public enum PokemonBase {
         getMovemap().put(SUICUNE, Arrays.asList(new Move(Moves.ICEFANG), new Move(Moves.AURORABEAM), new Move(Moves.HYDROPUMP),
         		new Move(Moves.CALMMIND)));
         
-        getMovemap().put(TREECKO, Arrays.asList(new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK), new Move(Moves.LEER))); 
+        getMovemap().put(TREECKO, Arrays.asList(new Move(Moves.QUICKATTACK), new Move(Moves.CONFUSERAY), new Move(Moves.FLY), 
+        		new Move(Moves.AGILITY))); 
+        
+//      getMovemap().put(TREECKO, Arrays.asList(new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK), new Move(Moves.LEER)));      
         getMovemap().put(GROVYLE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.ABSORB), new Move(Moves.CUT),
         		new Move(Moves.AGILITY))); 
         getMovemap().put(SCEPTILE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.LEAFSTORM), new Move(Moves.GIGADRAIN),
@@ -225,9 +228,9 @@ public enum PokemonBase {
         getMovemap().put(KYOGRE, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.THUNDER),
         		new Move(Moves.CALMMIND)));
         getMovemap().put(GROUDON, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.FIREFANG), new Move(Moves.DRAGONCLAW), 
-        		new Move(Moves.SOLARBEAM, 2)));
+        		new Move(Moves.SOLARBEAM)));
         getMovemap().put(RAYQUAZA, Arrays.asList(new Move(Moves.DRAGONCLAW), new Move(Moves.EXTREMESPEED), new Move(Moves.BLIZZARD), 
-        		new Move(Moves.FLY, 2))); 
+        		new Move(Moves.FLY))); 
 	}
 	/** END POKEMON MOVES STATIC MAP **/
 	
