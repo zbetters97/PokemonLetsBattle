@@ -442,6 +442,8 @@ public class Pokemon {
 	public List<Type> getTypes() { return pokemon.getTypes(); }		
 	public Nature getNature() { return this.nature; }		
 	
+	public int getCatchRate() { return pokemon.getCatchRate(); }
+	
 	public BufferedImage getFrontSprite() { return pokemon.getFrontSprite(); }
 	public BufferedImage getBackSprite() { return pokemon.getBackSprite(); }
 	public BufferedImage getMenuSprite() { return pokemon.getMenuSprite(); }	

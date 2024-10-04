@@ -26,6 +26,7 @@ public class BattleManager extends Thread {
 	public Pokemon[] newFighter = new Pokemon[2];
 	public Move move1, move2;
 	public int winner = -1, loser = -1;	
+	private int escapeAttempts = 0;
 			
 	// TURN VALUES
 	public int currentTurn;
@@ -56,6 +57,7 @@ public class BattleManager extends Thread {
 	public final int fight_Start = 3;
 	public final int fight_Move = 4;
 	public final int fight_Over = 5;	
+	public final int fight_Run = 6;
 			
 	// CONSTRUCTOR
 	public BattleManager(GamePanel gp) {
@@ -103,7 +105,12 @@ public class BattleManager extends Thread {
 				case fight_Over:
 					try { getWinningTrainer(); } 
 					catch (InterruptedException e) { e.printStackTrace(); }
-					break;					
+					break;				
+					
+				case fight_Run:
+					try { escapeBattle(); } 
+					catch (InterruptedException e) { e.printStackTrace(); }				
+					break;
 			}		
 		}
 		
@@ -947,6 +954,8 @@ public class BattleManager extends Thread {
 		// no damage dealt
 		if (damage <= 0) {
 			typeDialogue("It had no effect!");
+			currentTurn = nextTurn;	
+			nextTurn = -1;	
 		}
 		else {							
 			dealDamage(atk, trg, move, damage, crit);
@@ -967,12 +976,13 @@ public class BattleManager extends Thread {
 		return (r.nextFloat() <= ((float) chance / 25)) ? 1.5 : 1.0;
 	}
 	private int calculateDamage(int atk, int trg, Move move, double crit, boolean cpu) throws InterruptedException {
+		// DAMAGE FORMULA REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Damage (GEN IV)
 		
 		int damage = 0;
 		
 		double level = fighter[atk].getLevel();		
 		double power = (move.getPower() == -1) ? level : move.getPower();		
-		double A = 1.0, D = 1.0, STAB = 1.0, type = 1.0;
+		double A = 1.0, D = 1.0, STAB = 1.0, type1 = 1.0, type2 = 2.0, random = 1.0;
 
 		if (move.getMType().equals(MoveType.SPECIAL)) {
 			A = fighter[atk].getSpAttack();
@@ -982,6 +992,9 @@ public class BattleManager extends Thread {
 			A = fighter[atk].getAttack();
 			D = fighter[trg].getDefense();
 		}
+		
+		Random r = new Random();
+		random = (double) (r.nextInt(100 - 85 + 1) + 85) / 100.0;
 		
 		// if attacker has more than 1 type
 		if (fighter[atk].getTypes() != null) {	
@@ -1000,22 +1013,55 @@ public class BattleManager extends Thread {
 			STAB = move.getType() == fighter[atk].getType() ? 1.5 : 1.0;
 		}
 		
-		// damage formula reference: https://bulbapedia.bulbagarden.net/wiki/Damage (GEN IV)
+		if (fighter[trg].getTypes() == null) {
+			Type trgType = fighter[trg].getType();
+			type1 = effectiveness(trgType, move.getType());	
+		}
+		else {
+			Type trgType = fighter[trg].getTypes().get(0);
+			type1 = effectiveness(trgType, move.getType());	
+			
+			trgType = fighter[trg].getTypes().get(1);
+			type2 = effectiveness(trgType, move.getType());	
+		}
+		
 		damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
-			power * (A / D)) / 50)) + 2) * crit * STAB * type);
+			power * (A / D)) / 50)) + 2) * crit * random * STAB * type1 * type2);
 
 		// keep damage dealt less than or equal to remaining HP
 		if (damage > fighter[trg].getHP()) {
 			damage = fighter[trg].getHP();
 		}
+		else if (damage < 1) {
+			damage = 1;
+		}
 		
 		return damage;
 	}
-	private double effectiveness(int trg, Type type) {
+	private double effectiveness(Type trgType, Type type) {
 		
 		// default value
 		double effect = 1.0;
 		
+		// if vulnerable, retrieve and return vulnerable value		
+		for (Type vulnType : trgType.getVulnerability().keySet()) {		
+			if (vulnType.getName().equals(type.getName())) {
+				effect = trgType.getVulnerability().get(vulnType);
+				return effect;
+			}
+		}			
+		// if resistant, retrieve and return resistance value
+		for (Type resType : trgType.getResistance().keySet()) {			
+			if (resType.getName().equals(type.getName())) {
+				effect = trgType.getResistance().get(resType);
+				return effect;
+			}			
+		}
+		
+		if (effect == 0.75)	
+			effect = 1;
+		
+		/*		
 		// if target is single types
 		if (fighter[trg].getTypes() == null) {
 			
@@ -1065,7 +1111,8 @@ public class BattleManager extends Thread {
 			// vulnerable and resistant cancel out
 			if (effect == 0.75)	
 				effect = 1;
-		}			
+		}					
+		*/
 						
 		return effect;
 	}
@@ -1074,9 +1121,17 @@ public class BattleManager extends Thread {
 	private void dealDamage(int atk, int trg, Move move, int damage, double crit) throws InterruptedException {		
 
 		// subtract damage dealt from total hp
-		int result = fighter[trg].getHP() - (int)damage;									
+		int result = fighter[trg].getHP() - (int)damage;	
 		
-		String hitEffectiveness = getHitSE(effectiveness(trg, move.getType()));		
+		String hitEffectiveness = "";
+		
+		if (fighter[trg].getTypes() == null) {
+			hitEffectiveness = getHitSE(effectiveness(fighter[trg].getType(), move.getType()));		
+		}
+		else {
+			hitEffectiveness = getHitSE(effectiveness(fighter[trg].getTypes().get(0), move.getType()));		
+		}		
+		
 		gp.playSE(battle_SE, hitEffectiveness);
 		fighter[trg].setHit(true);
 		
@@ -1442,6 +1497,8 @@ public class BattleManager extends Thread {
 		winner = -1;
 		loser = -1;
 		
+		escapeAttempts = 0;
+		
 		fightStage = fight_Encounter;
 		
 		active = false;
@@ -1449,6 +1506,88 @@ public class BattleManager extends Thread {
 		
 		gp.particleList.clear();
 		gp.gameState = gp.evolveState;
+	}
+	
+	public void escapeBattle() throws InterruptedException {
+		/** ESCAPE FORMULA REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Escape **/
+		
+		boolean escape = false;
+		
+		if (battleMode == wildBattle) {
+			double playerSpeed = fighter[0].getSpeed();
+			double wildSpeed = fighter[1].getSpeed();
+			
+			if (playerSpeed > wildSpeed) {
+				escape = true;
+			}
+			else {
+				escapeAttempts++;
+				double attempts = (double) escapeAttempts;				
+				double escapeOdds = ((((playerSpeed * 128) / wildSpeed) + 30) * attempts);
+				
+				Random r = new Random();
+				int roll = (int) (r.nextInt(255 - 0 + 1) + 0);
+				
+				if (roll <= escapeOdds) {
+					escape = true;
+				}
+			}	
+			
+			
+			
+			if (escape) {
+				gp.playSE(battle_SE, 11);
+				typeDialogue("Got away safely!", true);
+				endBattle();
+			}
+			else {				
+				typeDialogue("Oh no!\nYou can't escape!", true);
+				fightStage = fight_Start;
+			}
+		}
+		else if (battleMode == trainerBattle) {
+			typeDialogue("You can't flee\na trainer battle!", true);
+			gp.ui.battleState = gp.ui.battle_Options;
+			running = false;
+		}
+	}
+	
+	private boolean isCaptured() {
+		/** CATCH RATE FOMRULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Capture_method_(Generation_III-IV) **/
+		
+		boolean isCaptured = false;
+		
+		double catchOdds;
+		double maxHP = 1.0;
+		double hp = 1.0;
+		double catchRate = 1.0;
+		double statusBonus = 1.0;
+		
+		maxHP = fighter[1].getBHP(); if (maxHP == 0.0) maxHP = 1.0; 		
+		hp = fighter[1].getHP(); if (hp == 0.0) hp = 1.0;
+		catchRate = fighter[1].getCatchRate();
+		
+		if (fighter[1].getStatus() != null) {			
+			switch(fighter[1].getStatus().getAbreviation()) {			
+				case "PAR": statusBonus = 1.5; break;
+				case "PSN": statusBonus = 1.5; break;
+				case "CNF": statusBonus = 1.0; break;
+				case "BRN": statusBonus = 1.5; break;
+				case "FRZ": statusBonus = 2.0; break;
+				case "SLP": statusBonus = 2.0; break;
+			}			
+		}
+		
+		catchOdds = ( (((3 * maxHP) - (2 * hp)) / (3 * maxHP) ) * catchRate * statusBonus);
+		
+		Random r = new Random();
+		int roll = (int) (r.nextInt(255 - 0 + 1) + 0);
+		
+		if (roll <= catchOdds) {
+			isCaptured = true;
+		}
+		
+		return isCaptured;
 	}
 	
 	// MISC HANDLERS

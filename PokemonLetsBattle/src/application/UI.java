@@ -1728,12 +1728,12 @@ public class UI {
 				gp.keyH.aPressed = false;
 				gp.keyH.playCursorSE();
 				
-				battleState = gp.ui.battle_Moves;					
+				battleState = battle_Moves;					
 				
 				commandNum = 0;
 			}
 			else if (commandNum == 1) {
-				gp.keyH.aPressed = false;
+				gp.keyH.aPressed = false;								
 				commandNum = 0;
 			}
 			else if (commandNum == 2) {
@@ -1745,14 +1745,12 @@ public class UI {
 				commandNum = 0;
 			}
 			else if (commandNum == 3) {
-				gp.keyH.aPressed = false;				
+				gp.keyH.aPressed = false;		
 				
-				if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {		
-					
-				}				
-				else {
-					
-				}
+				gp.btlManager.fightStage = gp.btlManager.fight_Run;
+				gp.btlManager.running = true;			
+				new Thread(gp.btlManager).start();	
+				battleState = battle_Turn;
 				
 				commandNum = 0;
 			}	
