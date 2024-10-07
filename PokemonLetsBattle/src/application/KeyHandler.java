@@ -420,15 +420,15 @@ public class KeyHandler implements KeyListener {
 	
 	// SOUND EFFECTS
 	public void playCursorSE() {
-		gp.playSE(2, 0);
+		gp.playSE(2, "select");
 	}
 	public void playErrorSE() {
-		gp.playSE(2, 1);
+		gp.playSE(2, "error");
 	}
 	public void playMenuOpenSE() {
-		
+		gp.playSE(2, "menu-open");
 	}
 	public void playMenuCloseSE() {
-		
+		gp.playSE(2, "back");
 	}
 }

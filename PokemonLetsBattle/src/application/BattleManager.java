@@ -57,7 +57,9 @@ public class BattleManager extends Thread {
 	public final int fight_Start = 3;
 	public final int fight_Move = 4;
 	public final int fight_Over = 5;	
-	public final int fight_Run = 6;
+	public final int fight_Capture = 6;
+	public final int fight_Run = 7;
+	
 			
 	// CONSTRUCTOR
 	public BattleManager(GamePanel gp) {
@@ -105,7 +107,12 @@ public class BattleManager extends Thread {
 				case fight_Over:
 					try { getWinningTrainer(); } 
 					catch (InterruptedException e) { e.printStackTrace(); }
-					break;				
+					break;			
+					
+				case fight_Capture:
+					try { throwPokeball(); } 
+					catch (InterruptedException e) { e.printStackTrace(); }				
+					break;
 					
 				case fight_Run:
 					try { escapeBattle(); } 
@@ -129,7 +136,7 @@ public class BattleManager extends Thread {
 		switch(battleMode) {
 			case wildBattle:
 				
-				gp.playMusic(1, 2);				
+				gp.playMusic(1, 1);				
 				pause(1400);
 				
 				gp.playSE(cry_SE, fighter[1].toString());	
@@ -138,7 +145,7 @@ public class BattleManager extends Thread {
 				break;
 			case trainerBattle: 
 				
-				gp.playMusic(1, 3);				
+				gp.playMusic(1, 4);				
 				pause(1400);		
 				
 				typeDialogue("Trainer " + trainer[1].name + "\nwould like to battle!", true);				
@@ -262,7 +269,7 @@ public class BattleManager extends Thread {
 					typeDialogue("Player defeated\nTrainer " + trainer[1].name + "!", true);
 					
 					gp.stopMusic();
-					gp.playMusic(1, 0);
+					gp.playMusic(1, 5);
 				}	
 			}
 			else if (winner == 1) {
@@ -1435,6 +1442,133 @@ public class BattleManager extends Thread {
 		return (int) exp;
 	}	
 	
+	// CAPTURE POKEMON METHODS
+	private void throwPokeball() throws InterruptedException {
+		
+		if (battleMode == wildBattle) {			
+			
+			typeDialogue(trainer[0].name + " used a\nPOKE BALL!", false);
+			playSE(battle_SE, "ball-throw");
+			gp.ui.isFighterCaptured = true;
+			playSE(battle_SE, "ball-open");
+			playSE(battle_SE, "ball-bounce");
+			
+			for (int i = 0; i < 3; i++) {
+				playSE(battle_SE, "ball-shake");
+				Thread.sleep(800);	
+			}	
+			
+			if (isCaptured()) {
+				
+				gp.stopMusic();
+				gp.playMusic(1, 3);										
+				typeDialogue("Gotcha!\n" + fighter[1].getName() + " was caught!", true);
+				
+				if (trainer[0].pokeParty.size() < 6) {
+					trainer[0].pokeParty.add(fighter[1]);
+					typeDialogue(fighter[1].getName() + " was added\nto your party!", true);
+				}
+				else {
+					
+				}
+				
+				endBattle();
+			}
+			else {
+				gp.playSE(battle_SE, "ball-open");
+				gp.ui.isFighterCaptured = false;		
+				gp.playSE(battle_SE, "ball-open");
+				typeDialogue("Oh no!\n" + fighter[1].getName() + " broke free!", true);
+				fightStage = fight_Start;			
+			}	
+		}
+		else if (battleMode == trainerBattle) {
+			typeDialogue("You can't use\nthat here!", true);
+			gp.ui.battleState = gp.ui.battle_Options;
+			running = false;
+		}
+	}
+	private boolean isCaptured() {
+		/** CATCH RATE FOMRULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Capture_method_(Generation_III-IV) **/
+		
+		boolean isCaptured = false;
+		
+		double catchOdds;
+		double maxHP = 1.0;
+		double hp = 1.0;
+		double catchRate = 1.0;
+		double statusBonus = 1.0;
+		
+		maxHP = fighter[1].getBHP(); if (maxHP == 0.0) maxHP = 1.0; 		
+		hp = fighter[1].getHP(); if (hp == 0.0) hp = 1.0;
+		catchRate = fighter[1].getCatchRate();
+		
+		if (fighter[1].getStatus() != null) {			
+			switch(fighter[1].getStatus().getAbreviation()) {			
+				case "PAR": statusBonus = 1.5; break;
+				case "PSN": statusBonus = 1.5; break;
+				case "CNF": statusBonus = 1.0; break;
+				case "BRN": statusBonus = 1.5; break;
+				case "FRZ": statusBonus = 2.0; break;
+				case "SLP": statusBonus = 2.0; break;
+			}			
+		}
+		
+		catchOdds = ( (((3 * maxHP) - (2 * hp)) / (3 * maxHP) ) * catchRate * statusBonus);
+		
+		Random r = new Random();
+		int roll = (int) (r.nextInt(255 - 0 + 1) + 0);
+		
+		if (roll <= catchOdds) {
+			isCaptured = true;
+		}
+		
+		return isCaptured;
+	}
+	
+	// RUN AWAY METHOD
+	public void escapeBattle() throws InterruptedException {
+		/** ESCAPE FORMULA REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Escape **/
+		
+		boolean escape = false;
+		
+		if (battleMode == wildBattle) {
+			double playerSpeed = fighter[0].getSpeed();
+			double wildSpeed = fighter[1].getSpeed();
+			
+			if (playerSpeed > wildSpeed) {
+				escape = true;
+			}
+			else {
+				escapeAttempts++;
+				double attempts = (double) escapeAttempts;				
+				double escapeOdds = ((((playerSpeed * 128) / wildSpeed) + 30) * attempts);
+				
+				Random r = new Random();
+				int roll = (int) (r.nextInt(255 - 0 + 1) + 0);
+				
+				if (roll <= escapeOdds) {
+					escape = true;
+				}
+			}	
+			
+			if (escape) {
+				gp.playSE(battle_SE, "run");
+				typeDialogue("Got away safely!", true);
+				endBattle();
+			}
+			else {				
+				typeDialogue("Oh no!\nYou can't escape!", true);
+				fightStage = fight_Start;
+			}
+		}
+		else if (battleMode == trainerBattle) {
+			typeDialogue("You can't flee\na trainer battle!", true);
+			gp.ui.battleState = gp.ui.battle_Options;
+			running = false;
+		}
+	}
+	
 	// BATTLE END METHODS
 	private void setVictory() throws InterruptedException {
 		
@@ -1500,94 +1634,13 @@ public class BattleManager extends Thread {
 		escapeAttempts = 0;
 		
 		fightStage = fight_Encounter;
+		gp.ui.isFighterCaptured = false;
 		
 		active = false;
 		running = false;
 		
 		gp.particleList.clear();
 		gp.gameState = gp.evolveState;
-	}
-	
-	public void escapeBattle() throws InterruptedException {
-		/** ESCAPE FORMULA REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Escape **/
-		
-		boolean escape = false;
-		
-		if (battleMode == wildBattle) {
-			double playerSpeed = fighter[0].getSpeed();
-			double wildSpeed = fighter[1].getSpeed();
-			
-			if (playerSpeed > wildSpeed) {
-				escape = true;
-			}
-			else {
-				escapeAttempts++;
-				double attempts = (double) escapeAttempts;				
-				double escapeOdds = ((((playerSpeed * 128) / wildSpeed) + 30) * attempts);
-				
-				Random r = new Random();
-				int roll = (int) (r.nextInt(255 - 0 + 1) + 0);
-				
-				if (roll <= escapeOdds) {
-					escape = true;
-				}
-			}	
-			
-			
-			
-			if (escape) {
-				gp.playSE(battle_SE, 11);
-				typeDialogue("Got away safely!", true);
-				endBattle();
-			}
-			else {				
-				typeDialogue("Oh no!\nYou can't escape!", true);
-				fightStage = fight_Start;
-			}
-		}
-		else if (battleMode == trainerBattle) {
-			typeDialogue("You can't flee\na trainer battle!", true);
-			gp.ui.battleState = gp.ui.battle_Options;
-			running = false;
-		}
-	}
-	
-	private boolean isCaptured() {
-		/** CATCH RATE FOMRULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Capture_method_(Generation_III-IV) **/
-		
-		boolean isCaptured = false;
-		
-		double catchOdds;
-		double maxHP = 1.0;
-		double hp = 1.0;
-		double catchRate = 1.0;
-		double statusBonus = 1.0;
-		
-		maxHP = fighter[1].getBHP(); if (maxHP == 0.0) maxHP = 1.0; 		
-		hp = fighter[1].getHP(); if (hp == 0.0) hp = 1.0;
-		catchRate = fighter[1].getCatchRate();
-		
-		if (fighter[1].getStatus() != null) {			
-			switch(fighter[1].getStatus().getAbreviation()) {			
-				case "PAR": statusBonus = 1.5; break;
-				case "PSN": statusBonus = 1.5; break;
-				case "CNF": statusBonus = 1.0; break;
-				case "BRN": statusBonus = 1.5; break;
-				case "FRZ": statusBonus = 2.0; break;
-				case "SLP": statusBonus = 2.0; break;
-			}			
-		}
-		
-		catchOdds = ( (((3 * maxHP) - (2 * hp)) / (3 * maxHP) ) * catchRate * statusBonus);
-		
-		Random r = new Random();
-		int roll = (int) (r.nextInt(255 - 0 + 1) + 0);
-		
-		if (roll <= catchOdds) {
-			isCaptured = true;
-		}
-		
-		return isCaptured;
 	}
 	
 	// MISC HANDLERS

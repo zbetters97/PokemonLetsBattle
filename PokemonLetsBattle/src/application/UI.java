@@ -64,10 +64,11 @@ public class UI {
 	
 	// BATTLE VALUES
 	private BufferedImage current_arena;
-	private BufferedImage ball_empty, ball_active, ball_inactive;	
+	private BufferedImage ball_empty, ball_active, ball_inactive, pokeball;	
 	public int fighterNum = 0;	
 	private int hitCounter = -1;
 	private int hpCounter = 0;
+	public boolean isFighterCaptured = false;
 
 	// FIGHTER X/Y VALUES
 	public int fighter_one_X;
@@ -117,6 +118,7 @@ public class UI {
 		ball_empty = setup("/ui/battle/ball-empty", (int) (gp.tileSize * 0.5), (int) (gp.tileSize * 0.5));
 		ball_active = setup("/ui/battle/ball-active", (int) (gp.tileSize * 0.5), (int) (gp.tileSize * 0.5));
 		ball_inactive = setup("/ui/battle/ball-inactive", (int) (gp.tileSize * 0.5), (int) (gp.tileSize * 0.5));
+		pokeball = setup("/objects_interactive/pokeball", (int) (gp.tileSize * 0.8), (int) (gp.tileSize * 0.8));
 		
 		fighter_one_startX = gp.tileSize * 14;
 		fighter_two_startX = 0 - gp.tileSize * 3;
@@ -1331,9 +1333,15 @@ public class UI {
 			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 		}
 		if (gp.btlManager.fighter[1] != null) {				
-			if (gp.btlManager.fighter[1].getHit()) animateHit(1, g2);				
-			g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
-			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+			
+			if (isFighterCaptured) {				
+				g2.drawImage(pokeball, fighter_two_X + (int)(gp.tileSize * 2.2), fighter_two_Y + (int)(gp.tileSize * 3.2), null);	
+			}
+			else {
+				if (gp.btlManager.fighter[1].getHit()) animateHit(1, g2);		
+				g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
+				g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+			}			
 		}		
 	}
 	private void animateHit(int num, Graphics2D g2) {
@@ -1610,7 +1618,7 @@ public class UI {
 		if (remainHP > 0) {
 			hpCounter++;
 			if (hpCounter == 33) {
-				gp.playSE(6, 8);
+				gp.playSE(6, "hp-low");
 				hpCounter = 0;
 			}	
 		}
@@ -1733,7 +1741,13 @@ public class UI {
 				commandNum = 0;
 			}
 			else if (commandNum == 1) {
-				gp.keyH.aPressed = false;								
+				gp.keyH.aPressed = false;		
+				
+				gp.btlManager.fightStage = gp.btlManager.fight_Capture;
+				gp.btlManager.running = true;			
+				new Thread(gp.btlManager).start();	
+				battleState = battle_Turn;
+				
 				commandNum = 0;
 			}
 			else if (commandNum == 2) {
