@@ -12,6 +12,7 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import application.GamePanel;
+import moves.Move;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
 
@@ -409,6 +410,45 @@ public class Entity {
 			return false;
 		}		
 	}	
+	public Pokemon pokemonHasHM(String objectType) {
+		
+		Pokemon hmPokemon = null;
+		
+		switch (objectType) {
+			case "CUT":				
+				for (Pokemon p : gp.player.pokeParty) {
+					for (Move m : p.getMoveSet()) {
+						if (m.getName().equals("Cut")) {
+							hmPokemon = p;
+							break;	
+						}
+					}
+				}				
+				break;
+			case "ROCK SMASH":
+				for (Pokemon p : gp.player.pokeParty) {
+					for (Move m : p.getMoveSet()) {
+						if (m.getName().equals("Rock Smash")) {
+							hmPokemon = p;
+							break;	
+						}
+					}
+				}		
+				break;
+			case "SURF":
+				for (Pokemon p : gp.player.pokeParty) {					
+					for (Move m : p.getMoveSet()) {
+						if (m.getName().equals("Surf")) {
+							hmPokemon = p;
+							break;	
+						}
+					}
+				}		
+				break;
+		}
+		
+		return hmPokemon;		
+	}
 	
 	// MANAGE VALUES
 	public void manageValues() {

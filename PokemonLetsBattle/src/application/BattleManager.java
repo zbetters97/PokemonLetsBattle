@@ -18,7 +18,7 @@ public class BattleManager extends Thread {
 	
 	private GamePanel gp;
 	public boolean active = false;
-	public boolean running = true;
+	public boolean running = false;
 	
 	// GENERAL VALUES		
 	public Entity[] trainer = new Entity[2];
@@ -178,7 +178,7 @@ public class BattleManager extends Thread {
 				fighter[0] = newFighter[0];
 				
 				gp.playSE(cry_SE, fighter[0].toString());	
-				typeDialogue("GO, " + fighter[0].getName() + "!");					
+				typeDialogue("Go, " + fighter[0].getName() + "!");					
 				pause(100);
 				
 				newFighter[0] = null;
@@ -194,7 +194,7 @@ public class BattleManager extends Thread {
 				fighter[0] = newFighter[0];
 				
 				gp.playSE(cry_SE, fighter[0].toString());
-				typeDialogue("GO, " + fighter[0].getName() + "!");	
+				typeDialogue("Go, " + fighter[0].getName() + "!");	
 				pause(100);
 				
 				newFighter[0] = null;

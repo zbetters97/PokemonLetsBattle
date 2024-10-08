@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 
 import javax.imageio.ImageIO;
 
@@ -57,6 +58,9 @@ public class UI {
 	
 	public int commandNum = 0;
 	public int subState = 0;
+	
+	private boolean partyMove = false;
+	private int partyMoveNum = -1;
 	
 	// TRANSITION
 	private int tCounter = 0;
@@ -178,13 +182,13 @@ public class UI {
 			drawHealScreen();
 		}
 		else if (gp.gameState == gp.battleState) {
-			drawBattle();
+			drawBattleScreen();
 		}		
 		else if (gp.gameState == gp.evolveState) {
 			drawEvolveScreen();
 		}		
 		else if (gp.gameState == gp.transitionState) {
-			drawTransition();
+			drawTransitionScreen();
 		}
 	}
 	
@@ -381,7 +385,7 @@ public class UI {
 			}
 			else if (npc.type == npc.type_obstacle_i) {
 				
-				Pokemon p = playerHasHM();
+				Pokemon p = gp.player.pokemonHasHM(npc.hmType);
 				
 				if (p != null) {
 					gp.gameState = gp.hmState;	
@@ -443,12 +447,11 @@ public class UI {
 	// HEAL SCREEN
 	private void drawHealScreen() {
 		
-		if (subState == 0) {
-			drawHealDialogue();
-		}
-		
+		switch (subState) {
+			case 0: drawHeal_Dialogue(); break;
+		}		
 	}
-	private void drawHealDialogue() {
+	private void drawHeal_Dialogue() {
 		
 		int x = (int) (gp.tileSize * 2);
 		int y = gp.tileSize * 9;
@@ -551,45 +554,6 @@ public class UI {
 			}
 		}		
 	}
-	private Pokemon playerHasHM() {
-		
-		Pokemon hmPokemon = null;
-		
-		switch (npc.hmType) {
-			case "CUT":				
-				for (Pokemon p : gp.player.pokeParty) {
-					for (Move m : p.getMoveSet()) {
-						if (m.getName().equals("Cut")) {
-							hmPokemon = p;
-							break;	
-						}
-					}
-				}				
-				break;
-			case "ROCK SMASH":
-				for (Pokemon p : gp.player.pokeParty) {
-					for (Move m : p.getMoveSet()) {
-						if (m.getName().equals("Rock Smash")) {
-							hmPokemon = p;
-							break;	
-						}
-					}
-				}		
-				break;
-			case "SURF":
-				for (Pokemon p : gp.player.pokeParty) {					
-					for (Move m : p.getMoveSet()) {
-						if (m.getName().equals("Surf")) {
-							hmPokemon = p;
-							break;	
-						}
-					}
-				}		
-				break;
-		}
-		
-		return hmPokemon;		
-	}
 	
 	// PARTY SCREEN
 	private void drawPartyScreen() {
@@ -604,11 +568,11 @@ public class UI {
 				break;
 			case party_Skills:				
 				drawParty_Skills();
-				drawHeader(0);
+				drawParty_Header(0);
 				break;
 			case party_Moves:
 				drawParty_Moves();
-				drawHeader(1);
+				drawParty_Header(1);
 				break;
 		}
 	}			
@@ -636,9 +600,10 @@ public class UI {
 		else { boxColor = party_faint; }
 		
 		if (fighterNum == 0) { drawSubWindow(x, y, width, height, 3, 5, boxColor, party_red); }
+		else if (partyMove && partyMoveNum == 0) { drawSubWindow(x, y, width, height, 3, 3, boxColor, hp_yellow); }
 		else { drawSubWindow(x, y, width, height, 3, 3, boxColor, Color.BLACK); }
 		
-		drawPartyBox(x, y, fighter, true);
+		drawParty_Box(x, y, fighter, true);
 		
 		x = (int) (gp.tileSize * 6.5);
 		y = (int) (gp.tileSize * 0.5); 
@@ -655,9 +620,10 @@ public class UI {
 				else { boxColor = party_faint; }
 				
 				if (fighterNum == i) { drawSubWindow(x, y, width, height, 3, 5, boxColor, party_red); }
-				else { drawSubWindow(x, y, width, height, 3, 3, boxColor, Color.BLACK);	}				
+				else if (partyMove && partyMoveNum == i) { drawSubWindow(x, y, width, height, 3, 3, boxColor, hp_yellow); }
+				else { drawSubWindow(x, y, width, height, 3, 3, boxColor, Color.BLACK); }			
 				
-				drawPartyBox((int) (x + gp.tileSize * 0.15), (int) (y - gp.tileSize * 0.15), fighter, false);				
+				drawParty_Box((int) (x + gp.tileSize * 0.15), (int) (y - gp.tileSize * 0.15), fighter, false);				
 			}
 			else {
 				if (fighterNum == i) { drawSubWindow(x, y, width, height, 3, 5, party_blue, party_red); }
@@ -676,7 +642,8 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));
 		x += gp.tileSize * 0.3;
 		y += gp.tileSize * 1.15;
-		text = "CHOOSE A POKEMON";	
+		if (partyMove) text = "MOVE POKEMON";
+		else text = "CHOOSE A POKEMON";
 		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 		
 		x += width + (gp.tileSize * 0.4);
@@ -692,53 +659,68 @@ public class UI {
 		y += gp.tileSize * 0.8;
 		text = "CANCEL";
 		drawText(text, x, y, battle_white, Color.BLACK);
-		
-		if (partyState == party_Main) {			
+					
+		if (partyState == party_Main) {
+			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
-				
+												
 				if (fighterNum == 6) {
 					
-					if (gp.btlManager.active) {
-						
-						if (battleState == battle_Options) {
-							gp.keyH.playCursorSE();
-							
-							fighterNum = 0;	
-							commandNum = 2;
-							gp.gameState = gp.battleState;								
-						}
-						else if (!gp.btlManager.fighter[0].isAlive()) {							
-							gp.keyH.playErrorSE();
-						}
-						else {						
-							gp.keyH.playCursorSE();
-							
-							fighterNum = 0;	
-							commandNum = 0;
-							gp.btlManager.running = true;
-							new Thread(gp.btlManager).start();	
-							gp.gameState = gp.battleState;		
-						}						
-					}
-					else {
+					if (partyMove) {				
 						gp.keyH.playCursorSE();
 						
-						fighterNum = 0;	
-						commandNum = 1;
-						gp.gameState = gp.pauseState;
+						partyMove = false;	
+						partyMoveNum = -1;
 					}
+					else {
+						if (gp.btlManager.active) {
+							
+							if (battleState == battle_Options) {
+								gp.keyH.playCursorSE();
+								
+								fighterNum = 0;	
+								commandNum = 2;
+								gp.gameState = gp.battleState;								
+							}
+							else if (!gp.btlManager.fighter[0].isAlive()) {							
+								gp.keyH.playErrorSE();
+							}
+							else {						
+								gp.keyH.playCursorSE();
+								
+								fighterNum = 0;	
+								commandNum = 0;
+								gp.btlManager.running = true;
+								new Thread(gp.btlManager).start();	
+								gp.gameState = gp.battleState;		
+							}						
+						}
+						else {
+							gp.keyH.playCursorSE();
+							
+							fighterNum = 0;	
+							commandNum = 1;
+							gp.gameState = gp.pauseState;
+						}
+					}					
 				}
-				else if (gp.player.pokeParty.size() > fighterNum) {	
+				else if (gp.player.pokeParty.size() > fighterNum) {		
 					
-					if (gp.btlManager.active) {
+					if (partyMove) {
 						gp.keyH.playCursorSE();
-						partyState = party_Main_Select;		
+						
+						if (partyMoveNum != fighterNum) {
+							Collections.swap( gp.player.pokeParty, fighterNum, partyMoveNum);	
+						}	
+
+						partyMove = false;
+						partyMoveNum = -1;
 					}
 					else {
-						gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  	
-						partyState = party_Skills;
-					}			
+						gp.keyH.playCursorSE();
+						partyState = party_Main_Select;			
+					}
 				}	
 			}
 			if (gp.keyH.bPressed) {			
@@ -755,6 +737,7 @@ public class UI {
 		int y;
 		int width;
 		int height;
+		String text;
 		
 		x = (int) (gp.tileSize * 12.35);
 		y = (int) (gp.tileSize * 8.85);
@@ -762,16 +745,20 @@ public class UI {
 		height = (int) (gp.tileSize * 2.78);		
 		drawSubWindow(x, y, width, height, 4, 4, battle_white, Color.BLACK);
 		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 40F));	
 		x += gp.tileSize * 0.4;
 		y += gp.tileSize * 0.72;
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 40F));	
-		drawText("SELECT", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		if (gp.btlManager.active) text = "SELECT";
+		else text = "MOVE";		
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 		
 		y += gp.tileSize * 0.95;
-		drawText("INFO", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		text = "INFO";
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 		
 		y += gp.tileSize * 0.95;
-		drawText("CANCEL", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		text = "CANCEL";		
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 		
 		x -= gp.tileSize * 0.38;
 		y -= gp.tileSize * 2.58;
@@ -782,28 +769,38 @@ public class UI {
 			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
-			
-				fighter_one_Y = fighter_one_startY;
-				fighter_two_Y = fighter_two_startY;	
 				
-				// NEW FIGHTER SELECTED
-				if (gp.btlManager.swapPokemon(fighterNum)) {					
-					gp.keyH.playCursorSE();	
+				if (gp.btlManager.active) {
 					
-					commandNum = 0;
-					fighterNum = 0;			
+					fighter_one_Y = fighter_one_startY;
+					fighter_two_Y = fighter_two_startY;	
 					
-					gp.btlManager.running = true;
-					gp.btlManager.fightStage = gp.btlManager.fight_Swap;
-					new Thread(gp.btlManager).start();
+					// NEW FIGHTER SELECTED
+					if (gp.btlManager.swapPokemon(fighterNum)) {					
+						gp.keyH.playCursorSE();	
+						
+						commandNum = 0;
+						fighterNum = 0;			
+						
+						gp.btlManager.running = true;
+						gp.btlManager.fightStage = gp.btlManager.fight_Swap;
+						new Thread(gp.btlManager).start();
+						
+						gp.gameState = gp.battleState;
+					}	
 					
-					gp.gameState = gp.battleState;
+					// UNABLE TO SELECT FIGHTER
+					else {
+						gp.keyH.playErrorSE();
+					}				
+				}
+				else {					
+					gp.keyH.playCursorSE();
+					
+					partyMoveNum = fighterNum;
+					partyMove = true;
+					partyState = party_Main;
 				}	
-				
-				// UNABLE TO SELECT FIGHTER
-				else {
-					gp.keyH.playErrorSE();
-				}				
 			}
 		}
 		
@@ -840,7 +837,7 @@ public class UI {
 			commandNum = 0;	
 		}
 	}
-	private void drawPartyBox(int x, int y, Pokemon fighter, boolean main) {
+	private void drawParty_Box(int x, int y, Pokemon fighter, boolean main) {
 		
 		g2.drawImage(fighter.getMenuSprite(), x, y, null);
 		
@@ -864,9 +861,9 @@ public class UI {
 			y -= gp.tileSize;	
 		}
 		
-		drawFighterHP_Party(x, y, fighter);
+		drawParty_Box_HP(x, y, fighter);
 	}
-	private void drawFighterHP_Party(int x, int y, Pokemon fighter) {
+	private void drawParty_Box_HP(int x, int y, Pokemon fighter) {
 		
 		int width = (int) (gp.tileSize * 4.2);
 		int height = (int) (gp.tileSize * 0.5);
@@ -1223,7 +1220,7 @@ public class UI {
 		g2.setColor(Color.BLACK);
 		g2.drawRoundRect(x, y, width, height, 4, 4);
 	}
-	private void drawHeader(int subState) {
+	private void drawParty_Header(int subState) {
 		
 		int x;
 		int y;
@@ -1275,7 +1272,7 @@ public class UI {
 	}
 	
 	// BATTLE SCREEN
-	private void drawBattle() {		
+	private void drawBattleScreen() {		
 
 		g2.setColor(new Color(234,233,246));  
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
@@ -1316,11 +1313,11 @@ public class UI {
 				drawBattle_Fighters();				
 				drawBattle_HUD();
 				drawBattle_Swap();
-				break;
-				
+				break;				
 			case battle_End:
 				animateTrainerDefeat();
 				drawBattle_Dialogue();
+				break;
 		}
 	}
 	
@@ -1610,7 +1607,21 @@ public class UI {
 					
 		if (remainHP >= .50) g2.setColor(hp_green);
 		else if (remainHP >= .25) g2.setColor(hp_yellow);
-		else { g2.setColor(hp_red); if (num == 0) playLowHPSE(remainHP); }
+		else { 
+			g2.setColor(hp_red); 
+			if (num == 0) {				
+				if (remainHP > 0) {
+					hpCounter++;
+					if (hpCounter == 33) {
+						gp.playSE(6, "hp-low");
+						hpCounter = 0;
+					}	
+				}
+				else {
+					hpCounter = 0;
+				} 
+			}
+		}
 		
 		width *= remainHP;							
 		g2.fillRoundRect(x, y + 1, width, height, 15, 15);	
@@ -1625,19 +1636,6 @@ public class UI {
 		x = getXforRightAlignText(text, (int) (x + gp.tileSize * 3.65));		
 		y += gp.tileSize * 0.9;
 		g2.drawString(text, x, y);	
-	}
-	private void playLowHPSE(double remainHP) {
-		
-		if (remainHP > 0) {
-			hpCounter++;
-			if (hpCounter == 33) {
-				gp.playSE(6, "hp-low");
-				hpCounter = 0;
-			}	
-		}
-		else {
-			hpCounter = 0;
-		}
 	}
 	private void drawBattle_EXP(int x, int y) {
 		
@@ -1875,6 +1873,7 @@ public class UI {
 		text = gp.btlManager.fighter[0].getMoveSet().get(commandNum).getType().getName();
 		drawText(text, x, y, battle_white, Color.BLACK);
 	}		
+	
 	private void drawBattle_LevelUp() {		
 		
 		Pokemon p = gp.btlManager.fighter[0];
@@ -2019,6 +2018,7 @@ public class UI {
 			case 4:	evolveStage_Close(x, y); break;
 		}
 	}
+	
 	private void evolveStage_Check(int x, int y) {
 		
 		for (int i = 0; i < gp.player.pokeParty.size(); i++) {					
@@ -2045,7 +2045,7 @@ public class UI {
 	private void evolveStage_Evolving(int x, int y) {
 		
 		evolveText = "What?\n" + oldEvolve.getName() + " is evolving?";	
-		drawEvolveDialogue();	
+		drawEvolve_Dialogue();	
 		
 		if (evolveNum == 0) g2.drawImage(oldEvolve.getFrontSprite(), x, y, null);					
 		else g2.drawImage(newEvolve.getFrontSprite(), x, y, null);							
@@ -2123,11 +2123,12 @@ public class UI {
 			gp.gameState = gp.playState;
 		}
 		
-		drawEvolveDialogue();		
+		drawEvolve_Dialogue();		
 	}
-	private void drawEvolveDialogue() {
+	
+	private void drawEvolve_Dialogue() {
 		
-		drawEvolveDialogueWindow();
+		drawEvolve_DialogueWindow();
 		
 		int x = gp.tileSize / 2;
 		int y = gp.screenHeight - gp.tileSize * 2;
@@ -2141,7 +2142,7 @@ public class UI {
 			y += gp.tileSize;
 		} 		
 	}
-	private void drawEvolveDialogueWindow() {
+	private void drawEvolve_DialogueWindow() {
 		
 		int width = (int) (gp.screenWidth - (gp.tileSize * 0.15));
 		int height = (int) (gp.tileSize * 3.5);
@@ -2152,7 +2153,7 @@ public class UI {
 	}	
 	
 	// TRANSITION
-	private void drawTransition() {
+	private void drawTransitionScreen() {
 		
 		// DARKEN SCREEN
 		tCounter++;
@@ -2184,8 +2185,7 @@ public class UI {
 				gp.gameState = gp.playState;
 			}
 		}		
-	}
-	
+	}	
 	private void startBattle() {
 		battleDialogue = "";
 		battleState = battle_Encounter;
