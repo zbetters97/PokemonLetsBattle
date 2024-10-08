@@ -102,6 +102,7 @@ public class UI {
 	public final int battle_Turn = 5;
 	public final int battle_KO = 6;
 	public final int battle_LevelUp = 7;
+	public final int battle_End = 8;
 	
 	private Pokemon oldEvolve, newEvolve = null;
 	private int evolveIndex = -1;
@@ -1316,6 +1317,10 @@ public class UI {
 				drawBattle_HUD();
 				drawBattle_Swap();
 				break;
+				
+			case battle_End:
+				animateTrainerDefeat();
+				drawBattle_Dialogue();
 		}
 	}
 	
@@ -1385,18 +1390,26 @@ public class UI {
 			if (fighter_one_Y < gp.screenHeight) {
 				fighter_one_Y += 16;
 			}
-			else {
-				
-			}
 		}
 		else if (gp.btlManager.loser == 1) {
 			if (fighter_two_Y < gp.screenHeight) {
 				fighter_two_Y += 16;
 			}
-			else {
-				
-			}
 		}		
+	}
+	private void animateTrainerDefeat() {
+		
+		fighter_two_Y = fighter_two_startY;	
+				
+		if (fighter_two_endX < fighter_two_X) {
+			fighter_two_X -= 6;
+		}
+		
+		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
+		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
+
+		g2.drawImage(gp.btlManager.trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y, null);
+		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);			
 	}
 	
 	private void drawBattle_Dialogue() {

@@ -60,7 +60,6 @@ public class BattleManager extends Thread {
 	public final int fight_Capture = 6;
 	public final int fight_Run = 7;
 	
-			
 	// CONSTRUCTOR
 	public BattleManager(GamePanel gp) {
 		this.gp = gp;
@@ -68,6 +67,8 @@ public class BattleManager extends Thread {
 	public void setup(int currentBattle, Entity trainer, Pokemon pokemon) {
 		
 		battleMode = currentBattle;
+		
+		this.trainer[0] = gp.player;
 						
 		if (trainer != null) this.trainer[1] = trainer;	
 		else if (pokemon != null) fighter[1] = pokemon;
@@ -123,16 +124,12 @@ public class BattleManager extends Thread {
 		
 	}
 		
+	// SETUP BATTLE METHOD
 	private void setBattle() throws InterruptedException {		
 		gp.stopMusic();	
-		
-		trainer[0] = gp.player;
-		newFighter[0] = trainer[0].pokeParty.get(0);			
 				
-		getBattleMode();
-	}	
-	private void getBattleMode() throws InterruptedException {
-		
+		newFighter[0] = trainer[0].pokeParty.get(0);			
+
 		switch(battleMode) {
 			case wildBattle:
 				
@@ -155,7 +152,7 @@ public class BattleManager extends Thread {
 		}
 		
 		fightStage = fight_Swap;
-	}
+	}	
 	
 	// SWAP POKEMON METHODS
 	private void swapFighters() throws InterruptedException {
@@ -221,12 +218,13 @@ public class BattleManager extends Thread {
 	}
 	private void getWinningTrainer() throws InterruptedException {
 		
+		// WILD BATTLE
 		if (battleMode == wildBattle) {
 			
 			// TRAINER 1 WINNER
 			if (winner == 0) {		
 				pause(1000);
-				endBattle();	
+				endBattle();
 			}
 			// WILD POKEMON WINNER
 			else if (winner == 1){
@@ -234,19 +232,22 @@ public class BattleManager extends Thread {
 				// TRAINER 1 HAS MORE POKEMON
 				if (trainer[0].hasPokemon()) {				
 					winner = -1;					
+					running = false;
 					gp.ui.partyState = gp.ui.party_Main;
 					gp.gameState = gp.partyState;
 				}
 				// TRAINER 1 OUT OF POKEMON
 				else {
 					pause(1000);
-					endBattle();	
+					endBattle();
 				}	
 			}			
 		}
+		// TRAINER BATTLE
 		else {			
 			gp.ui.battleState = gp.ui.battle_Turn;
 			
+			// TRAINER 1 WINNER
 			if (winner == 0) {
 				
 				// GET NEW FIGHTER
@@ -266,12 +267,30 @@ public class BattleManager extends Thread {
 				}
 				// TRAINER 2 OUT OF POKEMON
 				else {									
-					typeDialogue("Player defeated\nTrainer " + trainer[1].name + "!", true);
+					
+					gp.ui.fighter_two_X = gp.screenWidth + gp.tileSize;
+					
+					gp.ui.battleState = gp.ui.battle_End;
 					
 					gp.stopMusic();
-					gp.playMusic(1, 5);
+					gp.playMusic(1, 5);					
+					
+					typeDialogue("Player defeated\nTrainer " + trainer[1].name + "!", true);
+					
+					trainer[loser].isDefeated = true;
+					trainer[loser].hasBattle = false;
+					
+					int dialogueSet = trainer[loser].dialogueSet + 1;
+					typeDialogue(trainer[loser].dialogues[dialogueSet][0], true);
+					
+					int moneyEarned = getMoney();
+					trainer[winner].money += moneyEarned;
+					typeDialogue(trainer[winner].name + " got $" + moneyEarned + "\nfor winning!", true);					
+					
+					endBattle();
 				}	
 			}
+			// TRAINER 2 WINNER
 			else if (winner == 1) {
 				
 				// TRAINER 1 HAS MORE POKEMON
@@ -285,11 +304,23 @@ public class BattleManager extends Thread {
 					gp.gameState = gp.partyState;
 				}
 				// TRAINER 1 OUT OF POKEMON
-				else {
+				else {					
+					typeDialogue(trainer[0].name + " is out\nof Pokemon!", true);	
 					
+					pause(1000);
+					endBattle();
 				}		
 			}		
 		}
+	}
+	private int getMoney() {
+		// MONEY EARNED FORMULA REFERENCE (ALL GEN): https://bulbapedia.bulbagarden.net/wiki/Prize_money
+		
+		int level = trainer[loser].pokeParty.get(trainer[loser].pokeParty.size() - 1).getLevel();
+		int base = trainer[loser].trainerClass;		
+		int payout = base * level;
+		
+		return payout;
 	}
 	
 	// CHECK TURN METHODS
@@ -553,6 +584,7 @@ public class BattleManager extends Thread {
 		}
 	}
 	
+	// SWAP FIGHTER METHODS
 	public boolean swapPokemon(int partySlot) {
 		
 		if (fighter[0] == trainer[0].pokeParty.get(partySlot)) {
@@ -989,7 +1021,7 @@ public class BattleManager extends Thread {
 		
 		double level = fighter[atk].getLevel();		
 		double power = (move.getPower() == -1) ? level : move.getPower();		
-		double A = 1.0, D = 1.0, STAB = 1.0, type1 = 1.0, type2 = 2.0, random = 1.0;
+		double A = 1.0, D = 1.0, STAB = 1.0, type1 = 1.0, type2 = 1.0, random = 1.0;
 
 		if (move.getMType().equals(MoveType.SPECIAL)) {
 			A = fighter[atk].getSpAttack();
@@ -1407,12 +1439,11 @@ public class BattleManager extends Thread {
 					gp.ui.battleState = gp.ui.battle_LevelUp;
 					
 					typeDialogue(fighter[0].getName() + " grew to\nLv. " + 
-							(fighter[0].getLevel()) + "!", true);						
-					
-					
-					gp.ui.battleState = gp.ui.battle_Turn;
+							(fighter[0].getLevel()) + "!", true);	
 				}	
 			}
+			
+			pause(500);
 			
 			gp.ui.battleState = gp.ui.battle_Turn;
 			fightStage = fight_Swap;
@@ -1569,49 +1600,7 @@ public class BattleManager extends Thread {
 		}
 	}
 	
-	// BATTLE END METHODS
-	private void setVictory() throws InterruptedException {
-		
-		// TRAINER 1 WINNER
-		if (winner == 0) {
-			
-			// WILD BATTLE
-			if (battleMode == wildBattle || battleMode == legendaryBattle) {
-				fightStage = 0;
-				gp.gameState = gp.playState;
-			}			
-			// TRAINER BATTLE
-			else {			
-				trainer[loser].isDefeated = true;
-				trainer[loser].hasBattle = false;
-				
-				int dialogueSet = trainer[loser].dialogueSet + 1;
-				typeDialogue(trainer[loser].dialogues[dialogueSet][0]);
-				
-				int moneyEarned = getMoney();
-				trainer[winner].money += moneyEarned;
-				typeDialogue(trainer[winner].name + " got $" + moneyEarned + "\nfor winning!" );								
-			}	
-		}
-		// TRAINER 2 WINNER
-		else {
-			// WILD BATTLE
-			if (battleMode == wildBattle || battleMode == legendaryBattle) {				
-			}			
-			// TRAINER BATTLE
-			else {							
-			}	
-		}
-	}
-	private int getMoney() {
-		// money earned formula reference (ALL GEN): https://bulbapedia.bulbagarden.net/wiki/Prize_money
-		
-		int level = trainer[loser].pokeParty.get(trainer[loser].pokeParty.size() - 1).getLevel();
-		int base = trainer[loser].trainerClass;		
-		int payout = base * level;
-		
-		return payout;
-	}
+	// BATTLE END METHOD
 	public void endBattle() {
 		gp.stopMusic();
 				
