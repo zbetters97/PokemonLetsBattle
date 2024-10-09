@@ -1440,6 +1440,8 @@ public class BattleManager extends Thread {
 					
 					typeDialogue(fighter[0].getName() + " grew to\nLv. " + 
 							(fighter[0].getLevel()) + "!", true);	
+					
+					gp.ui.battleState = gp.ui.battle_Turn;
 				}	
 			}
 			
@@ -1496,6 +1498,7 @@ public class BattleManager extends Thread {
 				typeDialogue("Gotcha!\n" + fighter[1].getName() + " was caught!", true);
 				
 				if (trainer[0].pokeParty.size() < 6) {
+					fighter[1].resetMovesPP();
 					trainer[0].pokeParty.add(fighter[1]);
 					typeDialogue(fighter[1].getName() + " was added\nto your party!", true);
 				}

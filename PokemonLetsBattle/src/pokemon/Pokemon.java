@@ -294,7 +294,18 @@ public class Pokemon {
 	}
 	/** END EXP METHODS **/
 
-	/** ADD NEW MOVE METHOD **/
+	/** MOVE METHODS **/
+	private static void mapMoves(Pokemon p) {
+		
+		// if pokemon not already mapped to moveset
+        if (p.getMoveSet().isEmpty()) {
+        	
+        	// add each move to passed in pokemon object
+            for (int i = 0; i < Pokedex.getMovemap().get(p.pokemon).size(); i++) {        	
+            	p.addMove(Pokedex.getMovemap().get(p.pokemon).get(i));
+            } 	
+        }
+	}
 	public boolean addMove(Move move) { 
 		
 		if (this.getMoveSet().size() == 4) {
@@ -304,6 +315,11 @@ public class Pokemon {
 			this.getMoveSet().add(move);
 			return true;
 		}
+	}
+	public void resetMovesPP() {		
+		for (int i = 0; i < moveSet.size(); i++) {			
+			moveSet.get(i).resetpp();			
+		}		
 	}
 	/** END ADD NEW MOVE METHOD **/
 	
@@ -339,20 +355,6 @@ public class Pokemon {
 		return pokemon;		
 	}	
 	/** END GET POKEMON METHODS **/
-	
-	/** MAP MOVES METHOD **/
-	private static void mapMoves(Pokemon p) {
-		
-		// if pokemon not already mapped to moveset
-        if (p.getMoveSet().isEmpty()) {
-        	
-        	// add each move to passed in pokemon object
-            for (int i = 0; i < Pokedex.getMovemap().get(p.pokemon).size(); i++) {        	
-            	p.addMove(Pokedex.getMovemap().get(p.pokemon).get(i));
-            } 	
-        }
-	}
-	/** END MAP MOVES METHOD **/
 	
 	/** GETTERS AND SETTERS **/	
 	public String getNickname() { return nickname; }	

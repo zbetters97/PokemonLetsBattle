@@ -63,6 +63,7 @@ public class UI {
 	private int partyMoveNum = -1;
 	
 	// TRANSITION
+	public boolean tMoving = false;
 	private int tCounter = 0;
 	public String tDirection = "";
 	
@@ -922,14 +923,13 @@ public class UI {
 		
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));
 		g2.setColor(Color.BLACK);
-		x = frameX + gp.tileSize * 4;
-		y = (int) (frameY * 0.9);				
-		
-		text = "STAT"; g2.drawString(text, x, y); x += gp.tileSize * 1.8;
+		x = frameX + (int) (gp.tileSize * 4.5);
+		y = (int) (frameY * 0.9);			
+		text = "STAT"; g2.drawString(text, x, y); x += gp.tileSize * 2.3;
 		text = "IV"; g2.drawString(text, x, y);
 			
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 40F));	
-		x = frameX + gp.tileSize;
+		x = frameX + (int) (gp.tileSize * 0.5);
 		y = (int) (frameY + gp.tileSize * 0.6);	
 		text = "HP"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		text = "ATTACK"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
@@ -940,7 +940,7 @@ public class UI {
 		
 		Pokemon fighter = gp.player.pokeParty.get(fighterNum);
 		
-		x = frameX + gp.tileSize * 5;
+		x = frameX + (int) (gp.tileSize * 5.5);
 		y = (int) (frameY + gp.tileSize * 0.6);		
 		text = fighter.getHP() + "/" + fighter.getBHP(); 
 		frameX = getXforRightAlignText(text, x);	
@@ -961,7 +961,7 @@ public class UI {
 		frameX = getXforRightAlignText(text, x);	
 		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		
-		x = frameX + gp.tileSize * 2;
+		x = frameX + (int) (gp.tileSize * 2.5);
 		y = (int) (frameY + gp.tileSize * 0.6);	
 		text = Integer.toString((int) fighter.getHPIV()); 
 		frameX = getXforRightAlignText(text, x);	
@@ -2181,6 +2181,11 @@ public class UI {
 				gp.eHandler.previousEventY = gp.player.worldY;
 				
 				gp.changeArea();
+				
+				if (tMoving) {
+					gp.player.moving = true;
+					tMoving = false;
+				}
 				
 				gp.gameState = gp.playState;
 			}

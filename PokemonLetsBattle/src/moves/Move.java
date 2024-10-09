@@ -41,6 +41,8 @@ public class Move {
 	public int getbpp() { return bpp; }
 	public void setbpp(int bpp) { this.bpp = bpp; }	
 	
+	public void resetpp() { pp = bpp;}
+	
 	public int getTurns() {	return turns; }
 	public void setTurns(int turns) { this.turns = turns; }
 	

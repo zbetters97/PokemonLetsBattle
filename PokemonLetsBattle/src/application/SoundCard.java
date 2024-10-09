@@ -14,7 +14,7 @@ public class SoundCard {
 	
 	// CLIP HOLDERS
 	public Clip clip;
-	private String sounds[][] = new String[7][];
+	private String sounds[][] = new String[8][];
 	
 	// VOLUME SLIDER
 	private FloatControl fc;
@@ -29,6 +29,7 @@ public class SoundCard {
 		sounds[4] = getSounds("pdxfaint");	
 		sounds[5] = getSounds("moves");
 		sounds[6] = getSounds("battle");	
+		sounds[7] = getSounds("world");	
 	}	
 	
 	private String[] getSounds(String library) {		

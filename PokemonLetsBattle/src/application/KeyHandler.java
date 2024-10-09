@@ -68,6 +68,7 @@ public class KeyHandler implements KeyListener {
 		if (code == gp.btn_Z) { zPressed = true; }
 		
 		if (code == gp.btn_START && lock) { 
+			startPressed = true;
 			playMenuOpenSE(); 
 			gp.gameState = gp.pauseState; 
 			lock = false;		

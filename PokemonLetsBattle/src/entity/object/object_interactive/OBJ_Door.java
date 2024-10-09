@@ -61,7 +61,6 @@ public class OBJ_Door extends Entity {
 			spriteCounter = 0;
 			opening = false;
 			open = true;
-			collision = false;
 		}
 	}
 	
@@ -74,7 +73,6 @@ public class OBJ_Door extends Entity {
 			if (openTimer >= 60) {
 				closing = true;
 				open = false;
-				collision = true;
 				openTimer = 0;
 			}	
 		}		
@@ -84,7 +82,6 @@ public class OBJ_Door extends Entity {
 		
 		spriteCounter++;
 		if (spriteCounter < 5) { 
-			collision = true;
 			spriteNum = 3; 
 		}
 		else if (5 <= spriteCounter && spriteCounter < 10) { 
@@ -98,16 +95,17 @@ public class OBJ_Door extends Entity {
 	}
 	
 	public void interact() {	
-		if (!opening && collision) {
+		if (!opening) {
 			playOpenSE();
 			opening = true;		
+			gp.player.moving = true;
 		}				
 	}
 	
 	public void playOpenSE() {
-	
+		gp.playSE(7, "door-shop");
 	}
 	public void playCloseSE() {
-		
+		gp.playSE(7, "exit");
 	}
 }

@@ -401,6 +401,7 @@ public class Entity {
 			for (Pokemon p : pokeParty) {				
 				p.setAlive(true);
 				p.setHP(p.getBHP());
+				p.resetMovesPP();
 				p.setStatus(null);				
 			}
 			

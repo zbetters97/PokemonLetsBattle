@@ -153,7 +153,7 @@ public class Player extends Entity {
 				gp.keyH.aPressed = false;
 				gp.keyH.bPressed = false;
 				action();
-			}
+			}			
 			
 			if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) { 		
 				move();

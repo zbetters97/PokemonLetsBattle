@@ -64,8 +64,8 @@ public class EventHandler {
 		if (canTouchEvent) {
 			
 			// TELEPORT SPOTS
-			if (hit(0, 30, 25, Arrays.asList("up"))) teleport(1, 22, 32, gp.shop, "up"); // POKEMART ENTRANCE
-			else if (hit(1, 21, 32, "right", 2, Arrays.asList("down"))) teleport(0, 30, 26, gp.town, "down"); // POKEMART EXIT
+			if (hit(0, 30, 25, Arrays.asList("up"))) teleport(1, 22, 32, gp.shop, "up", false, false); // POKEMART ENTRANCE
+			else if (hit(1, 21, 32, "right", 2, Arrays.asList("down"))) teleport(0, 30, 25, gp.town, "down", true, true); // POKEMART EXIT
 			else if (hit(1, 22, 28, Arrays.asList("up"))) speak(gp.npc[1][0]); // NURSE JOY TALK
 		}
 	}
@@ -168,16 +168,20 @@ public class EventHandler {
 		return hit;		
 	}
 		
-	private void teleport(int map, int col, int row, int area, String direction) {		
+	private void teleport(int map, int col, int row, int area, String direction, boolean moving, boolean playExitSE) {		
+				
+//		canTouchEvent = false;
 		
-		canTouchEvent = false;
+		if (playExitSE) playExitSE(); 
 		
 		tempMap = map;
 		tempCol = col;
 		tempRow = row;
 		
-		gp.ui.tDirection = direction;
 		gp.nextArea = area;		
+		gp.ui.tDirection = direction;
+		gp.ui.tMoving = moving;
+				
 		gp.gameState = gp.transitionState;
 	}	
 	
@@ -185,5 +189,9 @@ public class EventHandler {
 		if (gp.keyH.aPressed) {
 			npc.speak();
 		}
+	}
+	
+	private void playExitSE() { 
+		gp.playSE(7, "exit");
 	}
 }
