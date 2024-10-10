@@ -19,6 +19,7 @@ public enum Pokedex {
 	/** EXP & EV REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield_in_Generation_IV **/
 	/** XP GROWTH REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_experience_type **/	
 	/** CATCH RATE REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pokémon_by_catch_rate **/
+	/** MOVE LEVELS REFERENCE: https://gamefaqs.gamespot.com/gba/563596-pokemon-sapphire-version/faqs/22795 **/
 	
 	BULBASAUR ("Bulbasaur", 1, Type.GRASS, 45, 49, 49, 65, 65, 45, 16, 64, 3, 1, 45),
 	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), 60, 62, 63, 80, 80, 60, 32, 141, 3, 2, 45),
@@ -51,15 +52,63 @@ public enum Pokedex {
 	RAIKOU ("Raikou", 243, Type.ELECTRIC, 90, 85, 75, 115, 100, 115, -1, 216, 5, 3, 3),
 	ENTEI ("Entei", 244, Type.FIRE, 115, 115, 85, 90, 75, 100, -1, 217, 5, 3, 3),
 	SUICUNE ("Suicune", 245, Type.WATER, 100, 75, 115, 90, 115, 85, -1, 215, 5, 3, 3),
-	TREECKO ("Treecko", 252, Type.GRASS, 40, 45, 35, 65, 55, 70, 16, 65, 3, 1, 45),
-	GROVYLE ("Grovyle", 253, Type.GRASS, 50, 65, 45, 85, 65, 95, 36, 141, 3, 2, 45),
-	SCEPTILE ("Sceptile", 254, Type.GRASS, 70, 85, 65, 105, 85, 120, -1, 208, 3, 3, 45),
-	TORCHIC ("Torchic", 255, Type.FIRE, 45, 60, 40, 70, 50, 45, 16, 65, 3, 1, 45),
-	COMBUSKEN ("Combusken", 256, Arrays.asList(Type.FIRE, Type.FIGHTING), 60, 85, 60, 85, 60, 55, 36, 142, 3, 2, 45),
-	BLAZIKEN ("Blaziken", 257, Arrays.asList(Type.FIRE, Type.FIGHTING), 80, 120, 70, 110, 70, 80, -1, 209, 3, 3, 45),
-	MUDKIP ("Mudkip", 258, Type.WATER, 50, 70, 50, 50, 50, 40, 16, 65, 3, 1, 45),
-	MARSHTOMP ("Marshtomp", 259, Arrays.asList(Type.WATER, Type.GROUND), 70, 85, 70, 60, 70, 50, 36, 143, 3, 2, 45),
-	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), 100, 110, 90, 85, 90, 60, -1, 210, 3, 3, 45),
+	TREECKO ("Treecko", 252, Type.GRASS, 40, 45, 35, 65, 55, 70, 16, 65, 3, 1, 45, 
+			Map.ofEntries(
+					Map.entry(6, Moves.QUICKATTACK),
+					Map.entry(11, Moves.QUICKATTACK),
+					Map.entry(31, Moves.AGILITY),
+					Map.entry(36, Moves.SLAM),
+					Map.entry(46, Moves.GIGADRAIN)
+			)),
+	GROVYLE ("Grovyle", 253, Type.GRASS, 50, 65, 45, 85, 65, 95, 36, 141, 3, 2, 45, 
+			Map.ofEntries(
+					Map.entry(29, Moves.LEAFBLADE),
+					Map.entry(35, Moves.AGILITY),
+					Map.entry(41, Moves.SLAM)
+			)),
+	SCEPTILE ("Sceptile", 254, Type.GRASS, 70, 85, 65, 105, 85, 120, -1, 208, 3, 3, 45,
+			Map.ofEntries(
+					Map.entry(29, Moves.LEAFBLADE),
+					Map.entry(35, Moves.AGILITY),
+					Map.entry(41, Moves.SLAM)
+			)),
+	TORCHIC ("Torchic", 255, Type.FIRE, 45, 60, 40, 70, 50, 45, 16, 65, 3, 1, 45,
+			Map.ofEntries(
+					Map.entry(10, Moves.EMBER),
+					Map.entry(28, Moves.QUICKATTACK),
+					Map.entry(34, Moves.SLASH),
+					Map.entry(43, Moves.FLAMETHROWER)
+			)),
+	COMBUSKEN ("Combusken", 256, Arrays.asList(Type.FIRE, Type.FIGHTING), 60, 85, 60, 85, 60, 55, 36, 142, 3, 2, 45,
+			Map.ofEntries(
+					Map.entry(16, Moves.DOUBLEKICK),
+					Map.entry(28, Moves.QUICKATTACK),
+					Map.entry(39, Moves.SLASH)
+			)),
+	BLAZIKEN ("Blaziken", 257, Arrays.asList(Type.FIRE, Type.FIGHTING), 80, 120, 70, 110, 70, 80, -1, 209, 3, 3, 45, 
+			Map.ofEntries(
+					Map.entry(36, Moves.BLAZEKICK),
+					Map.entry(42, Moves.SLASH),
+					Map.entry(59, Moves.SKYUPPERCUT)
+			)),
+	MUDKIP ("Mudkip", 258, Type.WATER, 50, 70, 50, 50, 50, 40, 16, 65, 3, 1, 45, 
+			Map.ofEntries(
+					Map.entry(6, Moves.WATERGUN),
+					Map.entry(28, Moves.TAKEDOWN),
+					Map.entry(42, Moves.HYDROPUMP)
+			)),
+	MARSHTOMP ("Marshtomp", 259, Arrays.asList(Type.WATER, Type.GROUND), 70, 85, 70, 60, 70, 50, 36, 143, 3, 2, 45,
+			Map.ofEntries(
+					Map.entry(16, Moves.MUDSHOT),
+					Map.entry(31, Moves.TAKEDOWN),
+					Map.entry(37, Moves.MUDDYWATER),
+					Map.entry(46, Moves.EARTHQUAKE)
+			)),
+	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), 100, 110, 90, 85, 90, 60, -1, 210, 3, 3, 45,
+			Map.ofEntries(
+					Map.entry(39, Moves.MUDDYWATER),
+					Map.entry(52, Moves.EARTHQUAKE)
+			)),
 	SPHEAL("Spheal", 363, Arrays.asList(Type.ICE, Type.WATER), 70, 40, 50, 55, 50, 25, 32, 75, 3, 1, 255),
 	SEALEO("Sealeo", 364, Arrays.asList(Type.ICE, Type.WATER), 90, 60, 70, 75, 70, 45, 44, 128, 3, 2, 120),
 	WALREIN("Walrein", 365, Arrays.asList(Type.ICE, Type.WATER), 110, 80, 90, 95, 90, 65, -1, 192, 3, 3, 45),
@@ -75,6 +124,7 @@ public enum Pokedex {
 	private final Type type;
 	private final List<Type> types;
 	private int hp, speed, attack, defense, spAttack, spDefense, accuracy, evLevel, ey, growth, ev, catchRate;	
+	private Map<Integer, Moves> moveLevels;
 	/** END INITIALIZE VALUES **/
 		
 	/** CONSTRUCTORS **/
@@ -102,6 +152,33 @@ public enum Pokedex {
 		
 		this.types = null;	
 	}
+	Pokedex(String name, int index, Type type, int hp, int attack, int defense, 
+			int spAttack, int spDefense, int speed, int evLevel, int ey, int growth, int ev, int catchRate, 
+			Map<Integer, Moves> moveLevels) {	
+		
+		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
+		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
+		this.menuSprite = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
+		
+		this.name = name; 
+		this.index = index; 
+		this.type = type; 
+		this.hp = hp;
+		this.attack = attack;
+		this.defense = defense;
+		this.spAttack = spAttack;
+		this.spDefense = spDefense;
+		this.speed = speed;
+		this.ey = ey;
+		this.growth = growth;
+		this.ev = ev;
+		this.evLevel = evLevel; 
+		this.catchRate = catchRate;
+		
+		this.types = null;	
+		
+		this.moveLevels = moveLevels;
+	}
 	Pokedex(String name, int index, List<Type> types, int hp, int attack, int defense, 
 			int spAttack, int spDefense, int speed, int evLevel, int ey, int growth, int ev, int catchRate) {			
 		
@@ -126,6 +203,32 @@ public enum Pokedex {
 		
 		this.type = null;		
 	}
+	Pokedex(String name, int index, List<Type> types, int hp, int attack, int defense, 
+			int spAttack, int spDefense, int speed, int evLevel, int ey, int growth, int ev, int catchRate, 
+			Map<Integer, Moves> moveLevels) {			
+		
+		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
+		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
+		this.menuSprite = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
+
+		this.name = name; 
+		this.index = index; 
+		this.types = types; 
+		this.hp = hp;
+		this.attack = attack;
+		this.defense = defense;
+		this.spAttack = spAttack;
+		this.spDefense = spDefense;
+		this.speed = speed;
+		this.ey = ey;
+		this.growth = growth;
+		this.ev = ev;
+		this.evLevel = evLevel; 
+		this.catchRate = catchRate;
+		
+		this.type = null;		
+		this.moveLevels = moveLevels;
+	}
 	/** END CONSTRUCTORS **/
 	
 	// LIST TO HOLD ALL POKEMON ENUMS
@@ -133,101 +236,100 @@ public enum Pokedex {
 	
 	/** POKEMON MOVES STATIC MAP **/
 	private static final Map<Pokedex, List<Move>> moveMap;
-	static {
+	static {		
 		moveMap = new HashMap<>();
-		getMovemap().put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
-        getMovemap().put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
+		moveMap.put(BULBASAUR, Arrays.asList(new Move(Moves.VINEWHIP), new Move(Moves.TACKLE), new Move(Moves.GROWL)));
+        moveMap.put(IVYSAUR, Arrays.asList(new Move(Moves.RAZORLEAF), new Move(Moves.VINEWHIP), new Move(Moves.POISONPOWDER),
         		new Move(Moves.TACKLE)));
-		getMovemap().put(VENUSAUR, Arrays.asList(new Move(Moves.PETALBLIZZARD), new Move(Moves.SOLARBEAM), new Move(Moves.TAKEDOWN), 
+		moveMap.put(VENUSAUR, Arrays.asList(new Move(Moves.PETALBLIZZARD), new Move(Moves.SOLARBEAM), new Move(Moves.TAKEDOWN), 
 				new Move(Moves.DOUBLEEDGE)));
 		
-        getMovemap().put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
-		getMovemap().put(CHARMELEON, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.EMBER), new Move(Moves.SLASH), 
+        moveMap.put(CHARMANDER, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL)));
+		moveMap.put(CHARMELEON, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.EMBER), new Move(Moves.SLASH), 
 				new Move(Moves.GROWL)));
-        getMovemap().put(CHARIZARD, Arrays.asList(new Move(Moves.FLAMETHROWER), new Move(Moves.FLAREBLITZ),new Move(Moves.DRAGONBREATH),
+        moveMap.put(CHARIZARD, Arrays.asList(new Move(Moves.FLAMETHROWER), new Move(Moves.FLAREBLITZ),new Move(Moves.DRAGONBREATH),
         	new Move(Moves.FLY)));
  
-		getMovemap().put(SQUIRTLE, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.TAILWHIP)));
-        getMovemap().put(WARTORTLE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.WATERGUN), new Move(Moves.TAILWHIP)));
-        getMovemap().put(BLASTOISE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.AQUATAIL), new Move(Moves.HYDROPUMP), 
+		moveMap.put(SQUIRTLE, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.TAILWHIP)));
+        moveMap.put(WARTORTLE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.WATERGUN), new Move(Moves.TAILWHIP)));
+        moveMap.put(BLASTOISE, Arrays.asList(new Move(Moves.WATERPULSE), new Move(Moves.AQUATAIL), new Move(Moves.HYDROPUMP), 
         		new Move(Moves.FLASHCANNON)));
         
-        getMovemap().put(PIKACHU, Arrays.asList(new Move(Moves.THUNDERWAVE), new Move(Moves.THUNDERSHOCK),new Move(Moves.TACKLE),
+        moveMap.put(PIKACHU, Arrays.asList(new Move(Moves.THUNDERWAVE), new Move(Moves.THUNDERSHOCK),new Move(Moves.TACKLE),
         		new Move(Moves.PLAYNICE)));
-        getMovemap().put(RAICHU, Arrays.asList(new Move(Moves.THUNDERPUNCH), new Move(Moves.THUNDERBOLT), new Move(Moves.QUICKATTACK), 
+        moveMap.put(RAICHU, Arrays.asList(new Move(Moves.THUNDERPUNCH), new Move(Moves.THUNDERBOLT), new Move(Moves.QUICKATTACK), 
         		new Move(Moves.SLAM)));    
       
-        getMovemap().put(ABRA, Arrays.asList(new Move(Moves.TELEPORT)));
-        getMovemap().put(KADABRA, Arrays.asList(new Move(Moves.CONFUSION), new Move(Moves.PSYBEAM), new Move(Moves.KINESIS)));
-        getMovemap().put(ALAKAZAM, Arrays.asList(new Move(Moves.PSYCHIC), new Move(Moves.CONFUSION), new Move(Moves.PSYCHOCUT), 
+        moveMap.put(ABRA, Arrays.asList(new Move(Moves.TELEPORT)));
+        moveMap.put(KADABRA, Arrays.asList(new Move(Moves.CONFUSION), new Move(Moves.PSYBEAM), new Move(Moves.KINESIS)));
+        moveMap.put(ALAKAZAM, Arrays.asList(new Move(Moves.PSYCHIC), new Move(Moves.CONFUSION), new Move(Moves.PSYCHOCUT), 
         		new Move(Moves.CALMMIND)));     
         
-        getMovemap().put(MACHOP, Arrays.asList(new Move(Moves.LOWKICK), new Move(Moves.LOWSWEEP), new Move(Moves.KNOCKOFF))); 
-        getMovemap().put(MACHOKE, Arrays.asList(new Move(Moves.LOWKICK), new Move(Moves.LOWSWEEP), new Move(Moves.VITALTHROW),
+        moveMap.put(MACHOP, Arrays.asList(new Move(Moves.LOWKICK), new Move(Moves.LOWSWEEP), new Move(Moves.KNOCKOFF))); 
+        moveMap.put(MACHOKE, Arrays.asList(new Move(Moves.LOWKICK), new Move(Moves.LOWSWEEP), new Move(Moves.VITALTHROW),
         		new Move(Moves.SEISMICTOSS))); 
-        getMovemap().put(MACHAMP, Arrays.asList(new Move(Moves.SEISMICTOSS), new Move(Moves.DYNAMICPUNCH), new Move(Moves.CROSSCHOP), 
+        moveMap.put(MACHAMP, Arrays.asList(new Move(Moves.SEISMICTOSS), new Move(Moves.DYNAMICPUNCH), new Move(Moves.CROSSCHOP), 
         		new Move(Moves.SCARYFACE))); 
         
-        getMovemap().put(GEODUDE, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.TACKLE), new Move(Moves.DEFENSECURL)));
-        getMovemap().put(GRAVELER, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.ROLLOUT), new Move(Moves.TACKLE),
+        moveMap.put(GEODUDE, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.TACKLE), new Move(Moves.DEFENSECURL)));
+        moveMap.put(GRAVELER, Arrays.asList(new Move(Moves.ROCKTHROW), new Move(Moves.ROLLOUT), new Move(Moves.TACKLE),
         		new Move(Moves.DEFENSECURL)));
-        getMovemap().put(GOLEM, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.DIG), new Move(Moves.HEAVYSLAM), 
+        moveMap.put(GOLEM, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.DIG), new Move(Moves.HEAVYSLAM), 
         		new Move(Moves.DOUBLEEDGE)));
         
-        getMovemap().put(GASTLY, Arrays.asList(new Move(Moves.LICK), new Move(Moves.PAYBACK), new Move(Moves.HYPNOSIS)));   
-        getMovemap().put(HAUNTER, Arrays.asList(new Move(Moves.PAYBACK), new Move(Moves.HEX), new Move(Moves.DARKPULSE), 
+        moveMap.put(GASTLY, Arrays.asList(new Move(Moves.LICK), new Move(Moves.PAYBACK), new Move(Moves.HYPNOSIS)));   
+        moveMap.put(HAUNTER, Arrays.asList(new Move(Moves.PAYBACK), new Move(Moves.HEX), new Move(Moves.DARKPULSE), 
         		new Move(Moves.CONFUSERAY)));   
-        getMovemap().put(GENGAR, Arrays.asList(new Move(Moves.SHADOWBALL), new Move(Moves.SHADOWPUNCH),new Move(Moves.HEX), 
+        moveMap.put(GENGAR, Arrays.asList(new Move(Moves.SHADOWBALL), new Move(Moves.SHADOWPUNCH),new Move(Moves.HEX), 
         		new Move(Moves.DARKPULSE))); 
         
-        getMovemap().put(HORSEA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.BUBBLE), new Move(Moves.LEER))); 
-        getMovemap().put(SEADRA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TWISTER), new Move(Moves.HYDROPUMP),
+        moveMap.put(HORSEA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.BUBBLE), new Move(Moves.LEER))); 
+        moveMap.put(SEADRA, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TWISTER), new Move(Moves.HYDROPUMP),
         		new Move(Moves.AGILITY)));       
-        getMovemap().put(KINGDRA, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.DRAGONPULSE),
+        moveMap.put(KINGDRA, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.DRAGONPULSE),
         		new Move(Moves.AGILITY))); 
      
-        getMovemap().put(LAPRAS, Arrays.asList(new Move(Moves.ICEBEAM), new Move(Moves.HYDROPUMP), new Move(Moves.SHEERCOLD), 
+        moveMap.put(LAPRAS, Arrays.asList(new Move(Moves.ICEBEAM), new Move(Moves.HYDROPUMP), new Move(Moves.SHEERCOLD), 
         		new Move(Moves.CONFUSERAY)));     
         
-        getMovemap().put(SNORLAX, Arrays.asList(new Move(Moves.BODYSLAM), new Move(Moves.ROLLOUT), new Move(Moves.CRUNCH), 
+        moveMap.put(SNORLAX, Arrays.asList(new Move(Moves.BODYSLAM), new Move(Moves.ROLLOUT), new Move(Moves.CRUNCH), 
         		new Move(Moves.YAWN)));     
         
-        getMovemap().put(RAIKOU, Arrays.asList(new Move(Moves.THUNDERFANG), new Move(Moves.THUNDER), new Move(Moves.CRUNCH),
+        moveMap.put(RAIKOU, Arrays.asList(new Move(Moves.THUNDERFANG), new Move(Moves.THUNDER), new Move(Moves.CRUNCH),
         		new Move(Moves.CALMMIND)));
-        getMovemap().put(ENTEI, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.FLAMETHROWER), new Move(Moves.EXTRASENSORY),
+        moveMap.put(ENTEI, Arrays.asList(new Move(Moves.FIREFANG), new Move(Moves.FLAMETHROWER), new Move(Moves.EXTRASENSORY),
         		new Move(Moves.CALMMIND)));
-        getMovemap().put(SUICUNE, Arrays.asList(new Move(Moves.ICEFANG), new Move(Moves.AURORABEAM), new Move(Moves.HYDROPUMP),
+        moveMap.put(SUICUNE, Arrays.asList(new Move(Moves.ICEFANG), new Move(Moves.AURORABEAM), new Move(Moves.HYDROPUMP),
         		new Move(Moves.CALMMIND)));
         
-        getMovemap().put(TREECKO, Arrays.asList(new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK), new Move(Moves.LEER)));      
-        getMovemap().put(GROVYLE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.ABSORB), new Move(Moves.CUT),
-        		new Move(Moves.AGILITY))); 
-        getMovemap().put(SCEPTILE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.LEAFSTORM), new Move(Moves.GIGADRAIN),
+        moveMap.put(TREECKO, Arrays.asList(new Move(Moves.POUND), new Move(Moves.LEER)));      
+        moveMap.put(GROVYLE, Arrays.asList(new Move(Moves.ABSORB), new Move(Moves.QUICKATTACK), new Move(Moves.POUND),
+        		new Move(Moves.LEER))); 
+        moveMap.put(SCEPTILE, Arrays.asList(new Move(Moves.LEAFBLADE), new Move(Moves.QUICKATTACK), new Move(Moves.ABSORB),
         		new Move(Moves.AGILITY))); 
        
-        getMovemap().put(TORCHIC, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL))); 
-        getMovemap().put(COMBUSKEN, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.DOUBLEKICK), new Move(Moves.SLASH), 
-        		new Move(Moves.GROWL))); 
-        getMovemap().put(BLAZIKEN, Arrays.asList(new Move(Moves.FIREPUNCH), new Move(Moves.BLAZEKICK), new Move(Moves.FLAREBLITZ),
-        		new Move(Moves.SKYUPPERCUT))); 
+        moveMap.put(TORCHIC, Arrays.asList(new Move(Moves.SCRATCH), new Move(Moves.GROWL))); 
+        moveMap.put(COMBUSKEN, Arrays.asList(new Move(Moves.EMBER), new Move(Moves.SCRATCH), new Move(Moves.GROWL))); 
+        moveMap.put(BLAZIKEN, Arrays.asList(new Move(Moves.FLAREBLITZ), new Move(Moves.QUICKATTACK), new Move(Moves.SCRATCH),
+        		new Move(Moves.GROWL)));
 
-        getMovemap().put(MUDKIP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.TACKLE), new Move(Moves.GROWL))); 
-        getMovemap().put(MARSHTOMP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.MUDSHOT), new Move(Moves.MUDSLAP), 
-        		new Move(Moves.TACKLE))); 
-        getMovemap().put(SWAMPERT, Arrays.asList(new Move(Moves.SURF), new Move(Moves.MUDDYWATER), new Move(Moves.MUDBOMB),
-        		new Move(Moves.EARTHQUAKE)));
+        moveMap.put(MUDKIP, Arrays.asList(new Move(Moves.TACKLE), new Move(Moves.GROWL))); 
+        moveMap.put(MARSHTOMP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.MUDSHOT), new Move(Moves.TACKLE),
+        		new Move(Moves.GROWL)));
+        moveMap.put(SWAMPERT, Arrays.asList(new Move(Moves.SURF), new Move(Moves.MUDSHOT), new Move(Moves.TAKEDOWN),
+        		new Move(Moves.GROWL)));
         
-        getMovemap().put(SPHEAL, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.DEFENSECURL), new Move(Moves.GROWL))); 
-        getMovemap().put(SEALEO, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.AURORABEAM), new Move(Moves.BODYSLAM), 
+        moveMap.put(SPHEAL, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.DEFENSECURL), new Move(Moves.GROWL))); 
+        moveMap.put(SEALEO, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.AURORABEAM), new Move(Moves.BODYSLAM), 
         		new Move(Moves.YAWN))); 
-        getMovemap().put(WALREIN, Arrays.asList(new Move(Moves.AURORABEAM), new Move(Moves.BLIZZARD), new Move(Moves.SHEERCOLD),
+        moveMap.put(WALREIN, Arrays.asList(new Move(Moves.AURORABEAM), new Move(Moves.BLIZZARD), new Move(Moves.SHEERCOLD),
         		new Move(Moves.SURF)));
      
-        getMovemap().put(KYOGRE, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.THUNDER),
+        moveMap.put(KYOGRE, Arrays.asList(new Move(Moves.SURF), new Move(Moves.HYDROPUMP), new Move(Moves.THUNDER),
         		new Move(Moves.CALMMIND)));
-        getMovemap().put(GROUDON, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.FIREFANG), new Move(Moves.DRAGONCLAW), 
+        moveMap.put(GROUDON, Arrays.asList(new Move(Moves.EARTHQUAKE), new Move(Moves.FIREFANG), new Move(Moves.DRAGONCLAW), 
         		new Move(Moves.SOLARBEAM)));
-        getMovemap().put(RAYQUAZA, Arrays.asList(new Move(Moves.DRAGONCLAW), new Move(Moves.EXTREMESPEED), new Move(Moves.BLIZZARD), 
+        moveMap.put(RAYQUAZA, Arrays.asList(new Move(Moves.DRAGONCLAW), new Move(Moves.EXTREMESPEED), new Move(Moves.BLIZZARD), 
         		new Move(Moves.FLY))); 
 	}
 	/** END POKEMON MOVES STATIC MAP **/
@@ -258,6 +360,7 @@ public enum Pokedex {
 	
 	protected static List<Pokedex> getPokemonList() { return PokemonList; }
 	protected static Map<Pokedex, List<Move>> getMovemap() { return moveMap; }	
+	protected Map<Integer, Moves> getMoveLevelMap() { return moveLevels; }	
 	/** END GETTERS **/
 	
 	// IMAGE MANAGERS

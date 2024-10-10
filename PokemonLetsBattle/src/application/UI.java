@@ -104,10 +104,9 @@ public class UI {
 	public final int battle_Swap = 2;
 	public final int battle_Options = 3;
 	public final int battle_Moves = 4;
-	public final int battle_Turn = 5;
-	public final int battle_KO = 6;
-	public final int battle_LevelUp = 7;
-	public final int battle_End = 8;
+	public final int battle_Dialogue = 5;
+	public final int battle_LevelUp = 6;
+	public final int battle_End = 7;
 	
 	private Pokemon oldEvolve, newEvolve = null;
 	private int evolveIndex = -1;
@@ -1282,6 +1281,11 @@ public class UI {
 				animateBattleEntrance();
 				drawBattle_Dialogue();
 				break;
+			case battle_Swap:				
+				drawBattle_Fighters();				
+				drawBattle_HUD();
+				drawBattle_Swap();
+				break;
 			case battle_Options:				
 				drawBattle_Fighters();				
 				drawBattle_Options();
@@ -1292,14 +1296,8 @@ public class UI {
 				drawBattle_Moves();
 				drawBattle_HUD();
 				break;
-			case battle_Turn:
+			case battle_Dialogue:
 				drawBattle_Fighters();
-				drawBattle_Dialogue();
-				drawBattle_HUD();
-				break;
-			case battle_KO:
-				drawBattle_Fighters();
-				animateFighterDefeat();
 				drawBattle_Dialogue();
 				drawBattle_HUD();
 				break;
@@ -1308,12 +1306,7 @@ public class UI {
 				drawBattle_Dialogue();
 				drawBattle_HUD();
 				drawBattle_LevelUp();
-				break;
-			case battle_Swap:				
-				drawBattle_Fighters();				
-				drawBattle_HUD();
-				drawBattle_Swap();
-				break;				
+				break;							
 			case battle_End:
 				animateTrainerDefeat();
 				drawBattle_Dialogue();
@@ -1329,7 +1322,12 @@ public class UI {
 		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
 		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
 		
-		if (gp.btlManager.fighter[0] != null) {			
+		if (gp.btlManager.fighter[0] != null) {	
+			
+			if (!gp.btlManager.fighter[0].isAlive() && fighter_one_Y < gp.screenHeight) {
+				fighter_one_Y += 16;
+			}
+			
 			if (gp.btlManager.fighter[0].getHit()) animateHit(0, g2);		
 			g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);	
 			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
@@ -1340,6 +1338,11 @@ public class UI {
 				g2.drawImage(pokeball, fighter_two_X + (int)(gp.tileSize * 2.2), fighter_two_Y + (int)(gp.tileSize * 3.2), null);	
 			}
 			else {
+				
+				if (!gp.btlManager.fighter[1].isAlive() && fighter_two_Y < gp.screenHeight) {
+					fighter_two_Y += 16;
+				}
+				
 				if (gp.btlManager.fighter[1].getHit()) animateHit(1, g2);		
 				g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
 				g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
@@ -1382,18 +1385,6 @@ public class UI {
 			fighter_two_X += 6;	
 		}		
 	}	
-	private void animateFighterDefeat() {
-		if (gp.btlManager.loser == 0) {
-			if (fighter_one_Y < gp.screenHeight) {
-				fighter_one_Y += 16;
-			}
-		}
-		else if (gp.btlManager.loser == 1) {
-			if (fighter_two_Y < gp.screenHeight) {
-				fighter_two_Y += 16;
-			}
-		}		
-	}
 	private void animateTrainerDefeat() {
 		
 		fighter_two_Y = fighter_two_startY;	
@@ -1757,7 +1748,7 @@ public class UI {
 				gp.btlManager.fightStage = gp.btlManager.fight_Capture;
 				gp.btlManager.running = true;			
 				new Thread(gp.btlManager).start();	
-				battleState = battle_Turn;
+				battleState = battle_Dialogue;
 				
 				commandNum = 0;
 			}
@@ -1775,7 +1766,7 @@ public class UI {
 				gp.btlManager.fightStage = gp.btlManager.fight_Run;
 				gp.btlManager.running = true;			
 				new Thread(gp.btlManager).start();	
-				battleState = battle_Turn;
+				battleState = battle_Dialogue;
 				
 				commandNum = 0;
 			}	
@@ -1839,7 +1830,7 @@ public class UI {
 			gp.btlManager.setPlayerMove(commandNum);
 			gp.btlManager.running = true;			
 			new Thread(gp.btlManager).start();	
-			battleState = battle_Turn;
+			battleState = battle_Dialogue;
 			
 			commandNum = 0;
 		}
@@ -1985,7 +1976,7 @@ public class UI {
 			fighter_one_Y = fighter_one_startY;
 			fighter_two_Y = fighter_two_startY;			
 			
-			battleState = battle_Turn;
+			battleState = battle_Dialogue;
 			gp.btlManager.fightStage = gp.btlManager.fight_Swap;
 			
 			if (commandNum == 0) {		
@@ -2191,7 +2182,7 @@ public class UI {
 			}
 		}		
 	}	
-	private void startBattle() {
+	public void startBattle() {
 		battleDialogue = "";
 		battleState = battle_Encounter;
 		

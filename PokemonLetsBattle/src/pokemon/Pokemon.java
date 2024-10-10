@@ -264,6 +264,18 @@ public class Pokemon {
 		
 		this.bxp = getXP(level);
 	}
+	public Move getNewMove() {
+		
+		Move newMove = null;
+		
+		for (Integer lvl : pokemon.getMoveLevelMap().keySet()) {
+			if (level == lvl) {
+				newMove = new Move(pokemon.getMoveLevelMap().get(lvl));
+			}
+		}
+					
+		return newMove;
+	}
 	public boolean canEvolve() {
 		
 		boolean canEvolve = false;
@@ -302,11 +314,11 @@ public class Pokemon {
         	
         	// add each move to passed in pokemon object
             for (int i = 0; i < Pokedex.getMovemap().get(p.pokemon).size(); i++) {        	
-            	p.addMove(Pokedex.getMovemap().get(p.pokemon).get(i));
+            	p.learnMove(Pokedex.getMovemap().get(p.pokemon).get(i));
             } 	
         }
 	}
-	public boolean addMove(Move move) { 
+	public boolean learnMove(Move move) { 
 		
 		if (this.getMoveSet().size() == 4) {
 			return false;
@@ -316,6 +328,30 @@ public class Pokemon {
 			return true;
 		}
 	}
+	public boolean forgetMove(Move move) {
+		
+		for (int i = 0; i < moveSet.size(); i++) {
+			if (moveSet.get(i).getName().equals(move.getName())) {
+				moveSet.remove(i);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	public boolean replaceMove(Move oldMove, Move newMove) {
+		
+		for (int i = 0; i < moveSet.size(); i++) {
+			if (moveSet.get(i).getName().equals(oldMove.getName())) {
+				moveSet.remove(i);
+				moveSet.add(i, newMove);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public void resetMovesPP() {		
 		for (int i = 0; i < moveSet.size(); i++) {			
 			moveSet.get(i).resetpp();			
