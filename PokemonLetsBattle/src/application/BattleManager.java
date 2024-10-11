@@ -27,6 +27,7 @@ public class BattleManager extends Thread {
 	public Move move1, move2;
 	public int winner = -1, loser = -1;	
 	private int escapeAttempts = 0;
+	public Move newMove = null;
 			
 	// TURN VALUES
 	public int currentTurn;
@@ -1368,27 +1369,81 @@ public class BattleManager extends Thread {
 				fighter[0].levelUp();					
 				
 				gp.ui.battleState = gp.ui.battle_LevelUp;
-				
+				gp.playSE(battle_SE, "level-up");
 				typeDialogue(fighter[0].getName() + " grew to\nLv. " + 
 						(fighter[0].getLevel()) + "!", true);
 				
 				gp.ui.battleState = gp.ui.battle_Dialogue;
 				
-				Move newMove = fighter[0].getNewMove();				
-				if (newMove != null) {
-					if (fighter[0].learnMove(newMove)) {
-						typeDialogue(fighter[0].getName() + " learned\n" + 
-								newMove.getName() + "!", true);	
-					}
-					else {
-						typeDialogue(fighter[0].getName() + " wants to learn\n" + 
-								newMove.getName() + "...", true);	
-					}					
-				}
+				checkNewMove();
 			}	
 		}
 		
 		pause(500);
+	}
+	private void checkNewMove() throws InterruptedException {
+		
+		newMove = fighter[0].getNewMove();				
+		if (newMove != null) {
+			if (fighter[0].learnMove(newMove)) {
+				gp.playSE(battle_SE, "move-learn");
+				typeDialogue(fighter[0].getName() + " learned\n" + 
+						newMove.getName() + "!", true);	
+				newMove = null;
+			}
+			else {
+				typeDialogue(fighter[0].getName() + " wants to learn\n" + 
+						newMove.getName() + ".");	
+				typeDialogue("Delete a move to make\nroom for " + newMove.getName() + "?", false);
+				
+				gp.ui.battleState = gp.ui.battle_Confirm;					
+				waitForKeyPress();
+				getMoveAnswer();
+			}					
+		}
+	}
+	private void getMoveAnswer() throws InterruptedException {
+		
+		if (gp.keyH.aPressed) {
+			gp.keyH.aPressed = false;	
+			
+			fightStage = fight_Swap;
+			gp.ui.battleState = gp.ui.battle_Dialogue;						
+			
+			if (gp.ui.commandNum == 0) {	
+				gp.ui.partyState = gp.ui.party_Moves;
+				gp.gameState = gp.partyState;	
+				
+				while (!gp.keyH.aPressed && !gp.keyH.bPressed) {
+					pause(5);
+				}
+				
+				if (gp.keyH.aPressed) {
+					gp.playSE(battle_SE, "move-learn");
+					typeDialogue(fighter[0].getName() + " learned\n" + newMove.getName() + "!", true);	
+				}
+				else if (gp.keyH.bPressed) {
+					typeDialogue(fighter[0].getName() + " did not learn\n" + newMove.getName() + ".", true);
+				}
+			}
+			else {
+				typeDialogue(fighter[0].getName() + " did not learn\n" + newMove.getName() + ".", true);
+			}
+			
+			newMove = null;
+			gp.ui.commandNum = 0;			
+		}			
+		else if (gp.keyH.bPressed) {
+			gp.keyH.bPressed = false;
+			
+			fightStage = fight_Swap;
+			gp.ui.battleState = gp.ui.battle_Dialogue;			
+			
+			typeDialogue(fighter[0].getName() + " did not learn\n" + newMove.getName() + ".", true);
+			
+			newMove = null;
+			gp.ui.commandNum = 0;	
+		}
 	}
 	
 	// GET WINNING TRAINER METHODS
@@ -1463,9 +1518,12 @@ public class BattleManager extends Thread {
 				if (trainer[0].getAvailablePokemon() > 1) {
 					typeDialogue("Trainer " + trainer[1].name + " is about\nto sent out " + 
 							newFighter[1].getName() + "!", true);
-											
-					running = false;
-					gp.ui.battleState = gp.ui.battle_Swap;
+					
+					typeDialogue("Will " + gp.player.name + " swap\nPokemon?", false);										
+					
+					gp.ui.battleState = gp.ui.battle_Confirm;					
+					waitForKeyPress();
+					getSwapAnswer();
 				}
 			}
 			// TRAINER 2 OUT OF POKEMON
@@ -1474,6 +1532,29 @@ public class BattleManager extends Thread {
 				endBattle();
 			}	
 		}
+	}
+	private void getSwapAnswer() {
+		
+		if (gp.keyH.aPressed) {
+			gp.keyH.aPressed = false;
+			
+			gp.ui.fighter_one_X = gp.ui.fighter_one_startX;
+			gp.ui.fighter_two_X = gp.ui.fighter_two_startX;
+			gp.ui.fighter_one_Y = gp.ui.fighter_one_startY;
+			gp.ui.fighter_two_Y = gp.ui.fighter_two_startY;		
+			
+			fightStage = fight_Swap;
+			gp.ui.battleState = gp.ui.battle_Dialogue;						
+			
+			if (gp.ui.commandNum == 0) {		
+				running = false;
+				
+				gp.ui.partyState = gp.ui.party_Main;
+				gp.gameState = gp.partyState;								
+			}
+			
+			gp.ui.commandNum = 0;
+		}			
 	}
 	private void announceWinner() throws InterruptedException {
 		
@@ -1647,6 +1728,7 @@ public class BattleManager extends Thread {
 		newFighter[1] = null;
 		trainer[0] = null;
 		trainer[1] = null;
+		newMove = null;
 		
 		move1 = null;
 		move2 = null;

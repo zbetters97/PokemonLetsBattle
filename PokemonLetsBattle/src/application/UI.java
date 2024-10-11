@@ -80,12 +80,12 @@ public class UI {
 	public int fighter_two_X;
 	public int fighter_one_Y;
 	public int fighter_two_Y;	
-	private final int fighter_one_startX;
-	private final int fighter_two_startX;
+	public final int fighter_one_startX;
+	public final int fighter_two_startX;
 	private final int fighter_one_endX;
 	private final int fighter_two_endX;	
-	private final int fighter_one_startY;
-	private final int fighter_two_startY;
+	public final int fighter_one_startY;
+	public final int fighter_two_startY;
 	private final int fighter_one_platform_endX;
 	private final int fighter_two_platform_endX;
 	private final int fighter_one_platform_Y;
@@ -100,12 +100,12 @@ public class UI {
 	
 	// BATTLE STATE
 	public int battleState;
-	public final int battle_Encounter = 1;
-	public final int battle_Swap = 2;
-	public final int battle_Options = 3;
-	public final int battle_Moves = 4;
-	public final int battle_Dialogue = 5;
-	public final int battle_LevelUp = 6;
+	public final int battle_Encounter = 1;	
+	public final int battle_Options = 2;
+	public final int battle_Moves = 3;
+	public final int battle_Dialogue = 4;
+	public final int battle_LevelUp = 5;
+	public final int battle_Confirm = 6;
 	public final int battle_End = 7;
 	
 	private Pokemon oldEvolve, newEvolve = null;
@@ -434,14 +434,6 @@ public class UI {
 			npc.dialogueIndex++;
 			gp.keyH.aPressed = false;			
 		}
-	}
-	public void resetDialogue() {	
-		dialogueCounter = 0;
-		charIndex = 0;		
-		combinedText = "";
-		currentDialogue = "";
-		npc = null;		
-		canSkip = false;		
 	}
 	
 	// HEAL SCREEN
@@ -1128,14 +1120,34 @@ public class UI {
 			y += gp.tileSize * 0.8;
 		} 			
 		
-		if (gp.keyH.leftPressed) {
-			commandNum = 0;
-			partyState = party_Skills;			
+		if (gp.btlManager.newMove != null) {
+			if (gp.keyH.aPressed) {			
+				gp.keyH.aPressed = false;
+				gp.keyH.playCursorSE();
+				
+				Move oldMove = gp.btlManager.fighter[0].getMoveSet().get(commandNum);			
+				gp.btlManager.fighter[0].replaceMove(oldMove, gp.btlManager.newMove);	
+				
+				commandNum = 0;			
+				gp.gameState = gp.battleState;
+			}
+			if (gp.keyH.bPressed) {
+				gp.keyH.bPressed = false;	
+							
+				commandNum = 0;
+				gp.gameState = gp.battleState;
+			}			
 		}
-		if (gp.keyH.bPressed) {			
-			commandNum = 0;
-			partyState = party_Main;
-			gp.keyH.bPressed = false;
+		else {
+			if (gp.keyH.leftPressed) {
+				commandNum = 0;
+				partyState = party_Skills;			
+			}
+			if (gp.keyH.bPressed) {			
+				gp.keyH.bPressed = false;			
+				partyState = party_Main;
+				commandNum = 0;
+			}	
 		}
 	}
 	private void drawParty_Info() {
@@ -1281,11 +1293,6 @@ public class UI {
 				animateBattleEntrance();
 				drawBattle_Dialogue();
 				break;
-			case battle_Swap:				
-				drawBattle_Fighters();				
-				drawBattle_HUD();
-				drawBattle_Swap();
-				break;
 			case battle_Options:				
 				drawBattle_Fighters();				
 				drawBattle_Options();
@@ -1300,13 +1307,19 @@ public class UI {
 				drawBattle_Fighters();
 				drawBattle_Dialogue();
 				drawBattle_HUD();
-				break;
+				break;				
 			case battle_LevelUp:
 				drawBattle_Fighters();
 				drawBattle_Dialogue();
 				drawBattle_HUD();
 				drawBattle_LevelUp();
-				break;							
+				break;		
+			case battle_Confirm:				
+				drawBattle_Fighters();	
+				drawBattle_Dialogue();
+				drawBattle_HUD();
+				drawBattle_Confirmation();				
+				break;
 			case battle_End:
 				animateTrainerDefeat();
 				drawBattle_Dialogue();
@@ -1915,9 +1928,7 @@ public class UI {
 		x = getXforRightAlignText(text, frameX);
 		g2.drawString(text, x, y); y += gp.tileSize * 0.8;
 	}
-	private void drawBattle_Swap() {
-		
-		drawBattle_DialogueWindow();
+	private void drawBattle_Confirmation() {
 		
 		int x;
 		int y;
@@ -1925,32 +1936,21 @@ public class UI {
 		int height;
 		String text;
 		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));		
-		x = gp.tileSize / 2;
-		y = gp.screenHeight - gp.tileSize * 2;				
-		text = "Will " + gp.player.name + " swap\nPokemon?";
-		
-		for (String line : text.split("\n")) { 
-			drawText(line, x, y, battle_white, Color.BLACK);
-			y += gp.tileSize;
-		}
-		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));				
 		x = (int) (gp.tileSize * 12.4);
 		y = (int) (gp.tileSize * 5);
 		width = (int) (gp.tileSize * 3.45);
-		height = (int) (gp.tileSize * 3.2);
-		
+		height = (int) (gp.tileSize * 3.2);		
 		drawSubWindow(x, y, width, height, 10, 10, battle_white, battle_gray);
 		
+		g2.setStroke(new BasicStroke(4));		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));		
+		g2.setColor(Color.BLACK);
 		width = (int) (gp.tileSize * 2.5);
 		height = gp.tileSize;
-		g2.setStroke(new BasicStroke(4));
 		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
-		
-		g2.setColor(Color.BLACK);
 		x += gp.tileSize * 0.5;
-		y += gp.tileSize * 1.3;	
+		y += gp.tileSize * 1.3;			
 		text = "YES";		
 		g2.drawString(text, x, y);	
 		if (commandNum == 0) {
@@ -1967,7 +1967,7 @@ public class UI {
 			g2.drawRect(x - 4, y - (int) (gp.tileSize * 0.85), width + 4, height);
 			g2.setColor(Color.BLACK);		
 		}			
-		
+		/*
 		if (gp.keyH.aPressed) {
 			gp.keyH.aPressed = false;
 			
@@ -1989,7 +1989,7 @@ public class UI {
 			}
 			
 			commandNum = 0;	
-		}
+		}*/
 	}
 	
 	// EVOLVE SCREEN	

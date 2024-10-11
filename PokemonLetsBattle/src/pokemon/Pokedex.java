@@ -313,7 +313,7 @@ public enum Pokedex {
         moveMap.put(BLAZIKEN, Arrays.asList(new Move(Moves.FLAREBLITZ), new Move(Moves.QUICKATTACK), new Move(Moves.SCRATCH),
         		new Move(Moves.GROWL)));
 
-        moveMap.put(MUDKIP, Arrays.asList(new Move(Moves.TACKLE), new Move(Moves.GROWL))); 
+        moveMap.put(MUDKIP, Arrays.asList(new Move(Moves.TACKLE), new Move(Moves.GROWL), new Move(Moves.SURF), new Move(Moves.AGILITY))); 
         moveMap.put(MARSHTOMP, Arrays.asList(new Move(Moves.WATERGUN), new Move(Moves.MUDSHOT), new Move(Moves.TACKLE),
         		new Move(Moves.GROWL)));
         moveMap.put(SWAMPERT, Arrays.asList(new Move(Moves.SURF), new Move(Moves.MUDSHOT), new Move(Moves.TAKEDOWN),

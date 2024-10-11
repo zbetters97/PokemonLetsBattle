@@ -210,7 +210,7 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 		}
-		else if (gp.ui.battleState == gp.ui.battle_Swap) {
+		else if (gp.ui.battleState == gp.ui.battle_Confirm) {
 			if (code == gp.btn_UP) {				
 				upPressed = true;
 				if (gp.ui.commandNum > 0) {
@@ -328,7 +328,10 @@ public class KeyHandler implements KeyListener {
 			
 			int maxParty = gp.player.pokeParty.size() - 1;
 			int maxMoves = gp.player.pokeParty.get(gp.ui.fighterNum).getMoveSet().size() - 1;
-
+			
+			if (code == gp.btn_A && lock) { 
+				aPressed = true; lock = false; 
+			}	
 			if (code == gp.btn_B && lock) { 
 				playCursorSE();						
 				bPressed = true; lock = false; 	

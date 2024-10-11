@@ -247,8 +247,11 @@ public class Pokemon {
 	public void levelUp() { 	
 		
 		level++;
+		int oldBHP = bhp;
+		bhp = (int)(Math.floor(((2 * pokemon.getHP() + hpIV + Math.floor(pokemon.getEV() / 4)) * level) / 100) + level + 10);
 		
-		this.bhp = (int)(Math.floor(((2 * pokemon.getHP() + hpIV + Math.floor(pokemon.getEV() / 4)) * level) / 100) + level + 10);
+		hp += Math.ceil((bhp - oldBHP));
+		if (hp > bhp) hp = bhp;
 		
 		Calculate getStat = (stat, IV, EV, lev) -> {
 			return (int)(Math.floor(0.01 * (2 * stat + IV + Math.floor(EV / 4)) * lev)) + 5;
