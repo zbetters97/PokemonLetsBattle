@@ -271,12 +271,14 @@ public class Pokemon {
 		
 		Move newMove = null;
 		
-		for (Integer lvl : pokemon.getMoveLevelMap().keySet()) {
-			if (level == lvl) {
-				newMove = new Move(pokemon.getMoveLevelMap().get(lvl));
-			}
+		if (pokemon.getMoveLevelMap() != null) {
+			for (Integer lvl : pokemon.getMoveLevelMap().keySet()) {
+				if (level == lvl) {
+					newMove = new Move(pokemon.getMoveLevelMap().get(lvl));
+				}
+			}	
 		}
-					
+		
 		return newMove;
 	}
 	public boolean canEvolve() {
