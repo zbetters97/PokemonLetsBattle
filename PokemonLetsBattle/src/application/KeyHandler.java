@@ -377,6 +377,34 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 		}
+		else if (gp.ui.partyState == gp.ui.party_MoveSwap) {
+			
+			int maxMoves = gp.player.pokeParty.get(gp.ui.fighterNum).getMoveSet().size();
+			
+			if (code == gp.btn_A && lock) { 
+				aPressed = true; lock = false; 
+			}	
+			if (code == gp.btn_B && lock) { 
+				playCursorSE();						
+				bPressed = true; lock = false; 	
+			}	
+			
+			if (code == gp.btn_UP) {				
+				upPressed = true;
+				
+				if (gp.ui.commandNum > 0) {
+					gp.ui.commandNum--;
+					playCursorSE();	
+				}				
+			}
+			if (code == gp.btn_DOWN) {				
+				downPressed = true;	
+				if (gp.ui.commandNum < maxMoves) {
+					gp.ui.commandNum++;
+					playCursorSE();	
+				}
+			}			
+		}
 	}
 	
 	// EVOLVE

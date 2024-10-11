@@ -28,6 +28,7 @@ public class BattleManager extends Thread {
 	public int winner = -1, loser = -1;	
 	private int escapeAttempts = 0;
 	public Move newMove = null;
+	public Move oldMove = null;
 			
 	// TURN VALUES
 	public int currentTurn;
@@ -1406,8 +1407,8 @@ public class BattleManager extends Thread {
 			else {
 				gp.playMusic();
 				
-				typeDialogue(fighter[0].getName() + " wants to learn\n" + 
-						newMove.getName() + ".");	
+				typeDialogue(fighter[0].getName() + " is trying to\nlearn " + newMove.getName() + ".", true);	
+				typeDialogue("But, " + fighter[0].getName() + " can't learn\nmore than four moves.", true);	
 				typeDialogue("Delete a move to make\nroom for " + newMove.getName() + "?", false);
 				
 				gp.ui.battleState = gp.ui.battle_Confirm;					
@@ -1425,7 +1426,7 @@ public class BattleManager extends Thread {
 			gp.ui.battleState = gp.ui.battle_Dialogue;						
 			
 			if (gp.ui.commandNum == 0) {	
-				gp.ui.partyState = gp.ui.party_Moves;
+				gp.ui.partyState = gp.ui.party_MoveSwap;
 				gp.gameState = gp.partyState;	
 				
 				while (!gp.keyH.aPressed && !gp.keyH.bPressed) {
@@ -1433,6 +1434,11 @@ public class BattleManager extends Thread {
 				}
 				
 				if (gp.keyH.aPressed) {
+					
+					typeDialogue("1, 2, and.. .. ..\nPoof!", true);
+					typeDialogue(fighter[0].getName() + " forgot\n" + oldMove.getName() + ".", true);	
+					typeDialogue("And...", true);
+					
 					gp.pauseMusic();
 					gp.playSE(battle_SE, "upgrade");
 					
@@ -1449,6 +1455,7 @@ public class BattleManager extends Thread {
 			}
 			
 			newMove = null;
+			oldMove = null;
 			gp.ui.commandNum = 0;			
 		}			
 		else if (gp.keyH.bPressed) {

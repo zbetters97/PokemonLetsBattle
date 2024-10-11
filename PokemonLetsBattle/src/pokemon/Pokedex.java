@@ -532,7 +532,7 @@ public enum Pokedex {
         ));        
         moveMap.put(TREECKO, Arrays.asList(
         		new Move(Moves.POUND), 
-        		new Move(Moves.LEER)        		
+        		new Move(Moves.LEER)
         ));      
         moveMap.put(GROVYLE, Arrays.asList(
         		new Move(Moves.POUND),

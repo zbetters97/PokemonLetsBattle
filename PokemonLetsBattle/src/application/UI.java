@@ -11,7 +11,9 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -98,6 +100,7 @@ public class UI {
 	public final int party_Main_Select = 2;
 	public final int party_Skills = 3;
 	public final int party_Moves = 4;
+	public final int party_MoveSwap = 5;
 	
 	// BATTLE STATE
 	public int battleState;
@@ -553,7 +556,7 @@ public class UI {
 		
 		switch(partyState) {
 			case party_Main:
-				drawParty_Main();
+				drawParty_Main();				
 				break;
 			case party_Main_Select:
 				drawParty_Main();
@@ -564,8 +567,11 @@ public class UI {
 				drawParty_Header(0);
 				break;
 			case party_Moves:
-				drawParty_Moves();
+				drawParty_Moves();				
 				drawParty_Header(1);
+				break;
+			case party_MoveSwap:
+				drawParty_MoveSwap();
 				break;
 		}
 	}			
@@ -592,8 +598,8 @@ public class UI {
 		if (fighter.isAlive()) { boxColor = party_blue; }
 		else { boxColor = party_faint; }
 		
-		if (fighterNum == 0) { drawSubWindow(x, y, width, height, 3, 5, boxColor, party_red); }
-		else if (partyMove && partyMoveNum == 0) { drawSubWindow(x, y, width, height, 3, 3, boxColor, hp_yellow); }
+		if (partyMove && partyMoveNum == 0) { drawSubWindow(x, y, width, height, 3, 3, boxColor, hp_yellow); }
+		else if (fighterNum == 0) { drawSubWindow(x, y, width, height, 3, 5, boxColor, party_red); }		
 		else { drawSubWindow(x, y, width, height, 3, 3, boxColor, Color.BLACK); }
 		
 		drawParty_Box(x, y, fighter, true);
@@ -612,8 +618,8 @@ public class UI {
 				if (fighter.isAlive()) { boxColor = party_blue; }
 				else { boxColor = party_faint; }
 				
-				if (fighterNum == i) { drawSubWindow(x, y, width, height, 3, 5, boxColor, party_red); }
-				else if (partyMove && partyMoveNum == i) { drawSubWindow(x, y, width, height, 3, 3, boxColor, hp_yellow); }
+				if (partyMove && partyMoveNum == i) { drawSubWindow(x, y, width, height, 3, 3, boxColor, hp_yellow); }
+				else if (fighterNum == i) { drawSubWindow(x, y, width, height, 3, 5, boxColor, party_red); }
 				else { drawSubWindow(x, y, width, height, 3, 3, boxColor, Color.BLACK); }			
 				
 				drawParty_Box((int) (x + gp.tileSize * 0.15), (int) (y - gp.tileSize * 0.15), fighter, false);				
@@ -1096,7 +1102,13 @@ public class UI {
 			textY = (int) (y + (gp.tileSize * 0.85));			
 			drawText(text, textX, textY, battle_white, Color.BLACK);	
 			
-			if (commandNum == i) {	
+			if (partyMove && partyMoveNum == i) {
+				slotY = y - 4;
+				g2.setColor(hp_yellow);
+				g2.setStroke(new BasicStroke(5));
+				g2.drawRoundRect(slotX, slotY, slotWidth, slotHeight, 6, 6);
+			}
+			else if (commandNum == i) {	
 				slotY = y - 4;
 				g2.setColor(battle_red);
 				g2.setStroke(new BasicStroke(5));
@@ -1123,7 +1135,7 @@ public class UI {
 		drawText(text, x, y, battle_white, Color.BLACK);	
 		
 		x += gp.tileSize * 5.2;
-		text = "PP:";
+		text = "PP";
 		drawText(text, x, y, battle_white, Color.BLACK);
 		
 		text = fighter.getMoveSet().get(commandNum).getpp() + "/" + fighter.getMoveSet().get(commandNum).getbpp();
@@ -1138,36 +1150,36 @@ public class UI {
 		for (String line : fighter.getMoveSet().get(commandNum).getInfo().split("\n")) {			
 			g2.drawString(line, x, y);
 			y += gp.tileSize * 0.8;
-		} 			
-				
-		if (gp.btlManager.newMove != null) {
-			if (gp.keyH.aPressed) {			
-				gp.keyH.aPressed = false;
-				gp.keyH.playCursorSE();
-				
-				Move oldMove = gp.btlManager.fighter[0].getMoveSet().get(commandNum);			
-				gp.btlManager.fighter[0].replaceMove(oldMove, gp.btlManager.newMove);	
-				
-				commandNum = 0;			
-				gp.gameState = gp.battleState;
-			}
-			if (gp.keyH.bPressed) {
-				gp.keyH.bPressed = false;	
-							
-				commandNum = 0;
-				gp.gameState = gp.battleState;
-			}			
+		} 							
+		
+		if (gp.keyH.leftPressed) {
+			commandNum = 0;
+			partyState = party_Skills;			
 		}
-		else {
-			if (gp.keyH.leftPressed) {
-				commandNum = 0;
-				partyState = party_Skills;			
+		if (gp.keyH.aPressed) {
+			gp.keyH.aPressed = false;
+			
+			if (partyMove) {
+				Collections.swap(fighter.getMoveSet(), commandNum, partyMoveNum);		
+				partyMove = false;
+				partyMoveNum = -1;
 			}
-			if (gp.keyH.bPressed) {			
-				gp.keyH.bPressed = false;			
+			else {
+				partyMove = true;
+				partyMoveNum = commandNum;	
+			}				
+		}
+		if (gp.keyH.bPressed) {						
+			gp.keyH.bPressed = false;	
+			
+			if (partyMove) {	
+				partyMove = false;
+				partyMoveNum = -1;
+			}
+			else {
 				partyState = party_Main;
 				commandNum = 0;
-			}	
+			}				
 		}		
 	}
 	private void drawParty_Info() {
@@ -1301,6 +1313,226 @@ public class UI {
 			g2.drawImage(gp.player.pokeParty.get(fighterNum + 1).getMenuSprite(), x, y, null);				
 		}
 	}
+	private void drawParty_MoveSwap() {
+		
+		Pokemon fighter = gp.player.pokeParty.get(fighterNum);
+		
+		g2.setColor(battle_white);  
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);	
+		
+		int x = -10;
+		int y = -5;
+		int width = gp.screenWidth + 13;
+		int height = (int) (gp.tileSize * 0.7);
+		drawSubWindow(x, y, width, height, 10, 4, party_green, Color.BLACK);	
+
+		List<Move> moveSet = new ArrayList<>();
+		moveSet.addAll(gp.player.pokeParty.get(fighterNum).getMoveSet());
+		moveSet.add(gp.btlManager.newMove);
+		
+		x = 5;
+		y = 30;
+		width = (int) (gp.tileSize * 7.3);
+		height = (int) (gp.tileSize * 1.2);
+		g2.setColor(party_gray);
+		g2.fillRoundRect(x, y, width, height, 8, 8);
+		
+		height += gp.tileSize;
+		g2.setColor(Color.BLACK);
+		g2.drawRoundRect(x, y, width, height, 4, 4);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55F));		
+		x += gp.tileSize * 0.3;
+		y += gp.tileSize * 0.95;
+		String text = fighter.getName();				
+		drawText(text, x, y, Color.WHITE, Color.BLACK);
+		
+		int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();		
+		x += length + 3;
+		g2.setColor(fighter.getSexColor());	
+		g2.drawString("" + fighter.getSex(), x, y);
+	
+		x = (int) (gp.tileSize * 0.7) - 10;
+		y += gp.tileSize * 0.95;
+		text = "Lv" + fighter.getLevel();
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));	
+		g2.setColor(Color.BLACK);
+		g2.drawString(text, x, y);
+		
+		text = fighter.getNature().getName();
+		x = getXforRightAlignText(text, x + (int) (gp.tileSize * 6.8));		
+		g2.drawString(text, x, y);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));	
+		x = (int) (gp.tileSize * 5.8);
+		y -= gp.tileSize * 1.2;
+		text = "No." + String.format("%03d", fighter.getIndex());	
+		drawText(text, x, y, Color.WHITE, Color.BLACK);
+		
+		if (fighter.getStatus() != null) {
+			drawBattle_Status((int) (x + (gp.tileSize * 1.5)), (int) (y - (gp.tileSize * 0.53)), fighter, 30F);
+			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 38F));
+		}
+		
+		x = (int) (gp.tileSize * 1.2);
+		y = gp.tileSize * 3;
+		g2.drawImage(fighter.getFrontSprite(), x, y, null);
+		
+		x = (int) (gp.tileSize * 7.5);
+		y = 30;
+		width = (int) (gp.tileSize * 8.4);
+		height = (int) (gp.tileSize * 7.15);
+		drawSubWindow(x, y, width, height, 10, 4, party_gray, Color.BLACK);	
+		
+		y = (int) (gp.tileSize * 7.9);
+		height = (int) (gp.tileSize * 0.8);		
+		g2.setColor(party_gray);
+		g2.fillRoundRect(x, y, width, height, 4, 4);
+		
+		height = gp.tileSize * 4;
+		g2.setColor(Color.BLACK);
+		g2.drawRoundRect(x, y, width, height, 4, 4);
+		
+		int slotX = (int) (gp.tileSize * 7.5);
+		int slotY;
+		int slotWidth = (int) (gp.tileSize * 8.38);
+		int slotHeight = gp.tileSize + 8;
+		
+		int frameX = (int) (gp.tileSize * 7.9);
+		int frameY = (int) (gp.tileSize * 0.9);
+		
+		int tempX = (int) (gp.tileSize * 0.4);
+		int tempY = (int) (gp.tileSize * 10.5);
+		
+		x = 5;
+		y = (int) (gp.tileSize * 9.5);		
+		height = (int) (gp.tileSize * 2.4);
+		width = (int) (gp.tileSize * 5.5);
+		g2.setColor(party_gray);
+		g2.fillRoundRect(x, y, width, height, 4, 4);
+		
+		width = (int) (gp.tileSize * 7.3);
+		g2.setColor(Color.BLACK);
+		g2.drawRoundRect(x, y, width, height, 4, 4);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55F));			
+		text = "POWER";
+		drawText(text, tempX, tempY, battle_white, Color.BLACK);				
+		tempY += gp.tileSize;
+		text = "ACCURACY";
+		drawText(text, tempX, tempY, battle_white, Color.BLACK);	
+		
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 55F));			
+		tempX += gp.tileSize * 5.45;
+		tempY -= gp.tileSize;		
+		if (moveSet.get(commandNum).getPower() == 0) { text = "---"; }
+		else { text = Integer.toString(moveSet.get(commandNum).getPower()); }
+		g2.drawString(text, tempX, tempY);	
+		
+		tempY += gp.tileSize;		
+		if (moveSet.get(commandNum).getAccuracy() == 0) { text = "---"; }
+		else { text = Integer.toString(moveSet.get(commandNum).getAccuracy()); }		
+		g2.drawString(text, tempX, tempY);	
+		
+		int i = 0;
+		x = frameX;
+		y = frameY;		
+		width = (int) (gp.tileSize * 2.3);
+		height = gp.tileSize;
+		
+		int textX;
+		int textY;
+		for (Move m : moveSet) {			
+				
+			drawSubWindow(x, y, width, height, 10, 3, m.getType().getColor(), Color.BLACK);		
+									
+			g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));			
+			text = m.getType().getName();
+			textX = getXForCenteredTextOnWidth(text, width, x + 5);
+			textY = (int) (y + (gp.tileSize * 0.75));			
+			drawText(text, textX, textY, battle_white, Color.BLACK);
+			
+			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 50F));
+			text = m.toString();
+			textX = (int) (frameX + (gp.tileSize * 2.5));
+			textY = (int) (y + (gp.tileSize * 0.85));			
+			drawText(text, textX, textY, battle_white, Color.BLACK);	
+			
+			if (commandNum == i) {	
+				slotY = y - 4;
+				g2.setColor(battle_red);
+				g2.setStroke(new BasicStroke(5));
+				g2.drawRoundRect(slotX, slotY, slotWidth, slotHeight, 6, 6);
+			}
+						
+			y += gp.tileSize * 1.35;
+			i++;
+		}		
+		
+		if (commandNum == i) {	
+			slotY = y - 4;
+			g2.setColor(battle_red);
+			g2.setStroke(new BasicStroke(5));
+			g2.drawRoundRect(slotX, slotY, slotWidth, slotHeight, 6, 6);
+		}
+		
+		if (commandNum == i) {	
+			slotY = y - 4;
+			g2.setColor(battle_red);
+			g2.setStroke(new BasicStroke(5));
+			g2.drawRoundRect(slotX, slotY, slotWidth, slotHeight, 6, 6);
+		}
+			 
+		y += gp.tileSize * 1.35;
+		
+		x = (int) (gp.tileSize * 7.8);
+		y = (int) (gp.tileSize * 8.6);
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42F));
+		text = "DESCRIPTION";
+		drawText(text, x, y, battle_white, Color.BLACK);	
+		
+		x += gp.tileSize * 5.2;
+		text = "PP";
+		drawText(text, x, y, battle_white, Color.BLACK);
+		
+		text = moveSet.get(commandNum).getpp() + "/" + moveSet.get(commandNum).getbpp();
+		x += gp.tileSize * 2.8;
+		x = getXforRightAlignText(text, x);
+		drawText(text, x, y, battle_white, Color.BLACK);
+		
+		x = (int) (gp.tileSize * 7.8);
+		y += gp.tileSize * 0.7;
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));
+		g2.setColor(Color.BLACK);
+		for (String line : moveSet.get(commandNum).getInfo().split("\n")) {			
+			g2.drawString(line, x, y);
+			y += gp.tileSize * 0.8;
+		} 			
+				
+		if (gp.keyH.aPressed) {			
+			gp.keyH.aPressed = false;
+			
+			if (commandNum != moveSet.size() - 1) {
+				gp.keyH.playCursorSE();
+				
+				gp.btlManager.oldMove = moveSet.get(commandNum);			
+				fighter.replaceMove(gp.btlManager.oldMove, gp.btlManager.newMove);	
+				
+				commandNum = 0;			
+				gp.gameState = gp.battleState;	
+			}
+			else {
+				gp.keyH.playErrorSE();
+			}
+		}
+		if (gp.keyH.bPressed) {
+			gp.keyH.bPressed = false;	
+						
+			commandNum = 0;
+			gp.gameState = gp.battleState;
+		}			
+	}
 	
 	// BATTLE SCREEN
 	private void drawBattleScreen() {		
@@ -1357,7 +1589,10 @@ public class UI {
 			if (gp.btlManager.fighter[0].getAttacking()) {
 				animateAttack_One();
 			}
-			else if (!gp.btlManager.fighter[0].isAlive() && fighter_one_Y < gp.screenHeight) {
+			else {
+				fighter_one_X = fighter_one_endX;
+			}
+			if (!gp.btlManager.fighter[0].isAlive() && fighter_one_Y < gp.screenHeight) {
 				fighter_one_Y += 16;
 			} 
 			
@@ -1375,7 +1610,10 @@ public class UI {
 				if (gp.btlManager.fighter[1].getAttacking()) {
 					animateAttack_Two();
 				}
-				else if (!gp.btlManager.fighter[1].isAlive() && fighter_two_Y < gp.screenHeight) {
+				else {
+					fighter_two_X = fighter_two_endX;					
+				}
+				if (!gp.btlManager.fighter[1].isAlive() && fighter_two_Y < gp.screenHeight) {
 					fighter_two_Y += 16;
 				}
 				
