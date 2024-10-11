@@ -71,6 +71,7 @@ public class UI {
 	private BufferedImage current_arena;
 	private BufferedImage ball_empty, ball_active, ball_inactive, pokeball;	
 	public int fighterNum = 0;	
+	private int attackCounter = 0;
 	private int hitCounter = -1;
 	private int hpCounter = 0;
 	public boolean isFighterCaptured = false;
@@ -1106,12 +1107,31 @@ public class UI {
 			i++;
 		}
 		
+		if (commandNum == i) {	
+			slotY = y - 4;
+			g2.setColor(battle_red);
+			g2.setStroke(new BasicStroke(5));
+			g2.drawRoundRect(slotX, slotY, slotWidth, slotHeight, 6, 6);
+		}
+			 
+		y += gp.tileSize * 1.35;
+		
 		x = (int) (gp.tileSize * 7.8);
 		y = (int) (gp.tileSize * 8.6);
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42F));
 		text = "DESCRIPTION";
 		drawText(text, x, y, battle_white, Color.BLACK);	
 		
+		x += gp.tileSize * 5.2;
+		text = "PP:";
+		drawText(text, x, y, battle_white, Color.BLACK);
+		
+		text = fighter.getMoveSet().get(commandNum).getpp() + "/" + fighter.getMoveSet().get(commandNum).getbpp();
+		x += gp.tileSize * 2.8;
+		x = getXforRightAlignText(text, x);
+		drawText(text, x, y, battle_white, Color.BLACK);
+		
+		x = (int) (gp.tileSize * 7.8);
 		y += gp.tileSize * 0.7;
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));
 		g2.setColor(Color.BLACK);
@@ -1119,7 +1139,7 @@ public class UI {
 			g2.drawString(line, x, y);
 			y += gp.tileSize * 0.8;
 		} 			
-		
+				
 		if (gp.btlManager.newMove != null) {
 			if (gp.keyH.aPressed) {			
 				gp.keyH.aPressed = false;
@@ -1148,7 +1168,7 @@ public class UI {
 				partyState = party_Main;
 				commandNum = 0;
 			}	
-		}
+		}		
 	}
 	private void drawParty_Info() {
 		
@@ -1326,20 +1346,20 @@ public class UI {
 				break;
 		}
 	}
-	
+		
 	private void drawBattle_Fighters() {	
-		
-		fighter_one_X = fighter_one_endX;
-		fighter_two_X = fighter_two_endX;
-		
+						
 		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
 		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
 		
 		if (gp.btlManager.fighter[0] != null) {	
-			
-			if (!gp.btlManager.fighter[0].isAlive() && fighter_one_Y < gp.screenHeight) {
-				fighter_one_Y += 16;
+						
+			if (gp.btlManager.fighter[0].getAttacking()) {
+				animateAttack_One();
 			}
+			else if (!gp.btlManager.fighter[0].isAlive() && fighter_one_Y < gp.screenHeight) {
+				fighter_one_Y += 16;
+			} 
 			
 			if (gp.btlManager.fighter[0].getHit()) animateHit(0, g2);		
 			g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);	
@@ -1351,8 +1371,11 @@ public class UI {
 				g2.drawImage(pokeball, fighter_two_X + (int)(gp.tileSize * 2.2), fighter_two_Y + (int)(gp.tileSize * 3.2), null);	
 			}
 			else {
-				
-				if (!gp.btlManager.fighter[1].isAlive() && fighter_two_Y < gp.screenHeight) {
+								
+				if (gp.btlManager.fighter[1].getAttacking()) {
+					animateAttack_Two();
+				}
+				else if (!gp.btlManager.fighter[1].isAlive() && fighter_two_Y < gp.screenHeight) {
 					fighter_two_Y += 16;
 				}
 				
@@ -1362,16 +1385,7 @@ public class UI {
 			}			
 		}		
 	}
-	private void animateHit(int num, Graphics2D g2) {
-		hitCounter++;
-		if (hitCounter > 30) {
-			gp.btlManager.fighter[num].setHit(false);
-			hitCounter = -1;
-		}
-		else if (hitCounter % 5 == 0) {
-			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
-		}
-	}
+	
 	private void animateBattleEntrance() {
 		
 		int x; 
@@ -1398,6 +1412,36 @@ public class UI {
 			fighter_two_X += 6;	
 		}		
 	}	
+	private void animateAttack_One() {
+		attackCounter++;
+		if (attackCounter > 20) fighter_one_X -= 3;
+		else fighter_one_X += 3;
+		
+		if (attackCounter == 41) {
+			attackCounter = 0;
+			gp.btlManager.fighter[0].setAttacking(false);
+		}
+	}
+	private void animateAttack_Two() {
+		attackCounter++;
+		if (attackCounter > 20) fighter_two_X += 3;
+		else fighter_two_X -= 3;
+		
+		if (attackCounter == 41) {
+			attackCounter = 0;
+			gp.btlManager.fighter[1].setAttacking(false);
+		}
+	}
+	private void animateHit(int num, Graphics2D g2) {
+		hitCounter++;
+		if (hitCounter > 30) {
+			gp.btlManager.fighter[num].setHit(false);
+			hitCounter = -1;
+		}
+		else if (hitCounter % 5 == 0) {
+			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
+		}
+	}
 	private void animateTrainerDefeat() {
 		
 		fighter_two_Y = fighter_two_startY;	
@@ -2021,7 +2065,7 @@ public class UI {
 				newEvolve = Pokemon.evolvePokemon(oldEvolve);
 				
 				gp.playSE(3, gp.se.getFile(3, oldEvolve.toString()));
-				gp.playMusic(1, 0);	
+				gp.startMusic(1, 0);	
 											
 				subState = 1;
 				break;

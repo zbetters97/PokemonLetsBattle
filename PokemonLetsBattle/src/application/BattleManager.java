@@ -134,7 +134,7 @@ public class BattleManager extends Thread {
 		switch(battleMode) {
 			case wildBattle:
 				
-				gp.playMusic(1, 1);				
+				gp.startMusic(1, 1);				
 				pause(1400);
 				
 				gp.playSE(cry_SE, fighter[1].toString());	
@@ -143,7 +143,7 @@ public class BattleManager extends Thread {
 				break;
 			case trainerBattle: 
 				
-				gp.playMusic(1, 4);				
+				gp.startMusic(1, 4);				
 				pause(1400);		
 				
 				typeDialogue("Trainer " + trainer[1].name + "\nwould like to battle!", true);				
@@ -708,7 +708,10 @@ public class BattleManager extends Thread {
 				
 		// if not delayed move or delayed move is ready
 		if (atkMove.getTurns() <= 1) {	
+			
 			typeDialogue(fighter[atk].getName() + " used\n" + atkMove.toString() + "!", false); 
+			
+			fighter[atk].setAttacking(true);
 			playSE(moves_SE, atkMove.getName());
 			
 			// reset turns to wait
@@ -721,6 +724,7 @@ public class BattleManager extends Thread {
 		}
 		// delayed move is used for first time
 		else if (atkMove.getTurns() == atkMove.getNumTurns()) {
+			
 			typeDialogue(fighter[atk].getName() + " used\n" + atkMove.toString() + "!");
 			typeDialogue(atkMove.getDelay(fighter[atk].getName()));				
 			
@@ -1366,16 +1370,21 @@ public class BattleManager extends Thread {
 			// FIGHTER LEVELED UP
 			if (fighter[winner].getXP() >= fighter[0].getBXP() + fighter[0].getNextXP()) {			
 				
-				fighter[0].levelUp();					
-				
-				gp.ui.battleState = gp.ui.battle_LevelUp;
+				gp.pauseMusic();
 				gp.playSE(battle_SE, "level-up");
+				
+				fighter[0].levelUp();					
+				gp.ui.battleState = gp.ui.battle_LevelUp;
+			
+				gp.playSE(battle_SE, "upgrade");
 				typeDialogue(fighter[0].getName() + " grew to\nLv. " + 
 						(fighter[0].getLevel()) + "!", true);
 				
 				gp.ui.battleState = gp.ui.battle_Dialogue;
-				
+								
 				checkNewMove();
+				
+				gp.playMusic();
 			}	
 		}
 		
@@ -1385,13 +1394,18 @@ public class BattleManager extends Thread {
 		
 		newMove = fighter[0].getNewMove();				
 		if (newMove != null) {
+			
 			if (fighter[0].learnMove(newMove)) {
-				gp.playSE(battle_SE, "move-learn");
+				
+				gp.playSE(battle_SE, "upgrade");
 				typeDialogue(fighter[0].getName() + " learned\n" + 
-						newMove.getName() + "!", true);	
+						newMove.getName() + "!", true);
+				
 				newMove = null;
 			}
 			else {
+				gp.playMusic();
+				
 				typeDialogue(fighter[0].getName() + " wants to learn\n" + 
 						newMove.getName() + ".");	
 				typeDialogue("Delete a move to make\nroom for " + newMove.getName() + "?", false);
@@ -1419,8 +1433,12 @@ public class BattleManager extends Thread {
 				}
 				
 				if (gp.keyH.aPressed) {
-					gp.playSE(battle_SE, "move-learn");
+					gp.pauseMusic();
+					gp.playSE(battle_SE, "upgrade");
+					
 					typeDialogue(fighter[0].getName() + " learned\n" + newMove.getName() + "!", true);	
+					
+					gp.playMusic();
 				}
 				else if (gp.keyH.bPressed) {
 					typeDialogue(fighter[0].getName() + " did not learn\n" + newMove.getName() + ".", true);
@@ -1563,7 +1581,7 @@ public class BattleManager extends Thread {
 		gp.ui.battleState = gp.ui.battle_End;
 		
 		gp.stopMusic();
-		gp.playMusic(1, 5);					
+		gp.startMusic(1, 5);					
 		
 		typeDialogue("Player defeated\nTrainer " + trainer[1].name + "!", true);
 		
@@ -1606,7 +1624,7 @@ public class BattleManager extends Thread {
 			if (isCaptured()) {
 				
 				gp.stopMusic();
-				gp.playMusic(1, 3);										
+				gp.startMusic(1, 3);										
 				typeDialogue("Gotcha!\n" + fighter[1].getName() + " was caught!", true);
 				
 				if (trainer[0].pokeParty.size() < 6) {

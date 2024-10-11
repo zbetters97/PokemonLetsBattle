@@ -24,7 +24,8 @@ public class Pokemon {
 	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg;
 	private Status status;
 	private boolean isAlive;
-	private boolean hit = false;
+	private boolean attacking = false;
+	private boolean hit = false;	
 	private int statusCounter, statusLimit;
 	private List<Move> moveSet;
 	/** END INITIALIZE VALUES **/
@@ -466,6 +467,9 @@ public class Pokemon {
 	
 	public boolean isAlive() { return isAlive; }
 	public void setAlive(boolean isAlive) {	this.isAlive = isAlive; this.status = null; }
+	
+	public boolean getAttacking() { return attacking; }
+	public void setAttacking(boolean attacking) { this.attacking = attacking; }
 	
 	public boolean getHit() { return hit; }
 	public void setHit(boolean hit) { this.hit = hit; }
