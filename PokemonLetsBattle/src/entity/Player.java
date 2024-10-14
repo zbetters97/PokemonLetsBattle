@@ -9,10 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import application.GamePanel;
-import entity.collectables.COL_Greatball;
-import entity.collectables.COL_Masterball;
-import entity.collectables.COL_Pokeball;
-import entity.collectables.COL_Ultraball;
+import entity.collectables.*;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
 
@@ -80,16 +77,27 @@ public class Player extends Entity {
 		
 		getRunImage();
 		
-		inventory_pokeballs.add(new COL_Pokeball(gp));
+		inventory_items.add(new ITM_Potion(gp));
+		inventory_items.get(0).amount = 10;
+		
+		inventory_items.add(new ITM_Potion_Super(gp));
+		inventory_items.get(1).amount = 5;
+	
+		inventory_items.add(new ITM_Potion_Hyper(gp));
+		inventory_items.get(2).amount = 3;
+		
+		inventory_items.add(new ITM_Potion_Max(gp));		
+		
+		inventory_pokeballs.add(new COL_Ball_Poke(gp));
 		inventory_pokeballs.get(0).amount = 10;
 		
-		inventory_pokeballs.add(new COL_Greatball(gp));
+		inventory_pokeballs.add(new COL_Ball_Great(gp));
 		inventory_pokeballs.get(1).amount = 5;
 	
-		inventory_pokeballs.add(new COL_Ultraball(gp));
-		inventory_pokeballs.get(1).amount = 3;
+		inventory_pokeballs.add(new COL_Ball_Ultra(gp));
+		inventory_pokeballs.get(2).amount = 3;
 		
-		inventory_pokeballs.add(new COL_Masterball(gp));
+		inventory_pokeballs.add(new COL_Ball_Master(gp));
 	}
 	public void setDefaultPosition() {	
 

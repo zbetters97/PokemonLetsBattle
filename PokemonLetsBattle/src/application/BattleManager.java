@@ -1520,6 +1520,7 @@ public class BattleManager extends Thread {
 				running = false;
 				fightStage = fight_Swap;
 				
+				gp.ui.partyDialogue = "CHOOSE A NEW FIGHTER";
 				gp.ui.partyState = gp.ui.party_Main;
 				gp.gameState = gp.partyState;
 			}

@@ -3,11 +3,11 @@ package entity.collectables;
 import application.GamePanel;
 import entity.Entity;
 
-public class COL_Masterball extends Entity {
+public class COL_Ball_Master extends Entity {
 	
 	public static final String colName = "Master Ball";
 
-	public COL_Masterball(GamePanel gp) {		
+	public COL_Ball_Master(GamePanel gp) {		
 		super(gp);	
 		
 		name = colName;			

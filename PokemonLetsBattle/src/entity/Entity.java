@@ -89,6 +89,7 @@ public class Entity {
 
 	public String description;
 	public int amount = 1;
+	public int value = 0;
 	public int catchProbability;
 	
 	// INVENTORY

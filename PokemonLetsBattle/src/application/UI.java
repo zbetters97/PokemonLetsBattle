@@ -61,8 +61,10 @@ public class UI {
 	public int commandNum = 0;
 	public int subState = 0;
 	
+	public String partyDialogue = "";
 	private boolean partyMove = false;
 	private int partyMoveNum = -1;
+	private int partyPotion = -1;
 	
 	// TRANSITION
 	public boolean tMoving = false;
@@ -221,175 +223,6 @@ public class UI {
 		}
 	}
 	
-	// BAG SCREEN
-	private void drawBagScreen() {
-		g2.drawImage(bag_menu, 0, 0, null);
-		
-		switch (bagTab) {
-			case bag_Items:
-				drawBag_Items();
-				break;
-			case bag_Pokeballs:
-				drawBag_Pokeballs();
-				break;
-			case bag_Moves:
-				drawBag_Moves();
-				break;
-		}
-		
-		if (gp.keyH.bPressed) {
-			gp.keyH.bPressed = false;
-			gp.keyH.playCursorSE();
-			
-			if (gp.btlManager.active) {
-				bagTab = 0;
-				commandNum = 1;
-				gp.gameState = gp.battleState;		
-			}
-			else {
-				bagTab = 0;
-				commandNum = 2;
-				gp.gameState = gp.pauseState;
-			}
-		}
-	}
-	
-	private void drawBag_Items() {
-		
-		bag_Subtitle = "ITEMS";
-		bag_Tab = bag_tab_1;
-		bag_Image = bag_items;		
-		drawBag_HUD(gp.player.inventory_items);
-		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 65f));		
-	}
-	private void drawBag_Pokeballs() {
-		
-		bag_Subtitle = "POKe BALLS";
-		bag_Tab = bag_tab_2;
-		bag_Image = bag_pokeballs;		
-		drawBag_HUD(gp.player.inventory_pokeballs);		
-		
-		if (gp.keyH.upPressed) {
-			gp.keyH.upPressed = false;
-			if (commandNum > 0) {
-				gp.keyH.playCursorSE();
-				commandNum--;
-			}
-		}
-		if (gp.keyH.downPressed) {
-			gp.keyH.downPressed = false;
-			if (gp.player.inventory_pokeballs.size() - 1 > commandNum ) {
-				gp.keyH.playCursorSE();
-				commandNum++;
-			}
-		}
-		
-		if (gp.keyH.aPressed) {
-			gp.keyH.aPressed = false;
-			
-			Entity chosenItem = gp.player.inventory_pokeballs.get(commandNum);
-			
-			if (gp.btlManager.active) {
-				
-				if (chosenItem.amount > 0) {
-					
-					if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {
-						
-						chosenItem.amount--;	
-						
-						if (chosenItem.amount == 0) {
-							gp.player.inventory_pokeballs.remove(commandNum);
-						}
-					}
-					
-					gp.btlManager.ballUsed = chosenItem;
-					gp.btlManager.fightStage = gp.btlManager.fight_Capture;				
-					gp.btlManager.running = true;			
-					new Thread(gp.btlManager).start();	
-					
-					battleState = battle_Dialogue;
-					gp.gameState = gp.battleState;	
-				}
-			}
-		}
-	}
-	private void drawBag_Moves() {
-		
-		bag_Subtitle = "TMs & HMs";
-		bag_Tab = bag_tab_3;
-		bag_Image = bag_moves;		
-		drawBag_HUD(gp.player.inventory_moves);		
-	}
-	private void drawBag_HUD(ArrayList<Entity> items) {
-		
-		int x;
-		int y;
-		int width;
-		int height;
-		int slotX;
-		int slotY;		
-		String text;
-		
-		x = (int) (gp.tileSize * 1.8);
-		y = gp.tileSize / 2;
-		g2.drawImage(bag_Image, x, y, null);		
-		
-		x = (int) (gp.tileSize * 2.7);
-		y = (int) (gp.tileSize * 5.6);
-		g2.drawImage(bag_Tab, x, y, null);
-
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 65f));
-		x = (int) (gp.tileSize * 1.7);
-		x = getXForCenteredTextOnWidth(bag_Subtitle, x, (int) (gp.tileSize * 3.5));
-		y = gp.tileSize * 7;
-		drawText(bag_Subtitle, x, y, Color.BLACK, Color.GRAY);
-		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55f));	
-		
-		x = (int) (gp.tileSize * 7.8);		
-		y = (int) (gp.tileSize * 2.1);
-		
-		slotX = (int) (x - gp.tileSize * 0.3);
-		slotY = (int) (y - gp.tileSize * 0.9);
-		width = gp.tileSize * 8;
-		height = (int) (gp.tileSize * 1.1);
-		
-		for (int i = 0; i < items.size(); i++) {
-									
-			text = items.get(i).name;
-			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
-			
-			x += gp.tileSize * 6.3;
-			text = "x" + String.format("%02d", items.get(i).amount);
-			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
-			
-			if (commandNum == i) {
-				g2.setColor(battle_red);
-				g2.setStroke(new BasicStroke(4));				
-				g2.drawRoundRect(slotX, slotY, width, height, 6, 6);
-			}
-			
-			x = (int) (gp.tileSize * 7.8);	
-			y += gp.tileSize * 1.08;
-			slotY += gp.tileSize * 1.08;			
-		}		
-		
-		if (items.size() > 0) {
-
-			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48f));	
-			
-			x = (int) (gp.tileSize * 0.5);
-			y = (int) (gp.tileSize * 8.4);
-			text = items.get(commandNum).description;
-			
-			for (String line : text.split("\n")) {			
-				drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
-				y += gp.tileSize * 0.8;
-			} 		
-		}
-	}
-	
 	// HUD	
 	private void drawHUD() {
 		
@@ -471,6 +304,7 @@ public class UI {
 		if (commandNum == 1) {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			if (gp.keyH.aPressed) {
+				partyDialogue = "SELECT A POKEMON";
 				gp.keyH.aPressed = false;
 				gp.gameState = gp.partyState;
 				partyState = party_Main;
@@ -755,6 +589,182 @@ public class UI {
 		}		
 	}
 	
+	// BAG SCREEN
+	private void drawBagScreen() {
+		g2.drawImage(bag_menu, 0, 0, null);
+		
+		switch (bagTab) {
+			case bag_Items:
+				drawBag_Items();
+				break;
+			case bag_Pokeballs:
+				drawBag_Pokeballs();
+				break;
+			case bag_Moves:
+				drawBag_Moves();
+				break;
+		}
+		
+		if (gp.keyH.bPressed) {
+			gp.keyH.bPressed = false;
+			gp.keyH.playCursorSE();
+			
+			if (gp.btlManager.active) {
+				bagTab = 0;
+				commandNum = 1;
+				gp.gameState = gp.battleState;		
+			}
+			else {
+				bagTab = 0;
+				commandNum = 2;
+				gp.gameState = gp.pauseState;
+			}
+		}
+	}
+	private void drawBag_Items() {
+		
+		bag_Subtitle = "ITEMS";
+		bag_Tab = bag_tab_1;
+		bag_Image = bag_items;		
+		drawBag_HUD(gp.player.inventory_items);
+
+		if (gp.keyH.aPressed) {
+			gp.keyH.playCursorSE();
+			gp.keyH.aPressed = false;
+			
+			partyDialogue = "HEAL A FIGHTER";
+			partyPotion = gp.player.inventory_items.get(commandNum).value;
+			partyState = party_Main;
+			gp.gameState = gp.partyState;
+		}
+	}
+	private void drawBag_Pokeballs() {
+		
+		bag_Subtitle = "POKe BALLS";
+		bag_Tab = bag_tab_2;
+		bag_Image = bag_pokeballs;		
+		drawBag_HUD(gp.player.inventory_pokeballs);		
+				
+		if (gp.keyH.aPressed) {
+			gp.keyH.aPressed = false;
+			
+			Entity chosenItem = gp.player.inventory_pokeballs.get(commandNum);
+			
+			if (gp.btlManager.active) {
+				
+				if (chosenItem.amount > 0) {
+					
+					if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {
+						
+						chosenItem.amount--;	
+						
+						if (chosenItem.amount == 0) {
+							gp.player.inventory_pokeballs.remove(commandNum);
+						}
+					}
+					
+					gp.btlManager.ballUsed = chosenItem;
+					gp.btlManager.fightStage = gp.btlManager.fight_Capture;				
+					gp.btlManager.running = true;			
+					new Thread(gp.btlManager).start();	
+					
+					battleState = battle_Dialogue;
+					gp.gameState = gp.battleState;	
+				}
+			}
+		}
+	}
+	private void drawBag_Moves() {
+		
+		bag_Subtitle = "TMs & HMs";
+		bag_Tab = bag_tab_3;
+		bag_Image = bag_moves;		
+		drawBag_HUD(gp.player.inventory_moves);		
+	}
+	private void drawBag_HUD(ArrayList<Entity> items) {
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		int slotX;
+		int slotY;		
+		String text;
+		
+		x = (int) (gp.tileSize * 1.8);
+		y = gp.tileSize / 2;
+		g2.drawImage(bag_Image, x, y, null);		
+		
+		x = (int) (gp.tileSize * 2.7);
+		y = (int) (gp.tileSize * 5.6);
+		g2.drawImage(bag_Tab, x, y, null);
+
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 65f));
+		x = (int) (gp.tileSize * 1.7);
+		x = getXForCenteredTextOnWidth(bag_Subtitle, x, (int) (gp.tileSize * 3.5));
+		y = gp.tileSize * 7;
+		drawText(bag_Subtitle, x, y, Color.BLACK, Color.GRAY);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55f));	
+		
+		x = (int) (gp.tileSize * 7.8);		
+		y = (int) (gp.tileSize * 2.1);
+		
+		slotX = (int) (x - gp.tileSize * 0.3);
+		slotY = (int) (y - gp.tileSize * 0.9);
+		width = gp.tileSize * 8;
+		height = (int) (gp.tileSize * 1.1);
+		
+		for (int i = 0; i < items.size(); i++) {
+									
+			text = items.get(i).name;
+			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
+			
+			x += gp.tileSize * 6.3;
+			text = "x" + String.format("%02d", items.get(i).amount);
+			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
+			
+			if (commandNum == i) {
+				g2.setColor(battle_red);
+				g2.setStroke(new BasicStroke(4));				
+				g2.drawRoundRect(slotX, slotY, width, height, 6, 6);
+			}
+			
+			x = (int) (gp.tileSize * 7.8);	
+			y += gp.tileSize * 1.08;
+			slotY += gp.tileSize * 1.08;			
+		}		
+		
+		if (items.size() > 0) {
+
+			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48f));	
+			
+			x = (int) (gp.tileSize * 0.5);
+			y = (int) (gp.tileSize * 8.4);
+			text = items.get(commandNum).description;
+			
+			for (String line : text.split("\n")) {			
+				drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
+				y += gp.tileSize * 0.8;
+			} 		
+		}
+		
+		if (gp.keyH.upPressed) {
+			gp.keyH.upPressed = false;
+			if (commandNum > 0) {
+				gp.keyH.playCursorSE();
+				commandNum--;
+			}
+		}
+		if (gp.keyH.downPressed) {
+			gp.keyH.downPressed = false;
+			if (items.size() - 1 > commandNum ) {
+				gp.keyH.playCursorSE();
+				commandNum++;
+			}
+		}
+	}		
+	
 	// PARTY SCREEN
 	private void drawPartyScreen() {
 		
@@ -845,9 +855,7 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));
 		x += gp.tileSize * 0.3;
 		y += gp.tileSize * 1.15;
-		if (partyMove) text = "MOVE POKEMON";
-		else text = "CHOOSE A POKEMON";
-		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		drawText(partyDialogue, x, y, Color.BLACK, Color.LIGHT_GRAY);
 		
 		x += width + (gp.tileSize * 0.4);
 		y = (int) (gp.tileSize * 10.62);
@@ -869,12 +877,19 @@ public class UI {
 				gp.keyH.aPressed = false;
 												
 				if (fighterNum == 6) {
-					
+																				
 					if (partyMove) {				
 						gp.keyH.playCursorSE();
 						
 						partyMove = false;	
 						partyMoveNum = -1;
+					}
+					else if (partyPotion != -1) {
+						partyPotion = -1;
+						fighterNum = 0;
+						commandNum = 0;						
+						bagTab = bag_Items;
+						gp.gameState = gp.bagState;	
 					}
 					else {
 						if (gp.btlManager.active) {
@@ -914,11 +929,15 @@ public class UI {
 						gp.keyH.playCursorSE();
 						
 						if (partyMoveNum != fighterNum) {
-							Collections.swap( gp.player.pokeParty, fighterNum, partyMoveNum);	
+							Collections.swap(gp.player.pokeParty, fighterNum, partyMoveNum);	
 						}	
 
 						partyMove = false;
 						partyMoveNum = -1;
+					}
+					else if (partyPotion > -1) {
+						gp.player.pokeParty.get(fighterNum).addHP(partyPotion);
+						partyPotion = -1;
 					}
 					else {
 						gp.keyH.playCursorSE();
@@ -928,9 +947,8 @@ public class UI {
 			}
 			if (gp.keyH.bPressed) {			
 				gp.keyH.playCursorSE();
-				
 				gp.keyH.bPressed = false;
-				fighterNum = 6;				
+				fighterNum = 6;					
 			}
 		}
 	}
@@ -2256,6 +2274,8 @@ public class UI {
 			else if (commandNum == 2) {
 				gp.keyH.aPressed = false;
 				
+
+				partyDialogue = "CHOOSE A NEW FIGHTER";				
 				gp.gameState = gp.partyState;
 				partyState = party_Main;	
 				

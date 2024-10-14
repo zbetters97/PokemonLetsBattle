@@ -417,6 +417,11 @@ public class Pokemon {
 	public int getNXP() { return nxp; }
 
 	public int getHP() { return hp; }
+	public void addHP(int hp) { 
+		this.hp += hp; 
+		if (this.hp > bhp) 
+			this.hp = bhp; 
+	}
 	public void setHP(int hp) {	this.hp = hp; }	
 	public int getBHP() { return bhp; }
 	public void setBHP(int bhp) {	this.bhp = bhp; }

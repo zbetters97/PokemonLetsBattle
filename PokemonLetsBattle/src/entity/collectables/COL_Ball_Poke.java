@@ -3,11 +3,11 @@ package entity.collectables;
 import application.GamePanel;
 import entity.Entity;
 
-public class COL_Pokeball extends Entity {
+public class COL_Ball_Poke extends Entity {
 	
 	public static final String colName = "Poké Ball";
 
-	public COL_Pokeball(GamePanel gp) {		
+	public COL_Ball_Poke(GamePanel gp) {		
 		super(gp);	
 		
 		name = colName;			
