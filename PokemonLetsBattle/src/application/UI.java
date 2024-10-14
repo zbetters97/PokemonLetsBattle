@@ -71,13 +71,25 @@ public class UI {
 	
 	// BATTLE VALUES
 	private BufferedImage current_arena;
-	private BufferedImage ball_empty, ball_active, ball_inactive, pokeball;	
+	private BufferedImage ball_empty, ball_active, ball_inactive;	
 	public int fighterNum = 0;	
 	private int attackCounter = 0;
 	private int hitCounter = -1;
 	private int hpCounter = 0;
 	public boolean isFighterCaptured = false;
+	
+	// BAG VALUES
+	private BufferedImage bag_menu, bag_Image, bag_Tab;
+	private BufferedImage bag_items, bag_pokeballs, bag_moves;
+	private BufferedImage bag_tab_1, bag_tab_2, bag_tab_3;	
 
+	private String bag_Subtitle = "";
+	
+	public int bagTab;
+	private final int bag_Items = 0;
+	private final int bag_Pokeballs = 1;
+	private final int bag_Moves = 2;	
+	
 	// FIGHTER X/Y VALUES
 	public int fighter_one_X;
 	public int fighter_two_X;
@@ -127,7 +139,17 @@ public class UI {
 		ball_empty = setup("/ui/battle/ball-empty", (int) (gp.tileSize * 0.5), (int) (gp.tileSize * 0.5));
 		ball_active = setup("/ui/battle/ball-active", (int) (gp.tileSize * 0.5), (int) (gp.tileSize * 0.5));
 		ball_inactive = setup("/ui/battle/ball-inactive", (int) (gp.tileSize * 0.5), (int) (gp.tileSize * 0.5));
-		pokeball = setup("/objects_interactive/pokeball", (int) (gp.tileSize * 0.8), (int) (gp.tileSize * 0.8));
+
+		bag_menu = setup("/ui/bag/bag-menu", gp.screenWidth, gp.screenHeight);
+		bag_tab_1 = setup("/ui/bag/bag-tab-1", gp.tileSize * 3, gp.tileSize / 3);
+		bag_tab_2 = setup("/ui/bag/bag-tab-2", gp.tileSize * 3, gp.tileSize / 3);
+		bag_tab_3 = setup("/ui/bag/bag-tab-3", gp.tileSize * 3, gp.tileSize / 3);
+//		bag_tab_4 = setup("/ui/bag/bag-tab-4", gp.tileSize * 3, gp.tileSize / 3);
+//		bag_tab_5 = setup("/ui/bag/bag-tab-5", gp.tileSize * 3, gp.tileSize / 3);
+		
+		bag_items = setup("/ui/bag/bag-keyitems", gp.tileSize * 5, gp.tileSize * 5);
+		bag_pokeballs = setup("/ui/bag/bag-pokeballs", gp.tileSize * 5, gp.tileSize * 5);
+		bag_moves = setup("/ui/bag/bag-moves", gp.tileSize * 5, gp.tileSize * 5);
 		
 		fighter_one_startX = gp.tileSize * 14;
 		fighter_two_startX = 0 - gp.tileSize * 3;
@@ -173,6 +195,9 @@ public class UI {
 		else if (gp.gameState == gp.partyState) {
 			drawPartyScreen();
 		}
+		else if (gp.gameState == gp.bagState) {
+			drawBagScreen();
+		}		
 		else if (gp.gameState == gp.dialogueState) {
 			drawHUD();
 			drawDialogueScreen();
@@ -193,6 +218,175 @@ public class UI {
 		}		
 		else if (gp.gameState == gp.transitionState) {
 			drawTransitionScreen();
+		}
+	}
+	
+	// BAG SCREEN
+	private void drawBagScreen() {
+		g2.drawImage(bag_menu, 0, 0, null);
+		
+		switch (bagTab) {
+			case bag_Items:
+				drawBag_Items();
+				break;
+			case bag_Pokeballs:
+				drawBag_Pokeballs();
+				break;
+			case bag_Moves:
+				drawBag_Moves();
+				break;
+		}
+		
+		if (gp.keyH.bPressed) {
+			gp.keyH.bPressed = false;
+			gp.keyH.playCursorSE();
+			
+			if (gp.btlManager.active) {
+				bagTab = 0;
+				commandNum = 1;
+				gp.gameState = gp.battleState;		
+			}
+			else {
+				bagTab = 0;
+				commandNum = 2;
+				gp.gameState = gp.pauseState;
+			}
+		}
+	}
+	
+	private void drawBag_Items() {
+		
+		bag_Subtitle = "ITEMS";
+		bag_Tab = bag_tab_1;
+		bag_Image = bag_items;		
+		drawBag_HUD(gp.player.inventory_items);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 65f));		
+	}
+	private void drawBag_Pokeballs() {
+		
+		bag_Subtitle = "POKe BALLS";
+		bag_Tab = bag_tab_2;
+		bag_Image = bag_pokeballs;		
+		drawBag_HUD(gp.player.inventory_pokeballs);		
+		
+		if (gp.keyH.upPressed) {
+			gp.keyH.upPressed = false;
+			if (commandNum > 0) {
+				gp.keyH.playCursorSE();
+				commandNum--;
+			}
+		}
+		if (gp.keyH.downPressed) {
+			gp.keyH.downPressed = false;
+			if (gp.player.inventory_pokeballs.size() - 1 > commandNum ) {
+				gp.keyH.playCursorSE();
+				commandNum++;
+			}
+		}
+		
+		if (gp.keyH.aPressed) {
+			gp.keyH.aPressed = false;
+			
+			Entity chosenItem = gp.player.inventory_pokeballs.get(commandNum);
+			
+			if (gp.btlManager.active) {
+				
+				if (chosenItem.amount > 0) {
+					
+					if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {
+						
+						chosenItem.amount--;	
+						
+						if (chosenItem.amount == 0) {
+							gp.player.inventory_pokeballs.remove(commandNum);
+						}
+					}
+					
+					gp.btlManager.ballUsed = chosenItem;
+					gp.btlManager.fightStage = gp.btlManager.fight_Capture;				
+					gp.btlManager.running = true;			
+					new Thread(gp.btlManager).start();	
+					
+					battleState = battle_Dialogue;
+					gp.gameState = gp.battleState;	
+				}
+			}
+		}
+	}
+	private void drawBag_Moves() {
+		
+		bag_Subtitle = "TMs & HMs";
+		bag_Tab = bag_tab_3;
+		bag_Image = bag_moves;		
+		drawBag_HUD(gp.player.inventory_moves);		
+	}
+	private void drawBag_HUD(ArrayList<Entity> items) {
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		int slotX;
+		int slotY;		
+		String text;
+		
+		x = (int) (gp.tileSize * 1.8);
+		y = gp.tileSize / 2;
+		g2.drawImage(bag_Image, x, y, null);		
+		
+		x = (int) (gp.tileSize * 2.7);
+		y = (int) (gp.tileSize * 5.6);
+		g2.drawImage(bag_Tab, x, y, null);
+
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 65f));
+		x = (int) (gp.tileSize * 1.7);
+		x = getXForCenteredTextOnWidth(bag_Subtitle, x, (int) (gp.tileSize * 3.5));
+		y = gp.tileSize * 7;
+		drawText(bag_Subtitle, x, y, Color.BLACK, Color.GRAY);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55f));	
+		
+		x = (int) (gp.tileSize * 7.8);		
+		y = (int) (gp.tileSize * 2.1);
+		
+		slotX = (int) (x - gp.tileSize * 0.3);
+		slotY = (int) (y - gp.tileSize * 0.9);
+		width = gp.tileSize * 8;
+		height = (int) (gp.tileSize * 1.1);
+		
+		for (int i = 0; i < items.size(); i++) {
+									
+			text = items.get(i).name;
+			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
+			
+			x += gp.tileSize * 6.3;
+			text = "x" + String.format("%02d", items.get(i).amount);
+			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
+			
+			if (commandNum == i) {
+				g2.setColor(battle_red);
+				g2.setStroke(new BasicStroke(4));				
+				g2.drawRoundRect(slotX, slotY, width, height, 6, 6);
+			}
+			
+			x = (int) (gp.tileSize * 7.8);	
+			y += gp.tileSize * 1.08;
+			slotY += gp.tileSize * 1.08;			
+		}		
+		
+		if (items.size() > 0) {
+
+			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48f));	
+			
+			x = (int) (gp.tileSize * 0.5);
+			y = (int) (gp.tileSize * 8.4);
+			text = items.get(commandNum).description;
+			
+			for (String line : text.split("\n")) {			
+				drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
+				y += gp.tileSize * 0.8;
+			} 		
 		}
 	}
 	
@@ -267,6 +461,7 @@ public class UI {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);		
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
+				commandNum = 0;
 			}
 		}
 		
@@ -277,9 +472,9 @@ public class UI {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
-				commandNum = 0;				
 				gp.gameState = gp.partyState;
 				partyState = party_Main;
+				commandNum = 0;
 			}
 		}
 		
@@ -290,6 +485,11 @@ public class UI {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
+				
+				gp.gameState = gp.bagState;
+				bagTab = bag_Items;
+				
+				commandNum = 0;
 			}
 		}
 		
@@ -300,6 +500,7 @@ public class UI {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
+				commandNum = 0;
 			}
 		}
 		
@@ -310,6 +511,7 @@ public class UI {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
+				commandNum = 0;
 			}
 		}
 		
@@ -320,6 +522,7 @@ public class UI {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
+				commandNum = 0;
 			}
 		}
 		
@@ -329,8 +532,9 @@ public class UI {
 		if (commandNum == 6) {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			if (gp.keyH.aPressed) {
-				commandNum = 0;
+				gp.keyH.aPressed = false;
 				gp.gameState = gp.playState;
+				commandNum = 0;
 			}
 		}
 		
@@ -1579,51 +1783,6 @@ public class UI {
 		}
 	}
 		
-	private void drawBattle_Fighters() {	
-						
-		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
-		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
-		
-		if (gp.btlManager.fighter[0] != null) {	
-						
-			if (gp.btlManager.fighter[0].getAttacking()) {
-				animateAttack_One();
-			}
-			else {
-				fighter_one_X = fighter_one_endX;
-			}
-			if (!gp.btlManager.fighter[0].isAlive() && fighter_one_Y < gp.screenHeight) {
-				fighter_one_Y += 16;
-			} 
-			
-			if (gp.btlManager.fighter[0].getHit()) animateHit(0, g2);		
-			g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);	
-			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-		}
-		if (gp.btlManager.fighter[1] != null) {				
-			
-			if (isFighterCaptured) {				
-				g2.drawImage(pokeball, fighter_two_X + (int)(gp.tileSize * 2.2), fighter_two_Y + (int)(gp.tileSize * 3.2), null);	
-			}
-			else {
-								
-				if (gp.btlManager.fighter[1].getAttacking()) {
-					animateAttack_Two();
-				}
-				else {
-					fighter_two_X = fighter_two_endX;					
-				}
-				if (!gp.btlManager.fighter[1].isAlive() && fighter_two_Y < gp.screenHeight) {
-					fighter_two_Y += 16;
-				}
-				
-				if (gp.btlManager.fighter[1].getHit()) animateHit(1, g2);		
-				g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
-				g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-			}			
-		}		
-	}
-	
 	private void animateBattleEntrance() {
 		
 		int x; 
@@ -1649,7 +1808,56 @@ public class UI {
 			fighter_one_X -= 6;	
 			fighter_two_X += 6;	
 		}		
-	}	
+	}		
+	private void drawBattle_Fighters() {	
+						
+		g2.drawImage(current_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
+		g2.drawImage(current_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
+		
+		if (gp.btlManager.fighter[0] != null) {			
+			
+			if (gp.btlManager.fighter[0].getAttacking()) animateAttack_One();			
+			else fighter_one_X = fighter_one_endX;
+			
+			if (!gp.btlManager.fighter[0].isAlive()) 
+				animateFaint_One();			
+			
+			if (gp.btlManager.fighter[0].getHit()) animateHit(0, g2);		
+			g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);	
+			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));			
+		}
+		if (gp.btlManager.fighter[1] != null) {				
+			
+			if (isFighterCaptured) {				
+				g2.drawImage(gp.btlManager.ballUsed.image, fighter_two_X + (int)(gp.tileSize * 2.2), fighter_two_Y + (int)(gp.tileSize * 3.2), null);	
+			}
+			else {								
+				if (gp.btlManager.fighter[1].getAttacking()) animateAttack_Two();				
+				else fighter_two_X = fighter_two_endX;					
+				
+				if (!gp.btlManager.fighter[1].isAlive()) {
+					animateFaint_Two();
+				}
+				else {
+					if (gp.btlManager.fighter[1].getHit()) animateHit(1, g2);		
+					g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
+					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));	
+				}
+			}			
+		}		
+	}
+	private void animateFaint_One() {
+		if (fighter_one_Y < gp.screenHeight) {
+			fighter_one_Y += 16;
+		}
+	}
+	private void animateFaint_Two() {
+		if (fighter_two_Y < gp.screenHeight) {
+			fighter_two_Y += 16;
+		}
+		
+		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
+	}		
 	private void animateAttack_One() {
 		attackCounter++;
 		if (attackCounter > 20) fighter_one_X -= 3;
@@ -2040,11 +2248,9 @@ public class UI {
 			else if (commandNum == 1) {
 				gp.keyH.aPressed = false;		
 				
-				gp.btlManager.fightStage = gp.btlManager.fight_Capture;
-				gp.btlManager.running = true;			
-				new Thread(gp.btlManager).start();	
-				battleState = battle_Dialogue;
-				
+				bagTab = bag_Items;
+				gp.gameState = gp.bagState;
+												
 				commandNum = 0;
 			}
 			else if (commandNum == 2) {

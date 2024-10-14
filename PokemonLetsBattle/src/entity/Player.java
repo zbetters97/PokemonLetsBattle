@@ -9,6 +9,10 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import application.GamePanel;
+import entity.collectables.COL_Greatball;
+import entity.collectables.COL_Masterball;
+import entity.collectables.COL_Pokeball;
+import entity.collectables.COL_Ultraball;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
 
@@ -27,7 +31,9 @@ public class Player extends Entity {
 	
 	// INVENTORY
 	public final int maxItemInventorySize = 10;
-	public ArrayList<Entity> inventory_item = new ArrayList<>();
+	public ArrayList<Entity> inventory_items = new ArrayList<>();
+	public ArrayList<Entity> inventory_pokeballs = new ArrayList<>();
+	public ArrayList<Entity> inventory_moves = new ArrayList<>();
 		
 /** END PLAYER VARIABLES **/		
 	
@@ -73,7 +79,18 @@ public class Player extends Entity {
 		setDialogue();
 		
 		getRunImage();
-	}	
+		
+		inventory_pokeballs.add(new COL_Pokeball(gp));
+		inventory_pokeballs.get(0).amount = 10;
+		
+		inventory_pokeballs.add(new COL_Greatball(gp));
+		inventory_pokeballs.get(1).amount = 5;
+	
+		inventory_pokeballs.add(new COL_Ultraball(gp));
+		inventory_pokeballs.get(1).amount = 3;
+		
+		inventory_pokeballs.add(new COL_Masterball(gp));
+	}
 	public void setDefaultPosition() {	
 
 		worldX = gp.tileSize * 24;

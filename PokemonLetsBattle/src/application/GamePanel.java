@@ -100,6 +100,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int partyState = 7;
 	public final int transitionState = 8;	
 	public final int evolveState = 9;
+	public final int bagState = 10;
 	
 	// AREA STATES
 	public int currentArea;
@@ -337,7 +338,7 @@ public class GamePanel extends JPanel implements Runnable {
 			ui.draw(g2);
 		}
 		// BATTLE STATE
-		else if (gameState == partyState) {
+		else if (gameState == partyState || gameState == bagState) {
 			
 			// DRAW UI
 			ui.draw(g2);

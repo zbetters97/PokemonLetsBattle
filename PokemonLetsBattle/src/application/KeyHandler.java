@@ -45,6 +45,9 @@ public class KeyHandler implements KeyListener {
 		else if (gp.gameState == gp.partyState) {
 			partyState(code);
 		}
+		else if (gp.gameState == gp.bagState) {
+			bagState(code);
+		}
 		else if (gp.gameState == gp.evolveState) {
 			evolveState(code);
 		}	
@@ -75,6 +78,43 @@ public class KeyHandler implements KeyListener {
 		}			
 		
 		if (code == gp.btn_DEBUG) { if (debug) debug = false; else debug = true; }
+	}
+	
+	// PLAY
+	private void bagState(int code) { 	
+
+		if (code == gp.btn_UP) {
+			upPressed = true;
+		}
+		if (code == gp.btn_DOWN) {
+			downPressed = true;
+		}
+		if (code == gp.btn_LEFT) {
+			playCursorSE();
+			leftPressed = true;
+			
+			if (gp.ui.bagTab > 0) {
+				gp.ui.bagTab--;
+				gp.ui.commandNum = 0;
+			}
+		}
+		if (code == gp.btn_RIGHT) {
+			playCursorSE();
+			rightPressed = true;		
+			if (2 > gp.ui.bagTab) {
+				gp.ui.bagTab++;
+				gp.ui.commandNum = 0;
+			}
+		}
+						
+		if (code == gp.btn_A && lock) { 
+			aPressed = true; 
+			lock = false; 
+		}
+		if (code == gp.btn_B && lock) { 
+			bPressed = true; 
+			lock = false; 
+		}
 	}
 	
 	// PAUSE

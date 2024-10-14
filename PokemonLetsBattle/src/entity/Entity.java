@@ -87,6 +87,10 @@ public class Entity {
 	public int hitboxDefaultWidth = hitbox.width;
 	public int hitboxDefaultHeight = hitbox.height;
 
+	public String description;
+	public int amount = 1;
+	public int catchProbability;
+	
 	// INVENTORY
 	public ArrayList<Entity> inventory = new ArrayList<>();
 	public final int maxInventorySize = 20;

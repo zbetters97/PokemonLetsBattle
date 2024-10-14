@@ -29,6 +29,8 @@ public class BattleManager extends Thread {
 	private int escapeAttempts = 0;
 	public Move newMove = null;
 	public Move oldMove = null;
+	
+	public Entity ballUsed;
 			
 	// TURN VALUES
 	public int currentTurn;
@@ -1617,7 +1619,7 @@ public class BattleManager extends Thread {
 		
 		if (battleMode == wildBattle) {			
 			
-			typeDialogue(trainer[0].name + " used a\nPOKE BALL!", false);
+			typeDialogue(trainer[0].name + " used a\n" + ballUsed.name + "!", false);
 			playSE(battle_SE, "ball-throw");
 			gp.ui.isFighterCaptured = true;
 			playSE(battle_SE, "ball-open");
@@ -1658,6 +1660,8 @@ public class BattleManager extends Thread {
 			gp.ui.battleState = gp.ui.battle_Options;
 			running = false;
 		}
+		
+		ballUsed = null;
 	}
 	private boolean isCaptured() {
 		/** CATCH RATE FOMRULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Capture_method_(Generation_III-IV) **/
@@ -1688,7 +1692,7 @@ public class BattleManager extends Thread {
 		catchOdds = ( (((3 * maxHP) - (2 * hp)) / (3 * maxHP) ) * catchRate * statusBonus);
 		
 		Random r = new Random();
-		int roll = (int) (r.nextInt(255 - 0 + 1) + 0);
+		int roll = (int) (r.nextInt(ballUsed.catchProbability - 0 + 1) + 0);
 		
 		if (roll <= catchOdds) {
 			isCaptured = true;
@@ -1754,6 +1758,7 @@ public class BattleManager extends Thread {
 		trainer[0] = null;
 		trainer[1] = null;
 		newMove = null;
+		ballUsed = null;
 		
 		move1 = null;
 		move2 = null;
@@ -1765,6 +1770,7 @@ public class BattleManager extends Thread {
 		
 		fightStage = fight_Encounter;
 		gp.ui.isFighterCaptured = false;
+		gp.ui.commandNum = 0;
 		
 		active = false;
 		running = false;
