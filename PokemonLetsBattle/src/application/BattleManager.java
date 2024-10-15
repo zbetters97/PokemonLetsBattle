@@ -1271,8 +1271,10 @@ public class BattleManager extends Thread {
 					newHP = 0;
 				}
 				
+				gp.playSE(battle_SE, fighter[atk].getStatus().getStatus());
 				fighter[atk].setHit(true);
 				decreaseHP(atk, newHP, damage);
+				
 				fighter[atk].getStatus().printStatus(gp, fighter[atk].getName());
 			}		
 		}	

@@ -73,8 +73,6 @@ public class Player extends Entity {
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MUDKIP, 5));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MARSHTOMP, 16));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36));
-		
-		pokeParty.get(0).setHP(5);
 	}
 	public void setDefaultValues() {
 					

@@ -26,9 +26,9 @@ public class ITM_Full_Restore extends Entity {
 		
 		if (p.isAlive() && (p.getHP() < p.getBHP() || p.getStatus() != null)) {
 						
+			gp.playSE(6, "heal");
 			p.setHP(p.getBHP());
-			p.setStatus(null);
-			
+			p.setStatus(null);					
 			entity.useItem(inventory_items, this);
 			
 			gp.ui.partyDialogue = p.getName() + " was fully restored.";

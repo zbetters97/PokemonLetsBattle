@@ -482,9 +482,9 @@ public class Entity {
 						
 		if (!p.isAlive()) {
 			
+			gp.playSE(6, "heal");
 			p.setAlive(true);
-			p.setHP((int) (p.getBHP() / value));
-			
+			p.setHP((int) (p.getBHP() / value));			
 			entity.useItem(entity.inventory_items, this);						
 			
 			gp.ui.partyDialogue = p.getName() + " was revived!";
@@ -503,8 +503,8 @@ public class Entity {
 				gainedHP = p.getBHP() - p.getHP();
 			}	
 			
-			p.addHP(value);
-			
+			gp.playSE(6, "heal");
+			p.addHP(value);			
 			entity.useItem(entity.inventory_items, this);				
 		
 			gp.ui.partyDialogue = p.getName() + " gained " + gainedHP + " HP.";
@@ -518,8 +518,8 @@ public class Entity {
 		
 		if (p.isAlive() && (p.getStatus().equals(status) || status == null)) {
 						
-			p.setStatus(null);
-			
+			gp.playSE(6, "heal");
+			p.setStatus(null);			
 			entity.useItem(entity.inventory_items, this);			
 			
 			gp.ui.partyDialogue = p.getName() + " was healed.";

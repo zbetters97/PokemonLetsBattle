@@ -50,26 +50,21 @@ public enum Status {
 	
 		switch (this.abr) {  	
 			case ("PAR"): 				
-				gp.playSE(6, status);
 				gp.btlManager.typeDialogue(fighter + " is paralyzed\nand unable to move!");					
 				break;
 	    	case ("PSN"): 	    	
-	    		gp.playSE(6, status);	
 	    		gp.btlManager.typeDialogue(fighter + " is hurt\nfrom the poison!"); 	    	
 	    		break;
 	    	case ("CNF"): 
 	    		gp.btlManager.typeDialogue(fighter + " hurt\nitself in confusion!");	    		
 	    		break;
 	    	case ("BRN"): 
-	    		gp.playSE(6, status);
 	    		gp.btlManager.typeDialogue(fighter + " is hurt\nfrom the burn!"); 	    			
 	    		break;
 	    	case ("FRZ"): 
-	    		gp.playSE(6, status);	
 	    		gp.btlManager.typeDialogue(fighter + " is frozen\nsolid!");	    		
 	    		break;
 	    	case ("SLP"): 
-	    		gp.playSE(6, status);
 	    		gp.btlManager.typeDialogue(fighter + " is fast\nasleep!"); 	    			
 	    		break;
 		}				

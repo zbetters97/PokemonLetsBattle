@@ -156,21 +156,26 @@ public class GamePanel extends JPanel implements Runnable {
 		aSetter.setObject();
 		aSetter.setInteractiveObjects();
 		
+		setupWildPokemon();
+		
 		// TEMP GAME WINDOW (before drawing to window)
 		tempScreen = new BufferedImage(screenWidth, screenHeight, BufferedImage.TYPE_INT_ARGB);
 		g2 = (Graphics2D)tempScreen.getGraphics();
 		
 		if (fullScreenOn) setFullScreen();
 		
-		Map<Pokedex, Integer> encounters_petalburg = new HashMap<>();			
-		encounters_petalburg.put(Pokedex.GEODUDE, 65);	
-		encounters_petalburg.put(Pokedex.MACHOP, 30);
-		encounters_petalburg.put(Pokedex.PIKACHU, 5);		
-		
-		wildEncounters.put(petalburg, encounters_petalburg);
-		wildLevels.put(petalburg, 4);
-		
 		gameState = playState;
+	}
+	
+	private void setupWildPokemon() {
+		wildEncounters.put( 
+				petalburg, Map.ofEntries(
+						Map.entry(Pokedex.GEODUDE, 65), 
+						Map.entry(Pokedex.MACHOP, 30),
+						Map.entry(Pokedex.PIKACHU, 5)
+				)
+		);
+		wildLevels.put(petalburg, 4);
 	}
 	
 	public void setupMusic() {					
@@ -188,6 +193,7 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	public void playMusic() {
 		music.play();
+		music.loop();
 	}
 	public void stopMusic() {
 		music.stop();

@@ -1116,11 +1116,11 @@ public class UI {
   			}
   			else {  				
   				partyItem = null;
+  				fighterNum = 0;	
+  				commandNum = 0;		
   				
   				if (gp.btlManager.active) {
-  					commandNum = 0;
-					fighterNum = 0;			
-					
+  					
 					gp.btlManager.running = true;
 					gp.btlManager.fightStage = gp.btlManager.fight_Start;
 					new Thread(gp.btlManager).start();
@@ -1336,13 +1336,12 @@ public class UI {
 				
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));	
 		int textX;
-		int textY = (int) (y + (gp.tileSize * 2.95));	
+		int textY = (int) (y + (gp.tileSize * 2.32));	
 		int width = (int) (gp.tileSize * 2.7);
-		int height = gp.tileSize;		
-		
+		int height = gp.tileSize;								
 		if (fighter.getTypes() != null) {			
-			x = (int) (gp.tileSize * 0.85);
-			y = (int) (gp.tileSize * 10.5);			
+			x = (int) (gp.tileSize * 0.9);			
+			y = (int) (gp.tileSize * 9.8);	
 			for (Type t : fighter.getTypes()) {				
 				drawSubWindow(x, y, width, height, 10, 3, t.getColor(), Color.BLACK);		
 										
@@ -1354,14 +1353,42 @@ public class UI {
 			}			
 		}
 		else {			
-			x = (int) (gp.tileSize * 2.4);
-			y = (int) (gp.tileSize * 10.5);			
+			x = (int) (gp.tileSize * 2.4);	
+			y = (int) (gp.tileSize * 9.8);	
 			drawSubWindow(x, y, width, height, 10, 3, fighter.getType().getColor(), Color.BLACK);		
 						
 			text = fighter.getType().getName();
 			textX = getXForCenteredTextOnWidth(text, width, x + 5);
 			drawText(text, textX, textY, battle_white, Color.BLACK);	
 		}
+		
+		g2.setColor(Color.BLACK);
+		x = (int) (gp.tileSize * 0.25);	
+		y = gp.tileSize * 11;
+		width = gp.tileSize * 7;
+		height = (int) (gp.tileSize * 0.6);
+		g2.fillRoundRect(x, y, width, height, 15, 15);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 28F));
+		g2.setColor(battle_white);		
+		text = "EXP";		
+		x += gp.tileSize * 0.25;
+		y += gp.tileSize * 0.48;
+		g2.drawString(text, x, y);
+		
+		x += gp.tileSize * 0.88;
+		y -= gp.tileSize * 0.41;
+		width -= gp.tileSize * 1.3;
+		height -= gp.tileSize * 0.12;
+		g2.setColor(battle_gray);
+		g2.fillRect(x, y, width, height);		
+				
+		double remainXP = (double) (fighter.getXP() - fighter.getBXP()) / (double) fighter.getNextXP();
+		
+		width *= remainXP;		
+		
+		g2.setColor(battle_blue);
+		g2.fillRect(x, y, width, height);
 		
 		x = (int) (gp.tileSize * 7.8);
 		y = (int) (gp.tileSize * 8.6);
@@ -1505,8 +1532,23 @@ public class UI {
 		for (String line : fighter.getMoveSet().get(commandNum).getInfo().split("\n")) {			
 			g2.drawString(line, x, y);
 			y += gp.tileSize * 0.8;
-		} 							
-		
+		} 					
+				
+		if (gp.keyH.upPressed) {				
+			gp.keyH.upPressed = false;
+			
+			if (commandNum > 0) {
+				gp.keyH.playCursorSE();	
+				commandNum--;				
+			}				
+		}
+		if (gp.keyH.downPressed) {				
+			gp.keyH.downPressed = false;	
+			if (commandNum < gp.player.pokeParty.get(fighterNum).getMoveSet().size() - 1) {
+				gp.keyH.playCursorSE();	
+				commandNum++;				
+			}
+		}					
 		if (gp.keyH.leftPressed) {
 			partyState = party_Skills;			
 			commandNum = 0;
@@ -1586,7 +1628,7 @@ public class UI {
 		g2.drawString(text, x, y);
 		
 		text = fighter.getNature().getName();
-		x = getXforRightAlignText(text, x + (int) (gp.tileSize * 6.8));		
+		x = getXforRightAlignText(text, x + (int) (gp.tileSize * 6.7));		
 		g2.drawString(text, x, y);
 		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));	
@@ -1618,6 +1660,25 @@ public class UI {
 		height = gp.tileSize * 4;
 		g2.setColor(Color.BLACK);
 		g2.drawRoundRect(x, y, width, height, 4, 4);
+		
+		if (!partyMove) {		
+			if (gp.keyH.lPressed) {				
+				gp.keyH.lPressed = false;
+				if (0 < fighterNum) {
+					fighterNum--;
+					commandNum = 0;
+					gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  		
+				}
+			}
+			if (gp.keyH.rPressed) {				
+				gp.keyH.rPressed = false;
+				if (fighterNum < gp.player.pokeParty.size() - 1) {
+					fighterNum++;
+					commandNum = 0;
+					gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  		
+				}
+			}
+		}
 	}
 	private void drawParty_Header(int subState) {
 		
