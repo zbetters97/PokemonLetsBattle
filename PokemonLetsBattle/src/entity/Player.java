@@ -8,19 +8,9 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import application.GamePanel;
-import entity.collectables.*;
-import entity.collectables.balls.COL_Ball_Great;
-import entity.collectables.balls.COL_Ball_Master;
-import entity.collectables.balls.COL_Ball_Poke;
-import entity.collectables.balls.COL_Ball_Ultra;
-import entity.collectables.heals.ITM_Full_Restore;
-import entity.collectables.heals.ITM_Heal_Full;
-import entity.collectables.heals.ITM_Revive;
-import entity.collectables.heals.ITM_Revive_Max;
-import entity.collectables.potions.ITM_Potion;
-import entity.collectables.potions.ITM_Potion_Hyper;
-import entity.collectables.potions.ITM_Potion_Max;
-import entity.collectables.potions.ITM_Potion_Super;
+import entity.collectables.potions.*;
+import entity.collectables.balls.*;
+import entity.collectables.heals.*;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
 
