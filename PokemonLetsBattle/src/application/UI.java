@@ -64,7 +64,7 @@ public class UI {
 	public String partyDialogue = "";
 	private boolean partyMove = false;
 	private int partyMoveNum = -1;
-	private int partyPotion = -1;
+	public Entity partyItem;
 	
 	// TRANSITION
 	public boolean tMoving = false;
@@ -81,16 +81,11 @@ public class UI {
 	public boolean isFighterCaptured = false;
 	
 	// BAG VALUES
+	private String bag_Subtitle = "";
+	private int bagNum = 0;
 	private BufferedImage bag_menu, bag_Image, bag_Tab;
 	private BufferedImage bag_items, bag_pokeballs, bag_moves;
 	private BufferedImage bag_tab_1, bag_tab_2, bag_tab_3;	
-
-	private String bag_Subtitle = "";
-	
-	public int bagTab;
-	private final int bag_Items = 0;
-	private final int bag_Pokeballs = 1;
-	private final int bag_Moves = 2;	
 	
 	// FIGHTER X/Y VALUES
 	public int fighter_one_X;
@@ -107,14 +102,21 @@ public class UI {
 	private final int fighter_two_platform_endX;
 	private final int fighter_one_platform_Y;
 	private final int fighter_two_platform_Y;
+	
+	// BAG TABS
+	public int bagTab;
+	private final int bag_Items = 0;
+	private final int bag_Pokeballs = 1;
+	private final int bag_Moves = 2;
 		
 	// PARTY STATES
 	public int partyState;
-	public final int party_Main = 1;
-	public final int party_Main_Select = 2;
-	public final int party_Skills = 3;
-	public final int party_Moves = 4;
-	public final int party_MoveSwap = 5;
+	public final int party_Main_Select = 1;
+	public final int party_Main_Options = 2;
+	public final int party_Main_Dialogue = 3;
+	public final int party_Skills = 4;
+	public final int party_Moves = 5;
+	public final int party_MoveSwap = 6;
 	
 	// BATTLE STATE
 	public int battleState;
@@ -304,10 +306,10 @@ public class UI {
 		if (commandNum == 1) {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			if (gp.keyH.aPressed) {
-				partyDialogue = "SELECT A POKEMON";
+				partyDialogue = "Choose a POKeMON.";
 				gp.keyH.aPressed = false;
 				gp.gameState = gp.partyState;
-				partyState = party_Main;
+				partyState = party_Main_Select;
 				commandNum = 0;
 			}
 		}
@@ -591,97 +593,8 @@ public class UI {
 	
 	// BAG SCREEN
 	private void drawBagScreen() {
+		
 		g2.drawImage(bag_menu, 0, 0, null);
-		
-		switch (bagTab) {
-			case bag_Items:
-				drawBag_Items();
-				break;
-			case bag_Pokeballs:
-				drawBag_Pokeballs();
-				break;
-			case bag_Moves:
-				drawBag_Moves();
-				break;
-		}
-		
-		if (gp.keyH.bPressed) {
-			gp.keyH.bPressed = false;
-			gp.keyH.playCursorSE();
-			
-			if (gp.btlManager.active) {
-				bagTab = 0;
-				commandNum = 1;
-				gp.gameState = gp.battleState;		
-			}
-			else {
-				bagTab = 0;
-				commandNum = 2;
-				gp.gameState = gp.pauseState;
-			}
-		}
-	}
-	private void drawBag_Items() {
-		
-		bag_Subtitle = "ITEMS";
-		bag_Tab = bag_tab_1;
-		bag_Image = bag_items;		
-		drawBag_HUD(gp.player.inventory_items);
-
-		if (gp.keyH.aPressed) {
-			gp.keyH.playCursorSE();
-			gp.keyH.aPressed = false;
-			
-			partyDialogue = "HEAL A FIGHTER";
-			partyPotion = gp.player.inventory_items.get(commandNum).value;
-			partyState = party_Main;
-			gp.gameState = gp.partyState;
-		}
-	}
-	private void drawBag_Pokeballs() {
-		
-		bag_Subtitle = "POKe BALLS";
-		bag_Tab = bag_tab_2;
-		bag_Image = bag_pokeballs;		
-		drawBag_HUD(gp.player.inventory_pokeballs);		
-				
-		if (gp.keyH.aPressed) {
-			gp.keyH.aPressed = false;
-			
-			Entity chosenItem = gp.player.inventory_pokeballs.get(commandNum);
-			
-			if (gp.btlManager.active) {
-				
-				if (chosenItem.amount > 0) {
-					
-					if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {
-						
-						chosenItem.amount--;	
-						
-						if (chosenItem.amount == 0) {
-							gp.player.inventory_pokeballs.remove(commandNum);
-						}
-					}
-					
-					gp.btlManager.ballUsed = chosenItem;
-					gp.btlManager.fightStage = gp.btlManager.fight_Capture;				
-					gp.btlManager.running = true;			
-					new Thread(gp.btlManager).start();	
-					
-					battleState = battle_Dialogue;
-					gp.gameState = gp.battleState;	
-				}
-			}
-		}
-	}
-	private void drawBag_Moves() {
-		
-		bag_Subtitle = "TMs & HMs";
-		bag_Tab = bag_tab_3;
-		bag_Image = bag_moves;		
-		drawBag_HUD(gp.player.inventory_moves);		
-	}
-	private void drawBag_HUD(ArrayList<Entity> items) {
 		
 		int x;
 		int y;
@@ -690,6 +603,29 @@ public class UI {
 		int slotX;
 		int slotY;		
 		String text;
+		
+		ArrayList<Entity> items = new ArrayList<>();
+		
+		switch (bagTab) {
+			case bag_Items:
+				bag_Subtitle = "ITEMS";
+				bag_Tab = bag_tab_1;
+				bag_Image = bag_items;		
+				items = gp.player.inventory_items;
+				break;
+			case bag_Pokeballs:
+				bag_Subtitle = "POKe BALLS";
+				bag_Tab = bag_tab_2;
+				bag_Image = bag_pokeballs;		
+				items = gp.player.inventory_pokeballs;	
+				break;
+			case bag_Moves:
+				bag_Subtitle = "TMs & HMs";
+				bag_Tab = bag_tab_3;
+				bag_Image = bag_moves;		
+				items = gp.player.inventory_moves;		
+				break;
+		}
 		
 		x = (int) (gp.tileSize * 1.8);
 		y = gp.tileSize / 2;
@@ -714,27 +650,32 @@ public class UI {
 		slotY = (int) (y - gp.tileSize * 0.9);
 		width = gp.tileSize * 8;
 		height = (int) (gp.tileSize * 1.1);
-		
-		for (int i = 0; i < items.size(); i++) {
-									
-			text = items.get(i).name;
-			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
-			
-			x += gp.tileSize * 6.3;
-			text = "x" + String.format("%02d", items.get(i).amount);
-			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
-			
-			if (commandNum == i) {
-				g2.setColor(battle_red);
-				g2.setStroke(new BasicStroke(4));				
-				g2.drawRoundRect(slotX, slotY, width, height, 6, 6);
+								
+		for (int i = bagNum; i < bagNum + 9; i++) {
+								
+			if (i < items.size()) {
+				text = items.get(i).name;
+				drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
+				
+				x += gp.tileSize * 6.3;
+				text = "x" + String.format("%02d", items.get(i).amount);
+				drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
+				
+				if (commandNum == i) {
+					g2.setColor(battle_red);
+					g2.setStroke(new BasicStroke(4));				
+					g2.drawRoundRect(slotX, slotY, width, height, 6, 6);
+				}
+				
+				x = (int) (gp.tileSize * 7.8);	
+				y += gp.tileSize * 1.08;
+				slotY += gp.tileSize * 1.08;		
 			}
-			
-			x = (int) (gp.tileSize * 7.8);	
-			y += gp.tileSize * 1.08;
-			slotY += gp.tileSize * 1.08;			
+			else {
+				break;
+			}	
 		}		
-		
+				
 		if (items.size() > 0) {
 
 			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48f));	
@@ -749,32 +690,92 @@ public class UI {
 			} 		
 		}
 		
+		if (0 < bagNum) {
+			x = (int) (gp.tileSize * 11.4);
+			y = (int) (gp.tileSize * 1.5);
+			drawText("^", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		}
+		
+		if (bagNum + 9 < items.size()) {
+			x = (int) (gp.tileSize * 11.4);
+			y = (int) (gp.tileSize * 11.4);
+			drawText("v", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		}
+		
 		if (gp.keyH.upPressed) {
 			gp.keyH.upPressed = false;
-			if (commandNum > 0) {
-				gp.keyH.playCursorSE();
-				commandNum--;
-			}
+			gp.keyH.playCursorSE();
+		
+			if (commandNum > 0)	commandNum--;
+			if (bagNum > 0) bagNum--;
 		}
 		if (gp.keyH.downPressed) {
 			gp.keyH.downPressed = false;
-			if (items.size() - 1 > commandNum ) {
+			gp.keyH.playCursorSE();
+			
+			if (commandNum < items.size() - 1) commandNum++;
+			if (commandNum >= bagNum + 9) bagNum++;
+		}				
+		if (gp.keyH.leftPressed) {
+			gp.keyH.leftPressed = false;
+			
+			if (0 < bagTab) {
 				gp.keyH.playCursorSE();
-				commandNum++;
+				bagTab--;
+				bagNum = 0;
+				commandNum = 0;
 			}
 		}
-	}		
+		if (gp.keyH.rightPressed) {	
+			gp.keyH.rightPressed = false;
+			
+			if (bagTab < 2) {
+				gp.keyH.playCursorSE();
+				bagTab++;
+				bagNum = 0;
+				commandNum = 0;
+			}
+		}
+		
+		if (gp.keyH.aPressed) {
+			gp.keyH.aPressed = false;
+			
+			items.get(commandNum).use();
+
+			bagNum = 0;
+			commandNum = 0;
+		}		
+		if (gp.keyH.bPressed) {
+			gp.keyH.bPressed = false;
+			gp.keyH.playCursorSE();
+			
+			if (gp.btlManager.active) {
+				bagTab = 0;
+				bagNum = 0;
+				commandNum = 1;
+				gp.gameState = gp.battleState;		
+			}
+			else {
+				bagTab = 0;
+				bagNum = 0;
+				commandNum = 2;
+				gp.gameState = gp.pauseState;
+			}
+		}
+	}	
 	
 	// PARTY SCREEN
 	private void drawPartyScreen() {
 		
 		switch(partyState) {
-			case party_Main:
-				drawParty_Main();				
-				break;
 			case party_Main_Select:
-				drawParty_Main();
-				drawParty_Main_Select();
+				drawParty_Main_Select();				
+				break;
+			case party_Main_Options:
+				drawParty_Main_Options();
+				break;
+			case party_Main_Dialogue:
+				drawParty_Main_Dialogue();
 				break;
 			case party_Skills:				
 				drawParty_Skills();
@@ -788,7 +789,351 @@ public class UI {
 				drawParty_MoveSwap();
 				break;
 		}
-	}			
+	}		
+	
+	private void drawParty_Main_Select() {
+		
+		drawParty_Main();
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		String text;
+		
+		x = (int) (gp.tileSize * 12);
+		y = (int) (gp.tileSize * 10.62);
+		width = (int) (gp.tileSize * 3.5);
+		height = (int) (gp.tileSize * 1);	
+				
+		// CANCEL BUTTON
+		if (fighterNum == 6) { 
+			drawSubWindow(x, y, width, height, 5, 5, party_blue, party_red); 
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+																		
+				if (partyMove) {				
+					gp.keyH.playCursorSE();
+					
+					partyMove = false;	
+					partyMoveNum = -1;
+					partyDialogue = "Choose a POKEMON.";
+				}
+				else if (partyItem != null) {
+					partyItem = null;
+					fighterNum = 0;
+					commandNum = 0;						
+					bagTab = bag_Items;
+					gp.gameState = gp.bagState;	
+				}
+				else {
+					if (gp.btlManager.active) {
+						
+						if (battleState == battle_Options) {
+							gp.keyH.playCursorSE();
+							
+							fighterNum = 0;	
+							commandNum = 2;
+							gp.gameState = gp.battleState;								
+						}
+						else if (!gp.btlManager.fighter[0].isAlive()) {							
+							gp.keyH.playErrorSE();
+						}
+						else {						
+							gp.keyH.playCursorSE();
+							
+							fighterNum = 0;	
+							commandNum = 0;
+							gp.btlManager.running = true;
+							new Thread(gp.btlManager).start();	
+							gp.gameState = gp.battleState;		
+						}						
+					}
+					else {
+						gp.keyH.playCursorSE();
+						
+						fighterNum = 0;	
+						commandNum = 1;
+						gp.gameState = gp.pauseState;
+					}
+				}		
+			}			
+		}		
+		// POKEMON SELECTED
+		else { 
+			drawSubWindow(x, y, width, height, 5, 3, party_blue, Color.BLACK); 
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;									
+				
+				if (partyMove) {
+					gp.keyH.playCursorSE();
+					
+					if (partyMoveNum != fighterNum) {
+						Collections.swap(gp.player.pokeParty, fighterNum, partyMoveNum);	
+					}	
+					
+					partyMove = false;
+					partyMoveNum = -1;
+					partyDialogue = "Choose a POKEMON.";
+				}
+				else if (partyItem != null) {
+					Pokemon p = gp.player.pokeParty.get(gp.ui.fighterNum);
+					partyItem.apply(gp.player, p);
+				}
+				else {
+					gp.keyH.playCursorSE();	
+					commandNum = 0;
+					partyState = party_Main_Options;			
+				}					
+			}
+		}
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));
+		x += gp.tileSize * 0.8;
+		y += gp.tileSize * 0.8;
+		text = "CANCEL";
+		drawText(text, x, y, battle_white, Color.BLACK);
+		
+		x = (int) (gp.tileSize * 0.3);
+		y = (int) (gp.tileSize * 10);
+		width = gp.tileSize * 11;
+		height = (int) (gp.tileSize * 1.6);
+		drawSubWindow(x, y, width, height, 3, 5, battle_white, Color.BLACK);	
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));
+		x += gp.tileSize * 0.3;
+		y += gp.tileSize * 1.15;
+		drawText(partyDialogue, x, y, Color.BLACK, Color.LIGHT_GRAY);	
+		
+		if (gp.keyH.upPressed) {				
+			gp.keyH.upPressed = false;
+			if (fighterNum == 6) {
+				gp.keyH.playCursorSE();
+				fighterNum = gp.player.pokeParty.size() - 1;
+			}
+			else if (fighterNum > 0) {
+				gp.keyH.playCursorSE();
+				fighterNum--;
+			}
+		}
+		if (gp.keyH.downPressed) {				
+			gp.keyH.downPressed = false;
+			if (fighterNum < gp.player.pokeParty.size() - 1) {
+				gp.keyH.playCursorSE();
+				fighterNum++;
+			}
+			else {
+				fighterNum = 6;
+			}
+		}
+		if (gp.keyH.leftPressed) {
+			gp.keyH.leftPressed = false;
+			gp.keyH.playCursorSE();
+			fighterNum = 0;				
+		}
+		if (gp.keyH.rightPressed) {				
+			gp.keyH.rightPressed = false;	
+			if (fighterNum < gp.player.pokeParty.size() - 1) {
+				gp.keyH.playCursorSE();
+				fighterNum++;
+			}
+			else {
+				fighterNum = 6;
+			}
+		}
+		if (gp.keyH.bPressed) {			
+			gp.keyH.playCursorSE();
+			gp.keyH.bPressed = false;
+			fighterNum = 6;					
+		}
+	}
+	private void drawParty_Main_Options() {
+		
+		partyDialogue = "Do what with " + gp.player.pokeParty.get(fighterNum).getName() + "?";
+		drawParty_Main();
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		String text;
+		
+		x = (int) (gp.tileSize * 0.3);
+		y = (int) (gp.tileSize * 10);
+		width = gp.tileSize * 11;
+		height = (int) (gp.tileSize * 1.6);
+		drawSubWindow(x, y, width, height, 3, 5, battle_white, Color.BLACK);	
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));
+		x += gp.tileSize * 0.3;
+		y += gp.tileSize * 1.15;
+		drawText(partyDialogue, x, y, Color.BLACK, Color.LIGHT_GRAY);	
+		
+		x = (int) (gp.tileSize * 12.35);
+		y = (int) (gp.tileSize * 8.85);
+		width = (int) (gp.tileSize * 2.8);
+		height = (int) (gp.tileSize * 2.78);		
+		drawSubWindow(x, y, width, height, 4, 4, battle_white, Color.BLACK);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 40F));	
+		x += gp.tileSize * 0.4;
+		y += gp.tileSize * 0.72;
+		text = "SUMMARY";
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		
+		y += gp.tileSize * 0.95;
+		if (gp.btlManager.active) text = "SELECT";
+		else text = "SWITCH";		
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		
+		y += gp.tileSize * 0.95;
+		text = "CANCEL";		
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		
+		x -= gp.tileSize * 0.38;
+		y -= gp.tileSize * 2.58;
+		height = (int) (gp.tileSize * 0.9);	
+		
+		// SUMMARY
+		if (commandNum == 0) {
+			g2.setColor(battle_red);
+			g2.drawRoundRect(x, y, width, height, 4, 4);
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;					
+				partyState = party_Skills;	
+				gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  
+				commandNum = 0;			
+			}
+		}
+		
+		// SWITCH / SELECT
+		y += gp.tileSize * 0.95;
+		if (commandNum == 1) {			
+			g2.setColor(battle_red);
+			g2.drawRoundRect(x, y, width, height, 4, 4);
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+				
+				if (gp.btlManager.active) {
+					
+					fighter_one_Y = fighter_one_startY;
+					fighter_two_Y = fighter_two_startY;	
+					
+					// NEW FIGHTER SELECTED
+					if (gp.btlManager.swapPokemon(fighterNum)) {					
+						gp.keyH.playCursorSE();	
+						
+						commandNum = 0;
+						fighterNum = 0;			
+						
+						gp.btlManager.running = true;
+						gp.btlManager.fightStage = gp.btlManager.fight_Swap;
+						new Thread(gp.btlManager).start();
+						
+						gp.gameState = gp.battleState;
+					}						
+					// UNABLE TO SELECT FIGHTER
+					else {
+						gp.keyH.playErrorSE();
+					}				
+				}
+				else {					
+					gp.keyH.playCursorSE();
+					
+					partyDialogue = "Move to where?";
+					partyMoveNum = fighterNum;
+					partyMove = true;
+					partyState = party_Main_Select;
+				}	
+			}
+		}
+		
+		// CANCEL
+		y += gp.tileSize * 0.95;
+		if (commandNum == 2) {
+			g2.setColor(battle_red);
+			g2.drawRoundRect(x, y, width, height, 4, 4);
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.playCursorSE();
+				gp.keyH.aPressed = false;		
+				partyDialogue = "Choose a POKEMON.";
+				partyState = party_Main_Select;	
+				commandNum = 0;	
+			}
+		}
+		
+		if (gp.keyH.upPressed) {				
+			gp.keyH.upPressed = false;
+			if (commandNum > 0) {
+				gp.keyH.playCursorSE();
+				commandNum--;
+			}
+		}
+		if (gp.keyH.downPressed) {				
+			gp.keyH.downPressed = false;
+			if (commandNum < 2) {
+				gp.keyH.playCursorSE();
+				commandNum++;
+			}
+		}
+		
+		if (gp.keyH.bPressed) {		
+			gp.keyH.playCursorSE();
+			gp.keyH.bPressed = false;
+			commandNum = 2;	
+		}
+	}
+	private void drawParty_Main_Dialogue() {
+		
+		drawParty_Main();
+		
+		int x = (int) (gp.tileSize * 2);
+		int y = gp.tileSize * 9;
+		int width =(int) (gp.tileSize * 12);
+		int height = (int) (gp.tileSize * 2.5);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, Color.BLACK);
+		
+		x += gp.tileSize * 0.6;
+		y += gp.tileSize * 1.1;	
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
+  		for (String line : partyDialogue.split("\n")) {   			
+  			drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
+  			y += 40;
+		} 
+  		
+  		if (gp.keyH.aPressed) {
+  			gp.keyH.aPressed = false;
+  			gp.keyH.playCursorSE();
+  			
+  			if (partyItem == null) {
+  				partyDialogue = "Choose a POKEMON.";
+  				partyState = party_Main_Select;
+  			}
+  			else {  				
+  				partyItem = null;
+  				
+  				if (gp.btlManager.active) {
+  					commandNum = 0;
+					fighterNum = 0;			
+					
+					gp.btlManager.running = true;
+					gp.btlManager.fightStage = gp.btlManager.fight_Start;
+					new Thread(gp.btlManager).start();
+					
+					battleState = battle_Dialogue;
+					gp.gameState = gp.battleState;
+  				}
+  				else {
+  	  				gp.gameState = gp.bagState;	
+  				}  				
+  			}  			
+  		}
+	}
 	
 	private void drawParty_Main() {
 		
@@ -799,7 +1144,6 @@ public class UI {
 		int y;
 		int width;
 		int height;
-		String text;
 		Pokemon fighter;
 		Color boxColor;
 		
@@ -844,218 +1188,6 @@ public class UI {
 			}
 			
 			y += gp.tileSize * 1.9;
-		}
-		
-		x = (int) (gp.tileSize * 0.3);
-		y = (int) (gp.tileSize * 10);
-		width = gp.tileSize * 11;
-		height = (int) (gp.tileSize * 1.6);
-		drawSubWindow(x, y, width, height, 3, 5, battle_white, Color.BLACK);	
-		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));
-		x += gp.tileSize * 0.3;
-		y += gp.tileSize * 1.15;
-		drawText(partyDialogue, x, y, Color.BLACK, Color.LIGHT_GRAY);
-		
-		x += width + (gp.tileSize * 0.4);
-		y = (int) (gp.tileSize * 10.62);
-		width = (int) (gp.tileSize * 3.5);
-		height = (int) (gp.tileSize * 1);			
-		
-		if (fighterNum == 6) { drawSubWindow(x, y, width, height, 5, 5, party_blue, party_red); }
-		else { drawSubWindow(x, y, width, height, 5, 3, party_blue, Color.BLACK); }
-		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));
-		x += gp.tileSize * 0.8;
-		y += gp.tileSize * 0.8;
-		text = "CANCEL";
-		drawText(text, x, y, battle_white, Color.BLACK);
-					
-		if (partyState == party_Main) {
-			
-			if (gp.keyH.aPressed) {
-				gp.keyH.aPressed = false;
-												
-				if (fighterNum == 6) {
-																				
-					if (partyMove) {				
-						gp.keyH.playCursorSE();
-						
-						partyMove = false;	
-						partyMoveNum = -1;
-					}
-					else if (partyPotion != -1) {
-						partyPotion = -1;
-						fighterNum = 0;
-						commandNum = 0;						
-						bagTab = bag_Items;
-						gp.gameState = gp.bagState;	
-					}
-					else {
-						if (gp.btlManager.active) {
-							
-							if (battleState == battle_Options) {
-								gp.keyH.playCursorSE();
-								
-								fighterNum = 0;	
-								commandNum = 2;
-								gp.gameState = gp.battleState;								
-							}
-							else if (!gp.btlManager.fighter[0].isAlive()) {							
-								gp.keyH.playErrorSE();
-							}
-							else {						
-								gp.keyH.playCursorSE();
-								
-								fighterNum = 0;	
-								commandNum = 0;
-								gp.btlManager.running = true;
-								new Thread(gp.btlManager).start();	
-								gp.gameState = gp.battleState;		
-							}						
-						}
-						else {
-							gp.keyH.playCursorSE();
-							
-							fighterNum = 0;	
-							commandNum = 1;
-							gp.gameState = gp.pauseState;
-						}
-					}					
-				}
-				else if (gp.player.pokeParty.size() > fighterNum) {		
-					
-					if (partyMove) {
-						gp.keyH.playCursorSE();
-						
-						if (partyMoveNum != fighterNum) {
-							Collections.swap(gp.player.pokeParty, fighterNum, partyMoveNum);	
-						}	
-
-						partyMove = false;
-						partyMoveNum = -1;
-					}
-					else if (partyPotion > -1) {
-						gp.player.pokeParty.get(fighterNum).addHP(partyPotion);
-						partyPotion = -1;
-					}
-					else {
-						gp.keyH.playCursorSE();
-						partyState = party_Main_Select;			
-					}
-				}	
-			}
-			if (gp.keyH.bPressed) {			
-				gp.keyH.playCursorSE();
-				gp.keyH.bPressed = false;
-				fighterNum = 6;					
-			}
-		}
-	}
-	private void drawParty_Main_Select() {
-		
-		int x;
-		int y;
-		int width;
-		int height;
-		String text;
-		
-		x = (int) (gp.tileSize * 12.35);
-		y = (int) (gp.tileSize * 8.85);
-		width = (int) (gp.tileSize * 2.8);
-		height = (int) (gp.tileSize * 2.78);		
-		drawSubWindow(x, y, width, height, 4, 4, battle_white, Color.BLACK);
-		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 40F));	
-		x += gp.tileSize * 0.4;
-		y += gp.tileSize * 0.72;
-		if (gp.btlManager.active) text = "SELECT";
-		else text = "MOVE";		
-		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
-		
-		y += gp.tileSize * 0.95;
-		text = "INFO";
-		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
-		
-		y += gp.tileSize * 0.95;
-		text = "CANCEL";		
-		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
-		
-		x -= gp.tileSize * 0.38;
-		y -= gp.tileSize * 2.58;
-		height = (int) (gp.tileSize * 0.9);	
-		if (commandNum == 0) {
-			g2.setColor(battle_red);
-			g2.drawRoundRect(x, y, width, height, 4, 4);
-			
-			if (gp.keyH.aPressed) {
-				gp.keyH.aPressed = false;
-				
-				if (gp.btlManager.active) {
-					
-					fighter_one_Y = fighter_one_startY;
-					fighter_two_Y = fighter_two_startY;	
-					
-					// NEW FIGHTER SELECTED
-					if (gp.btlManager.swapPokemon(fighterNum)) {					
-						gp.keyH.playCursorSE();	
-						
-						commandNum = 0;
-						fighterNum = 0;			
-						
-						gp.btlManager.running = true;
-						gp.btlManager.fightStage = gp.btlManager.fight_Swap;
-						new Thread(gp.btlManager).start();
-						
-						gp.gameState = gp.battleState;
-					}	
-					
-					// UNABLE TO SELECT FIGHTER
-					else {
-						gp.keyH.playErrorSE();
-					}				
-				}
-				else {					
-					gp.keyH.playCursorSE();
-					
-					partyMoveNum = fighterNum;
-					partyMove = true;
-					partyState = party_Main;
-				}	
-			}
-		}
-		
-		y += gp.tileSize * 0.95;
-		if (commandNum == 1) {
-			g2.setColor(battle_red);
-			g2.drawRoundRect(x, y, width, height, 4, 4);
-			
-			if (gp.keyH.aPressed) {
-				gp.keyH.aPressed = false;					
-				partyState = party_Skills;	
-				gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  
-				commandNum = 0;			
-			}
-		}
-		
-		y += gp.tileSize * 0.95;
-		if (commandNum == 2) {
-			g2.setColor(battle_red);
-			g2.drawRoundRect(x, y, width, height, 4, 4);
-			
-			if (gp.keyH.aPressed) {
-				gp.keyH.playCursorSE();
-				gp.keyH.aPressed = false;					
-				partyState = party_Main;	
-				commandNum = 0;	
-			}
-		}
-		
-		if (gp.keyH.bPressed) {		
-			gp.keyH.playCursorSE();
-			gp.keyH.bPressed = false;
-			partyState = party_Main;
-			commandNum = 0;	
 		}
 	}
 	private void drawParty_Box(int x, int y, Pokemon fighter, boolean main) {
@@ -1237,14 +1369,15 @@ public class UI {
 		text = "ABILITY";
 		drawText(text, x, y, battle_white, Color.BLACK);	
 		
-		if (gp.keyH.rightPressed) {
-			commandNum = 0;
+		if (gp.keyH.rightPressed) {			
 			partyState = party_Moves;				
+			commandNum = 0;
 		}
 		if (gp.keyH.bPressed) {
-			commandNum = 0;
-			partyState = party_Main;
 			gp.keyH.bPressed = false;
+			partyDialogue = "Choose a POKEMON.";
+			partyState = party_Main_Select;
+			commandNum = 0;
 		}
 	}
 	private void drawParty_Moves() {
@@ -1375,8 +1508,8 @@ public class UI {
 		} 							
 		
 		if (gp.keyH.leftPressed) {
-			commandNum = 0;
 			partyState = party_Skills;			
+			commandNum = 0;
 		}
 		if (gp.keyH.aPressed) {
 			gp.keyH.aPressed = false;
@@ -1399,7 +1532,8 @@ public class UI {
 				partyMoveNum = -1;
 			}
 			else {
-				partyState = party_Main;
+				partyDialogue = "Choose a POKEMON.";
+				partyState = party_Main_Select;
 				commandNum = 0;
 			}				
 		}		
@@ -2272,12 +2406,11 @@ public class UI {
 				commandNum = 0;
 			}
 			else if (commandNum == 2) {
-				gp.keyH.aPressed = false;
-				
+				gp.keyH.aPressed = false;				
 
-				partyDialogue = "CHOOSE A NEW FIGHTER";				
+				partyDialogue = "Choose a POKEMON.";				
 				gp.gameState = gp.partyState;
-				partyState = party_Main;	
+				partyState = party_Main_Select;	
 				
 				commandNum = 0;
 			}

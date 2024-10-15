@@ -15,6 +15,7 @@ import application.GamePanel;
 import moves.Move;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
+import properties.Status;
 
 public class Entity {
 	
@@ -91,10 +92,12 @@ public class Entity {
 	public int amount = 1;
 	public int value = 0;
 	public int catchProbability;
+	public Status status;
 	
 	// INVENTORY
-	public ArrayList<Entity> inventory = new ArrayList<>();
-	public final int maxInventorySize = 20;
+	public ArrayList<Entity> inventory_items = new ArrayList<>();
+	public ArrayList<Entity> inventory_pokeballs = new ArrayList<>();
+	public ArrayList<Entity> inventory_moves = new ArrayList<>();
 	
 	// POKEMON PARTY
 	public ArrayList<Pokemon> pokeParty = new ArrayList<>();
@@ -129,6 +132,9 @@ public class Entity {
 	public void setPath(int c, int r) { }		
 	public void interact() { }
 	public void speak() { }		
+	public void use() { }
+	public void apply() { }
+	public void apply(Entity entity, Pokemon p) { }
 	public void resetValues() { }	
 	
 	// UPDATER
@@ -454,6 +460,105 @@ public class Entity {
 		}
 		
 		return hmPokemon;		
+	}
+	
+	public void useItem(ArrayList<Entity> items, Entity item) {		
+		
+		for (int i = 0; i < items.size(); i++) {
+			
+			if (items.get(i).equals(item)) {
+				
+				items.get(i).amount--;
+				if (items.get(i).amount <= 0) {
+					items.remove(i);	
+				}
+				
+				break;
+			}			
+		}		
+	}
+	
+	protected void revive(Entity entity, Pokemon p) {
+						
+		if (!p.isAlive()) {
+			
+			p.setAlive(true);
+			p.setHP((int) (p.getBHP() / value));
+			
+			entity.useItem(entity.inventory_items, this);						
+			
+			gp.ui.partyDialogue = p.getName() + " was revived!";
+			gp.ui.partyState = gp.ui.party_Main_Dialogue;
+		}		
+		else {
+			gp.keyH.playErrorSE();
+		}
+	}
+	protected void restore(Entity entity, Pokemon p) {
+		
+		if (p.isAlive() && p.getHP() < p.getBHP()) {
+			
+			int gainedHP = value;												
+			if (p.getHP() + value > p.getBHP()) {
+				gainedHP = p.getBHP() - p.getHP();
+			}	
+			
+			p.addHP(value);
+			
+			entity.useItem(entity.inventory_items, this);				
+		
+			gp.ui.partyDialogue = p.getName() + " gained " + gainedHP + " HP.";
+			gp.ui.partyState = gp.ui.party_Main_Dialogue;			
+		}		
+		else {
+			gp.keyH.playErrorSE();
+		}
+	}
+	protected void heal(Entity entity, Pokemon p) {
+		
+		if (p.isAlive() && (p.getStatus().equals(status) || status == null)) {
+						
+			p.setStatus(null);
+			
+			entity.useItem(entity.inventory_items, this);			
+			
+			gp.ui.partyDialogue = p.getName() + " was healed.";
+			gp.ui.partyState = gp.ui.party_Main_Dialogue;
+		}		
+		else {
+			gp.keyH.playErrorSE();
+		}
+	}
+	protected void throwPokeball() {
+		
+		if (gp.btlManager.active) {
+			
+			if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {					
+				gp.player.useItem(gp.player.inventory_pokeballs, this);				
+			}
+			
+			gp.btlManager.ballUsed = this;
+			gp.btlManager.fightStage = gp.btlManager.fight_Capture;				
+			gp.btlManager.running = true;			
+			new Thread(gp.btlManager).start();	
+			
+			gp.ui.battleState = gp.ui.battle_Dialogue;
+			gp.gameState = gp.battleState;
+		}		
+	}
+	
+	public int getItemIndex(ArrayList<Entity> items, String name) {
+		
+		int itemIndex = -1;
+		
+		for (int i = 0; i < items.size(); i++) {
+			if (items.get(i).name.equals(name)) {
+				itemIndex = i;
+				break;
+			}
+		}
+		
+		return itemIndex;		
 	}
 	
 	// MANAGE VALUES

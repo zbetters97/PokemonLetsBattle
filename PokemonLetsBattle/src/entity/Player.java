@@ -6,10 +6,21 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 import application.GamePanel;
 import entity.collectables.*;
+import entity.collectables.balls.COL_Ball_Great;
+import entity.collectables.balls.COL_Ball_Master;
+import entity.collectables.balls.COL_Ball_Poke;
+import entity.collectables.balls.COL_Ball_Ultra;
+import entity.collectables.heals.ITM_Full_Restore;
+import entity.collectables.heals.ITM_Heal_Full;
+import entity.collectables.heals.ITM_Revive;
+import entity.collectables.heals.ITM_Revive_Max;
+import entity.collectables.potions.ITM_Potion;
+import entity.collectables.potions.ITM_Potion_Hyper;
+import entity.collectables.potions.ITM_Potion_Max;
+import entity.collectables.potions.ITM_Potion_Super;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
 
@@ -28,9 +39,6 @@ public class Player extends Entity {
 	
 	// INVENTORY
 	public final int maxItemInventorySize = 10;
-	public ArrayList<Entity> inventory_items = new ArrayList<>();
-	public ArrayList<Entity> inventory_pokeballs = new ArrayList<>();
-	public ArrayList<Entity> inventory_moves = new ArrayList<>();
 		
 /** END PLAYER VARIABLES **/		
 	
@@ -65,6 +73,8 @@ public class Player extends Entity {
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MUDKIP, 5));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MARSHTOMP, 16));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36));
+		
+		pokeParty.get(0).setHP(5);
 	}
 	public void setDefaultValues() {
 					
@@ -86,7 +96,12 @@ public class Player extends Entity {
 		inventory_items.add(new ITM_Potion_Hyper(gp));
 		inventory_items.get(2).amount = 3;
 		
-		inventory_items.add(new ITM_Potion_Max(gp));		
+		inventory_items.add(new ITM_Potion_Max(gp));
+		
+		inventory_items.add(new ITM_Full_Restore(gp));	
+		inventory_items.add(new ITM_Heal_Full(gp));			
+		inventory_items.add(new ITM_Revive(gp));
+		inventory_items.add(new ITM_Revive_Max(gp));		
 		
 		inventory_pokeballs.add(new COL_Ball_Poke(gp));
 		inventory_pokeballs.get(0).amount = 10;

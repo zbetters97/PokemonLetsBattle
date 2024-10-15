@@ -1520,8 +1520,7 @@ public class BattleManager extends Thread {
 				running = false;
 				fightStage = fight_Swap;
 				
-				gp.ui.partyDialogue = "CHOOSE A NEW FIGHTER";
-				gp.ui.partyState = gp.ui.party_Main;
+				gp.ui.partyState = gp.ui.party_Main_Select;
 				gp.gameState = gp.partyState;
 			}
 			// TRAINER 1 OUT OF POKEMON
@@ -1577,7 +1576,7 @@ public class BattleManager extends Thread {
 			if (gp.ui.commandNum == 0) {		
 				running = false;
 				
-				gp.ui.partyState = gp.ui.party_Main;
+				gp.ui.partyState = gp.ui.party_Main_Select;
 				gp.gameState = gp.partyState;								
 			}
 			

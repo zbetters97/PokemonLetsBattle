@@ -80,43 +80,6 @@ public class KeyHandler implements KeyListener {
 		if (code == gp.btn_DEBUG) { if (debug) debug = false; else debug = true; }
 	}
 	
-	// PLAY
-	private void bagState(int code) { 	
-
-		if (code == gp.btn_UP) {
-			upPressed = true;
-		}
-		if (code == gp.btn_DOWN) {
-			downPressed = true;
-		}
-		if (code == gp.btn_LEFT) {
-			playCursorSE();
-			leftPressed = true;
-			
-			if (gp.ui.bagTab > 0) {
-				gp.ui.bagTab--;
-				gp.ui.commandNum = 0;
-			}
-		}
-		if (code == gp.btn_RIGHT) {
-			playCursorSE();
-			rightPressed = true;		
-			if (2 > gp.ui.bagTab) {
-				gp.ui.bagTab++;
-				gp.ui.commandNum = 0;
-			}
-		}
-						
-		if (code == gp.btn_A && lock) { 
-			aPressed = true; 
-			lock = false; 
-		}
-		if (code == gp.btn_B && lock) { 
-			bPressed = true; 
-			lock = false; 
-		}
-	}
-	
 	// PAUSE
 	private void pauseState(int code) { 		
 
@@ -174,6 +137,18 @@ public class KeyHandler implements KeyListener {
 			if (gp.ui.commandNum > 1) gp.ui.commandNum = 1;
 			else playCursorSE(); 
 		}
+	}
+	
+	// BAG
+	private void bagState(int code) { 	
+
+		if (code == gp.btn_UP) { upPressed = true; }
+		if (code == gp.btn_DOWN) { downPressed = true; }
+		if (code == gp.btn_LEFT) { leftPressed = true; }
+		if (code == gp.btn_RIGHT) {	rightPressed = true; }
+						
+		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
+		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
 	}
 	
 	// BATTLE
@@ -271,14 +246,16 @@ public class KeyHandler implements KeyListener {
 	// PARTY
 	private void partyState(int code) { 
 		
-		if (gp.ui.partyState == gp.ui.party_Main) {			
-			
-			if (code == gp.btn_A && lock) { 		
-				aPressed = true; lock = false; 
-			}
-			if (code == gp.btn_B && lock) { 	
-				bPressed = true; lock = false; 	
-			}
+		if (code == gp.btn_UP) { upPressed = true; }
+		if (code == gp.btn_DOWN) { downPressed = true; }
+		if (code == gp.btn_LEFT) { leftPressed = true; }
+		if (code == gp.btn_RIGHT) {	rightPressed = true; }
+						
+		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
+		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
+		
+		/*
+		if (gp.ui.partyState == gp.ui.party_Main) {		
 			
 			if (code == gp.btn_UP) {				
 				upPressed = true;
@@ -306,6 +283,15 @@ public class KeyHandler implements KeyListener {
 					gp.ui.fighterNum++;
 				}
 			}
+			
+			if (code == gp.btn_A && lock) { 		
+				aPressed = true; lock = false; 
+			}
+			if (code == gp.btn_B && lock) { 	
+				bPressed = true; lock = false; 	
+			}
+			
+			
 		}
 		if (gp.ui.partyState == gp.ui.party_Main_Select) {			
 			
@@ -445,6 +431,8 @@ public class KeyHandler implements KeyListener {
 				}
 			}			
 		}
+		
+		*/
 	}
 	
 	// EVOLVE
