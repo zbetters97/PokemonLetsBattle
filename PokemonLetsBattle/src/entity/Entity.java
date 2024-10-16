@@ -484,7 +484,7 @@ public class Entity {
 			p.giveItem(item);			
 			useItem(gp.player.inventory_items, item);				
 			
-			gp.ui.partyDialogue = p.getName() + " was given a " + item.name + "\nto hold.";
+			gp.ui.partyDialogue = p.getName() + " was given a\n" + item.name + " to hold.";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;			
 		}
 		else {

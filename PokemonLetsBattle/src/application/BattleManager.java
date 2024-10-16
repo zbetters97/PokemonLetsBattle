@@ -639,6 +639,8 @@ public class BattleManager extends Thread {
 	}
 	private Move cpuSelectMove() throws InterruptedException {
 		
+		Move bestMove;
+		
 		// holds Map of Move and Damage Points
 		Map<Move, Integer> moves = new HashMap<>();
 		
@@ -655,19 +657,22 @@ public class BattleManager extends Thread {
 			}		
 		}
 		
-		Move bestMove;
-		
 		// find max value in moves list based on value
 		if (!moves.isEmpty()) {
 			
-			// 33% chance CPU selects random move instead of most powerful			
-			int val = 1 + (int)(Math.random() * 4);
-			if (val == 1) {				
-				int ranMove = (int)(Math.random() * (fighter[1].getMoveSet().size()));				
-				bestMove = fighter[1].getMoveSet().get(ranMove);
-			}
-			else
-				bestMove = Collections.max(moves.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey(); 	
+			bestMove = Collections.max(moves.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey(); 
+			
+			// if best move does not cause KO
+			int damage = calculateDamage(1, 0, bestMove, 1.0, true);
+			if (damage < fighter[0].getHP()) {
+				
+				// 33% chance CPU selects random move instead of most powerful			
+				int val = 1 + (int)(Math.random() * 4);
+				if (val == 1) {				
+					int ranMove = (int)(Math.random() * (fighter[1].getMoveSet().size()));				
+					bestMove = fighter[1].getMoveSet().get(ranMove);
+				}	
+			}			
 		}
 		// if list is empty, select random move
 		else {
