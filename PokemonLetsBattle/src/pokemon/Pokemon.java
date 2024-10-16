@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
+import entity.Entity;
 import moves.Move;
 import properties.Nature;
 import properties.Status;
@@ -28,6 +29,7 @@ public class Pokemon {
 	private boolean hit = false;	
 	private int statusCounter, statusLimit;
 	private List<Move> moveSet;
+	private Entity item;
 	/** END INITIALIZE VALUES **/
 	
 	/** CONSTRUCTORS **/
@@ -133,6 +135,7 @@ public class Pokemon {
 		isAlive = old.isAlive;		
 		
 		moveSet = old.getMoveSet();
+		item = old.item;
 	}		
 	/** END CONSTRUCTORS **/
 			
@@ -481,6 +484,9 @@ public class Pokemon {
 	
 	public List<Move> getMoveSet() { return moveSet; }
 	public void setMoveSet(ArrayList<Move> moveSet) { this.moveSet = moveSet; }
+	
+	public Entity getHeldItem() { return item; }
+	public void giveItem(Entity item) { this.item = item; }
 	/** END GETTERS AND SETTERS **/
 	
 	/** GETTERS **/

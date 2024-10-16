@@ -154,44 +154,16 @@ public class KeyHandler implements KeyListener {
 	// BATTLE
 	private void battleState(int code) { 
 		
-		if (code == gp.btn_A && lock) { 					
-			aPressed = true; lock = false; 
-		}
-		if (code == gp.btn_B && lock) { 					
-			bPressed = true; lock = false; 
-		}
+		if (code == gp.btn_UP) { upPressed = true; }
+		if (code == gp.btn_DOWN) { downPressed = true; }
+		if (code == gp.btn_LEFT) { leftPressed = true; }
+		if (code == gp.btn_RIGHT) {	rightPressed = true; }		
+
+		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
+		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
 		
-		if (gp.ui.battleState == gp.ui.battle_Options) {
-			if (code == gp.btn_UP) {				
-				upPressed = true;
-				if (gp.ui.commandNum > 1) {
-					playCursorSE();		
-					gp.ui.commandNum -= 2;
-				}
-			}
-			if (code == gp.btn_DOWN) {				
-				downPressed = true;
-				if (gp.ui.commandNum < 2) {
-					playCursorSE();		
-					gp.ui.commandNum += 2;
-				}
-			}
-			if (code == gp.btn_LEFT) {
-				leftPressed = true;
-				if (gp.ui.commandNum > 0) {
-					playCursorSE();		
-					gp.ui.commandNum--;
-				}
-			}
-			if (code == gp.btn_RIGHT) {				
-				rightPressed = true;	
-				if (gp.ui.commandNum < 3) {
-					playCursorSE();		
-					gp.ui.commandNum++;
-				}			
-			}
-		}
-		else if (gp.ui.battleState == gp.ui.battle_Moves) {
+		/*
+		if (gp.ui.battleState == gp.ui.battle_Moves) {
 				
 			int maxMoves = gp.btlManager.fighter[0].getMoveSet().size() - 1;		
 			
@@ -241,6 +213,7 @@ public class KeyHandler implements KeyListener {
 				}
 			}
 		}
+		*/
 	}
 	
 	// PARTY

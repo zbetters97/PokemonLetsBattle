@@ -18,6 +18,7 @@ public class ITM_Full_Restore extends Entity {
 	public void use() {
 		gp.ui.partyDialogue = "Restore a POKEMON.";
 		gp.ui.partyItem = this;
+		gp.ui.partyItemApply = true;
 		gp.ui.partyState = gp.ui.party_Main_Select;
 		gp.gameState = gp.partyState;
 	}
@@ -29,7 +30,7 @@ public class ITM_Full_Restore extends Entity {
 			gp.playSE(6, "heal");
 			p.setHP(p.getBHP());
 			p.setStatus(null);					
-			entity.useItem(inventory_items, this);
+			entity.useItem(entity.inventory_items, this);
 			
 			gp.ui.partyDialogue = p.getName() + " was fully restored.";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;

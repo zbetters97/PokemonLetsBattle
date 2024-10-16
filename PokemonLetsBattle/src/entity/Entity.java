@@ -477,6 +477,20 @@ public class Entity {
 			}			
 		}		
 	}
+	public void give(Entity item, Pokemon p) {
+		
+		if (p.getHeldItem() == null) {
+			
+			p.giveItem(item);			
+			useItem(gp.player.inventory_items, item);				
+			
+			gp.ui.partyDialogue = p.getName() + " was given a " + item.name + "\nto hold.";
+			gp.ui.partyState = gp.ui.party_Main_Dialogue;			
+		}
+		else {
+			gp.keyH.playErrorSE();
+		}
+	}
 	
 	protected void revive(Entity entity, Pokemon p) {
 						
@@ -485,7 +499,7 @@ public class Entity {
 			gp.playSE(6, "heal");
 			p.setAlive(true);
 			p.setHP((int) (p.getBHP() / value));			
-			entity.useItem(entity.inventory_items, this);						
+			useItem(entity.inventory_items, this);						
 			
 			gp.ui.partyDialogue = p.getName() + " was revived!";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;
@@ -505,7 +519,7 @@ public class Entity {
 			
 			gp.playSE(6, "heal");
 			p.addHP(value);			
-			entity.useItem(entity.inventory_items, this);				
+			useItem(entity.inventory_items, this);				
 		
 			gp.ui.partyDialogue = p.getName() + " gained " + gainedHP + " HP.";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;			
@@ -516,11 +530,11 @@ public class Entity {
 	}
 	protected void heal(Entity entity, Pokemon p) {
 		
-		if (p.isAlive() && (p.getStatus().equals(status) || status == null)) {
+		if (p.isAlive() && p.getStatus() != null && (p.getStatus().equals(status) || status == null)) {
 						
 			gp.playSE(6, "heal");
 			p.setStatus(null);			
-			entity.useItem(entity.inventory_items, this);			
+			useItem(entity.inventory_items, this);			
 			
 			gp.ui.partyDialogue = p.getName() + " was healed.";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;
@@ -545,6 +559,10 @@ public class Entity {
 			gp.ui.battleState = gp.ui.battle_Dialogue;
 			gp.gameState = gp.battleState;
 		}		
+		else {
+			gp.ui.bagDialogue = "You can't use this here!";
+			gp.ui.bagState = gp.ui.bag_Dialogue;
+		}
 	}
 	
 	public int getItemIndex(ArrayList<Entity> items, String name) {

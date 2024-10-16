@@ -20,6 +20,7 @@ public class ITM_Revive_Max extends Entity {
 	public void use() {
 		gp.ui.partyDialogue = "Revive a POKEMON.";
 		gp.ui.partyItem = this;
+		gp.ui.partyItemApply = true;
 		gp.ui.partyState = gp.ui.party_Main_Select;
 		gp.gameState = gp.partyState;
 	}

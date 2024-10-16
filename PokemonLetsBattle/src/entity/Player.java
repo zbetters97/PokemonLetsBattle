@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 
 import application.GamePanel;
 import entity.collectables.potions.*;
+import entity.collectables.ITM_Repel;
 import entity.collectables.balls.*;
 import entity.collectables.heals.*;
 import pokemon.Pokedex;
@@ -29,6 +30,10 @@ public class Player extends Entity {
 	
 	// INVENTORY
 	public final int maxItemInventorySize = 10;
+	
+	public boolean repelActive = false;
+	private int repelSteps = 0;
+	private int repelStepsMax = 0;
 		
 /** END PLAYER VARIABLES **/		
 	
@@ -86,10 +91,15 @@ public class Player extends Entity {
 		
 		inventory_items.add(new ITM_Potion_Max(gp));
 		
+		inventory_items.add(new ITM_Repel(gp));
 		inventory_items.add(new ITM_Full_Restore(gp));	
 		inventory_items.add(new ITM_Heal_Full(gp));			
 		inventory_items.add(new ITM_Revive(gp));
-		inventory_items.add(new ITM_Revive_Max(gp));		
+		inventory_items.add(new ITM_Revive_Max(gp));	
+		inventory_items.add(new ITM_Heal_Burn(gp));
+		inventory_items.add(new ITM_Heal_Ice(gp));
+		inventory_items.add(new ITM_Heal_Antidote(gp));
+		inventory_items.add(new ITM_Heal_Awakening(gp));
 		
 		inventory_pokeballs.add(new COL_Ball_Poke(gp));
 		inventory_pokeballs.get(0).amount = 10;
@@ -129,6 +139,7 @@ public class Player extends Entity {
 	
 	// DIALOGUE
 	public void setDialogue() {
+		dialogues[0][0] = "Repel affect has worn off.";		
 	}
 	
 	// PLAYER IMAGES
@@ -274,8 +285,11 @@ public class Player extends Entity {
 			moving = false;
 			pixelCounter = 0;
 			
-			gp.cChecker.checkGrass(this);			
-			if (inGrass) checkWildEncounter();	
+			gp.cChecker.checkGrass(this);
+			
+			if (!hasRepel() && inGrass) {
+				checkWildEncounter();					
+			}
 			
 			gp.eHandler.checkEvent();	
 		}
@@ -326,6 +340,33 @@ public class Player extends Entity {
 		}	
 	}	
 
+	
+	public void setRepel(int steps) {
+		repelActive = true;
+		repelSteps = 0;
+		repelStepsMax = steps;
+	}
+	private boolean hasRepel() {
+		
+		if (repelActive) {
+			
+			repelSteps++;
+			if (repelStepsMax <= repelSteps) {				
+				repelActive = false;
+				repelSteps = 0;
+				repelStepsMax = 0;
+				
+				dialogueSet = 0;	
+				startDialogue(this, dialogueSet);
+			}
+			
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
 	public void manageValues() {
 	}
 
