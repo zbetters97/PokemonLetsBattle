@@ -398,8 +398,16 @@ public class UI {
 			}
 		}
 		
+		if (gp.keyH.startPressed) {
+			gp.keyH.startPressed = false;
+			gp.keyH.playMenuCloseSE();
+			commandNum = 0;
+			gp.gameState = gp.playState;			
+		}
+		
 		if (gp.keyH.bPressed) {
 			gp.keyH.bPressed = false;
+			gp.keyH.playMenuCloseSE();
 			commandNum = 0;
 			gp.gameState = gp.playState;
 		}
@@ -516,7 +524,7 @@ public class UI {
 		int y = gp.tileSize * 9;
 		int width =(int) (gp.tileSize * 12);
 		int height = (int) (gp.tileSize * 2.5);
-		drawSubWindow(x, y, width, height, 25, 10, battle_white, party_green);		
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);		
 		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
 		x += gp.tileSize * 0.6;
@@ -531,9 +539,9 @@ public class UI {
 		y = (int) (gp.tileSize * 6.3);
 		width = (int) (gp.tileSize * 2.3);
 		height = (int) (gp.tileSize * 2.5);
-		drawSubWindow(x, y, width, height, 25, 10, battle_white, party_green);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
 				
-		x += gp.tileSize * 0.8;						
+		x += gp.tileSize * 0.8;
 		y += gp.tileSize + 5;
 		drawText("YES", x, y, Color.BLACK, Color.LIGHT_GRAY);
 		if (commandNum == 0) {
@@ -896,16 +904,10 @@ public class UI {
 		y += gp.tileSize * 1.3;
 		height = gp.tileSize;		
 		
-		String lastLine = "";
   		for (String line : bagDialogue.split("\n")) {   			
   			drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
-  			lastLine = line;
   			y += 40;
 		} 
-  		
-  		x += (int)g2.getFontMetrics().getStringBounds(lastLine, g2).getWidth() + 3;
-		y -= gp.tileSize * 1.75;
-  		g2.drawImage(dialogue_next, x, y + 25, null);
 		
 		if (gp.keyH.aPressed) {	
 			gp.keyH.aPressed = false;
@@ -1312,7 +1314,9 @@ public class UI {
 		if (gp.keyH.bPressed) {		
 			gp.keyH.playCursorSE();
 			gp.keyH.bPressed = false;
-			commandNum = 2;	
+			partyDialogue = "Choose a POKEMON.";
+			partyState = party_Main_Select;	
+			commandNum = 0;	
 		}
 	}
 	private void drawParty_Main_Dialogue() {
@@ -2941,6 +2945,12 @@ public class UI {
 			g2.setColor(battle_red);
 			g2.drawRect(x - 4, y - (int) (gp.tileSize * 0.85), width + 4, height);
 			g2.setColor(Color.BLACK);
+			
+			if (gp.keyH.downPressed) {
+				gp.keyH.downPressed = false;
+				gp.keyH.playCursorSE();
+				commandNum++;
+			}
 		}		
 		
 		y += gp.tileSize * 1.3;		
@@ -2949,31 +2959,14 @@ public class UI {
 		if (commandNum == 1) {
 			g2.setColor(battle_red);
 			g2.drawRect(x - 4, y - (int) (gp.tileSize * 0.85), width + 4, height);
-			g2.setColor(Color.BLACK);		
-		}			
-		/*
-		if (gp.keyH.aPressed) {
-			gp.keyH.aPressed = false;
+			g2.setColor(Color.BLACK);	
 			
-			fighter_one_X = fighter_one_startX;
-			fighter_two_X = fighter_two_startX;
-			fighter_one_Y = fighter_one_startY;
-			fighter_two_Y = fighter_two_startY;			
-			
-			battleState = battle_Dialogue;
-			gp.btlManager.fightStage = gp.btlManager.fight_Swap;
-			
-			if (commandNum == 0) {		
-				gp.gameState = gp.partyState;
-				partyState = party_Main;
+			if (gp.keyH.upPressed) {
+				gp.keyH.upPressed = false;
+				gp.keyH.playCursorSE();
+				commandNum--;
 			}
-			else {				
-				gp.btlManager.running = true;
-				new Thread(gp.btlManager).start();	
-			}
-			
-			commandNum = 0;	
-		}*/
+		}	
 	}
 	
 	// EVOLVE SCREEN	

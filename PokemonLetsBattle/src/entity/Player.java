@@ -179,28 +179,40 @@ public class Player extends Entity {
 	
 	
 /** UPDATER **/
-
 	public void update() {
 				
-		if (!moving) {	
+		if (!moving) {			
 			
-			gp.eHandler.checkEvent();	
-			
-			running = false;
-			
-			if (gp.keyH.aPressed) {		
-				gp.keyH.aPressed = false;
+			if (gp.keyH.startPressed) {
+				
+				gp.keyH.startPressed = false;
 				gp.keyH.bPressed = false;
-				action();
-			}			
-			
-			if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) { 		
-				move();
+				gp.keyH.playMenuOpenSE();
+				
+				spriteNum = 1;
+				running = false;
+				
+				gp.gameState = gp.pauseState; 
 			}
 			else {
-				spriteNum = 1;
-			}
-		}		
+				gp.eHandler.checkEvent();	
+			
+				running = false;
+				
+				if (gp.keyH.aPressed) {		
+					gp.keyH.aPressed = false;
+					gp.keyH.bPressed = false;
+					action();
+				}			
+				
+				if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) { 		
+					move();
+				}
+				else {
+					spriteNum = 1;
+				}
+			}			
+		}	
 		if (moving) {
 			walking();
 		}
@@ -340,7 +352,6 @@ public class Player extends Entity {
 		}	
 	}	
 
-	
 	public void setRepel(int steps) {
 		repelActive = true;
 		repelSteps = 0;

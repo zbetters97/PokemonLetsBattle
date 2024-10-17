@@ -70,12 +70,7 @@ public class KeyHandler implements KeyListener {
 		if (code == gp.btn_R && lock) { rPressed = true; lock = false; }
 		if (code == gp.btn_Z) { zPressed = true; }
 		
-		if (code == gp.btn_START && lock) { 
-			startPressed = true;
-			playMenuOpenSE(); 
-			gp.gameState = gp.pauseState; 
-			lock = false;		
-		}			
+		if (code == gp.btn_START && lock) { startPressed = true; lock = false; }			
 		
 		if (code == gp.btn_DEBUG) { if (debug) debug = false; else debug = true; }
 	}
@@ -95,10 +90,7 @@ public class KeyHandler implements KeyListener {
 				gp.ui.commandNum++;
 			}
 		}
-		if (code == gp.btn_LEFT) {		
-		}
-		if (code == gp.btn_RIGHT) {			
-		}						
+		
 		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
 		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
 		if (code == gp.btn_X && lock) { xPressed = true; lock = false; }
@@ -108,11 +100,7 @@ public class KeyHandler implements KeyListener {
 		if (code == gp.btn_R && lock) { rPressed = true; lock = false; }
 		if (code == gp.btn_Z) { zPressed = true; }
 		
-		if (code == gp.btn_START && lock) { 
-			gp.ui.commandNum = 0;
-			gp.gameState = gp.playState;
-			lock = false;
-		}			
+		if (code == gp.btn_START && lock) { startPressed = true; lock = false; }			
 		
 		if (code == gp.btn_DEBUG) { if (debug) debug = false; else debug = true; }
 	}
@@ -141,7 +129,7 @@ public class KeyHandler implements KeyListener {
 	
 	// BAG
 	private void bagState(int code) { 	
-
+		
 		if (code == gp.btn_UP) { upPressed = true; }
 		if (code == gp.btn_DOWN) { downPressed = true; }
 		if (code == gp.btn_LEFT) { leftPressed = true; }
@@ -161,59 +149,6 @@ public class KeyHandler implements KeyListener {
 
 		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
 		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
-		
-		/*
-		if (gp.ui.battleState == gp.ui.battle_Moves) {
-				
-			int maxMoves = gp.btlManager.fighter[0].getMoveSet().size() - 1;		
-			
-			if (code == gp.btn_UP) {
-				upPressed = true;
-				if (gp.ui.commandNum > 1) {
-					playCursorSE();		
-					gp.ui.commandNum -= 2;
-				}
-			}
-			if (code == gp.btn_DOWN) {				
-				downPressed = true;
-				if (gp.ui.commandNum < 2) {
-					playCursorSE();		
-					gp.ui.commandNum += 2;
-					if (gp.ui.commandNum > maxMoves) gp.ui.commandNum = maxMoves;
-				}
-			}
-			if (code == gp.btn_LEFT) {
-				leftPressed = true;
-				if (gp.ui.commandNum > 0) {
-					playCursorSE();	
-					gp.ui.commandNum--;
-				}
-			}
-			if (code == gp.btn_RIGHT) {				
-				rightPressed = true;	
-				if (gp.ui.commandNum < maxMoves) {
-					playCursorSE();		
-					gp.ui.commandNum++;
-				}
-			}
-		}
-		else if (gp.ui.battleState == gp.ui.battle_Confirm) {
-			if (code == gp.btn_UP) {				
-				upPressed = true;
-				if (gp.ui.commandNum > 0) {
-					playCursorSE();		
-					gp.ui.commandNum--;
-				}
-			}
-			if (code == gp.btn_DOWN) {				
-				downPressed = true;
-				if (gp.ui.commandNum < 1) {
-					playCursorSE();		
-					gp.ui.commandNum++;
-				}
-			}
-		}
-		*/
 	}
 	
 	// PARTY
