@@ -1,4 +1,4 @@
-package entity.collectables.heals;
+package entity.collectables.items;
 
 import application.GamePanel;
 import entity.Entity;
@@ -11,9 +11,12 @@ public class ITM_Heal_Full extends Entity {
 	public ITM_Heal_Full(GamePanel gp) {		
 		super(gp);	
 		
+		collectableType = type_item;
 		name = colName;			
 		description = "Heals all the\nstatus problems of\none Pokémon.";		
 		status = null;
+		
+		menuSprite = setup("/collectables/menu/heal_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

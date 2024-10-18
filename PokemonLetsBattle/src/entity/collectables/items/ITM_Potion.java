@@ -1,20 +1,23 @@
-package entity.collectables.potions;
+package entity.collectables.items;
 
 import application.GamePanel;
 import entity.Entity;
 import pokemon.Pokemon;
 
-public class ITM_Potion_Hyper extends Entity {
+public class ITM_Potion extends Entity {
 	
-	public static final String colName = "Hyper Potion";
+	public static final String colName = "Potion";
 
-	public ITM_Potion_Hyper(GamePanel gp) {		
+	public ITM_Potion(GamePanel gp) {		
 		super(gp);	
 		
+		collectableType = type_item;
 		name = colName;			
-		description = "Restores the HP of\na Pokémon by 200\npoints.";
+		description = "Restores the HP of\na Pokémon by 20\npoints.";
 		
-		value = 200;
+		value = 20;
+		
+		menuSprite = setup("/collectables/menu/potion", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

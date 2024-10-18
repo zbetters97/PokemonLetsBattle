@@ -1,4 +1,4 @@
-package entity.collectables.heals;
+package entity.collectables.items;
 
 import application.GamePanel;
 import entity.Entity;
@@ -11,10 +11,13 @@ public class ITM_Revive extends Entity {
 	public ITM_Revive(GamePanel gp) {		
 		super(gp);	
 		
+		collectableType = type_item;
 		name = colName;			
 		description = "Revives a fainted\nPokémon with half\nits HP.";
 		
 		value = 2;
+		
+		menuSprite = setup("/collectables/menu/revive", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

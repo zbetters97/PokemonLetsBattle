@@ -816,7 +816,7 @@ public class UI {
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
 				gp.keyH.playCursorSE();							
-				gp.player.useItem(items, items.get(bagNum));	
+				gp.player.useItem(items.get(bagNum), gp.player);	
 				bagState = bag_Main;
 				commandNum = 0;				
 			}
@@ -1428,6 +1428,10 @@ public class UI {
 		
 		g2.drawImage(fighter.getMenuSprite(), x, y, null);
 		
+		if (fighter.getHeldItem() != null) {			
+			g2.drawImage(fighter.getHeldItem().menuSprite, x + gp.tileSize, y + (int) (gp.tileSize * 1.2), null);
+		}
+		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));	
 		x += gp.tileSize * 2;
 		y += gp.tileSize;
@@ -1660,7 +1664,7 @@ public class UI {
 		int slotWidth = (int) (gp.tileSize * 8.38);
 		int slotHeight = gp.tileSize + 8;
 		
-		int frameX = (int) (gp.tileSize * 7.9);
+		int frameX = (int) (gp.tileSize * 7.6);
 		int frameY = (int) (gp.tileSize * 2.4);
 		
 		int tempX = (int) (gp.tileSize * 0.4);
@@ -1700,7 +1704,7 @@ public class UI {
 		int i = 0;
 		x = frameX;
 		y = frameY;		
-		width = (int) (gp.tileSize * 2.3);
+		width = (int) (gp.tileSize * 2);
 		height = gp.tileSize;
 		
 		for (Move m : fighter.getMoveSet()) {			
@@ -1713,11 +1717,16 @@ public class UI {
 			textY = (int) (y + (gp.tileSize * 0.75));			
 			drawText(text, textX, textY, battle_white, Color.BLACK);
 			
-			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 50F));
+			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 40F));
 			text = m.toString();
-			textX = (int) (frameX + (gp.tileSize * 2.5));
+			textX = (int) (frameX + (gp.tileSize * 2.3));
 			textY = (int) (y + (gp.tileSize * 0.85));			
 			drawText(text, textX, textY, battle_white, Color.BLACK);	
+			
+			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));						
+			text = m.getpp() + "/" + m.getbpp();
+			textX = getXforRightAlignText(text, (int) (gp.tileSize * 15.7));
+			drawText(text, textX, textY, battle_white, Color.BLACK);
 			
 			if (partyMove && partyMoveNum == i) {
 				slotY = y - 4;
@@ -1750,16 +1759,7 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42F));
 		text = "DESCRIPTION";
 		drawText(text, x, y, battle_white, Color.BLACK);	
-		
-		x += gp.tileSize * 5.2;
-		text = "PP";
-		drawText(text, x, y, battle_white, Color.BLACK);
-		
-		text = fighter.getMoveSet().get(commandNum).getpp() + "/" + fighter.getMoveSet().get(commandNum).getbpp();
-		x += gp.tileSize * 2.8;
-		x = getXforRightAlignText(text, x);
-		drawText(text, x, y, battle_white, Color.BLACK);
-		
+				
 		x = (int) (gp.tileSize * 7.8);
 		y += gp.tileSize * 0.7;
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));

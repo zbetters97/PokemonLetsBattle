@@ -1,20 +1,23 @@
-package entity.collectables.heals;
+package entity.collectables.items;
 
 import application.GamePanel;
 import entity.Entity;
 import pokemon.Pokemon;
 import properties.Status;
 
-public class ITM_Heal_Paralyze extends Entity {
+public class ITM_Heal_Awakening extends Entity {
 	
-	public static final String colName = "Paralyze Heal";
+	public static final String colName = "Awakening";
 
-	public ITM_Heal_Paralyze(GamePanel gp) {		
+	public ITM_Heal_Awakening(GamePanel gp) {		
 		super(gp);	
 		
+		collectableType = type_item;
 		name = colName;			
-		description = "Heals a paralyzed\nPokémon.";
-		status = Status.PARALYZE;
+		description = "Awakens a sleeping\nPokémon.";
+		status = Status.SLEEP;
+		
+		menuSprite = setup("/collectables/menu/heal_awakening", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

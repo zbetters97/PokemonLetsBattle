@@ -8,10 +8,8 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import application.GamePanel;
-import entity.collectables.potions.*;
-import entity.collectables.ITM_Repel;
 import entity.collectables.balls.*;
-import entity.collectables.heals.*;
+import entity.collectables.items.*;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
 

@@ -10,12 +10,14 @@ public class COL_Ball_Great extends Entity {
 	public COL_Ball_Great(GamePanel gp) {		
 		super(gp);	
 		
+		collectableType = type_ball;
 		name = colName;			
 		description = "A good ball with a\nhigher catch rate\nthan a Poké Ball.";
 		
 		catchProbability = 200;
 		
-		image = setup("/collectables/ball-great", (int) (gp.tileSize * 0.8), (int) (gp.tileSize * 0.8));
+		image = setup("/collectables/battle/ball_great", (int) (gp.tileSize * 0.8), (int) (gp.tileSize * 0.8));
+		menuSprite = setup("/collectables/menu/ball_great", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {		

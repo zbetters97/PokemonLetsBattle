@@ -1,4 +1,4 @@
-package entity.collectables;
+package entity.collectables.items;
 
 import application.GamePanel;
 import entity.Entity;
@@ -10,15 +10,18 @@ public class ITM_Repel extends Entity {
 	public ITM_Repel(GamePanel gp) {		
 		super(gp);	
 		
+		collectableType = type_item;
 		name = colName;			
 		description = "Repels weak wild\nPokémon for 100\nsteps.";
 		
 		value = 100;
+		
+		menuSprite = setup("/collectables/menu/repel", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {
 		gp.player.setRepel(value);
-		useItem(gp.player.inventory_items, this);
+		useItem(this, gp.player);
 		
 		gp.ui.bagDialogue = "Repel has been used!";
 		gp.ui.bagState = gp.ui.bag_Dialogue;

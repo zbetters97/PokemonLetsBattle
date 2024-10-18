@@ -1,4 +1,4 @@
-package entity.collectables.heals;
+package entity.collectables.items;
 
 import application.GamePanel;
 import entity.Entity;
@@ -11,10 +11,13 @@ public class ITM_Revive_Max extends Entity {
 	public ITM_Revive_Max(GamePanel gp) {		
 		super(gp);	
 		
+		collectableType = type_item;
 		name = colName;			
 		description = "Revives a fainted\nPokémon with all\nits HP.";
 		
 		value = 1;
+
+		menuSprite = setup("/collectables/menu/revive_max", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

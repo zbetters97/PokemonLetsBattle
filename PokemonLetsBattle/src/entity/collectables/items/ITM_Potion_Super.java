@@ -1,4 +1,4 @@
-package entity.collectables.potions;
+package entity.collectables.items;
 
 import application.GamePanel;
 import entity.Entity;
@@ -11,10 +11,13 @@ public class ITM_Potion_Super extends Entity {
 	public ITM_Potion_Super(GamePanel gp) {		
 		super(gp);	
 		
+		collectableType = type_item;
 		name = colName;			
 		description = "Restores the HP of\na Pokémon by 50\npoints.";
 		
 		value = 50;
+		
+		menuSprite = setup("/collectables/menu/potion_super", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

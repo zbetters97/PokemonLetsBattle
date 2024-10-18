@@ -60,7 +60,7 @@ public class Entity {
 							runDown1, runDown2, runDown3,
 							runLeft1, runLeft2, runLeft3,
 							runRight1, runRight2, runRight3;
-	public BufferedImage frontSprite, backSprite;
+	public BufferedImage frontSprite, backSprite, menuSprite;
 		
 	// CHARACTER ATTRIBUTES	
 	public boolean hasBattle = false;
@@ -88,11 +88,18 @@ public class Entity {
 	public int hitboxDefaultWidth = hitbox.width;
 	public int hitboxDefaultHeight = hitbox.height;
 
+	// ITEM VALUES	
 	public String description;
 	public int amount = 1;
 	public int value = 0;
 	public int catchProbability;
 	public Status status;
+	
+	// ITEM TYPE
+	public int collectableType = 0;
+	public final int type_item = 1;
+	public final int type_ball = 2;
+	public final int type_move = 3;
 	
 	// INVENTORY
 	public ArrayList<Entity> inventory_items = new ArrayList<>();
@@ -462,27 +469,44 @@ public class Entity {
 		return hmPokemon;		
 	}
 	
-	public void useItem(ArrayList<Entity> items, Entity item) {		
+	public void useItem(Entity collectable, Entity person) {	
 		
-		for (int i = 0; i < items.size(); i++) {
+		ArrayList<Entity> inventory = null;
+		
+		if (collectable.collectableType == type_item) {			
+			inventory = person.inventory_items;
+		}
+		else if (collectable.collectableType == type_ball) {			
+			inventory = person.inventory_pokeballs;
+		}
+		else if (collectable.collectableType == type_move) {			
+			inventory = person.inventory_moves;
+		}
+		else {
+			return;
+		}
+		
+		for (int i = 0; i < inventory.size(); i++) {
 			
-			if (items.get(i).equals(item)) {
+			if (inventory.get(i).equals(collectable)) {
 				
-				items.get(i).amount--;
-				if (items.get(i).amount <= 0) {
-					items.remove(i);	
+				inventory.get(i).amount--;
+				if (inventory.get(i).amount <= 0) {
+					inventory.remove(i);	
 				}
 				
 				break;
-			}			
-		}		
+			}								
+		}
+		
+		
 	}
 	public void give(Entity item, Pokemon p) {
 		
 		if (p.getHeldItem() == null) {
 			
 			p.giveItem(item);			
-			useItem(gp.player.inventory_items, item);				
+			useItem(this, gp.player);				
 			
 			gp.ui.partyDialogue = p.getName() + " was given a\n" + item.name + " to hold.";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;			
@@ -499,7 +523,7 @@ public class Entity {
 			gp.playSE(6, "heal");
 			p.setAlive(true);
 			p.setHP((int) (p.getBHP() / value));			
-			useItem(entity.inventory_items, this);						
+			useItem(this, gp.player);						
 			
 			gp.ui.partyDialogue = p.getName() + " was revived!";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;
@@ -519,7 +543,7 @@ public class Entity {
 			
 			gp.playSE(6, "heal");
 			p.addHP(value);			
-			useItem(entity.inventory_items, this);				
+			useItem(this, entity);				
 		
 			gp.ui.partyDialogue = p.getName() + " gained " + gainedHP + " HP.";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;			
@@ -534,7 +558,7 @@ public class Entity {
 						
 			gp.playSE(6, "heal");
 			p.setStatus(null);			
-			useItem(entity.inventory_items, this);			
+			useItem(this, entity);			
 			
 			gp.ui.partyDialogue = p.getName() + " was healed.";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;
@@ -548,7 +572,7 @@ public class Entity {
 		if (gp.btlManager.active) {
 			
 			if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {					
-				gp.player.useItem(gp.player.inventory_pokeballs, this);				
+				gp.player.useItem(this, gp.player);				
 			}
 			
 			gp.btlManager.ballUsed = this;
