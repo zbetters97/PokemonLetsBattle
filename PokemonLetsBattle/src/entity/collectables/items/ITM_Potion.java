@@ -17,7 +17,7 @@ public class ITM_Potion extends Entity {
 		
 		value = 20;
 		
-		menuSprite = setup("/collectables/menu/potion", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		image1 = setup("/collectables/menu/potion", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

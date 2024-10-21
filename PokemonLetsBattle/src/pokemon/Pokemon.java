@@ -29,15 +29,17 @@ public class Pokemon {
 	private boolean hit = false;	
 	private int statusCounter, statusLimit;
 	private List<Move> moveSet;
-	private Entity item;
+	private Entity item, capturedBall;
 	/** END INITIALIZE VALUES **/
 	
 	/** CONSTRUCTORS **/
-	public Pokemon(Pokedex p, int lvl) {	
+	public Pokemon(Pokedex p, int lvl, Entity capturedBall) {	
 		// STAT FORMULA REFERENCE: https://pokemon.fandom.com/wiki/Statistics
 		
 		pokemon = p;
 		level = lvl;	
+		this.capturedBall = capturedBall;
+		
 		bxp = getXP(level);
 		xp = bxp;
 		nxp = getNextXP();
@@ -92,6 +94,8 @@ public class Pokemon {
 		
 		pokemon = p;
 		level = old.level;	
+		capturedBall = old.capturedBall;
+		
 		bxp = old.bxp;
 		xp = bxp;
 		nxp = getNextXP();
@@ -369,13 +373,13 @@ public class Pokemon {
 	/** END ADD NEW MOVE METHOD **/
 	
 	/** GET POKEMON METHODS **/	
-	public static Pokemon getPokemon(Pokedex poke, int level) {
+	public static Pokemon getPokemon(Pokedex poke, int level, Entity capturedBall) {
 		
 		Pokemon pokemon = null;
 		
 		for (Pokedex p : Pokedex.getPokemonList()) {
 			if (p == poke) {
-				pokemon = new Pokemon(p, level);
+				pokemon = new Pokemon(p, level, capturedBall);
 				break;
 			}
 		}
@@ -384,13 +388,13 @@ public class Pokemon {
 		
 		return pokemon;		
 	}	
-	public static Pokemon getPokemonByIndex(int index, int level) {
+	public static Pokemon getPokemonByIndex(int index, int level, Entity capturedBall) {
 		
 		Pokemon pokemon = null;
 		
 		for (Pokedex p : Pokedex.getPokemonList()) {
 			if (p.getIndex() == index) {
-				pokemon = new Pokemon(p, level);
+				pokemon = new Pokemon(p, level, capturedBall);
 				break;
 			}
 		}
@@ -487,6 +491,9 @@ public class Pokemon {
 	
 	public Entity getHeldItem() { return item; }
 	public void giveItem(Entity item) { this.item = item; }
+	
+	public Entity getBall() { return capturedBall; }
+	public void setBall(Entity capturedBall) { this.capturedBall = capturedBall; }
 	/** END GETTERS AND SETTERS **/
 	
 	/** GETTERS **/

@@ -17,7 +17,7 @@ public class ITM_Revive_Max extends Entity {
 		
 		value = 1;
 
-		menuSprite = setup("/collectables/menu/revive_max", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		image1 = setup("/collectables/menu/revive_max", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

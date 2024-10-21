@@ -60,7 +60,7 @@ public class Entity {
 							runDown1, runDown2, runDown3,
 							runLeft1, runLeft2, runLeft3,
 							runRight1, runRight2, runRight3;
-	public BufferedImage frontSprite, backSprite, menuSprite;
+	public BufferedImage frontSprite, backSprite;
 		
 	// CHARACTER ATTRIBUTES	
 	public boolean hasBattle = false;
@@ -409,7 +409,7 @@ public class Entity {
 		int maxLevel = minLevel + 3;
 		int level = new Random().nextInt(maxLevel - minLevel + 1) + minLevel;
 		
-		wildPokemon = Pokemon.getPokemon(randomPokemon, level);
+		wildPokemon = Pokemon.getPokemon(randomPokemon, level, null);
 		
 		return wildPokemon;
 	}
@@ -493,6 +493,7 @@ public class Entity {
 				inventory.get(i).amount--;
 				if (inventory.get(i).amount <= 0) {
 					inventory.remove(i);	
+					if (gp.ui.bagNum > 0) gp.ui.bagNum--;
 				}
 				
 				break;

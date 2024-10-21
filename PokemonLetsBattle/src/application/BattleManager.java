@@ -1637,22 +1637,8 @@ public class BattleManager extends Thread {
 				Thread.sleep(800);	
 			}	
 			
-			if (isCaptured()) {
-				
-				gp.stopMusic();
-				gp.startMusic(1, 3);										
-				typeDialogue("Gotcha!\n" + fighter[1].getName() + " was caught!", true);
-				
-				if (trainer[0].pokeParty.size() < 6) {
-					fighter[1].resetMovesPP();
-					trainer[0].pokeParty.add(fighter[1]);
-					typeDialogue(fighter[1].getName() + " was added\nto your party!", true);
-				}
-				else {
-					
-				}
-				
-				endBattle();
+			if (isCaptured()) {				
+				capturePokemon();
 			}
 			else {
 				gp.playSE(battle_SE, "ball-open");
@@ -1669,6 +1655,24 @@ public class BattleManager extends Thread {
 		}
 		
 		ballUsed = null;
+	}
+	private void capturePokemon() throws InterruptedException {
+		
+		gp.stopMusic();
+		gp.startMusic(1, 3);										
+		typeDialogue("Gotcha!\n" + fighter[1].getName() + " was caught!", true);
+		
+		if (trainer[0].pokeParty.size() < 6) {
+			fighter[1].resetMovesPP();
+			fighter[1].setBall(ballUsed);
+			trainer[0].pokeParty.add(fighter[1]);
+			typeDialogue(fighter[1].getName() + " was added\nto your party!", true);
+		}
+		else {
+			
+		}
+		
+		endBattle();
 	}
 	private boolean isCaptured() {
 		/** CATCH RATE FOMRULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Capture_method_(Generation_III-IV) **/

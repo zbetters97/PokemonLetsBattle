@@ -325,7 +325,7 @@ public enum Pokedex {
 	/** END INITIALIZE ENUMS **/
 				
 	/** INITIALIZE VALUES**/
-	private final BufferedImage frontSprite, backSprite, menuSprite;
+	private final BufferedImage frontSprite, backSprite, image1;
 	private final String name;
 	private final int index;
 	private final Type type;
@@ -342,7 +342,7 @@ public enum Pokedex {
 		
 		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
 		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
-		this.menuSprite = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
+		this.image1 = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
 		
 		this.name = name; 
 		this.index = index; 
@@ -369,7 +369,7 @@ public enum Pokedex {
 		
 		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
 		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
-		this.menuSprite = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
+		this.image1 = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
 
 		this.name = name; 
 		this.index = index; 
@@ -609,7 +609,7 @@ public enum Pokedex {
 	/** GETTERS **/	
 	protected BufferedImage getFrontSprite() { return frontSprite; }
 	protected BufferedImage getBackSprite() { return backSprite; }
-	protected BufferedImage getMenuSprite() { return menuSprite; }
+	protected BufferedImage getMenuSprite() { return image1; }
 	public String getName() { return name; }
 	protected int getIndex() {	return index; }	
 	protected Type getType() { return type; }

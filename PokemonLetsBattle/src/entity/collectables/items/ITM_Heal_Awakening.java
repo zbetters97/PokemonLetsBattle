@@ -17,7 +17,7 @@ public class ITM_Heal_Awakening extends Entity {
 		description = "Awakens a sleeping\nPokémon.";
 		status = Status.SLEEP;
 		
-		menuSprite = setup("/collectables/menu/heal_awakening", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		image1 = setup("/collectables/menu/heal_awakening", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

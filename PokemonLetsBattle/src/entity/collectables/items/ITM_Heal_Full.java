@@ -16,7 +16,7 @@ public class ITM_Heal_Full extends Entity {
 		description = "Heals all the\nstatus problems of\none Pokémon.";		
 		status = null;
 		
-		menuSprite = setup("/collectables/menu/heal_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		image1 = setup("/collectables/menu/heal_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

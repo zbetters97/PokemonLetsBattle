@@ -17,7 +17,7 @@ public class ITM_Revive extends Entity {
 		
 		value = 2;
 		
-		menuSprite = setup("/collectables/menu/revive", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		image1 = setup("/collectables/menu/revive", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

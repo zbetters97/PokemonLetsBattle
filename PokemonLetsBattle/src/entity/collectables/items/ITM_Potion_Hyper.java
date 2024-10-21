@@ -17,7 +17,7 @@ public class ITM_Potion_Hyper extends Entity {
 		
 		value = 200;
 		
-		menuSprite = setup("/collectables/menu/potion_hyper", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		image1 = setup("/collectables/menu/potion_hyper", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

@@ -63,9 +63,9 @@ public class Player extends Entity {
 	
 	// DEFAULT VALUES
 	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon(Pokedex.MUDKIP, 5));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.MARSHTOMP, 16));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.MARSHTOMP, 16, new COL_Ball_Great(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36, new COL_Ball_Ultra(gp)));
 	}
 	public void setDefaultValues() {
 					

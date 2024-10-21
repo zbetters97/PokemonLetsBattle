@@ -16,7 +16,7 @@ public class ITM_Repel_Super extends Entity {
 		
 		value = 200;
 
-		menuSprite = setup("/collectables/menu/repel_super", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));		
+		image1 = setup("/collectables/menu/repel_super", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));		
 	}	
 	
 	public void use() {

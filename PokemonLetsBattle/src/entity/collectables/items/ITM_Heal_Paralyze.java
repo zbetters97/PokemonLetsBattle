@@ -17,7 +17,7 @@ public class ITM_Heal_Paralyze extends Entity {
 		description = "Heals a paralyzed\nPokémon.";
 		status = Status.PARALYZE;
 		
-		menuSprite = setup("/collectables/menu/heal_paralyze", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		image1 = setup("/collectables/menu/heal_paralyze", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

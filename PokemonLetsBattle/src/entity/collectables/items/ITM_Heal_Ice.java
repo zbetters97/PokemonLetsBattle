@@ -17,7 +17,7 @@ public class ITM_Heal_Ice extends Entity {
 		description = "Defrosts a frozen\nPokémon.";
 		status = Status.FREEZE;
 		
-		menuSprite = setup("/collectables/menu/heal_ice", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		image1 = setup("/collectables/menu/heal_ice", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

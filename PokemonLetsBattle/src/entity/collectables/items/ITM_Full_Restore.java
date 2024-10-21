@@ -15,7 +15,7 @@ public class ITM_Full_Restore extends Entity {
 		name = colName;			
 		description = "Fully restores the\nHP and status of\na Pokémon.";
 		
-		menuSprite = setup("/collectables/menu/restore_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		image1 = setup("/collectables/menu/restore_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {

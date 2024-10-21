@@ -21,7 +21,6 @@ import entity.Entity;
 import entity.npc.NPC_Nurse;
 import moves.Move;
 import pokemon.Pokemon;
-import properties.Type;
 
 public class UI {
 	
@@ -87,7 +86,7 @@ public class UI {
 	// BAG VALUES
 	private String bag_Subtitle = "";
 	private int bagStart = 0;
-	private int bagNum = 0;	
+	public int bagNum = 0;	
 	public String bagDialogue = "";
 	private BufferedImage bag_menu, bag_Image, bag_Tab;
 	private BufferedImage bag_items, bag_pokeballs, bag_moves;
@@ -1429,7 +1428,7 @@ public class UI {
 		g2.drawImage(fighter.getMenuSprite(), x, y, null);
 		
 		if (fighter.getHeldItem() != null) {			
-			g2.drawImage(fighter.getHeldItem().menuSprite, x + gp.tileSize, y + (int) (gp.tileSize * 1.2), null);
+			g2.drawImage(fighter.getHeldItem().image1, x + gp.tileSize, y + (int) (gp.tileSize * 1.2), null);
 		}
 		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));	
@@ -1506,16 +1505,28 @@ public class UI {
 		
 		int x;
 		int y;
+		int width;
+		int height;
 		String text;
+
+		Pokemon fighter = gp.player.pokeParty.get(fighterNum);
 		
-		int frameX = (int) (gp.tileSize * 7.9);
+		// SKILLS BOX
+		x = (int) (gp.tileSize * 7.5);
+		y = (int) (gp.tileSize * 2.05);
+		width = gp.tileSize * 9;
+		height = (int) (gp.tileSize * 5.7);
+		drawSubWindow(x, y, width, height, 4, 4, party_gray, Color.BLACK);	
+		
+		int frameX = x;
 		int frameY = (int) (gp.tileSize * 2.9);
 		
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));
 		g2.setColor(Color.BLACK);
-		x = frameX + (int) (gp.tileSize * 4.5);
+		x = frameX + (int) (gp.tileSize * 4.4);
 		y = (int) (frameY * 0.9);			
-		text = "STAT"; g2.drawString(text, x, y); x += gp.tileSize * 2.3;
+		text = "STAT"; g2.drawString(text, x, y); 
+		x += gp.tileSize * 2.5;
 		text = "IV"; g2.drawString(text, x, y);
 			
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 40F));	
@@ -1527,9 +1538,7 @@ public class UI {
 		text = "SP. ATK"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		text = "SP. DEF"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		text = "SPEED"; drawText(text, x, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
-		
-		Pokemon fighter = gp.player.pokeParty.get(fighterNum);
-		
+				
 		x = frameX + (int) (gp.tileSize * 5.5);
 		y = (int) (frameY + gp.tileSize * 0.6);		
 		text = fighter.getHP() + "/" + fighter.getBHP(); 
@@ -1551,7 +1560,7 @@ public class UI {
 		frameX = getXforRightAlignText(text, x);	
 		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		
-		x = frameX + (int) (gp.tileSize * 2.5);
+		x = (int) (gp.tileSize * 15);
 		y = (int) (frameY + gp.tileSize * 0.6);	
 		text = Integer.toString((int) fighter.getHPIV()); 
 		frameX = getXforRightAlignText(text, x);	
@@ -1572,11 +1581,14 @@ public class UI {
 		frameX = getXforRightAlignText(text, x);	
 		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 				
+		// FIGHTER TYPE
+		
+		/*
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));	
 		int textX;
-		int textY = (int) (y + (gp.tileSize * 2.32));	
-		int width = (int) (gp.tileSize * 2.7);
-		int height = gp.tileSize;								
+		int textY = (int) (y + (gp.tileSize * 2.18));	
+		width = (int) (gp.tileSize * 2.2);
+		height = (int) (gp.tileSize * 0.8);								
 		if (fighter.getTypes() != null) {			
 			x = (int) (gp.tileSize * 0.9);			
 			y = (int) (gp.tileSize * 9.8);	
@@ -1591,21 +1603,24 @@ public class UI {
 			}			
 		}
 		else {			
-			x = (int) (gp.tileSize * 2.4);	
+			x = (int) (gp.tileSize * 0.3);	
 			y = (int) (gp.tileSize * 9.8);	
 			drawSubWindow(x, y, width, height, 10, 3, fighter.getType().getColor(), Color.BLACK);		
 						
+			g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));	
 			text = fighter.getType().getName();
 			textX = getXForCenteredTextOnWidth(text, width, x + 5);
 			drawText(text, textX, textY, battle_white, Color.BLACK);	
 		}
-		
-		g2.setColor(Color.BLACK);
-		x = (int) (gp.tileSize * 0.25);	
-		y = gp.tileSize * 11;
-		width = gp.tileSize * 7;
+		*/
+						
+		// EXP BAR
+		x = -5;	
+		y = (int) (gp.tileSize * 9.3);
+		width = (int) (gp.tileSize * 7.48);
 		height = (int) (gp.tileSize * 0.6);
-		g2.fillRoundRect(x, y, width, height, 15, 15);
+		g2.setColor(Color.BLACK);
+		g2.fillRoundRect(x, y, width, height, 4, 4);
 		
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 28F));
 		g2.setColor(battle_white);		
@@ -1621,18 +1636,59 @@ public class UI {
 		g2.setColor(battle_gray);
 		g2.fillRect(x, y, width, height);		
 				
-		double remainXP = (double) (fighter.getXP() - fighter.getBXP()) / (double) fighter.getNextXP();
-		
-		width *= remainXP;		
-		
+		double remainXP = (double) (fighter.getXP() - fighter.getBXP()) / (double) fighter.getNextXP();		
+		width *= remainXP;				
 		g2.setColor(battle_blue);
 		g2.fillRect(x, y, width, height);
+		
+		// ITEM BOX
+		x = -5;
+		y = (int) (gp.tileSize * 10);		
+		width = (int) (gp.tileSize * 7.45);
+		height = (int) (gp.tileSize * 0.8);		
+		g2.setColor(party_gray);
+		g2.setStroke(new BasicStroke(4));
+		g2.fillRoundRect(x, y, width, height, 4, 4);
+		
+		height += gp.tileSize * 1.8;
+		g2.setColor(Color.BLACK);
+		g2.drawRoundRect(x, y, width, height, 4, 4);
+		
+		x += gp.tileSize * 0.3;
+		y += gp.tileSize * 0.7;
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42F));
+		text = "ITEM";
+		drawText(text, x, y, battle_white, Color.BLACK);	
+		
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD));
+		y += gp.tileSize * 0.9;
+		if (fighter.getHeldItem() != null) {
+			text = fighter.getHeldItem().name;
+		}
+		else {
+			text = "NONE";
+		}		
+		g2.drawString(text, x, y);
+		
+		// ABILITY BOX
+		x = (int) (gp.tileSize * 7.5);
+		y = (int) (gp.tileSize * 7.9);
+		width = (int) (gp.tileSize * 3.5);
+		height = (int) (gp.tileSize * 0.8);		
+		g2.setColor(party_gray);
+		g2.fillRoundRect(x, y, width, height, 4, 4);
+		
+		width = gp.tileSize * 9;
+		height = gp.tileSize * 5;
+		g2.setColor(Color.BLACK);
+		g2.drawRoundRect(x, y, width, height, 4, 4);
 		
 		x = (int) (gp.tileSize * 7.8);
 		y = (int) (gp.tileSize * 8.6);
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42F));
 		text = "ABILITY";
-		drawText(text, x, y, battle_white, Color.BLACK);	
+		drawText(text, x, y, battle_white, Color.BLACK);		
 		
 		if (gp.keyH.rightPressed) {		
 			gp.keyH.playCursorSE();
@@ -1661,23 +1717,24 @@ public class UI {
 								
 		int slotX = (int) (gp.tileSize * 7.5);
 		int slotY;
-		int slotWidth = (int) (gp.tileSize * 8.38);
+		int slotWidth = (int) (gp.tileSize * 9.38);
 		int slotHeight = gp.tileSize + 8;
 		
 		int frameX = (int) (gp.tileSize * 7.6);
 		int frameY = (int) (gp.tileSize * 2.4);
 		
-		int tempX = (int) (gp.tileSize * 0.4);
+		int tempX = (int) (gp.tileSize * 0.3);
 		int tempY = (int) (gp.tileSize * 10.5);
 		
-		x = 5;
+		// MOVE STAT BOX
+		x = -5;
 		y = (int) (gp.tileSize * 9.5);		
-		height = (int) (gp.tileSize * 2.4);
+		height = gp.tileSize * 3;
 		width = (int) (gp.tileSize * 5.5);
 		g2.setColor(party_gray);
-		g2.fillRoundRect(x, y, width, height, 4, 4);
+		g2.fillRoundRect(x, y, width, height, 4, 4);		
 		
-		width = (int) (gp.tileSize * 7.3);
+		width = (int) (gp.tileSize * 7.45);
 		g2.setColor(Color.BLACK);
 		g2.drawRoundRect(x, y, width, height, 4, 4);
 		
@@ -1690,7 +1747,7 @@ public class UI {
 		
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 55F));			
-		tempX += gp.tileSize * 5.45;
+		tempX += gp.tileSize * 5.35;
 		tempY -= gp.tileSize;		
 		if (fighter.getMoveSet().get(commandNum).getPower() == 0) { text = "---"; }
 		else { text = Integer.toString(fighter.getMoveSet().get(commandNum).getPower()); }
@@ -1701,17 +1758,23 @@ public class UI {
 		else { text = Integer.toString(fighter.getMoveSet().get(commandNum).getAccuracy()); }		
 		g2.drawString(text, tempX, tempY);	
 		
+		// MOVES BOX
+		x = (int) (gp.tileSize * 7.5);
+		y = (int) (gp.tileSize * 2.05);
+		width = gp.tileSize * 9;
+		height = (int) (gp.tileSize * 5.7);
+		drawSubWindow(x, y, width, height, 4, 4, party_gray, Color.BLACK);			
+		
 		int i = 0;
 		x = frameX;
 		y = frameY;		
 		width = (int) (gp.tileSize * 2);
-		height = gp.tileSize;
-		
+		height = gp.tileSize;		
 		for (Move m : fighter.getMoveSet()) {			
 				
 			drawSubWindow(x, y, width, height, 10, 3, m.getType().getColor(), Color.BLACK);		
 									
-			g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));			
+			g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));			
 			text = m.getType().getName();
 			textX = getXForCenteredTextOnWidth(text, width, x + 5);
 			textY = (int) (y + (gp.tileSize * 0.75));			
@@ -1751,8 +1814,19 @@ public class UI {
 			g2.setStroke(new BasicStroke(5));
 			g2.drawRoundRect(slotX, slotY, slotWidth, slotHeight, 6, 6);
 		}
-			 
-		y += gp.tileSize * 1.35;
+		
+		// MOVE DESCRIPTION BOX
+		x = (int) (gp.tileSize * 7.5);			 
+		y = (int) (gp.tileSize * 7.9);
+		width = gp.tileSize * 9;
+		height = (int) (gp.tileSize * 0.8);		
+		g2.setColor(party_gray);
+		g2.setStroke(new BasicStroke(4));
+		g2.fillRoundRect(x, y, width, height, 4, 4);
+		
+		height = gp.tileSize * 5;
+		g2.setColor(Color.BLACK);
+		g2.drawRoundRect(x, y, width, height, 4, 4);
 		
 		x = (int) (gp.tileSize * 7.8);
 		y = (int) (gp.tileSize * 8.6);
@@ -1760,7 +1834,6 @@ public class UI {
 		text = "DESCRIPTION";
 		drawText(text, x, y, battle_white, Color.BLACK);	
 				
-		x = (int) (gp.tileSize * 7.8);
 		y += gp.tileSize * 0.7;
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));
 		g2.setColor(Color.BLACK);
@@ -1828,26 +1901,32 @@ public class UI {
 		String text;
 		Pokemon fighter = gp.player.pokeParty.get(fighterNum);
 		
+		// HEADER 
 		x = -10;
 		y = -5;
 		width = gp.screenWidth + 13;
 		height = (int) (gp.tileSize * 2);
 		drawSubWindow(x, y, width, height, 10, 4, party_green, Color.BLACK);	
 		
-		x = 5;
-		y = gp.tileSize * 2;
-		width = (int) (gp.tileSize * 7.3);
+		// FIGHTER NAME BOX
+		x = -5;
+		y = (int) (gp.tileSize * 2.05);
+		width = (int) (gp.tileSize * 7.45);
 		height = (int) (gp.tileSize * 1.2);
 		g2.setColor(party_gray);
 		g2.fillRoundRect(x, y, width, height, 8, 8);
 		
-		height += gp.tileSize;
+		height += gp.tileSize * 0.8;
 		g2.setColor(Color.BLACK);
 		g2.drawRoundRect(x, y, width, height, 4, 4);
-		
+				
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55F));		
-		x += gp.tileSize * 0.3;
-		y += gp.tileSize * 0.95;
+		x += gp.tileSize * 0.15;
+		y += gp.tileSize * 0.1;
+		g2.drawImage(fighter.getBall().image2, x, y, null);
+		
+		x += gp.tileSize;
+		y += gp.tileSize * 0.85;		
 		text = fighter.getName();				
 		drawText(text, x, y, Color.WHITE, Color.BLACK);
 		
@@ -1856,15 +1935,16 @@ public class UI {
 		g2.setColor(fighter.getSexColor());	
 		g2.drawString("" + fighter.getSex(), x, y);
 	
-		x = (int) (gp.tileSize * 0.7) - 10;
-		y += gp.tileSize * 0.95;
+		// FIGHTER LEVEL AND NO.
+		x = (int) (gp.tileSize * 0.3);
+		y += gp.tileSize * 0.85;
 		text = "Lv" + fighter.getLevel();
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));	
 		g2.setColor(Color.BLACK);
 		g2.drawString(text, x, y);
 		
 		text = fighter.getNature().getName();
-		x = getXforRightAlignText(text, x + (int) (gp.tileSize * 6.7));		
+		x = getXforRightAlignText(text, x + (int) (gp.tileSize * 6.9));		
 		g2.drawString(text, x, y);
 		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));	
@@ -1873,30 +1953,17 @@ public class UI {
 		text = "No." + String.format("%03d", fighter.getIndex());	
 		drawText(text, x, y, Color.WHITE, Color.BLACK);
 		
+		// FIGHTER STATUS
 		if (fighter.getStatus() != null) {
 			drawBattle_Status((int) (x + (gp.tileSize * 1.5)), (int) (y - (gp.tileSize * 0.53)), fighter, 30F);
 			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 38F));
 		}
 		
-		x = (int) (gp.tileSize * 1.2);
-		y = (int) (gp.tileSize * 4.3);
+		// FIGHTER SPRITE
+		x = (int) (gp.tileSize * 1.3);
+		y = (int) (gp.tileSize * 4.2);
 		g2.drawImage(fighter.getFrontSprite(), x, y, null);
-		
-		x = (int) (gp.tileSize * 7.5);
-		y = gp.tileSize * 2;
-		width = (int) (gp.tileSize * 8.4);
-		height = (int) (gp.tileSize * 5.8);
-		drawSubWindow(x, y, width, height, 10, 4, party_gray, Color.BLACK);	
-		
-		y = (int) (gp.tileSize * 7.9);
-		height = (int) (gp.tileSize * 0.8);		
-		g2.setColor(party_gray);
-		g2.fillRoundRect(x, y, width, height, 4, 4);
-		
-		height = gp.tileSize * 4;
-		g2.setColor(Color.BLACK);
-		g2.drawRoundRect(x, y, width, height, 4, 4);
-		
+						
 		if (!partyMove) {		
 			if (gp.keyH.lPressed) {				
 				gp.keyH.lPressed = false;
@@ -2278,7 +2345,7 @@ public class UI {
 		if (gp.btlManager.fighter[1] != null) {				
 			
 			if (isFighterCaptured) {				
-				g2.drawImage(gp.btlManager.ballUsed.image, fighter_two_X + (int)(gp.tileSize * 2.2), fighter_two_Y + (int)(gp.tileSize * 3.2), null);	
+				g2.drawImage(gp.btlManager.ballUsed.image3, fighter_two_X + (int)(gp.tileSize * 2.2), fighter_two_Y + (int)(gp.tileSize * 3.2), null);	
 			}
 			else {								
 				if (gp.btlManager.fighter[1].getAttacking()) animateAttack_Two();				

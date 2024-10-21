@@ -17,7 +17,7 @@ public class ITM_Heal_Burn extends Entity {
 		description = "Heals a burned\nPokémon.";
 		status = Status.BURN;
 		
-		menuSprite = setup("/collectables/menu/heal_burn", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		image1 = setup("/collectables/menu/heal_burn", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {
