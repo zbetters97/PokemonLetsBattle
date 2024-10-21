@@ -10,6 +10,7 @@ import moves.Move;
 import properties.Nature;
 import properties.Status;
 import properties.Type;
+import properties.abilities.Ability;
 
 /*** MOVE CLASS ***/
 public class Pokemon {
@@ -504,8 +505,24 @@ public class Pokemon {
 	}
 	public int getIndex() {	return pokemon.getIndex(); }
 	public Type getType() { return pokemon.getType(); }
-	public List<Type> getTypes() { return pokemon.getTypes(); }		
-	public Nature getNature() { return this.nature; }		
+	public List<Type> getTypes() { return pokemon.getTypes(); }	
+	public boolean checkType(Type type) {
+		
+		boolean isType = false;
+		
+		if (pokemon.getTypes() != null) {
+			if (pokemon.getTypes().contains(type)) {
+				isType = true;
+			}
+		}
+		else if (pokemon.getType() == type) {
+			isType = true;
+		}
+		
+		return isType;		
+	}
+	public Ability getAbility() { return pokemon.getAbility(); }		
+	public Nature getNature() { return this.nature; }	
 	
 	public int getCatchRate() { return pokemon.getCatchRate(); }
 	

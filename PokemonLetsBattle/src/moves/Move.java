@@ -9,7 +9,7 @@ import properties.Type;
 public class Move {
 
 	public enum MoveType {
-		STATUS, ATTRIBUTE, PHYSICAL, SPECIAL, OTHER;
+		STATUS, ATTRIBUTE, PHYSICAL, SPECIAL, WEATHER, OTHER;
 	}
 	
 	/** INITIALIZE VALUES FOR UNIQUE MOVES **/
@@ -36,10 +36,20 @@ public class Move {
 	public String getName() { return move.getName(); }
 	
 	public int getpp() { return pp; }
-	public void setpp(int pp) {	this.pp = pp; }
+	public void setpp(int pp) {	
+		this.pp = pp; 
+		if (this.pp < 0) {
+			this.pp = 0; 
+		}
+	}
 	
 	public int getbpp() { return bpp; }
-	public void setbpp(int bpp) { this.bpp = bpp; }	
+	public void setbpp(int bpp) { 
+		this.bpp = bpp;  
+		if (this.bpp < 0) {
+			this.bpp = 0; 
+		}
+	}	
 	
 	public void resetpp() { pp = bpp;}
 	
@@ -64,6 +74,7 @@ public class Move {
 	public int getPower() {	return move.getPower(); }	
 	public boolean getGoFirst() { return move.getGoFirst(); }	
 	public boolean getIsProtected() { return move.getIsProtected(); }	
+	public String getWeather() { return move.getWeather(); }
 	public String getDelay(String name) { return move.getDelay(name); }	
 	public String getInfo() {	return move.getInfo(); }	
 	public int getCrit() { return move.getCrit(); }	

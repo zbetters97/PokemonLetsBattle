@@ -454,7 +454,7 @@ public class UI {
 				
 				skipDialogue();
 				
-				gp.btlManager.setup(gp.btlManager.trainerBattle, npc, null);
+				gp.btlManager.setup(gp.btlManager.trainerBattle, npc, null, null);
 				
 				startBattle();
 			}
@@ -1674,7 +1674,7 @@ public class UI {
 		// ABILITY BOX
 		x = (int) (gp.tileSize * 7.5);
 		y = (int) (gp.tileSize * 7.9);
-		width = (int) (gp.tileSize * 3.5);
+		width = (int) (gp.tileSize * 2.8);
 		height = (int) (gp.tileSize * 0.8);		
 		g2.setColor(party_gray);
 		g2.fillRoundRect(x, y, width, height, 4, 4);
@@ -1689,6 +1689,21 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42F));
 		text = "ABILITY";
 		drawText(text, x, y, battle_white, Color.BLACK);		
+		
+		x += gp.tileSize * 2.8;
+		text = fighter.getAbility().getName();
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 42F));
+		g2.setColor(Color.BLACK);
+		g2.drawString(text, x, y);
+		
+		x = (int) (gp.tileSize * 7.8);
+		y += gp.tileSize * 0.8;
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));
+		for (String line : fighter.getAbility().getDescription().split("\n")) {			
+			g2.drawString(line, x, y);
+			y += gp.tileSize * 0.8;
+		} 					
 		
 		if (gp.keyH.rightPressed) {		
 			gp.keyH.playCursorSE();
@@ -1834,7 +1849,7 @@ public class UI {
 		text = "DESCRIPTION";
 		drawText(text, x, y, battle_white, Color.BLACK);	
 				
-		y += gp.tileSize * 0.7;
+		y += gp.tileSize * 0.8;
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));
 		g2.setColor(Color.BLACK);
 		for (String line : fighter.getMoveSet().get(commandNum).getInfo().split("\n")) {			
@@ -2335,8 +2350,9 @@ public class UI {
 			if (gp.btlManager.fighter[0].getAttacking()) animateAttack_One();			
 			else fighter_one_X = fighter_one_endX;
 			
-			if (!gp.btlManager.fighter[0].isAlive()) 
+			if (!gp.btlManager.fighter[0].isAlive()) {
 				animateFaint_One();			
+			}
 			
 			if (gp.btlManager.fighter[0].getHit()) animateHit(0, g2);		
 			g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);	
