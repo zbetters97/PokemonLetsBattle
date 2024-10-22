@@ -64,7 +64,7 @@ public class NPC_Rival extends Entity {
 		
 		dialogues[1][0] = "Argh! How could I lose to\na little kid like you?";
 		
-		dialogues[2][0] = "You're too tough for your age!";
+		dialogues[2][0] = "You're suspsiciously tough for\nyour age!";
 	}
 	
 	public void speak() {	

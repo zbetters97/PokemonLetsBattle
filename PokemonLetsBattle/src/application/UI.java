@@ -1069,6 +1069,7 @@ public class UI {
 				fighterNum++;
 			}
 			else {
+				gp.keyH.playCursorSE();
 				fighterNum = 6;
 			}
 		}
@@ -1079,11 +1080,12 @@ public class UI {
 		}
 		if (gp.keyH.rightPressed) {				
 			gp.keyH.rightPressed = false;	
-			if (fighterNum < gp.player.pokeParty.size() - 1) {
+			if (fighterNum == 0 && gp.player.pokeParty.size() > 1) {
 				gp.keyH.playCursorSE();
-				fighterNum++;
+				fighterNum = 1;				
 			}
-			else {
+			else if (fighterNum == 0) {
+				gp.keyH.playCursorSE();
 				fighterNum = 6;
 			}
 		}
@@ -1092,53 +1094,7 @@ public class UI {
 			gp.keyH.aPressed = false;
 			
 			if (fighterNum == 6) {
-				if (partyMove) {				
-					gp.keyH.playCursorSE();
-					
-					partyMove = false;	
-					partyMoveNum = -1;
-					partyDialogue = "Choose a POKEMON.";
-				}
-				else if (partyItem != null) {
-					partyItem = null;
-					partyItemGive = false;
-					partyItemApply = false;
-					fighterNum = 0;	
-					commandNum = 0;
-					bagState = bag_Main;
-					gp.gameState = gp.bagState;		
-				}
-				else {
-					if (gp.btlManager.active) {
-						
-						if (battleState == battle_Options) {
-							gp.keyH.playCursorSE();
-							
-							fighterNum = 0;	
-							commandNum = 2;
-							gp.gameState = gp.battleState;								
-						}
-						else if (!gp.btlManager.fighter[0].isAlive()) {							
-							gp.keyH.playErrorSE();
-						}
-						else {						
-							gp.keyH.playCursorSE();
-							
-							fighterNum = 0;	
-							commandNum = 0;
-							gp.btlManager.running = true;
-							new Thread(gp.btlManager).start();	
-							gp.gameState = gp.battleState;		
-						}						
-					}
-					else {
-						gp.keyH.playCursorSE();
-						
-						fighterNum = 0;	
-						commandNum = 1;
-						gp.gameState = gp.pauseState;
-					}
-				}		
+				party_Main_Close();
 			}
 			else {
 				if (partyMove) {
@@ -1172,10 +1128,66 @@ public class UI {
 		}
 		
 		if (gp.keyH.bPressed) {			
-			gp.keyH.playCursorSE();
 			gp.keyH.bPressed = false;
-			fighterNum = 6;					
+			
+			if (fighterNum == 6) {
+				party_Main_Close();			
+			}
+			else {
+				gp.keyH.playCursorSE();
+				fighterNum = 6;				
+			}
 		}
+	}
+	private void party_Main_Close() {
+		
+		if (partyMove) {				
+			gp.keyH.playCursorSE();
+			
+			partyMove = false;	
+			partyMoveNum = -1;
+			partyDialogue = "Choose a POKEMON.";
+		}
+		else if (partyItem != null) {
+			partyItem = null;
+			partyItemGive = false;
+			partyItemApply = false;
+			fighterNum = 0;	
+			commandNum = 0;
+			bagState = bag_Main;
+			gp.gameState = gp.bagState;		
+		}
+		else {
+			if (gp.btlManager.active) {
+				
+				if (battleState == battle_Options) {
+					gp.keyH.playCursorSE();
+					
+					fighterNum = 0;	
+					commandNum = 2;
+					gp.gameState = gp.battleState;								
+				}
+				else if (!gp.btlManager.fighter[0].isAlive()) {							
+					gp.keyH.playErrorSE();
+				}
+				else {						
+					gp.keyH.playCursorSE();
+					
+					fighterNum = 0;	
+					commandNum = 0;
+					gp.btlManager.running = true;
+					new Thread(gp.btlManager).start();	
+					gp.gameState = gp.battleState;		
+				}						
+			}
+			else {
+				gp.keyH.playCursorSE();
+				
+				fighterNum = 0;	
+				commandNum = 1;
+				gp.gameState = gp.pauseState;
+			}
+		}		
 	}
 	private void drawParty_Main_Options() {
 		
@@ -2048,38 +2060,43 @@ public class UI {
 			g2.drawImage(gp.player.pokeParty.get(fighterNum + 1).getMenuSprite(), x, y, null);				
 		}
 	}
+	
 	private void drawParty_MoveSwap() {
-		
-		Pokemon fighter = gp.player.pokeParty.get(fighterNum);
-		
+						
 		g2.setColor(battle_white);  
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);	
-		
-		int x = -10;
-		int y = -5;
-		int width = gp.screenWidth + 13;
-		int height = (int) (gp.tileSize * 0.7);
-		drawSubWindow(x, y, width, height, 10, 4, party_green, Color.BLACK);	
 
+		int x;
+		int y;
+		int width;
+		int height;
+		String text;
+		Pokemon fighter = gp.player.pokeParty.get(fighterNum);
+		
 		List<Move> moveSet = new ArrayList<>();
 		moveSet.addAll(gp.player.pokeParty.get(fighterNum).getMoveSet());
 		moveSet.add(gp.btlManager.newMove);
 		
-		x = 5;
-		y = 30;
-		width = (int) (gp.tileSize * 7.3);
+		// FIGHTER NAME BOX
+		x = -5;
+		y = (int) (gp.tileSize * 0.2);
+		width = (int) (gp.tileSize * 7.45);
 		height = (int) (gp.tileSize * 1.2);
 		g2.setColor(party_gray);
 		g2.fillRoundRect(x, y, width, height, 8, 8);
 		
-		height += gp.tileSize;
+		height += gp.tileSize * 0.8;
 		g2.setColor(Color.BLACK);
 		g2.drawRoundRect(x, y, width, height, 4, 4);
-		
+				
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55F));		
-		x += gp.tileSize * 0.3;
-		y += gp.tileSize * 0.95;
-		String text = fighter.getName();				
+		x += gp.tileSize * 0.15;
+		y += gp.tileSize * 0.1;
+		g2.drawImage(fighter.getBall().image2, x, y, null);
+		
+		x += gp.tileSize;
+		y += gp.tileSize * 0.85;		
+		text = fighter.getName();				
 		drawText(text, x, y, Color.WHITE, Color.BLACK);
 		
 		int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();		
@@ -2087,15 +2104,16 @@ public class UI {
 		g2.setColor(fighter.getSexColor());	
 		g2.drawString("" + fighter.getSex(), x, y);
 	
-		x = (int) (gp.tileSize * 0.7) - 10;
-		y += gp.tileSize * 0.95;
+		// FIGHTER LEVEL AND NO.
+		x = (int) (gp.tileSize * 0.3);
+		y += gp.tileSize * 0.85;
 		text = "Lv" + fighter.getLevel();
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));	
 		g2.setColor(Color.BLACK);
 		g2.drawString(text, x, y);
 		
 		text = fighter.getNature().getName();
-		x = getXforRightAlignText(text, x + (int) (gp.tileSize * 6.8));		
+		x = getXforRightAlignText(text, x + (int) (gp.tileSize * 6.9));		
 		g2.drawString(text, x, y);
 		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));	
@@ -2104,49 +2122,29 @@ public class UI {
 		text = "No." + String.format("%03d", fighter.getIndex());	
 		drawText(text, x, y, Color.WHITE, Color.BLACK);
 		
+		// FIGHTER STATUS
 		if (fighter.getStatus() != null) {
 			drawBattle_Status((int) (x + (gp.tileSize * 1.5)), (int) (y - (gp.tileSize * 0.53)), fighter, 30F);
 			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 38F));
 		}
 		
-		x = (int) (gp.tileSize * 1.2);
-		y = gp.tileSize * 3;
+		// FIGHTER SPRITE
+		x = (int) (gp.tileSize * 1.3);
+		y = (int) (gp.tileSize * 3.1);
 		g2.drawImage(fighter.getFrontSprite(), x, y, null);
-		
-		x = (int) (gp.tileSize * 7.5);
-		y = 30;
-		width = (int) (gp.tileSize * 8.4);
-		height = (int) (gp.tileSize * 7.15);
-		drawSubWindow(x, y, width, height, 10, 4, party_gray, Color.BLACK);	
-		
-		y = (int) (gp.tileSize * 7.9);
-		height = (int) (gp.tileSize * 0.8);		
-		g2.setColor(party_gray);
-		g2.fillRoundRect(x, y, width, height, 4, 4);
-		
-		height = gp.tileSize * 4;
-		g2.setColor(Color.BLACK);
-		g2.drawRoundRect(x, y, width, height, 4, 4);
-		
-		int slotX = (int) (gp.tileSize * 7.5);
-		int slotY;
-		int slotWidth = (int) (gp.tileSize * 8.38);
-		int slotHeight = gp.tileSize + 8;
-		
-		int frameX = (int) (gp.tileSize * 7.9);
-		int frameY = (int) (gp.tileSize * 0.9);
-		
+												
 		int tempX = (int) (gp.tileSize * 0.4);
-		int tempY = (int) (gp.tileSize * 10.5);
+		int tempY = (int) (gp.tileSize * 10.5);		
 		
-		x = 5;
+		// MOVE STAT BOX
+		x = -5;
 		y = (int) (gp.tileSize * 9.5);		
-		height = (int) (gp.tileSize * 2.4);
+		height = gp.tileSize * 3;
 		width = (int) (gp.tileSize * 5.5);
 		g2.setColor(party_gray);
-		g2.fillRoundRect(x, y, width, height, 4, 4);
+		g2.fillRoundRect(x, y, width, height, 4, 4);		
 		
-		width = (int) (gp.tileSize * 7.3);
+		width = (int) (gp.tileSize * 7.45);
 		g2.setColor(Color.BLACK);
 		g2.drawRoundRect(x, y, width, height, 4, 4);
 		
@@ -2159,7 +2157,7 @@ public class UI {
 		
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 55F));			
-		tempX += gp.tileSize * 5.45;
+		tempX += gp.tileSize * 5.35;
 		tempY -= gp.tileSize;		
 		if (moveSet.get(commandNum).getPower() == 0) { text = "---"; }
 		else { text = Integer.toString(moveSet.get(commandNum).getPower()); }
@@ -2169,32 +2167,60 @@ public class UI {
 		if (moveSet.get(commandNum).getAccuracy() == 0) { text = "---"; }
 		else { text = Integer.toString(moveSet.get(commandNum).getAccuracy()); }		
 		g2.drawString(text, tempX, tempY);	
+				
+		// MOVES BOX
+		x = (int) (gp.tileSize * 7.5);
+		y = (int) (gp.tileSize * 0.2);
+		width = gp.tileSize * 9;
+		height = (int) (gp.tileSize * 7.5);
+		drawSubWindow(x, y, width, height, 4, 4, party_gray, Color.BLACK);			
 		
 		int i = 0;
+		int slotX = (int) (gp.tileSize * 7.5);
+		int slotY;
+		int slotWidth = (int) (gp.tileSize * 9.38);
+		int slotHeight = gp.tileSize + 8;
+		
+		int frameX = (int) (gp.tileSize * 7.9);
+		int frameY = (int) (gp.tileSize * 0.5);
 		x = frameX;
 		y = frameY;		
-		width = (int) (gp.tileSize * 2.3);
-		height = gp.tileSize;
-		
+		width = (int) (gp.tileSize * 2);
+		height = gp.tileSize;	
 		int textX;
 		int textY;
 		for (Move m : moveSet) {			
+			
+			if (i == moveSet.size() - 1) {
+				y = (int) (gp.tileSize * 6.4);
+			}
 				
 			drawSubWindow(x, y, width, height, 10, 3, m.getType().getColor(), Color.BLACK);		
 									
-			g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35F));			
+			g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));			
 			text = m.getType().getName();
 			textX = getXForCenteredTextOnWidth(text, width, x + 5);
 			textY = (int) (y + (gp.tileSize * 0.75));			
 			drawText(text, textX, textY, battle_white, Color.BLACK);
 			
-			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 50F));
+			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 40F));
 			text = m.toString();
-			textX = (int) (frameX + (gp.tileSize * 2.5));
+			textX = (int) (frameX + (gp.tileSize * 2.3));
 			textY = (int) (y + (gp.tileSize * 0.85));			
 			drawText(text, textX, textY, battle_white, Color.BLACK);	
 			
-			if (commandNum == i) {	
+			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));						
+			text = m.getpp() + "/" + m.getbpp();
+			textX = getXforRightAlignText(text, (int) (gp.tileSize * 15.7));
+			drawText(text, textX, textY, battle_white, Color.BLACK);
+			
+			if (partyMove && partyMoveNum == i) {
+				slotY = y - 4;
+				g2.setColor(hp_yellow);
+				g2.setStroke(new BasicStroke(5));
+				g2.drawRoundRect(slotX, slotY, slotWidth, slotHeight, 6, 6);
+			}
+			else if (commandNum == i) {	
 				slotY = y - 4;
 				g2.setColor(battle_red);
 				g2.setStroke(new BasicStroke(5));
@@ -2203,15 +2229,8 @@ public class UI {
 						
 			y += gp.tileSize * 1.35;
 			i++;
-		}		
-		
-		if (commandNum == i) {	
-			slotY = y - 4;
-			g2.setColor(battle_red);
-			g2.setStroke(new BasicStroke(5));
-			g2.drawRoundRect(slotX, slotY, slotWidth, slotHeight, 6, 6);
 		}
-		
+					
 		if (commandNum == i) {	
 			slotY = y - 4;
 			g2.setColor(battle_red);
@@ -2219,32 +2238,48 @@ public class UI {
 			g2.drawRoundRect(slotX, slotY, slotWidth, slotHeight, 6, 6);
 		}
 			 
-		y += gp.tileSize * 1.35;
+		// MOVE DESCRIPTION BOX
+		x = (int) (gp.tileSize * 7.5);			 
+		y = (int) (gp.tileSize * 7.9);
+		width = gp.tileSize * 9;
+		height = (int) (gp.tileSize * 0.8);		
+		g2.setColor(party_gray);
+		g2.setStroke(new BasicStroke(4));
+		g2.fillRoundRect(x, y, width, height, 4, 4);
+		
+		height = gp.tileSize * 5;
+		g2.setColor(Color.BLACK);
+		g2.drawRoundRect(x, y, width, height, 4, 4);
 		
 		x = (int) (gp.tileSize * 7.8);
 		y = (int) (gp.tileSize * 8.6);
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42F));
 		text = "DESCRIPTION";
 		drawText(text, x, y, battle_white, Color.BLACK);	
-		
-		x += gp.tileSize * 5.2;
-		text = "PP";
-		drawText(text, x, y, battle_white, Color.BLACK);
-		
-		text = moveSet.get(commandNum).getpp() + "/" + moveSet.get(commandNum).getbpp();
-		x += gp.tileSize * 2.8;
-		x = getXforRightAlignText(text, x);
-		drawText(text, x, y, battle_white, Color.BLACK);
-		
-		x = (int) (gp.tileSize * 7.8);
-		y += gp.tileSize * 0.7;
+				
+		y += gp.tileSize * 0.8;
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));
 		g2.setColor(Color.BLACK);
 		for (String line : moveSet.get(commandNum).getInfo().split("\n")) {			
 			g2.drawString(line, x, y);
 			y += gp.tileSize * 0.8;
-		} 			
+		} 					
 				
+		if (gp.keyH.upPressed) {				
+			gp.keyH.upPressed = false;
+			
+			if (commandNum > 0) {
+				gp.keyH.playCursorSE();	
+				commandNum--;				
+			}				
+		}
+		if (gp.keyH.downPressed) {				
+			gp.keyH.downPressed = false;	
+			if (commandNum < moveSet.size() - 1) {
+				gp.keyH.playCursorSE();	
+				commandNum++;				
+			}
+		}		
 		if (gp.keyH.aPressed) {			
 			gp.keyH.aPressed = false;
 			
@@ -2327,7 +2362,7 @@ public class UI {
 			g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
 		}
 		else {
-			g2.drawImage(gp.btlManager.trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y, null);
+			g2.drawImage(gp.btlManager.trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y + 15, null);
 		}
 		
 		x = fighter_one_X - gp.tileSize;
@@ -2431,7 +2466,7 @@ public class UI {
 		g2.drawImage(battle_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
 		g2.drawImage(battle_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
 
-		g2.drawImage(gp.btlManager.trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y, null);
+		g2.drawImage(gp.btlManager.trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y + 15, null);
 		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);			
 	}
 	

@@ -189,6 +189,7 @@ public class BattleManager extends Thread {
 		
 		gp.ui.battleState = gp.ui.battle_Options;
 	}	
+	
 	// PRINT WEATHER IF CONDITION IS ACTIVE
 	private void checkWeatherCondition() throws InterruptedException {
 			
@@ -213,6 +214,7 @@ public class BattleManager extends Thread {
 				break;
 		}		
 	}
+	
 	// CHANGE WEATHER BASED ON FIGHTER ABILITY
 	private void getWeatherAbility() {
 			
@@ -801,7 +803,27 @@ public class BattleManager extends Thread {
 			else if (delay == 1) move2 = null;			
 			else if (delay == 2) move1 = null;
 			
-			checkStatusDamage();
+			if (hasWinningPokemon()) {
+				getWinningPokemon();
+			}
+			else {
+				checkStatusDamage();	
+				checkWeatherDamage();
+				
+				if (hasWinningPokemon()) {
+					getWinningPokemon();
+				}
+				else {
+					if (getDelayedMove() == 1 || getDelayedMove() == 3) {		
+						fightStage = fight_Start;
+					}
+					else {				
+						running = false;
+						fightStage = fight_Start;
+						gp.ui.battleState = gp.ui.battle_Options;
+					}
+				}
+			}
 		}			
 	}	
 	private void useMove(int atk, int trg, Move atkMove, Move trgMove) throws InterruptedException {		
@@ -1411,31 +1433,13 @@ public class BattleManager extends Thread {
 	}
 	
 	// STATUS METHODS
-	private void checkStatusDamage() throws InterruptedException {
-					
-		// STATUS CONDITIONS CHECKED		
-		if (nextTurn == 1) {				
-			nextTurn = -1;			
-			checkWeatherDamage();
-		}
-		// CHECK BOTH STATUS CONDITIONS
-		else {		
-			nextTurn++;
-									
-			if (hasWinningPokemon()) {
-				nextTurn = -1;
-				getWinningPokemon();	
-			}
-			else {
-				if (fighter[nextTurn].isAlive()) {
-					getStatusDamage(nextTurn);
-				}	
-				if (hasWinningPokemon()) {
-					nextTurn = -1;
-					getWinningPokemon();	
-				}
-			}
-		}
+	private void checkStatusDamage() throws InterruptedException {					
+		if (fighter[0].isAlive()) {
+			getStatusDamage(0);
+		}	
+		if (fighter[1].isAlive()) {
+			getStatusDamage(1);
+		}	
 	}
 	private void getStatusDamage(int atk) throws InterruptedException {
 		// status effects reference: https://pokemon.fandom.com/wiki/Status_Effects		
@@ -1463,6 +1467,7 @@ public class BattleManager extends Thread {
 		}	
 	}
 	
+	// WEATHER METHODS
 	private void checkWeatherDamage() throws InterruptedException {
 					
 		if (weatherDays != -1) {
@@ -1509,49 +1514,34 @@ public class BattleManager extends Thread {
 				gp.playSE(battle_SE, "hail");
 				typeDialogue("Hail continues to fall!");	
 				
-				if (fighter[0].checkType(Type.ICE)) {
+				if (fighter[0].isAlive() &&
+						!fighter[0].checkType(Type.ICE)) {
 					getWeatherDamage(0);
 				}
-				if (fighter[1].checkType(Type.ICE)) {
+				if (fighter[1].isAlive() &&
+						!fighter[1].checkType(Type.ICE)) {
 					getWeatherDamage(1);
 				}	
-					
-				if (hasWinningPokemon()) {						
-					getWinningPokemon();	
-					return;
-				}
 				
 				break;
 			case SANDSTORM:
 				gp.playSE(battle_SE, "sandstorm");
 				typeDialogue("The sandstorm continues to rage!");	
 				
-				if (!fighter[0].checkType(Type.ROCK) && 
+				if (fighter[0].isAlive() &&
+						!fighter[0].checkType(Type.ROCK) && 
 						!fighter[0].checkType(Type.STEEL) &&
 						!fighter[0].checkType(Type.GROUND)) {
 					getWeatherDamage(0);
 				}
-				if (!fighter[1].checkType(Type.ROCK) && 
+				if (fighter[1].isAlive() &&
+						!fighter[1].checkType(Type.ROCK) && 
 						!fighter[1].checkType(Type.STEEL) &&
 						!fighter[1].checkType(Type.GROUND)) {
 					getWeatherDamage(1);
 				}
-					
-				if (hasWinningPokemon()) {						
-					getWinningPokemon();	
-					return;
-				}
 				
 				break;
-		}
-				
-		if (getDelayedMove() == 1 || getDelayedMove() == 3) {		
-			fightStage = fight_Start;
-		}
-		else {				
-			running = false;
-			fightStage = fight_Start;
-			gp.ui.battleState = gp.ui.battle_Options;
 		}
 	}
 	private void getWeatherDamage(int atk) throws InterruptedException {
@@ -1723,12 +1713,11 @@ public class BattleManager extends Thread {
 				gp.ui.partyState = gp.ui.party_MoveSwap;
 				gp.gameState = gp.partyState;	
 				
-				while (!gp.keyH.aPressed && !gp.keyH.bPressed) {
+				while (oldMove == null && !gp.keyH.bPressed) {
 					pause(5);
 				}
 				
-				if (gp.keyH.aPressed) {
-					
+				if (oldMove != null) {					
 					typeDialogue("1, 2, and.. .. ..\nPoof!", true);
 					typeDialogue(fighter[0].getName() + " forgot\n" + oldMove.getName() + ".", true);	
 					typeDialogue("And...", true);
@@ -1740,7 +1729,7 @@ public class BattleManager extends Thread {
 					
 					gp.playMusic();
 				}
-				else if (gp.keyH.bPressed) {
+				else {
 					typeDialogue(fighter[0].getName() + " did not learn\n" + newMove.getName() + ".", true);
 				}
 			}
