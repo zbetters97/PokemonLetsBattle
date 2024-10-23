@@ -48,9 +48,6 @@ public class KeyHandler implements KeyListener {
 		else if (gp.gameState == gp.bagState) {
 			bagState(code);
 		}
-		else if (gp.gameState == gp.evolveState) {
-			evolveState(code);
-		}	
 	}
 			
 	// PLAY
@@ -165,24 +162,7 @@ public class KeyHandler implements KeyListener {
 		if (code == gp.btn_L) {	lPressed = true; }
 		if (code == gp.btn_R) {	rPressed = true; }
 	}
-	
-	// EVOLVE
-	private void evolveState(int code) { 
-		if (code == gp.btn_A && lock) {	aPressed = true; lock = false; }	
-		if (code == gp.btn_B && lock) {	bPressed = true; lock = false; }	
 		
-		if (code == gp.btn_UP) { 				
-			gp.ui.commandNum--;
-			if (gp.ui.commandNum < 0) gp.ui.commandNum = 0;
-			else playCursorSE(); 
-		}
-		if (code == gp.btn_DOWN) { 
-			gp.ui.commandNum++;
-			if (gp.ui.commandNum > 1) gp.ui.commandNum = 1;
-			else playCursorSE(); 
-		}
-	}
-	
 	// KEY RELEASED
 	@Override
 	public void keyReleased(KeyEvent e) {	

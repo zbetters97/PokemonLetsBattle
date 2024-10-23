@@ -78,6 +78,8 @@ public class Player extends Entity {
 		
 		getRunImage();
 		
+		inventory_keyItems.add(new ITM_EXP_Share(gp));
+		
 		inventory_items.add(new ITM_Potion(gp));
 		inventory_items.get(0).amount = 10;
 		
@@ -95,9 +97,11 @@ public class Player extends Entity {
 		inventory_items.add(new ITM_Revive(gp));
 		inventory_items.add(new ITM_Revive_Max(gp));	
 		inventory_items.add(new ITM_Heal_Burn(gp));
+		
 		inventory_items.add(new ITM_Heal_Ice(gp));
 		inventory_items.add(new ITM_Heal_Antidote(gp));
 		inventory_items.add(new ITM_Heal_Awakening(gp));
+		
 		
 		inventory_pokeballs.add(new COL_Ball_Poke(gp));
 		inventory_pokeballs.get(0).amount = 10;

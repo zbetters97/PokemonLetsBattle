@@ -82,6 +82,7 @@ public class UI {
 	private int hitCounter = -1;
 	private int hpCounter = 0;
 	public boolean isFighterCaptured = false;
+	public Pokemon evolvePokemon = null;
 	
 	// BAG VALUES
 	private String bag_Subtitle = "";
@@ -89,8 +90,8 @@ public class UI {
 	public int bagNum = 0;	
 	public String bagDialogue = "";
 	private BufferedImage bag_menu, bag_Image, bag_Tab;
-	private BufferedImage bag_items, bag_pokeballs, bag_moves;
-	private BufferedImage bag_tab_1, bag_tab_2, bag_tab_3;	
+	private BufferedImage bag_keyItems, bag_items, bag_pokeballs, bag_moves;
+	private BufferedImage bag_tab_1, bag_tab_2, bag_tab_3, bag_tab_4;	
 	
 	// FIGHTER X/Y VALUES
 	public int fighter_one_X;
@@ -110,9 +111,10 @@ public class UI {
 	
 	// BAG TABS
 	public int bagTab;
-	private final int bag_Items = 0;
-	private final int bag_Pokeballs = 1;
-	private final int bag_Moves = 2;
+	private final int bag_KeyItems = 0;
+	private final int bag_Items = 1;
+	private final int bag_Pokeballs = 2;
+	private final int bag_Moves = 3;
 	
 	// BAG STATE
 	public int bagState;
@@ -137,13 +139,8 @@ public class UI {
 	public final int battle_Dialogue = 4;
 	public final int battle_LevelUp = 5;
 	public final int battle_Confirm = 6;
-	public final int battle_End = 7;
-	
-	private Pokemon oldEvolve, newEvolve = null;
-	private int evolveIndex = -1;
-	private int evolveNum = 0;
-	private int evolveTimer = 1;
-	private String evolveText;
+	public final int battle_Evolve = 7;
+	public final int battle_End = 8;
 	
 	public UI(GamePanel gp) {
 		this.gp = gp;
@@ -161,10 +158,11 @@ public class UI {
 		bag_tab_1 = setup("/ui/bag/bag-tab-1", gp.tileSize * 3, gp.tileSize / 3);
 		bag_tab_2 = setup("/ui/bag/bag-tab-2", gp.tileSize * 3, gp.tileSize / 3);
 		bag_tab_3 = setup("/ui/bag/bag-tab-3", gp.tileSize * 3, gp.tileSize / 3);
-//		bag_tab_4 = setup("/ui/bag/bag-tab-4", gp.tileSize * 3, gp.tileSize / 3);
+		bag_tab_4 = setup("/ui/bag/bag-tab-4", gp.tileSize * 3, gp.tileSize / 3);
 //		bag_tab_5 = setup("/ui/bag/bag-tab-5", gp.tileSize * 3, gp.tileSize / 3);
 		
-		bag_items = setup("/ui/bag/bag-keyitems", gp.tileSize * 5, gp.tileSize * 5);
+		bag_keyItems = setup("/ui/bag/bag-keyitems", gp.tileSize * 5, gp.tileSize * 5);
+		bag_items = setup("/ui/bag/bag-items", gp.tileSize * 5, gp.tileSize * 5);
 		bag_pokeballs = setup("/ui/bag/bag-pokeballs", gp.tileSize * 5, gp.tileSize * 5);
 		bag_moves = setup("/ui/bag/bag-moves", gp.tileSize * 5, gp.tileSize * 5);
 		
@@ -229,9 +227,6 @@ public class UI {
 		}
 		else if (gp.gameState == gp.battleState) {
 			drawBattleScreen();
-		}		
-		else if (gp.gameState == gp.evolveState) {
-			drawEvolveScreen();
 		}		
 		else if (gp.gameState == gp.transitionState) {
 			drawTransitionScreen();
@@ -342,7 +337,7 @@ public class UI {
 				
 				gp.gameState = gp.bagState;
 				bagState = bag_Main;
-				bagTab = bag_Items;
+				bagTab = bag_KeyItems;
 				
 				commandNum = 0;
 			}
@@ -627,21 +622,27 @@ public class UI {
 		ArrayList<Entity> items = new ArrayList<>();
 		
 		switch (bagTab) {
+			case bag_KeyItems:
+				bag_Subtitle = "KEY ITEMS";
+				bag_Tab = bag_tab_1;
+				bag_Image = bag_keyItems;		
+				items = gp.player.inventory_keyItems;
+				break;
 			case bag_Items:
 				bag_Subtitle = "ITEMS";
-				bag_Tab = bag_tab_1;
+				bag_Tab = bag_tab_2;
 				bag_Image = bag_items;		
 				items = gp.player.inventory_items;
 				break;
 			case bag_Pokeballs:
 				bag_Subtitle = "POKe BALLS";
-				bag_Tab = bag_tab_2;
+				bag_Tab = bag_tab_3;
 				bag_Image = bag_pokeballs;		
 				items = gp.player.inventory_pokeballs;	
 				break;
 			case bag_Moves:
 				bag_Subtitle = "TMs & HMs";
-				bag_Tab = bag_tab_3;
+				bag_Tab = bag_tab_4;
 				bag_Image = bag_moves;		
 				items = gp.player.inventory_moves;		
 				break;
@@ -708,7 +709,7 @@ public class UI {
 		if (gp.keyH.rightPressed) {	
 			gp.keyH.rightPressed = false;
 			
-			if (bagTab < 2) {
+			if (bagTab < 3) {
 				gp.keyH.playCursorSE();
 				bagTab++;
 				bagStart = 0;
@@ -814,10 +815,17 @@ public class UI {
 			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
-				gp.keyH.playCursorSE();							
-				gp.player.useItem(items.get(bagNum), gp.player);	
-				bagState = bag_Main;
-				commandNum = 0;				
+				gp.keyH.playCursorSE();			
+				
+				if (items.get(bagNum).collectableType == items.get(bagNum).type_keyItem) {
+					bagDialogue = "You shouldn't toss this\nitem!";
+					bagState = bag_Dialogue;
+				}
+				else {				
+					gp.player.useItem(items.get(bagNum), gp.player);	
+					bagState = bag_Main;
+					commandNum = 0;			
+				}	
 			}
 		}
 		
@@ -898,14 +906,14 @@ public class UI {
 		height = (int) (gp.tileSize * 3.5);		
 		drawSubWindow(x, y, width, height, 5, 12, battle_white, dialogue_blue);
 		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 62f));	
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 58f));	
 		x += gp.tileSize * 0.5;
-		y += gp.tileSize * 1.3;
+		y += gp.tileSize * 1.2;
 		height = gp.tileSize;		
 		
   		for (String line : bagDialogue.split("\n")) {   			
   			drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
-  			y += 40;
+  			y += gp.tileSize;
 		} 
 		
 		if (gp.keyH.aPressed) {	
@@ -1369,6 +1377,7 @@ public class UI {
 					gp.btlManager.fightStage = gp.btlManager.fight_Start;
 					new Thread(gp.btlManager).start();
 					
+					bagState = bag_Main;
 					battleState = battle_Dialogue;
 					gp.gameState = gp.battleState;
   				}
@@ -2336,11 +2345,22 @@ public class UI {
 				drawBattle_HUD();
 				drawBattle_LevelUp();
 				break;		
-			case battle_Confirm:				
-				drawBattle_Fighters();	
+			case battle_Confirm:					
+				if (gp.btlManager.fightStage == gp.btlManager.fight_Evolve) {
+					drawBattle_Evolve();
+					drawBattle_Confirmation();		
+					drawBattle_Dialogue();
+				}
+				else {
+					drawBattle_Fighters();	
+					drawBattle_Dialogue();
+					drawBattle_HUD();
+					drawBattle_Confirmation();				
+				}
+				break;
+			case battle_Evolve:
+				drawBattle_Evolve();
 				drawBattle_Dialogue();
-				drawBattle_HUD();
-				drawBattle_Confirmation();				
 				break;
 			case battle_End:
 				animateTrainerDefeat();
@@ -2779,7 +2799,7 @@ public class UI {
 			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;						
-				bagTab = bag_Items;
+				bagTab = bag_KeyItems;
 				gp.gameState = gp.bagState;													
 				commandNum = 0;				
 			}
@@ -3087,8 +3107,7 @@ public class UI {
 		}	
 	}
 	
-	// EVOLVE SCREEN	
-	private void drawEvolveScreen() {
+	private void drawBattle_Evolve() {
 		
 		g2.setColor(new Color(234,233,246));  
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
@@ -3096,147 +3115,8 @@ public class UI {
 		int x = (int) (gp.tileSize * 5.5);
 		int y = (int) (gp.tileSize * 2.2);
 		
-		switch(subState) {		
-			case 0: evolveStage_Check(x, y); break;
-			case 1:	evolveStage_Evolving(x, y); break;
-			case 2:	evolveStage_Stop(x, y); break;
-			case 3:	evolveStage_Complete(x, y);	break;
-			case 4:	evolveStage_Close(x, y); break;
-		}
+		g2.drawImage(evolvePokemon.getFrontSprite(), x, y, null);
 	}
-	
-	private void evolveStage_Check(int x, int y) {
-		
-		for (int i = 0; i < gp.player.pokeParty.size(); i++) {					
-			if (gp.player.pokeParty.get(i).canEvolve()) {
-				
-				evolveIndex = i;
-				
-				oldEvolve = gp.player.pokeParty.get(i);
-				newEvolve = Pokemon.evolvePokemon(oldEvolve);
-				
-				gp.playSE(3, gp.se.getFile(3, oldEvolve.toString()));
-				gp.startMusic(1, 0);	
-											
-				subState = 1;
-				break;
-			}					
-		}
-		
-		if (evolveIndex == -1) {
-			gp.setupMusic();
-			gp.gameState = gp.playState;
-		}			
-	}
-	private void evolveStage_Evolving(int x, int y) {
-		
-		evolveText = "What?\n" + oldEvolve.getName() + " is evolving?";	
-		drawEvolve_Dialogue();	
-		
-		if (evolveNum == 0) g2.drawImage(oldEvolve.getFrontSprite(), x, y, null);					
-		else g2.drawImage(newEvolve.getFrontSprite(), x, y, null);							
-		
-		if (evolveTimer < 1000) {
-			if (evolveTimer % 300 == 0) {
-				if (evolveNum == 0) evolveNum = 1;
-				else evolveNum = 0;
-			}
-		}
-		else if (1000 <= evolveTimer && evolveTimer < 1550) {
-			if (evolveTimer % 150 == 0) {
-				if (evolveNum == 0) evolveNum = 1;
-				else evolveNum = 0;
-			}
-		}
-		else if (1550 <= evolveTimer && evolveTimer < 1900) {
-			if (evolveTimer % 75 == 0) {
-				if (evolveNum == 0) evolveNum = 1;
-				else evolveNum = 0;
-			}
-		}
-		else if (1900 <= evolveTimer) {
-			if (evolveTimer % 10 == 0) {
-				if (evolveNum == 0) evolveNum = 1;
-				else evolveNum = 0;
-			}
-		}
-		
-		evolveTimer++;
-		if (evolveTimer >= 2355) {					
-			gp.playSE(3, gp.se.getFile(3, newEvolve.toString()));					
-			subState = 3;					
-		}		
-		else if (gp.keyH.bPressed) {
-			gp.stopMusic();
-			subState = 2;
-		}
-	}
-	private void evolveStage_Stop(int x, int y) {
-		
-		g2.drawImage(oldEvolve.getFrontSprite(), x, y, null);	
-		
-		evolveText = "Oh?\n" + oldEvolve.getName() + " stopped evolving...";	
-		subState = 4;
-	}
-	private void evolveStage_Complete(int x, int y) {
-		
-		g2.drawImage(newEvolve.getFrontSprite(), x, y, null);				
-		
-		evolveText = "Congratulations! Your " +  oldEvolve.getName() + 
-				"\nevolved into " + newEvolve.getName() + "!";	
-		
-		gp.player.pokeParty.set(evolveIndex, newEvolve);
-		
-		subState = 4;
-	}
-	private void evolveStage_Close(int x, int y) {
-		
-		g2.drawImage(gp.player.pokeParty.get(evolveIndex).getFrontSprite(), x, y, null);
-		
-		if (gp.keyH.aPressed) {
-			gp.stopMusic();
-			
-			evolveIndex = -1;
-			
-			oldEvolve = null;
-			newEvolve = null;					
-			
-			evolveNum = 0;
-			evolveTimer = 0;					
-			subState = 0;
-			
-			gp.setupMusic();
-			gp.gameState = gp.playState;
-		}
-		
-		drawEvolve_Dialogue();		
-	}
-	
-	private void drawEvolve_Dialogue() {
-		
-		drawEvolve_DialogueWindow();
-		
-		int x = gp.tileSize / 2;
-		int y = gp.screenHeight - gp.tileSize * 2;
-		
-		g2.setColor(Color.BLACK);
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60F));
-		
-		// PRINT OUT DIALOGUE
-		for (String line : evolveText.split("\n")) {  
-  			drawText(line, x, y, battle_white, Color.BLACK);
-			y += gp.tileSize;
-		} 		
-	}
-	private void drawEvolve_DialogueWindow() {
-		
-		int width = (int) (gp.screenWidth - (gp.tileSize * 0.15));
-		int height = (int) (gp.tileSize * 3.5);
-		int x = (int) (gp.tileSize * 0.1);
-		int y = (int) (gp.screenHeight - (height * 1.02)); 
-		
-		drawSubWindow(x, y, width, height, 12, 10, battle_green, battle_red);
-	}	
 	
 	// TRANSITION
 	private void drawTransitionScreen() {

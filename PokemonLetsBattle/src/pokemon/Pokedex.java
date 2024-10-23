@@ -284,11 +284,38 @@ public enum Pokedex {
 					Map.entry(31, Moves.TAKEDOWN),
 					Map.entry(37, Moves.MUDDYWATER),
 					Map.entry(46, Moves.EARTHQUAKE)
-			)),
+			)),	
 	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), new Torrent(), 100, 110, 90, 85, 90, 60, -1, 210, 3, 3, 45,
 			Map.ofEntries(
 					Map.entry(39, Moves.MUDDYWATER),
 					Map.entry(52, Moves.EARTHQUAKE)
+			)),
+	WHISMUR ("Whismur", 293, Type.NORMAL, new SoundProof(), 64, 51, 23, 51, 23, 28, 20, 68, 3, 1, 190,
+			Map.ofEntries(
+					Map.entry(11, Moves.ASTONISH),
+					Map.entry(15, Moves.HOWL),
+					Map.entry(21, Moves.SUPERSONIC),
+					Map.entry(25, Moves.STOMP),
+					Map.entry(31, Moves.SCREECH),
+					Map.entry(45, Moves.HYPERVOICE)
+			)),
+	LOUDRED ("Loudred", 294, Type.NORMAL, new SoundProof(), 84, 71, 43, 71, 43, 48, 40, 126, 3, 2, 120,
+			Map.ofEntries(
+					Map.entry(20, Moves.BITE),
+					Map.entry(23, Moves.SUPERSONIC),
+					Map.entry(29, Moves.STOMP),
+					Map.entry(37, Moves.SCREECH),
+					Map.entry(57, Moves.HYPERVOICE)
+			)),
+	EXPLOUD ("Exploud", 295, Type.NORMAL, new SoundProof(), 104, 91, 63, 91, 63, 68, -1, 184, 3, 3, 45,
+			Map.ofEntries(
+					Map.entry(20, Moves.BITE),
+					Map.entry(23, Moves.SUPERSONIC),
+					Map.entry(29, Moves.STOMP),
+					Map.entry(37, Moves.SCREECH),
+					Map.entry(40, Moves.CRUNCH),
+					Map.entry(63, Moves.HYPERVOICE),
+					Map.entry(71, Moves.HYPERBEAM)
 			)),
 	SPHEAL("Spheal", 363, Arrays.asList(Type.ICE, Type.WATER), new ThickFat(), 70, 40, 50, 55, 50, 25, 32, 75, 3, 1, 255,
 			Map.ofEntries(
@@ -341,9 +368,9 @@ public enum Pokedex {
 			int spAttack, int spDefense, int speed, int evLevel, int ey, int growth, int ev, int catchRate, 
 			Map<Integer, Moves> moveLevels) {	
 		
-		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
-		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
-		this.image1 = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
+		this.frontSprite = setup("/pokedex/front/" + name, 48 * 5, 48 * 5); 
+		this.backSprite = setup("/pokedex/back/" + name, 48 * 5, 48 * 5);
+		this.image1 = setup("/pokedex/menu/" + name, 48 * 2, 48 * 2);
 		
 		this.name = name; 
 		this.index = index; 
@@ -369,9 +396,9 @@ public enum Pokedex {
 			int spAttack, int spDefense, int speed, int evLevel, int ey, int growth, int ev, int catchRate, 
 			Map<Integer, Moves> moveLevels) {			
 		
-		this.frontSprite = setup("/pokedexfront/" + name, 48 * 5, 48 * 5); 
-		this.backSprite = setup("/pokedexback/" + name, 48 * 5, 48 * 5);
-		this.image1 = setup("/pokedexmenu/" + name, 48 * 2, 48 * 2);
+		this.frontSprite = setup("/pokedex/front/" + name, 48 * 5, 48 * 5); 
+		this.backSprite = setup("/pokedex/back/" + name, 48 * 5, 48 * 5);
+		this.image1 = setup("/pokedex/menu/" + name, 48 * 2, 48 * 2);
 
 		this.name = name; 
 		this.index = index; 
@@ -577,7 +604,21 @@ public enum Pokedex {
         		new Move(Moves.WATERGUN),
         		new Move(Moves.TACKLE),
         		new Move(Moves.GROWL)
-        ));        
+        ));  
+        moveMap.put(WHISMUR, Arrays.asList(
+        		new Move(Moves.POUND)
+        ));  
+        moveMap.put(LOUDRED, Arrays.asList(
+        		new Move(Moves.POUND),
+        		new Move(Moves.ASTONISH),
+        		new Move(Moves.HOWL)        		
+        ));  
+        moveMap.put(EXPLOUD, Arrays.asList(
+        		new Move(Moves.THUNDERFANG),
+        		new Move(Moves.FIREFANG),
+        		new Move(Moves.ICEFANG),
+        		new Move(Moves.POUND)
+        ));  
         moveMap.put(SPHEAL, Arrays.asList(
         		new Move(Moves.WATERGUN), 
         		new Move(Moves.DEFENSECURL),

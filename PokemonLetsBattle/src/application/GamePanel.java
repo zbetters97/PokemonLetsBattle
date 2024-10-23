@@ -100,7 +100,6 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int hmState = 7;
 	public final int transitionState = 8;	
 	public final int battleState = 9;
-	public final int evolveState = 10;	
 	
 	// AREA STATES
 	public int currentArea;

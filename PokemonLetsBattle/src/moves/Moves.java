@@ -19,8 +19,12 @@ public enum Moves {
 			"The user relaxes and\nlightens its body to move\nfaster. It sharply boosts\nthe Speed stat."),
 	AQUATAIL ("Aqua Tail", MoveType.PHYSICAL, Type.WATER, 10, 135, 90, 
 			"The user attacks by swing-\ning its tail as if it were a\nvicious wave in a raging\nstorm."),
+	ASTONISH ("Astonish", MoveType.PHYSICAL, Type.GHOST, 0.30, 15, 30, 100, 
+			"The user attacks the foe\nwhile shouting in a startling\nfashion. It may also make\nthe target flinch."),
 	AURORABEAM ("Aurora Beam", MoveType.SPECIAL, Type.ICE, 20, 65, 100, 
 			"The foe is hit with a\nrainbow-colored beam."),
+	BITE ("Bize", MoveType.PHYSICAL, Type.DARK, 0.30, 25, 60, 100,  
+			"The foe is bitten with\nviciously sharp fangs.\nIt may make the target\nflinch."),
 	BLAZEKICK ("Blaze Kick", MoveType.PHYSICAL, Type.FIRE, Status.BURN, 0.10, 10, 85, 90, 1, 
 			"The user launches a kick\nwith a high critical-hit\nratio. It may also leave\nthe target with a burn."),
 	BLIZZARD ("Blizzard", MoveType.SPECIAL, Type.ICE, Status.FREEZE, 0.10, 5, 120, 70, 
@@ -91,8 +95,14 @@ public enum Moves {
 			"The user slams into the\ntarget with its heavy body."),
 	HEX ("Hex", MoveType.SPECIAL, Type.GHOST, 10, 95, 100, 
 			"This relentless attack does\nmassive damage to a target\naffected by status\nconditions."),
+	HOWL ("Howl", MoveType.ATTRIBUTE, Type.NORMAL, true, 40, -1, 1, Arrays.asList("attack"),
+			"The user howls loudly to\nraise its spirit, boosting\nits Attack stat."),
 	HYDROPUMP ("Hydro Pump", MoveType.SPECIAL, Type.WATER, 5, 165, 80, 
 			"The foe is blasted by a huge\nvolume of water launched\nunder great pressure."),
+	HYPERBEAM ("Hyper Beam", MoveType.SPECIAL, Type.NORMAL, 5, 150, 90, 2, true,
+			"The foe is attacked with a\npowerful beam. The user\nmust rest on the next turn\nto regain its energy."),
+	HYPERVOICE ("Hyper Voice", MoveType.SPECIAL, Type.NORMAL, 10, 90, 100, 
+			"The user lets loose a\nhorribly echoing shout with\nthe power to inflict damage."),
 	HYPNOSIS ("Hypnosis", MoveType.STATUS, Type.PSYCHIC, Status.SLEEP, 20, 60, 
 			"The user employs hypnotic\nsuggestion to make the\ntarget fall into a deep\nsleep."),
 	ICEBEAM ("Ice Beam", MoveType.SPECIAL, Type.ICE, Status.FREEZE, 0.10, 10, 95, 100, 
@@ -155,6 +165,8 @@ public enum Moves {
 			"The user frightens the foe\nwith a scary face to\nsharply reduce its Speed\nstat."),
 	SCRATCH ("Scratch", MoveType.PHYSICAL, Type.NORMAL, 35, 40, 100, 
 			"Hard, pointed, and sharp\nclaws rake the foe to\ninflict damage."),
+	SCREECH ("Screech", MoveType.ATTRIBUTE, Type.NORMAL, false, 40, 85, -2, Arrays.asList("defense"),
+			"An earsplitting screech is\nemitted to sharply reduce\nthe foe's Defense stat."),
 	SEISMICTOSS ("Seismic Toss", MoveType.PHYSICAL, Type.FIGHTING, 20, -1, 100, 
 			"The foe is thrown using the\npower of gravity.\nIt inflicts damage equal to\nthe user's level."),
 	SHADOWBALL ("Shadow Ball", MoveType.SPECIAL, Type.GHOST, 15, 120, 100, 
@@ -172,9 +184,13 @@ public enum Moves {
 	SOLARBEAM ("Solar Beam", MoveType.SPECIAL, Type.GRASS, 10, 180, 100, 2, true, 
 			"is\ncharging a light beam...", 
 			"A two-turn attack. The\nuser gathers light, then\nblasts a bundled beam on\nthe second turn."),
+	STOMP ("Stomp", MoveType.PHYSICAL, Type.NORMAL, 0.30, 20, 65, 100, 
+			"The foe is stomped with a big\nfoot. It may also make the\ntarget flinch."),
+	STRUGGLE ("Struggle", MoveType.PHYSICAL, Type.NORMAL, 10, 50, 100, 0.25, "Struggles"),
 	SUNNYDAY ("Sunny Day", MoveType.WEATHER, Type.FIRE, 5, 5, "SUNLIGHT",
 			"The user intensifies the\nsun for five turns,\npowering up Fire-type moves."),
-	STRUGGLE ("Struggle", MoveType.PHYSICAL, Type.NORMAL, 10, 50, 100, 0.25, "Struggles"),
+	SUPERSONIC("Supersonic", MoveType.STATUS, Type.NORMAL, Status.CONFUSE, 20, 55, 
+			"The user generates odd\nsound waves from its body.\nIt may confuse the target."),
 	SURF ("Surf", MoveType.SPECIAL, Type.WATER, 15, 95, 100, 
 			"It swamps the entire\nbattlefield with a giant\nwave. It can also be used\nfor crossing water."),
 	TACKLE ("Tackle", MoveType.PHYSICAL, Type.NORMAL, 35, 40, 95, 
@@ -224,7 +240,7 @@ public enum Moves {
 	private Type type;
 	private Status effect;
 	private int pp, power, accuracy, level, crit, numTurns;
-	private boolean goFirst, toSelf, isProtected;	
+	private boolean goFirst, toSelf, isProtected, recharge;	
 	private double probability, damageToSelf, flinch;		
 	private List<String> stats;
 	/** END INITIALIZE VALUES **/	
@@ -235,7 +251,7 @@ public enum Moves {
 			List<String> stats, boolean toSelf,  
 			int pp, int power, int accuracy, int level, int crit, int numTurns,
 			double damageToSelf, double flinch,		
-			boolean goFirst, boolean isProtected,
+			boolean goFirst, boolean isProtected, boolean recharge,
 			String weather, String delay, String info) {
 		this.name = name;
 		this.mType = mType;
@@ -256,6 +272,7 @@ public enum Moves {
 		
 		this.goFirst = goFirst;
 		this.isProtected = isProtected;
+		this.recharge = recharge;
 		
 		this.damageToSelf = damageToSelf;
 		this.flinch = flinch;
@@ -271,7 +288,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0,
 				0.0, 0.0, 
-				false, false, 
+				false, false, false, 
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, double flinch, int pp, int power, int accuracy, String info) {
@@ -281,7 +298,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0,
 				0.0, flinch, 
-				false, false, 
+				false, false, false,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, double damageToSelf, String info) {
@@ -290,7 +307,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0,
 				damageToSelf, 0.0, 
-				false, false, 
+				false, false, false,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, int crit, String info) {
@@ -299,7 +316,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, crit, 0,
 				0.0, 0.0, 
-				false, false, 
+				false, false, false,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, boolean goFirst, String info) {
@@ -308,7 +325,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0,
 				0.0, 0.0, 
-				goFirst, false, 
+				goFirst, false, false, 
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, int numTurns, boolean isProtected, String delay, String info) {
@@ -317,16 +334,25 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, numTurns,
 				0.0, 0.0, 
-				false, isProtected, 
+				false, isProtected, false,
 				"", delay, info);
-	}	
+	}
+	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, int numTurns, boolean recharge, String info) {
+		this(name, mType, type, 
+				null, 0.0, 
+				null, false, 
+				pp, power, accuracy, 0, 0, numTurns,
+				0.0, 0.0, 
+				false, false, recharge,
+				"", "", info);
+	}
 	Moves (String name, MoveType mType, Type type, Status effect, int pp, int accuracy, String info) {
 		this(name, mType, type, 
 				effect, 0.0, 
 				null, false, 
 				pp, 0, accuracy, 0, 0, 0,
 				0.0, 0.0, 
-				false, false, 
+				false, false, false,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, Status effect, double probability, int pp, int power, int accuracy, String info) {
@@ -335,7 +361,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0,
 				0.0, 0.0, 
-				false, false, 
+				false, false, false,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, Status effect, double probability, double flinch, int pp, int power, int accuracy, String info) {
@@ -344,7 +370,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0,
 				0.0, flinch, 
-				false, false, 
+				false, false, false,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, Status effect, double probability, int pp, int power, int accuracy, int crit, String info) {
@@ -353,7 +379,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, crit, 0,
 				0.0, 0.0, 
-				false, false, 
+				false, false, false,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, boolean toSelf, int pp, int accuracy, int level, List<String> stats, String info) {
@@ -362,7 +388,7 @@ public enum Moves {
 				stats, toSelf, 
 				pp, 0, accuracy, level, 0, 0,
 				0.0, 0.0, 
-				false, false, 
+				false, false, false,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, boolean toSelf, double probability, int pp, int power, int accuracy, int level, List<String> stats, String info) {
@@ -371,7 +397,7 @@ public enum Moves {
 				stats, toSelf, 
 				pp, power, accuracy, level, 0, 0,
 				0.0, 0.0, 
-				false, false, 
+				false, false, false,
 				"", "", info);
 	}
 	Moves (String name, MoveType mType, Type type, int pp, int numTurns, String weather, String info) {
@@ -380,7 +406,7 @@ public enum Moves {
 				null, false, 
 				pp, 0, -1, 0, 0, numTurns,
 				0.0, 0.0, 
-				false, false, 
+				false, false, false,
 				weather, "", info);
 	}	
 	/** END CONSTRUCTORS **/
@@ -403,6 +429,7 @@ public enum Moves {
 	public int getNumTurns() { return numTurns; }
 	public boolean getGoFirst() { return goFirst; }	
 	public boolean getIsProtected() { return isProtected; }	
+	public boolean getRecharge() { return recharge; }	
 	public String getWeather() { return weather; }	
 	public String getDelay(String name) { return name + " " + delay; }	
 	public String getInfo() {	return info; }	

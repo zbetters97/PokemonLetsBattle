@@ -97,11 +97,13 @@ public class Entity {
 	
 	// ITEM TYPE
 	public int collectableType = 0;
-	public final int type_item = 1;
-	public final int type_ball = 2;
-	public final int type_move = 3;
+	public final int type_keyItem = 1;
+	public final int type_item = 2;
+	public final int type_ball = 3;
+	public final int type_move = 4;
 	
 	// INVENTORY
+	public ArrayList<Entity> inventory_keyItems = new ArrayList<>();
 	public ArrayList<Entity> inventory_items = new ArrayList<>();
 	public ArrayList<Entity> inventory_pokeballs = new ArrayList<>();
 	public ArrayList<Entity> inventory_moves = new ArrayList<>();
@@ -473,7 +475,10 @@ public class Entity {
 		
 		ArrayList<Entity> inventory = null;
 		
-		if (collectable.collectableType == type_item) {			
+		if (collectable.collectableType == type_keyItem) {			
+			inventory = person.inventory_keyItems;
+		}
+		else if (collectable.collectableType == type_item) {			
 			inventory = person.inventory_items;
 		}
 		else if (collectable.collectableType == type_ball) {			
