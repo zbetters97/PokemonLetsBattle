@@ -8,7 +8,7 @@ import properties.Status;
 public class Ability {		
 	
 	public enum Category {
-		ATTACK, ATTRIBUTE, CRITICAL, FLINCH, PP, RECOIL, STATUS, WEATHER;
+		ATTACK, ATTRIBUTE, CRITICAL, DEFENSE, FLINCH, PP, RECOIL, STATUS, WEATHER;
 	}
 		
     protected String name, description, attribute;

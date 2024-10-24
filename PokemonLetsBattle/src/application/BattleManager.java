@@ -368,8 +368,6 @@ public class BattleManager extends Thread {
 		// if both moves are active
 		if (move1 != null && move2 != null) {	
 			
-			System.out.println(move1.getName() + " " + move1.getRecharge() + " " + move1.getTurns());
-			
 			//both players are waiting
 			if (move1.getTurns() != move1.getNumTurns() && move2.getTurns() != move2.getNumTurns())
 				return 3;			
@@ -1157,13 +1155,14 @@ public class BattleManager extends Thread {
 		
 		if (fighter[atk].getAbility().getCategory() == Ability.Category.ATTACK &&
 				fighter[atk].getAbility().isValid(fighter[atk], fighter[trg], move)) {
+			
 			A *= fighter[atk].getAbility().getFactor();
 		}
-						
+		
 		damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
 			power * (A / D)) / 50)) + 2) * crit * STAB * type1 * type2 * ability * random);
-
-		if (fighter[trg].getAbility().getCategory() == Ability.Category.ATTACK &&
+		
+		if (fighter[trg].getAbility().getCategory() == Ability.Category.DEFENSE &&
 				fighter[trg].getAbility().isValid(fighter[atk], fighter[trg], move)) {
 			
 			damage *= fighter[trg].getAbility().getFactor();
@@ -1707,6 +1706,8 @@ public class BattleManager extends Thread {
 		
 		double exp = Math.floor( (b * L) / 7 ) * Math.floor(1 / s) * e * a * t;
 				
+		exp = 1000;
+		
 		return (int) exp;
 	}
 	private void increaseXP(Pokemon p, int xp, int timer) throws InterruptedException {

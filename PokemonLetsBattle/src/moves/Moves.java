@@ -23,7 +23,7 @@ public enum Moves {
 			"The user attacks the foe\nwhile shouting in a startling\nfashion. It may also make\nthe target flinch."),
 	AURORABEAM ("Aurora Beam", MoveType.SPECIAL, Type.ICE, 20, 65, 100, 
 			"The foe is hit with a\nrainbow-colored beam."),
-	BITE ("Bize", MoveType.PHYSICAL, Type.DARK, 0.30, 25, 60, 100,  
+	BITE ("Bite", MoveType.PHYSICAL, Type.DARK, 0.30, 25, 60, 100,  
 			"The foe is bitten with\nviciously sharp fangs.\nIt may make the target\nflinch."),
 	BLAZEKICK ("Blaze Kick", MoveType.PHYSICAL, Type.FIRE, Status.BURN, 0.10, 10, 85, 90, 1, 
 			"The user launches a kick\nwith a high critical-hit\nratio. It may also leave\nthe target with a burn."),

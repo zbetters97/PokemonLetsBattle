@@ -54,7 +54,7 @@ public class NPC_Rival extends Entity {
 		backSprite = setup("/npc/rival_battle_back", gp.tileSize * 4, gp.tileSize * 4);
 	}	
 	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon(Pokedex.RAYQUAZA, 5, null));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.TORCHIC, 5, null));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.COMBUSKEN, 16, null));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.BLAZIKEN, 36, null));
 	}

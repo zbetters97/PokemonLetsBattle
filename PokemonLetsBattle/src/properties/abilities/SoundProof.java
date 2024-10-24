@@ -18,7 +18,7 @@ public class SoundProof extends Ability {
 	);
 	
 	public SoundProof() {
-		super("Sound Proof", Category.ATTACK, 0.0, "Unaffected by sound moves.");
+		super("Sound Proof", Category.DEFENSE, 0.0, "Unaffected by sound moves.");
 	}	
 	
 	public boolean isValid(Pokemon attacker, Pokemon target, Move move) {	

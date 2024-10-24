@@ -19,7 +19,6 @@ public class Static extends Ability {
 		if (move.getMType() == MoveType.PHYSICAL) {
 			
 			int chance = new Random().nextInt(10);
-			chance = 2;
 			if (chance >= 1) {
 				return true;
 			}
