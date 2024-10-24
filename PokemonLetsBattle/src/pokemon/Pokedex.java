@@ -599,7 +599,8 @@ public enum Pokedex {
         ));
         moveMap.put(MUDKIP, Arrays.asList(
         		new Move(Moves.TACKLE), 
-        		new Move(Moves.GROWL)
+        		new Move(Moves.GROWL),
+        		new Move(Moves.WATERGUN)
         )); 
         moveMap.put(MARSHTOMP, Arrays.asList(
         		new Move(Moves.WATERGUN),

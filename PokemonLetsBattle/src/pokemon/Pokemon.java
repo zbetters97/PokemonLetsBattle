@@ -28,7 +28,7 @@ public class Pokemon {
 	private boolean isAlive;
 	private boolean attacking = false;
 	private boolean hit = false;	
-	private boolean waiting = false;
+	private boolean waiting = false, isProtected = false;
 	private int statusCounter, statusLimit;
 	private List<Move> moveSet;
 	private Entity item, capturedBall;
@@ -480,7 +480,12 @@ public class Pokemon {
 	public void setStatusLimit(int statusLimit) { this.statusLimit = statusLimit; }
 	
 	public boolean isAlive() { return isAlive; }
-	public void setAlive(boolean isAlive) {	this.isAlive = isAlive; this.status = null; this.waiting = false; }
+	public void setAlive(boolean isAlive) {	
+		this.isAlive = isAlive; 
+		this.status = null; 
+		this.waiting = false; 
+		this.isProtected = false;
+	}
 	
 	public boolean getAttacking() { return attacking; }
 	public void setAttacking(boolean attacking) { this.attacking = attacking; }
@@ -499,6 +504,9 @@ public class Pokemon {
 	
 	public boolean isWatiing() { return waiting; }
 	public void setWaiting(boolean waiting) { this.waiting = waiting; }
+	
+	public boolean isProtected() { return isProtected; }
+	public void setProtected(boolean isProtected) { this.isProtected = isProtected; }
 	/** END GETTERS AND SETTERS **/
 	
 	/** GETTERS **/

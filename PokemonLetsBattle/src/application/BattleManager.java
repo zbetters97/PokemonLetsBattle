@@ -71,11 +71,9 @@ public class BattleManager extends Thread {
 	public final int fight_Encounter = 1;
 	public final int fight_Swap = 2;
 	public final int fight_Start = 3;
-	public final int fight_Turn = 4;
-	public final int fight_Over = 5;	
-	public final int fight_Capture = 6;
-	public final int fight_Run = 7;
-	public final int fight_Evolve = 8;
+	public final int fight_Capture = 4;
+	public final int fight_Run = 5;
+	public final int fight_Evolve = 6;
 	
 	// CONSTRUCTOR
 	public BattleManager(GamePanel gp) {
@@ -116,19 +114,9 @@ public class BattleManager extends Thread {
 					break;
 			
 				case fight_Start:					
-					try { checkTurn(); } 
+					try { runBattle(); } 
 					catch (InterruptedException e) { e.printStackTrace(); }
-					break;
-					
-				case fight_Turn:
-					try { startTurn(); } 
-					catch (InterruptedException e) { e.printStackTrace(); }
-					break;
-					
-				case fight_Over:
-					try { getWinningTrainer(); } 
-					catch (InterruptedException e) { e.printStackTrace(); }
-					break;			
+					break;	
 					
 				case fight_Capture:
 					try { throwPokeball(); } 
@@ -278,7 +266,7 @@ public class BattleManager extends Thread {
 			gp.ui.battleState = gp.ui.battle_Dialogue;
 									
 			// TRAINER 2 FORCE SWAP OUT
-			if (fighter[1] == null || !fighter[1].isAlive()) {		
+			if (fighter[1] == null) {		
 												
 				fighter[1] = newFighter[1];
 				
@@ -286,27 +274,28 @@ public class BattleManager extends Thread {
 				typeDialogue("Trainer " + trainer.name + "\nsent out " + fighter[1].getName() + "!");				
 				pause(100);
 			}		
-			// TRAINER 1 FORCE SWAP OUT
-			if (fighter[0] == null || !fighter[0].isAlive()) {	
+			
+			if (fighter[0] == null || fighter[0] != null && newFighter[1] != null)  {
 				
 				if (otherFighters.contains(newFighter[0])) {
 					otherFighters.remove(newFighter[0]);
 				}
 				
-				fighter[0] = newFighter[0];
-				
-				gp.playSE(cry_SE, fighter[0].toString());	
-				typeDialogue("Go, " + fighter[0].getName() + "!");					
-				pause(100);
-				
+				if (newFighter[0] != null) {
+					fighter[0] = newFighter[0];		
+					
+					gp.playSE(cry_SE, fighter[0].toString());	
+					typeDialogue("Go, " + fighter[0].getName() + "!");					
+					pause(100);
+				}				
+								
 				newFighter[0] = null;
 				newFighter[1] = null;
 				
 				running = false;		
 				
 				gp.ui.battleState = gp.ui.battle_Options;
-			}	
-			// TRAINER 1 SWAP OUT (SAME TRAINER 2 FIGHTER)
+			}			
 			else if (newFighter[0] != null && newFighter[1] == null) {
 				
 				if (otherFighters.contains(newFighter[0])) {
@@ -352,111 +341,6 @@ public class BattleManager extends Thread {
 		}
 	}
 	
-	// CHECK TURN METHODS
-	private void checkTurn() throws InterruptedException {
-						
-		// GET CPU MOVE IF NO CPU DELAY
-		int delay = getDelayedMove();
-		
-		if (delay == 0 || delay == 1) {
-			cpuMove = cpuSelectMove();
-		}
-		
-		// SET ORDER OF TURNS
-		setRotation();
-		
-		fightStage = fight_Turn;
-	}
-	public int getDelayedMove() {		
-		
-		// both fighters are waiting
-		if (fighter[0].isWatiing() && fighter[1].isWatiing())
-			return 3;	
-		// fighter 1 is waiting
-		else if (fighter[0].isWatiing())
-			return 1;
-		// fighter 2 is waiting;
-		else if (fighter[1].isWatiing())
-			return 2;	
-		
-		return 0;
-	}	
-	private void setRotation() {		
-		
-		// if both pokemon are alive
-		if (fighter[0].isAlive() && fighter[1].isAlive()) {
-			
-			// 1 if trainer 1 moves first, 2 if trainer 2 moves first
-			// 3 if only trainer 2, 4 if only trainer 1, 5 if neither
-			int numTurn = getFirst();	
-			
-			if (numTurn == 1) { 
-				currentTurn = playerTurn;
-				nextTurn = cpuTurn;
-			}	
-			else if (numTurn == 2) { 
-				currentTurn = cpuTurn;
-				nextTurn = playerTurn;
-			}				
-			else if (numTurn == 3) { 
-				currentTurn = cpuTurn;
-				nextTurn = -1;
-			}				
-			else if (numTurn == 4) { 
-				currentTurn = playerTurn;
-				nextTurn = -1;
-			}
-			else if (numTurn == 5) {
-				currentTurn = -1;
-				nextTurn = -1;
-			}
-		}
-	}
-	private int getFirst() {
-		
-		if (playerMove == null && cpuMove == null) {
-			return 5;
-		}
-		else if (playerMove == null) {
-			return 3;
-		}
-		else if (cpuMove == null) {
-			return 4;
-		}
-		else {		
-			// if both moves go first (EX: Quick Attack)
-			if (playerMove.getGoFirst() && cpuMove.getGoFirst()) {			
-				
-				// if fighter_one is faster (fighter_one has advantage if equal)
-				if (fighter[0].getSpeed() >= fighter[1].getSpeed()) 
-					return 1;
-				else 
-					return 2;
-			}
-			// if only playerMove goes first (EX: Quick Attack)
-			else if (playerMove.getGoFirst()) 
-				return 1;
-			// if only cpuMove goes first (EX: Quick Attack)
-			else if (cpuMove.getGoFirst()) 
-				return 2;
-			else {
-				// if fighter 1 is faster
-				if (fighter[0].getSpeed() > fighter[1].getSpeed()) {
-					return 1;
-				}
-				// if fighter 2 is faster
-				else if (fighter[0].getSpeed() < fighter[1].getSpeed()) {
-					return 2;
-				}
-				// if both fighters have equal speed, coin flip decides
-				else {
-					Random r = new Random();					
-					return (r.nextFloat() <= ((float) 1 / 2)) ? 1 : 2;
-				}
-			}
-		}
-	}
-	
 	// SWAP FIGHTER METHODS
 	public boolean swapPokemon(int partySlot) {
 		
@@ -479,9 +363,18 @@ public class BattleManager extends Thread {
 		}		
 	}
 	private Pokemon cpuSelectNextFighter() {
-		
+				
 		if (fighter[0] == null) return trainer.pokeParty.get(0);
+				
+		int index = trainer.pokeParty.indexOf(fighter[1]);
+		if (index < 0 || index + 1 == trainer.pokeParty.size()) {
+			return null;
+		}
+		else {
+			 return trainer.pokeParty.get(index + 1);
+		}
 		
+		/*
 		int available = 0;
 		
 		// list to hold all candidates based on type effectiveness
@@ -576,8 +469,7 @@ public class BattleManager extends Thread {
 		}
 		// if 1 pokemon remaining in party
 		else if (available == 1) {
-			for (Pokemon p : trainer.pokeParty) {
-				
+			for (Pokemon p : trainer.pokeParty) {				
 				if (p.isAlive()) {
 					return p;
 				}
@@ -605,13 +497,58 @@ public class BattleManager extends Thread {
 			bestPokemon = Collections.max(pokemonList.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
 			return bestPokemon;
 		}
+		
+		*/
+	}
+			
+	// RUN BATTLE METHOD
+	private void runBattle() throws InterruptedException {
+		
+		getCPUMove();
+		setRotation();	
+		
+		startTurn();
+		
+		if (hasWinningPokemon()) {
+			getWinningPokemon();
+		}		
+		else {
+			checkStatusDamage();	
+			checkWeatherDamage();
+			
+			if (hasWinningPokemon()) {
+				getWinningPokemon();
+			}
+			else {
+				turnReset();
+			}
+		}
 	}
 	
-	// SELECT MOVE METHODS
-	public void setPlayerMove(int selection) {
-		playerMove = fighter[0].getMoveSet().get(selection);	
-		fightStage = fight_Start;
+	// GET MOVES METHOD
+	private void getCPUMove() throws InterruptedException {
+		
+		// GET CPU MOVE IF NO CPU DELAY
+		int delay = getDelayedMove();
+		
+		if (delay == 0 || delay == 1) {
+			cpuMove = cpuSelectMove();
+		}
 	}
+	public int getDelayedMove() {		
+		
+		// both fighters are waiting
+		if (fighter[0].isWatiing() && fighter[1].isWatiing())
+			return 3;	
+		// fighter 1 is waiting
+		else if (fighter[0].isWatiing())
+			return 1;
+		// fighter 2 is waiting;
+		else if (fighter[1].isWatiing())
+			return 2;	
+		
+		return 0;
+	}	
 	private Move cpuSelectMove() throws InterruptedException {
 		
 		Move bestMove;
@@ -657,51 +594,104 @@ public class BattleManager extends Thread {
 		
 		return bestMove;	
 	}
+	public void setPlayerMove(int selection) {
+		playerMove = fighter[0].getMoveSet().get(selection);	
+		fightStage = fight_Start;
+	}
+	
+	// SET ROTATION METHODS
+	private void setRotation() {		
+		
+		// if both pokemon are alive
+		if (fighter[0].isAlive() && fighter[1].isAlive()) {
 			
-	// START MOVE METHODS	
+			// 1 if trainer 1 moves first, 2 if trainer 2 moves first
+			// 3 if only trainer 2, 4 if only trainer 1, 5 if neither
+			int numTurn = getFirst();	
+			
+			if (numTurn == 1) { 
+				currentTurn = playerTurn;
+				nextTurn = cpuTurn;
+			}	
+			else if (numTurn == 2) { 
+				currentTurn = cpuTurn;
+				nextTurn = playerTurn;
+			}				
+			else if (numTurn == 3) { 
+				currentTurn = cpuTurn;
+				nextTurn = -1;
+			}				
+			else if (numTurn == 4) { 
+				currentTurn = playerTurn;
+				nextTurn = -1;
+			}
+			else if (numTurn == 5) {
+				currentTurn = -1;
+				nextTurn = -1;
+			}
+		}
+	}
+	private int getFirst() {
+		
+		if (playerMove == null && cpuMove == null) {
+			return 5;
+		}
+		else if (playerMove == null) {
+			return 3;
+		}
+		else if (cpuMove == null) {
+			return 4;
+		}
+		else {		
+			// if both moves go first (EX: Quick Attack)
+			if (playerMove.getGoFirst() && cpuMove.getGoFirst()) {			
+				
+				// if fighter_one is faster (fighter_one has advantage if equal)
+				if (fighter[0].getSpeed() >= fighter[1].getSpeed()) 
+					return 1;
+				else 
+					return 2;
+			}
+			// if only playerMove goes first (EX: Quick Attack)
+			else if (playerMove.getGoFirst()) 
+				return 1;
+			// if only cpuMove goes first (EX: Quick Attack)
+			else if (cpuMove.getGoFirst()) 
+				return 2;
+			else {
+				// if fighter 1 is faster
+				if (fighter[0].getSpeed() > fighter[1].getSpeed()) {
+					return 1;
+				}
+				// if fighter 2 is faster
+				else if (fighter[0].getSpeed() < fighter[1].getSpeed()) {
+					return 2;
+				}
+				// if both fighters have equal speed, coin flip decides
+				else {
+					Random r = new Random();					
+					return (r.nextFloat() <= ((float) 1 / 2)) ? 1 : 2;
+				}
+			}
+		}
+	}
+	
+	// START TURN METHOD
 	private void startTurn() throws InterruptedException {	
 		
 		if (currentTurn != -1) {		
 
 			if (canMove()) {					
-				startMove();					
+				move();					
 			}
 			else {
 				currentTurn = nextTurn;
 				nextTurn = -1;
 			}
-		}
-		else {						
-			// RESET NON-DELAYED MOVES
-			int delay = getDelayedMove();			
-			if (delay == 0) { playerMove = null; cpuMove = null; }
-			else if (delay == 1) cpuMove = null;			
-			else if (delay == 2) playerMove = null;
 			
-			if (hasWinningPokemon()) {
-				getWinningPokemon();
-			}
-			else {
-				checkStatusDamage();	
-				checkWeatherDamage();
-				
-				if (hasWinningPokemon()) {
-					getWinningPokemon();
-				}
-				else {
-					if (getDelayedMove() == 1 || getDelayedMove() == 3) {		
-						fightStage = fight_Start;
-					}
-					else {				
-						running = false;
-						fightStage = fight_Start;
-						gp.ui.battleState = gp.ui.battle_Options;
-					}
-				}
-			}
-		}			
-	}	
-	
+			startTurn();
+		}	
+	}		
 	private boolean canMove() throws InterruptedException {
 		
 		boolean canMove = true;
@@ -720,6 +710,8 @@ public class BattleManager extends Thread {
 		
 		return canMove;
 	}
+	
+	// STATUS CONDITION METHODS
 	private boolean paralyzed(int atk) throws InterruptedException {
 		
 		// 1/4 chance can't move due to PAR
@@ -844,10 +836,11 @@ public class BattleManager extends Thread {
 		}
 	}
 	
-	private void startMove() throws InterruptedException {		
+	// MOVE METHOD
+	private void move() throws InterruptedException {		
 				
 		int atk = currentTurn == playerTurn ? 0 : 1;
-		int trg = currentTurn == playerTurn ? 0 : 1;		
+		int trg = currentTurn == playerTurn ? 1 : 0;		
 		Move move = currentTurn == playerTurn ? playerMove : cpuMove;
 		
 		getWeatherMoveDelay(move);
@@ -858,7 +851,7 @@ public class BattleManager extends Thread {
 			
 			fighter[atk].setAttacking(true);
 			playSE(moves_SE, move.getName());	
-			
+									
 			if (move.getCoolDown()) {
 				
 				// reduce number of turns to wait
@@ -881,7 +874,7 @@ public class BattleManager extends Thread {
 				move.setpp(move.getpp() - 1);
 			}						
 			
-			attack();				
+			attack(atk, trg, move);				
 		}		
 		else if (move.getTurns() == move.getNumTurns()) {				
 			
@@ -890,6 +883,10 @@ public class BattleManager extends Thread {
 			
 			// reduce number of turns to wait
 			move.setTurns(move.getTurns() - 1);	
+			
+			if (move.getIsProtected()) {
+				fighter[atk].setProtected(true);
+			}
 			
 			fighter[atk].setWaiting(true);
 				
@@ -917,71 +914,57 @@ public class BattleManager extends Thread {
 	}
 	
 	// ATTACK METHOD
-	public void attack() throws InterruptedException {
-		
-		int atk = currentTurn == playerTurn ? 0 : 1;
-		int trg = currentTurn == playerTurn ? 1 : 0;		
-		Move atkMove = currentTurn == playerTurn ? playerMove : cpuMove;
-		Move trgMove = currentTurn == playerTurn ? cpuMove : playerMove;
-				
-        // if attack lands
-		if (hit(atk, atkMove, trgMove)) {
+	public void attack(int atk, int trg, Move move) throws InterruptedException {
 			
-			// move has a status affect
-			if (atkMove.getMType().equals(MoveType.STATUS)) {
-				statusMove(atk, trg, atkMove);		
-				currentTurn = nextTurn;	
-				nextTurn = -1;
-			}
+		if (hit(atk, trg, move)) {
 			
-			// move has an attribute affect
-			else if (atkMove.getMType().equals(MoveType.ATTRIBUTE)) {
-				attributeMove(atk, trg, atkMove);
-				currentTurn = nextTurn;	
-				nextTurn = -1;
-			}
+			switch (move.getMType()) {
 			
-			// move has an attribute affect
-			else if (atkMove.getMType().equals(MoveType.WEATHER)) {
-				weatherMove(atk, atkMove);
-				currentTurn = nextTurn;	
-				nextTurn = -1;
-			}
-			
-			// move is in other category
-			else if (atkMove.getMType().equals(MoveType.OTHER)) {
-				
-				switch (atkMove.getName()) {
-					case "Teleport":
-						break;						
-					default:
-						break;
-				}		
-			}
-			// move is damage-dealing
-			else {								
-				damageMove(atk, trg, atkMove);
-			}				
+				case STATUS:
+					statusMove(atk, trg, move);		
+					currentTurn = nextTurn;	
+					nextTurn = -1;
+					break;
+					
+				case ATTRIBUTE:
+					attributeMove(atk, trg, move);
+					currentTurn = nextTurn;	
+					nextTurn = -1;
+					break;
+					
+				case WEATHER:
+					weatherMove(atk, move);
+					currentTurn = nextTurn;	
+					nextTurn = -1;
+					break;
+					
+				case OTHER:
+					if (move.getMove() == Moves.TELEPORT) {
+						
+					}
+					break;
+					
+				default:
+					damageMove(atk, trg, move);
+					break;
+			}		
 		}
-		// attack missed
 		else {
 			typeDialogue("The attack missed!");
 			currentTurn = nextTurn;	
 			nextTurn = -1;
 		}			
 	}		
-	private boolean hit(int atk, Move atkMove, Move trgMove) {
+	private boolean hit(int atk, int trg, Move atkMove) {
 				
-		if (trgMove == null)
-			return true;
-		
-		// if target used delayed move and delayed move protects target		
-		if (trgMove.getTurns() == 1 && !trgMove.getIsProtected())
+		if (fighter[trg].isProtected()) {
 			return false;
+		}
 		
 		// if move never misses, return true
-		if (atkMove.getAccuracy() == -1) 
+		if (atkMove.getAccuracy() == -1) {
 			return true; 
+		}
 		
 		double accuracy = getMoveAccuracy(atkMove) * fighter[atk].getAccuracy();
 		
@@ -1317,9 +1300,6 @@ public class BattleManager extends Thread {
 	// POST MOVE METHODS
 	private void dealDamage(int atk, int trg, Move move, int damage, double crit) throws InterruptedException {		
 
-		// subtract damage dealt from total hp
-		int result = fighter[trg].getHP() - damage;	
-		
 		String hitEffectiveness = "";
 		
 		if (fighter[trg].getTypes() != null) {
@@ -1332,7 +1312,7 @@ public class BattleManager extends Thread {
 		gp.playSE(battle_SE, hitEffectiveness);
 		fighter[trg].setHit(true);
 		
-		decreaseHP(trg, result, damage);
+		decreaseHP(trg, fighter[trg].getHP() - damage, damage);
 		
 		if (hitEffectiveness.equals("hit-super")) {
 			typeDialogue("It's super effective!");
@@ -1348,14 +1328,9 @@ public class BattleManager extends Thread {
 		
 		typeDialogue(fighter[trg].getName() + " took\n" + damage + " damage!");	
 		
-		// set HP to 0 if below 0
-		if (result <= 0) {
-			result = 0;
-			currentTurn = -1;
-			nextTurn = -1;		
-		}
-		else {
-			applyEffect(atk, trg, move);
+		if (fighter[trg].getHP() > 0) {
+			
+			applyEffect(atk, trg, move);			
 			if (nextTurn != -1) {
 				getFlinch(trg, move);
 			}
@@ -1363,6 +1338,10 @@ public class BattleManager extends Thread {
 				currentTurn = nextTurn;	
 				nextTurn = -1;	
 			}			
+		}
+		else {
+			currentTurn = -1;
+			nextTurn = -1;		
 		}	
 	}
 	private String getHitSE(double effectiveness) throws InterruptedException {
@@ -1475,7 +1454,7 @@ public class BattleManager extends Thread {
 		currentTurn = nextTurn;	
 		nextTurn = -1;		
 	}
-	
+			
 	// STATUS METHODS
 	private void checkStatusDamage() throws InterruptedException {					
 		if (fighter[0].isAlive()) {
@@ -1656,7 +1635,7 @@ public class BattleManager extends Thread {
 			gp.playSE(faint_SE, fighter[0].toString());			
 			typeDialogue(fighter[0].getName() + " fainted!");	
 
-			fightStage = fight_Over;
+			getWinningTrainer();
 		}
 		// TIE GAME
 		else if (winner == 2) {
@@ -1666,8 +1645,8 @@ public class BattleManager extends Thread {
 			
 			gp.playSE(faint_SE, fighter[1].toString());
 			typeDialogue(fighter[1].getName() + " fainted!");
-			
-			fightStage = fight_Over;
+
+			getWinningTrainer();
 		}
 	}		
 	private void gainXP() throws InterruptedException {
@@ -2025,6 +2004,24 @@ public class BattleManager extends Thread {
 		return payout;
 	}
 	
+	private void turnReset() {
+		
+		// RESET NON-DELAYED MOVES
+		int delay = getDelayedMove();			
+		if (delay == 0) { playerMove = null; cpuMove = null; }
+		else if (delay == 1) cpuMove = null;			
+		else if (delay == 2) playerMove = null;
+		
+		if (delay == 1 || delay == 3) {		
+			fightStage = fight_Start;
+		}
+		else {				
+			running = false;
+			fightStage = fight_Start;
+			gp.ui.battleState = gp.ui.battle_Options;
+		}
+	}
+	
 	// CAPTURE POKEMON METHODS
 	private void throwPokeball() throws InterruptedException {
 		
@@ -2159,6 +2156,7 @@ public class BattleManager extends Thread {
 		}
 	}
 	
+	// EVOLVE METHODS
 	private void checkEvolve() throws InterruptedException {
 		gp.stopMusic();
 		
@@ -2224,9 +2222,22 @@ public class BattleManager extends Thread {
 	// BATTLE END METHOD
 	public void endBattle() {
 		gp.stopMusic();
+		gp.setupMusic();
+		
+		gp.ui.isFighterCaptured = false;
+		gp.ui.commandNum = 0;
+		
+		gp.particleList.clear();
+		gp.gameState = gp.playState;
+		
+		fightStage = fight_Encounter;
+		
+		active = false;
+		running = false;
 		
 		for (Pokemon p : gp.player.pokeParty) {
 			p.setWaiting(false);
+			p.setProtected(false);
 			
 			for (Move m : p.getMoveSet()) {
 				m.setTurns(m.getTurns());
@@ -2255,17 +2266,6 @@ public class BattleManager extends Thread {
 		loser = -1;
 		
 		escapeAttempts = 0;
-		
-		fightStage = fight_Encounter;
-		gp.ui.isFighterCaptured = false;
-		gp.ui.commandNum = 0;
-		
-		active = false;
-		running = false;
-		
-		gp.particleList.clear();
-		gp.setupMusic();
-		gp.gameState = gp.playState;
 	}
 	
 	// MISC HANDLERS
