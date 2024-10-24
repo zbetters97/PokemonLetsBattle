@@ -70,6 +70,21 @@ public enum Status {
 		}				
 	}
 	
+	public String printCondition() {
+		String recover = "";
+		
+		switch (this.abr) {  	
+			case ("PAR"): recover = " grew\nparalyzed!"; break;
+			case ("PSN"): recover = " became\npoisonsed!"; break;
+	    	case ("CNF"): recover = " became\nconfused!"; break;
+	    	case ("BRN"): recover = " suffered\na burn!"; break;
+	    	case ("FRZ"): recover = " froze\nin ice!"; break;
+	    	case ("SLP"): recover = " fell\nasleep!"; break;
+		}		
+		
+		return recover;
+	}
+	
 	public String printRecover() {
 		String recover = "";
 		

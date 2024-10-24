@@ -2382,7 +2382,7 @@ public class UI {
 			g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);
 		}
 		else {
-			g2.drawImage(gp.btlManager.trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y + 15, null);
+			g2.drawImage(gp.btlManager.trainer.frontSprite, fighter_two_X + 25, fighter_two_Y + 15, null);
 		}
 		
 		x = fighter_one_X - gp.tileSize;
@@ -2486,8 +2486,14 @@ public class UI {
 		g2.drawImage(battle_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
 		g2.drawImage(battle_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
 
-		g2.drawImage(gp.btlManager.trainer[1].frontSprite, fighter_two_X + 25, fighter_two_Y + 15, null);
+		g2.drawImage(gp.btlManager.trainer.frontSprite, fighter_two_X + 25, fighter_two_Y + 15, null);
 		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);			
+	}
+	public void resetFighterPositions() {
+		fighter_one_X = fighter_one_startX;
+		fighter_two_X = fighter_two_startX;
+		fighter_one_Y = fighter_one_startY;
+		fighter_two_Y = fighter_two_startY;		
 	}
 	
 	private void drawBattle_Dialogue() {
@@ -2594,14 +2600,16 @@ public class UI {
 		drawBattle_HP(x, y, num);
 	}	
 	private void drawBattle_Party(int num) {	
-		
+						
 		int startX;
 		int x;
 		int y;
 		
-		int partySize = gp.btlManager.trainer[num].pokeParty.size();
+		ArrayList<Pokemon> pokeParty = num == 0 ? gp.player.pokeParty : gp.btlManager.trainer.pokeParty;
+		
+		int partySize = pokeParty.size();
 		int activePartySize = 0;
-		for (Pokemon p : gp.btlManager.trainer[num].pokeParty) {
+		for (Pokemon p : pokeParty) {
 			if (p.isAlive()) activePartySize++;
 		}
 		
@@ -2973,7 +2981,7 @@ public class UI {
 			
 			commandNum = 0;
 		}
-		else if (gp.keyH.bPressed) {			
+		if (gp.keyH.bPressed) {			
 			gp.keyH.aPressed = false;
 			gp.keyH.playCursorSE();			
 			

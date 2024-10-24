@@ -49,7 +49,7 @@ public enum Moves {
 			"The user releases a horr-\nible aura imbued with dark\nthoughts. It may also make\nthe target flinch."),
 	DEFENSECURL ("Defense Curl", MoveType.ATTRIBUTE, Type.NORMAL, true, 40, -1, 1, Arrays.asList("defense"), 
 			"The user curls up to\nconceal weak spots and\nraise its Defense stat."),
-	DIG ("Dig", MoveType.PHYSICAL, Type.GROUND, 10, 80, 100, 2, false, 
+	DIG ("Dig", MoveType.PHYSICAL, Type.GROUND, 10, 80, 100, 2, false, false, 
 			"dug\ninto the ground!", 
 			"The user burrows, then\nattacks on the second turn.\nIt can also be used to exit\ndungeons."),
 	DOUBLEEDGE ("Double Edge", MoveType.PHYSICAL, Type.STEEL, 10, 80, 100, 0.25, 
@@ -82,7 +82,7 @@ public enum Moves {
 			"The foe is scorched with an\nintense blast of fire.\nThe target may also be\nleft with a burn."),
 	FLASHCANNON ("Flash Cannon", MoveType.SPECIAL, Type.STEEL, 10, 80, 100, 
 			"The user gathers all its\nlight energy and releases it at\nonce."),
-	FLY ("Fly", MoveType.PHYSICAL, Type.FLYING, 15, 90, 95, 2, false, 
+	FLY ("Fly", MoveType.PHYSICAL, Type.FLYING, 15, 90, 95, 2, false, false, 
 			"took\nflight!", 
 			"The user soars, then\nstrikes on the second turn.\nIt can also be used for\nflying to any familiar town."),
 	GIGADRAIN ("Giga Drain", MoveType.SPECIAL, Type.GRASS, 10, 60, 100, 
@@ -99,7 +99,8 @@ public enum Moves {
 			"The user howls loudly to\nraise its spirit, boosting\nits Attack stat."),
 	HYDROPUMP ("Hydro Pump", MoveType.SPECIAL, Type.WATER, 5, 165, 80, 
 			"The foe is blasted by a huge\nvolume of water launched\nunder great pressure."),
-	HYPERBEAM ("Hyper Beam", MoveType.SPECIAL, Type.NORMAL, 5, 150, 90, 2, true,
+	HYPERBEAM ("Hyper Beam", MoveType.SPECIAL, Type.NORMAL, 5, 150, 90, 2, true, false,
+			"is\nrecharging...",
 			"The foe is attacked with a\npowerful beam. The user\nmust rest on the next turn\nto regain its energy."),
 	HYPERVOICE ("Hyper Voice", MoveType.SPECIAL, Type.NORMAL, 10, 90, 100, 
 			"The user lets loose a\nhorribly echoing shout with\nthe power to inflict damage."),
@@ -155,6 +156,8 @@ public enum Moves {
 			"The user summons a heavy\nrain that falls for five\nturns, powering up Water-\ntype moves."),
 	RAZORLEAF ("Razor Leaf", MoveType.PHYSICAL, Type.GRASS, 25, 80, 95, 1, 
 			"Sharp-edged leaves are\nlaunched to slash at the\nfoe. It has a high critical-\nhit ratio."),
+	REST ("Rest", MoveType.ATTRIBUTE, Type.NORMAL, true, 10, -1, -1, null,
+			"The user goes to sleep for\ntwo turns. It fully\nrestores the user's HP and\nheals any status problem."),
 	ROCKTHROW ("Rock Throw", MoveType.PHYSICAL, Type.ROCK, 15, 75, 90, 
 			"The user picks up and\nthrows a small rock at the\nfoe to attack."),
 	ROLLOUT ("Rollout", MoveType.PHYSICAL, Type.ROCK, 20, 45, 90, 
@@ -181,7 +184,9 @@ public enum Moves {
 			"The foe is slammed with a\nlong tail, vines, etc., to\ninflict damage."),
 	SLASH ("Slash", MoveType.PHYSICAL, Type.NORMAL, 20, 70, 100, 1, 
 			"The foe is attacked with a\nslash of claws, etc.\nIt has a high critical-hit\nratio."),
-	SOLARBEAM ("Solar Beam", MoveType.SPECIAL, Type.GRASS, 10, 180, 100, 2, true, 
+	SLEEPTALK ("Sleep Talk", MoveType.SPECIAL, Type.NORMAL, 10, -1, -1, 
+			"While it is asleep, the user\nrandomly uses one of the\nmoves it knows."),
+	SOLARBEAM ("Solar Beam", MoveType.SPECIAL, Type.GRASS, 10, 180, 100, 2, false, true, 
 			"is\ncharging a light beam...", 
 			"A two-turn attack. The\nuser gathers light, then\nblasts a bundled beam on\nthe second turn."),
 	STOMP ("Stomp", MoveType.PHYSICAL, Type.NORMAL, 0.30, 20, 65, 100, 
@@ -240,7 +245,7 @@ public enum Moves {
 	private Type type;
 	private Status effect;
 	private int pp, power, accuracy, level, crit, numTurns;
-	private boolean goFirst, toSelf, isProtected, recharge;	
+	private boolean goFirst, coolDown, toSelf, isProtected;	
 	private double probability, damageToSelf, flinch;		
 	private List<String> stats;
 	/** END INITIALIZE VALUES **/	
@@ -251,7 +256,7 @@ public enum Moves {
 			List<String> stats, boolean toSelf,  
 			int pp, int power, int accuracy, int level, int crit, int numTurns,
 			double damageToSelf, double flinch,		
-			boolean goFirst, boolean isProtected, boolean recharge,
+			boolean goFirst, boolean coolDown, boolean isProtected,
 			String weather, String delay, String info) {
 		this.name = name;
 		this.mType = mType;
@@ -271,8 +276,8 @@ public enum Moves {
 		this.numTurns = numTurns;
 		
 		this.goFirst = goFirst;
+		this.coolDown = coolDown;
 		this.isProtected = isProtected;
-		this.recharge = recharge;
 		
 		this.damageToSelf = damageToSelf;
 		this.flinch = flinch;
@@ -325,26 +330,17 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0,
 				0.0, 0.0, 
-				goFirst, false, false, 
+				goFirst, false, false,
 				"", "", info);
 	}	
-	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, int numTurns, boolean isProtected, String delay, String info) {
+	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, int numTurns, boolean coolDown, boolean isProtected, String delay, String info) {
 		this(name, mType, type, 
 				null, 0.0, 
 				null, false, 
 				pp, power, accuracy, 0, 0, numTurns,
 				0.0, 0.0, 
-				false, isProtected, false,
+				false, coolDown, isProtected, 
 				"", delay, info);
-	}
-	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, int numTurns, boolean recharge, String info) {
-		this(name, mType, type, 
-				null, 0.0, 
-				null, false, 
-				pp, power, accuracy, 0, 0, numTurns,
-				0.0, 0.0, 
-				false, false, recharge,
-				"", "", info);
 	}
 	Moves (String name, MoveType mType, Type type, Status effect, int pp, int accuracy, String info) {
 		this(name, mType, type, 
@@ -428,8 +424,8 @@ public enum Moves {
 	public int getPower() {	return power; }	
 	public int getNumTurns() { return numTurns; }
 	public boolean getGoFirst() { return goFirst; }	
+	public boolean getCoolDown() { return coolDown; }	
 	public boolean getIsProtected() { return isProtected; }	
-	public boolean getRecharge() { return recharge; }	
 	public String getWeather() { return weather; }	
 	public String getDelay(String name) { return name + " " + delay; }	
 	public String getInfo() {	return info; }	

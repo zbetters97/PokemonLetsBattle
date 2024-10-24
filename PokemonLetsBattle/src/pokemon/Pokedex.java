@@ -297,6 +297,8 @@ public enum Pokedex {
 					Map.entry(21, Moves.SUPERSONIC),
 					Map.entry(25, Moves.STOMP),
 					Map.entry(31, Moves.SCREECH),
+					Map.entry(41, Moves.REST),
+					Map.entry(42, Moves.SLEEPTALK),
 					Map.entry(45, Moves.HYPERVOICE)
 			)),
 	LOUDRED ("Loudred", 294, Type.NORMAL, new SoundProof(), 84, 71, 43, 71, 43, 48, 40, 126, 3, 2, 120,
@@ -305,6 +307,8 @@ public enum Pokedex {
 					Map.entry(23, Moves.SUPERSONIC),
 					Map.entry(29, Moves.STOMP),
 					Map.entry(37, Moves.SCREECH),
+					Map.entry(51, Moves.REST),
+					Map.entry(52, Moves.SLEEPTALK),
 					Map.entry(57, Moves.HYPERVOICE)
 			)),
 	EXPLOUD ("Exploud", 295, Type.NORMAL, new SoundProof(), 104, 91, 63, 91, 63, 68, -1, 184, 3, 3, 45,
@@ -314,6 +318,8 @@ public enum Pokedex {
 					Map.entry(29, Moves.STOMP),
 					Map.entry(37, Moves.SCREECH),
 					Map.entry(40, Moves.CRUNCH),
+					Map.entry(55, Moves.REST),
+					Map.entry(56, Moves.SLEEPTALK),
 					Map.entry(63, Moves.HYPERVOICE),
 					Map.entry(71, Moves.HYPERBEAM)
 			)),

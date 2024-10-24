@@ -17,7 +17,6 @@ public class Move {
 	private int pp;
 	private int bpp;
 	private int turns;
-	private boolean recharge;
 	/** END INITIALIZE VALUES **/
 	
 	/** CONSTRUCTORS **/
@@ -26,7 +25,6 @@ public class Move {
 		this.pp = move.getpp();
 		this.bpp = pp;
 		this.turns = move.getNumTurns();
-		this.recharge = move.getRecharge();
 	}	
 	/** END CONSTRUCTORS **/
 	
@@ -59,9 +57,6 @@ public class Move {
 	public void setTurns(int turns) { this.turns = turns; }
 	
 	public int getNumTurns() {	return move.getNumTurns(); }
-	
-	public boolean getRecharge() { return recharge; }
-	public void flipCharge() { recharge = !recharge; }
 	/** END GETTERS AND SETTERS **/
 	
 	/** GETTERS **/
@@ -78,6 +73,7 @@ public class Move {
 	}
 	public int getPower() {	return move.getPower(); }	
 	public boolean getGoFirst() { return move.getGoFirst(); }	
+	public boolean getCoolDown() { return move.getCoolDown(); }
 	public boolean getIsProtected() { return move.getIsProtected(); }	
 	
 	public String getWeather() { return move.getWeather(); }
