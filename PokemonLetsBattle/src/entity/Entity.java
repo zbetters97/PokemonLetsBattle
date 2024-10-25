@@ -503,9 +503,7 @@ public class Entity {
 				
 				break;
 			}								
-		}
-		
-		
+		}		
 	}
 	public void give(Entity item, Pokemon p) {
 		
@@ -514,6 +512,7 @@ public class Entity {
 			p.giveItem(item);			
 			useItem(this, gp.player);				
 			
+			gp.ui.bagNum = 0;
 			gp.ui.partyDialogue = p.getName() + " was given a\n" + item.name + " to hold.";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;			
 		}
@@ -531,6 +530,7 @@ public class Entity {
 			p.setHP((int) (p.getBHP() / value));			
 			useItem(this, gp.player);						
 			
+			gp.ui.bagNum = 0;
 			gp.ui.partyDialogue = p.getName() + " was revived!";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;
 		}		
@@ -551,6 +551,7 @@ public class Entity {
 			p.addHP(value);			
 			useItem(this, entity);				
 		
+			gp.ui.bagNum = 0;
 			gp.ui.partyDialogue = p.getName() + " gained " + gainedHP + " HP.";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;			
 		}		
@@ -566,6 +567,7 @@ public class Entity {
 			p.setStatus(null);			
 			useItem(this, entity);			
 			
+			gp.ui.bagNum = 0;
 			gp.ui.partyDialogue = p.getName() + " was healed.";
 			gp.ui.partyState = gp.ui.party_Main_Dialogue;
 		}		
@@ -586,6 +588,7 @@ public class Entity {
 			gp.btlManager.running = true;			
 			new Thread(gp.btlManager).start();	
 			
+			gp.ui.bagNum = 0;
 			gp.ui.battleState = gp.ui.battle_Dialogue;
 			gp.gameState = gp.battleState;
 		}		
