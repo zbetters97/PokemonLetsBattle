@@ -308,7 +308,7 @@ public enum Pokedex {
 					Map.entry(5, Moves.TAILWHIP), 
 					Map.entry(37, Moves.REST)
 			)),	
-	LINOONE ("Linoone", 263, Type.NORMAL, new QuickFeet(), 78, 70, 61, 50, 61, 100, -1, 128, 0, 2, 264, 
+	LINOONE ("Linoone", 265, Type.NORMAL, new QuickFeet(), 78, 70, 61, 50, 61, 100, -1, 128, 0, 2, 264, 
 			Map.ofEntries(	
 					Map.entry(5, Moves.TAILWHIP), 
 					Map.entry(41, Moves.SLASH),

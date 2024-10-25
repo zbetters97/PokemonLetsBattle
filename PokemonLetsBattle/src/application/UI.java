@@ -2974,7 +2974,7 @@ public class UI {
 			gp.keyH.aPressed = false;
 			gp.keyH.playCursorSE();
 			
-			gp.btlManager.setPlayerMove(commandNum);
+			gp.btlManager.getPlayerMove(commandNum);
 			gp.btlManager.running = true;			
 			new Thread(gp.btlManager).start();	
 			battleState = battle_Dialogue;

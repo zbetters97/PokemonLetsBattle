@@ -28,6 +28,12 @@ public class GamePanel extends JPanel implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 	
+	public enum Weather {
+		/** WEATHER BATTLE REFERENCE: https://www.ign.com/wikis/pokemon-heartgold-soulsilver-version/Weather **/
+		
+		CLEAR, SUNLIGHT, RAIN, HAIL, SANDSTORM
+	}
+	
 	// GENERAL CONFIG
 	private Graphics2D g2;
 	private Thread gameThread;
