@@ -10,7 +10,6 @@ import entity.Entity;
 import entity.collectables.items.ITM_EXP_Share;
 import moves.Move;
 import moves.Moves;
-import moves.Move.MoveType;
 import pokemon.Pokemon;
 import properties.Status;
 import properties.Type;
@@ -24,12 +23,15 @@ public class BattleManager extends Thread {
 	
 	// GENERAL VALUES		
 	public Entity trainer;
+	
 	public Pokemon[] fighter = new Pokemon[2];
 	private Pokemon[] newFighter = new Pokemon[2];
 	private ArrayList<Pokemon> otherFighters = new ArrayList<>();
+	
 	private Move playerMove, cpuMove;
 	public Move newMove = null;
 	public Move oldMove = null;
+	
 	private Weather weather = Weather.CLEAR;
 	private int weatherDays = -1;
 	private int winner = -1, loser = -1;	
@@ -370,33 +372,33 @@ public class BattleManager extends Thread {
 	}
 	
 	// GET MOVES METHOD
-	public void getPlayerMove(int selection) {
-		playerMove = fighter[0].getMoveSet().get(selection);	
-		fightStage = fight_Start;
+	public Move getPlayerMove(int selection) {
+		
+		playerMove = fighter[0].getMoveSet().get(selection);
+		
+		boolean struggle = true;
+		for (Move m : fighter[0].getMoveSet()) {
+			if (m.getpp() > 0) {
+				struggle = false;
+				break;
+			}
+		}
+		
+		if (struggle) {
+			playerMove = new Move(Moves.STRUGGLE);
+		}
+		
+		return playerMove;
 	}
 	private void getCPUMove() throws InterruptedException {
 		
 		// GET CPU MOVE IF NO CPU DELAY
-		int delay = getDelayedMove();
+		int delay = BattleUtility.getDelay(playerMove, cpuMove);
 		
 		if (delay == 0 || delay == 1) {			
 			cpuMove = BattleUtility.getBestMove(fighter[1], fighter[0], weather);
 		}
 	}
-	public int getDelayedMove() {		
-		
-		// both fighters are waiting
-		if (fighter[0].isWatiing() && fighter[1].isWatiing())
-			return 3;	
-		// fighter 1 is waiting
-		else if (fighter[0].isWatiing())
-			return 1;
-		// fighter 2 is waiting;
-		else if (fighter[1].isWatiing())
-			return 2;	
-		
-		return 0;
-	}	
 	
 	// SET ROTATION METHODS
 	private void setRotation() {		
@@ -453,6 +455,8 @@ public class BattleManager extends Thread {
 			startTurn();
 		}	
 	}		
+	
+	// STATUS CONDITION METHODS
 	private boolean canMove() throws InterruptedException {
 		
 		boolean canMove = true;
@@ -472,8 +476,6 @@ public class BattleManager extends Thread {
 		
 		return canMove;
 	}
-	
-	// STATUS CONDITION METHODS
 	private boolean paralyzed(Pokemon pkm) throws InterruptedException {
 		
 		// 1/4 chance can't move due to PAR
@@ -601,78 +603,57 @@ public class BattleManager extends Thread {
 	// MOVE METHOD
 	private void move() throws InterruptedException {		
 				
-		int atk = currentTurn == playerTurn ? 0 : 1;
-		int trg = currentTurn == playerTurn ? 1 : 0;		
+		Pokemon atk = currentTurn == playerTurn ? fighter[0] : fighter[1];
+		Pokemon trg = currentTurn == playerTurn ? fighter[1] : fighter[0];		
 		Move move = currentTurn == playerTurn ? playerMove : cpuMove;
 		
 		getWeatherMoveDelay(move);
+		if (move.getTurns() == 0) {				
 			
-		if (move.getTurns() <= 1 ^ move.getCoolDown() || move.getMType() == MoveType.WEATHER) {				
+			typeDialogue(atk.getName() + " used\n" + move.toString() + "!", false); 
 			
-			typeDialogue(fighter[atk].getName() + " used\n" + move.toString() + "!", false); 
+			atk.setAttacking(true);
+			playSE(moves_SE, move.getName());
 			
-			fighter[atk].setAttacking(true);
-			playSE(moves_SE, move.getName());	
-									
-			if (move.getCoolDown()) {
-				
-				// reduce number of turns to wait
-				move.setTurns(move.getTurns() - 1);	
-				
-				fighter[atk].setWaiting(true);
-			}
-			else {
-				// reset turns to wait
-				move.setTurns(move.getNumTurns());	
-				
-				fighter[atk].setWaiting(false);	
-			}
+			move.setTurns(move.getNumTurns());
 			
 			// decrease move pp
-			if (fighter[trg].getAbility().getCategory() == Ability.Category.PP) {
-				move.setpp(move.getpp() - (int) fighter[trg].getAbility().getFactor());
+			if (trg.getAbility().getCategory() == Ability.Category.PP) {
+				move.setpp(move.getpp() - (int) trg.getAbility().getFactor());
 			}
 			else {				
 				move.setpp(move.getpp() - 1);
 			}						
 			
-			attack(fighter[atk], fighter[trg], move);				
-		}		
-		else if (move.getTurns() == move.getNumTurns()) {				
+			attack(atk, trg, move);				
+		}			
+		else {						
+			typeDialogue(atk.getName() + " used\n" + move.toString() + "!");
+			typeDialogue(move.getDelay(atk.getName()));		
 			
-			typeDialogue(fighter[atk].getName() + " used\n" + move.toString() + "!");
-			typeDialogue(move.getDelay(fighter[atk].getName()));				
-			
-			// reduce number of turns to wait
-			move.setTurns(move.getTurns() - 1);	
-			
-			if (move.getIsProtected()) {
-				fighter[atk].setProtected(true);
-			}
-			
-			fighter[atk].setWaiting(true);
-				
+			move.setTurns(move.getTurns() - 1);
+						
 			currentTurn = nextTurn;	
 			nextTurn = -1;							
 		}	
-		else {
-			typeDialogue(move.getDelay(fighter[atk].getName()));				
-			
-			// reduce number of turns to wait
-			move.setTurns(move.getTurns() - 1);	
-			if (move.getTurns() == 0) {
-				fighter[atk].setWaiting(false);
-				move.setTurns(move.getNumTurns());
-			}
-				
-			currentTurn = nextTurn;	
-			nextTurn = -1;	
-		}
 	}		
 	private void getWeatherMoveDelay(Move move) {
-		if (weather == Weather.SUNLIGHT && move.getMove() == Moves.SOLARBEAM) {
-			move.setTurns(1);
-		}
+		
+		switch (weather) {		
+			case SUNLIGHT:
+				if (move.getMove() == Moves.SOLARBEAM) {
+					move.setTurns(1);
+				}
+				break;
+			case RAIN:
+				break;
+			case HAIL:
+				break;
+			case SANDSTORM:
+				break;
+			case CLEAR:
+				break;
+		}		
 	}
 	
 	// ATTACK METHOD
@@ -1438,7 +1419,7 @@ public class BattleManager extends Thread {
 					
 					newFighter[1] = cpuSelectNextFighter();	
 					
-					if (gp.player.getAvailablePokemon() > 1 && !fighter[0].isWatiing()) {
+					if (gp.player.getAvailablePokemon() > 1 && playerMove.isReady()) {
 						
 						typeDialogue("Trainer " + trainer.name + " is about\nto sent out " + 
 								newFighter[1].getName() + "!", true);
@@ -1568,10 +1549,18 @@ public class BattleManager extends Thread {
 	private void turnReset() {
 		
 		// RESET NON-DELAYED MOVES
-		int delay = getDelayedMove();			
-		if (delay == 0) { playerMove = null; cpuMove = null; }
-		else if (delay == 1) cpuMove = null;			
-		else if (delay == 2) playerMove = null;
+		int delay = BattleUtility.getDelay(playerMove, cpuMove);	
+		
+		if (delay == 0) { 
+			playerMove = null; 
+			cpuMove = null; 
+		}
+		else if (delay == 1) {
+			cpuMove = null;			
+		}
+		else if (delay == 2) {
+			playerMove = null;
+		}
 		
 		if (delay == 1 || delay == 3) {		
 			fightStage = fight_Start;
@@ -1761,9 +1750,6 @@ public class BattleManager extends Thread {
 		running = false;
 		
 		for (Pokemon p : gp.player.pokeParty) {
-			p.setWaiting(false);
-			p.setProtected(false);
-			
 			for (Move m : p.getMoveSet()) {
 				m.setTurns(m.getTurns());
 			}
@@ -1782,8 +1768,8 @@ public class BattleManager extends Thread {
 		playerMove = null;
 		cpuMove = null;		
 		newMove = null;
-		ballUsed = null;
-		
+		ballUsed = null;		
+				
 		weather = Weather.CLEAR;
 		weatherDays = -1;
 		

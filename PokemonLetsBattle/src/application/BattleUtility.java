@@ -20,6 +20,52 @@ public final class BattleUtility {
 	
 	private BattleUtility(GamePanel gp) { }
 	
+	public static Move getBestMove(Pokemon attacker, Pokemon opponent, Weather weather) {
+		
+		Move bestMove;
+		
+		// holds Map of Move and Damage Points
+		Map<Move, Integer> moves = new HashMap<>();
+		
+		// for each move in attacker's move set
+		for (Move move : attacker.getMoveSet()) {
+			
+			if (!move.isToSelf() && move.getpp() != 0) {
+				
+				// find damage value of each move (no crit is assumed)
+				int damage = calculateDamage(attacker, opponent, move, weather);
+				
+				// add move and corresponding damage value to k/v list
+				moves.put(move, damage);	
+			}		
+		}
+		
+		// find max value in moves list based on value
+		if (!moves.isEmpty()) {
+			
+			bestMove = Collections.max(moves.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey(); 
+			
+			// if best move does not cause KO
+			int damage = calculateDamage(attacker, opponent, bestMove, weather);
+			if (damage < opponent.getHP()) {
+				
+				// 33% chance CPU selects random move instead of most powerful			
+				int val = 1 + (int)(Math.random() * 4);
+				if (val == 1) {				
+					int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
+					bestMove = attacker.getMoveSet().get(ranMove);
+				}	
+			}			
+		}
+		// if list is empty, select random move
+		else {
+			int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
+			bestMove = attacker.getMoveSet().get(ranMove);
+		}
+		
+		return bestMove;
+	}
+	
 	public static int getFirstTurn(Pokemon fighter1, Pokemon fighter2, Move move1, Move move2) {
 		
 		int first = 1;
@@ -88,51 +134,37 @@ public final class BattleUtility {
 		return first;
 	}
 	
-	public static Move getBestMove(Pokemon attacker, Pokemon opponent, Weather weather) {
+	public static int getDelay(Move move1, Move move2) {		
 		
-		Move bestMove;
+		int delay = 0;
 		
-		// holds Map of Move and Damage Points
-		Map<Move, Integer> moves = new HashMap<>();
-		
-		// for each move in attacker's move set
-		for (Move move : attacker.getMoveSet()) {
+		// BOTH MOVES ARE ACTIVE
+		if (move1 != null && move2 != null) {
 			
-			if (!move.isToSelf() && move.getpp() != 0) {
-				
-				// find damage value of each move (no crit is assumed)
-				int damage = calculateDamage(attacker, opponent, move, weather);
-				
-				// add move and corresponding damage value to k/v list
-				moves.put(move, damage);	
-			}		
+			// both fighters are waiting
+			if (!move1.isReady() && !move2.isReady()) {
+				delay = 3;	
+			}
+			// fighter 2 is waiting;
+			else if (!move2.isReady()) {
+				delay = 2;	
+			}
+			// fighter 1 is waiting
+			else if (!move1.isReady()) {
+				delay = 1;
+			}	
 		}
-		
-		// find max value in moves list based on value
-		if (!moves.isEmpty()) {
-			
-			bestMove = Collections.max(moves.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey(); 
-			
-			// if best move does not cause KO
-			int damage = calculateDamage(attacker, opponent, bestMove, weather);
-			if (damage < opponent.getHP()) {
+		// CPU MOVE IS ACTIVE AND WAITING
+		else if (move2 != null && !move2.isReady()) {
+			delay = 2;
+		}
+		// PLAYER MOVE IS ACTIVE AND WAITING
+		else if (move1 != null && !move1.isReady()) {
+			delay = 1;
+		}
 				
-				// 33% chance CPU selects random move instead of most powerful			
-				int val = 1 + (int)(Math.random() * 4);
-				if (val == 1) {				
-					int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
-					bestMove = attacker.getMoveSet().get(ranMove);
-				}	
-			}			
-		}
-		// if list is empty, select random move
-		else {
-			int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
-			bestMove = attacker.getMoveSet().get(ranMove);
-		}
-		
-		return bestMove;
-	}
+		return delay;
+	}	
 	
 	public static boolean hit(Pokemon attacker, Pokemon target, Move move, Weather weather) {
 		

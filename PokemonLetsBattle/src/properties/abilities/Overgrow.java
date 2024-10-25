@@ -7,7 +7,7 @@ import properties.Type;
 public class Overgrow extends Ability {
 
 	public Overgrow() {
-		super("Overgrow", Category.ATTACK, 1.5, "When HP is below 1/3rd,\\nGrass's power increases\\nto 1.5 times.");
+		super("Overgrow", Category.ATTACK, 1.5, "When HP is below 1/3rd,\nGrass's power increases\nto 1.5 times.");
 	}
 	
 	public boolean isValid(Pokemon attacker, Pokemon target, Move move) {

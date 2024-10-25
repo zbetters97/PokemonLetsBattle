@@ -34,7 +34,7 @@ public class GamePanel extends JPanel implements Runnable {
 		CLEAR, SUNLIGHT, RAIN, HAIL, SANDSTORM
 	}
 	
-	// GENERAL CONFIG
+	// GENERAL CONFIGaaaa
 	private Graphics2D g2;
 	private Thread gameThread;
 	private int FPS = 60;
@@ -175,8 +175,8 @@ public class GamePanel extends JPanel implements Runnable {
 	private void setupWildPokemon() {
 		wildEncounters.put( 
 				petalburg, Map.ofEntries(
-						Map.entry(Pokedex.GEODUDE, 65), 
-						Map.entry(Pokedex.MACHOP, 30),
+						Map.entry(Pokedex.ZIGZAGOON, 65), 
+						Map.entry(Pokedex.POOCHYENA, 30),
 						Map.entry(Pokedex.PIKACHU, 5)
 				)
 		);

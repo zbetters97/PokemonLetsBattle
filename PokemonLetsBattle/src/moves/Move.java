@@ -23,8 +23,8 @@ public class Move {
 	public Move (Moves move) {		
 		this.move = move;
 		this.pp = move.getpp();
-		this.bpp = pp;
-		this.turns = move.getNumTurns();
+		this.bpp = pp;		
+		this.turns = move.getNumTurns();			
 	}	
 	/** END CONSTRUCTORS **/
 	
@@ -49,14 +49,15 @@ public class Move {
 		if (this.bpp < 0) {
 			this.bpp = 0; 
 		}
-	}	
-	
+	}		
 	public void resetpp() { pp = bpp;}
 	
 	public int getTurns() {	return turns; }
 	public void setTurns(int turns) { this.turns = turns; }
 	
-	public int getNumTurns() {	return move.getNumTurns(); }
+	public int getNumTurns() {	return move.getNumTurns(); }	
+	
+	public boolean isReady() { return getTurns() == getNumTurns(); }
 	/** END GETTERS AND SETTERS **/
 	
 	/** GETTERS **/
@@ -73,8 +74,7 @@ public class Move {
 	}
 	public int getPower() {	return move.getPower(); }	
 	public boolean getGoFirst() { return move.getGoFirst(); }	
-	public boolean getCoolDown() { return move.getCoolDown(); }
-	public boolean getIsProtected() { return move.getIsProtected(); }	
+	public boolean getProtected() { return move.getProtected(); }	
 	
 	public String getWeather() { return move.getWeather(); }
 	public String getDelay(String name) { return move.getDelay(name); }	

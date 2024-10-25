@@ -2972,14 +2972,22 @@ public class UI {
 		
 		if (gp.keyH.aPressed) {		
 			gp.keyH.aPressed = false;
-			gp.keyH.playCursorSE();
 			
-			gp.btlManager.getPlayerMove(commandNum);
-			gp.btlManager.running = true;			
-			new Thread(gp.btlManager).start();	
-			battleState = battle_Dialogue;
+			Move pMove = gp.btlManager.getPlayerMove(commandNum);
 			
-			commandNum = 0;
+			if (pMove.getpp() <= 0) {
+				gp.keyH.playErrorSE();
+			}
+			else {
+				gp.keyH.playCursorSE();
+				
+				gp.btlManager.running = true;			
+				new Thread(gp.btlManager).start();	
+				gp.btlManager.fightStage = gp.btlManager.fight_Start;
+				
+				battleState = battle_Dialogue;				
+				commandNum = 0;
+			}			
 		}
 		if (gp.keyH.bPressed) {			
 			gp.keyH.aPressed = false;

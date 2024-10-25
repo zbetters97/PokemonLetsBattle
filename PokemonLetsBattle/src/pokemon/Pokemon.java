@@ -25,10 +25,7 @@ public class Pokemon {
 	private double speed, attack, defense, spAttack, spDefense, accuracy;	
 	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg;
 	private Status status;
-	private boolean isAlive;
-	private boolean attacking = false;
-	private boolean hit = false;	
-	private boolean waiting = false, isProtected = false;
+	private boolean isAlive = true, attacking = false, hit = false, isProtected = false;
 	private int statusCounter, statusLimit;
 	private List<Move> moveSet;
 	private Entity item, capturedBall;
@@ -483,7 +480,6 @@ public class Pokemon {
 	public void setAlive(boolean isAlive) {	
 		this.isAlive = isAlive; 
 		this.status = null; 
-		this.waiting = false; 
 		this.isProtected = false;
 	}
 	
@@ -493,6 +489,9 @@ public class Pokemon {
 	public boolean getHit() { return hit; }
 	public void setHit(boolean hit) { this.hit = hit; }
 	
+	public boolean isProtected() { return isProtected; }
+	public void setProtected(boolean isProtected) { this.isProtected = isProtected; }
+	
 	public List<Move> getMoveSet() { return moveSet; }
 	public void setMoveSet(ArrayList<Move> moveSet) { this.moveSet = moveSet; }
 	
@@ -501,12 +500,6 @@ public class Pokemon {
 	
 	public Entity getBall() { return capturedBall; }
 	public void setBall(Entity capturedBall) { this.capturedBall = capturedBall; }
-	
-	public boolean isWatiing() { return waiting; }
-	public void setWaiting(boolean waiting) { this.waiting = waiting; }
-	
-	public boolean isProtected() { return isProtected; }
-	public void setProtected(boolean isProtected) { this.isProtected = isProtected; }
 	/** END GETTERS AND SETTERS **/
 	
 	/** GETTERS **/

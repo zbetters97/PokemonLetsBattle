@@ -11,7 +11,7 @@ public class Ability {
 		ATTACK, ATTRIBUTE, CRITICAL, DEFENSE, FLINCH, PP, RECOIL, STATUS, WEATHER;
 	}
 		
-    protected String name, description, attribute;
+    protected String name, attribute, description;
     protected Category category;
     protected double factor;
     protected Status effect;   
