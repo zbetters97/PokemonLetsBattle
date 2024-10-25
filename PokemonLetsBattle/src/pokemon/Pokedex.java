@@ -643,7 +643,6 @@ public enum Pokedex {
         		new Move(Moves.HOWL)
         ));  
         moveMap.put(ZIGZAGOON, Arrays.asList(
-        		new Move(Moves.WATERGUN),
         		new Move(Moves.TACKLE),
         		new Move(Moves.GROWL)
         ));  
