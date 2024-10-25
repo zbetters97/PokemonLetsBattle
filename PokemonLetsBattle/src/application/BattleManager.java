@@ -262,41 +262,59 @@ public class BattleManager extends Thread {
 			
 			if (!fighter[0].isAlive()) fighter[0] = null;
 			if (!fighter[1].isAlive()) fighter[1] = null;
-			
-			gp.ui.battleState = gp.ui.battle_Dialogue;
 									
-			// TRAINER 2 FORCE SWAP OUT
-			if (fighter[1] == null) {		
-												
-				fighter[1] = newFighter[1];
-				
-				gp.playSE(cry_SE, fighter[1].toString());	
-				typeDialogue("Trainer " + trainer.name + "\nsent out " + fighter[1].getName() + "!");				
-				pause(100);
-			}		
+			gp.ui.battleState = gp.ui.battle_Dialogue;
 			
-			if (fighter[0] == null || fighter[0] != null && newFighter[1] != null)  {
+			// CPU SWAP OUT
+			if (fighter[1] == null) {
 				
-				if (otherFighters.contains(newFighter[0])) {
-					otherFighters.remove(newFighter[0]);
-				}
-				
+				// PLAYER SWAP OUT
 				if (newFighter[0] != null) {
+					
+					if (otherFighters.contains(newFighter[0])) {
+						otherFighters.remove(newFighter[0]);
+					}
+					
 					fighter[0] = newFighter[0];		
 					
 					gp.playSE(cry_SE, fighter[0].toString());	
 					typeDialogue("Go, " + fighter[0].getName() + "!");					
 					pause(100);
-				}				
-								
+				}
+				
+				fighter[1] = newFighter[1];
+				
+				gp.playSE(cry_SE, fighter[1].toString());	
+				typeDialogue("Trainer " + trainer.name + "\nsent out " + fighter[1].getName() + "!");				
+				pause(100);
+				
 				newFighter[0] = null;
 				newFighter[1] = null;
 				
-				running = false;		
+				running = false;				
+				gp.ui.battleState = gp.ui.battle_Options;				
+			}
+			// PLAYER FORCE SWAP OUT
+			else if (fighter[0] == null) {
 				
-				gp.ui.battleState = gp.ui.battle_Options;
-			}			
-			else if (newFighter[0] != null && newFighter[1] == null) {
+				if (otherFighters.contains(newFighter[0])) {
+					otherFighters.remove(newFighter[0]);
+				}
+				
+				fighter[0] = newFighter[0];		
+				
+				gp.playSE(cry_SE, fighter[0].toString());	
+				typeDialogue("Go, " + fighter[0].getName() + "!");					
+				pause(100);
+				
+				newFighter[0] = null;
+				newFighter[1] = null;
+				
+				running = false;				
+				gp.ui.battleState = gp.ui.battle_Options;	
+			}
+			// MID BATTLE SWAP OUT
+			else {			
 				
 				if (otherFighters.contains(newFighter[0])) {
 					otherFighters.remove(newFighter[0]);
@@ -305,13 +323,8 @@ public class BattleManager extends Thread {
 				if (!otherFighters.contains(fighter[0])) {
 					otherFighters.add(fighter[0]);	
 				}
-				
-				fighter[0].setWaiting(false);	
-				for (Move m : fighter[0].getMoveSet()) {
-					m.setTurns(m.getTurns());
-				}
-				
-				fighter[0] = newFighter[0];				
+
+				fighter[0] = newFighter[0];		
 				
 				gp.playSE(cry_SE, fighter[0].toString());
 				typeDialogue("Go, " + fighter[0].getName() + "!");	
@@ -321,19 +334,7 @@ public class BattleManager extends Thread {
 				newFighter[1] = null;
 				
 				fightStage = fight_Start;
-			}			
-			else {
-				newFighter[0] = null;
-				newFighter[1] = null;
-				
-				if (fighter[0].isWatiing()) {
-					fightStage = fight_Start;
-				}
-				else {
-					running = false;
-					gp.ui.battleState = gp.ui.battle_Options;	
-				}
-			}	
+			}
 		}				
 		// TRAINER HAS WON
 		else {							
@@ -642,12 +643,27 @@ public class BattleManager extends Thread {
 		else if (cpuMove == null) {
 			return 4;
 		}
-		else {		
+		else {				
+			
+			double speed1 = fighter[0].getSpeed();
+			double speed2 = fighter[1].getSpeed();
+			
+			if (fighter[0].getAbility().getCategory() == Ability.Category.ATTRIBUTE &&
+					fighter[0].getAbility().isValid(fighter[0])) {
+				
+				speed1 *= fighter[0].getAbility().getFactor();
+			}
+			if (fighter[1].getAbility().getCategory() == Ability.Category.ATTRIBUTE &&
+					fighter[1].getAbility().isValid(fighter[1])) {
+				
+				speed2 *= fighter[1].getAbility().getFactor();
+			}
+			
 			// if both moves go first (EX: Quick Attack)
 			if (playerMove.getGoFirst() && cpuMove.getGoFirst()) {			
 				
 				// if fighter_one is faster (fighter_one has advantage if equal)
-				if (fighter[0].getSpeed() >= fighter[1].getSpeed()) 
+				if (speed1 >= speed2) 
 					return 1;
 				else 
 					return 2;
@@ -660,11 +676,11 @@ public class BattleManager extends Thread {
 				return 2;
 			else {
 				// if fighter 1 is faster
-				if (fighter[0].getSpeed() > fighter[1].getSpeed()) {
+				if (speed1 > speed2) {
 					return 1;
 				}
 				// if fighter 2 is faster
-				else if (fighter[0].getSpeed() < fighter[1].getSpeed()) {
+				else if (speed1 < speed2) {
 					return 2;
 				}
 				// if both fighters have equal speed, coin flip decides

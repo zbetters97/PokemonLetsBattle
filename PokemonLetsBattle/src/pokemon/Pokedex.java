@@ -290,6 +290,30 @@ public enum Pokedex {
 					Map.entry(39, Moves.MUDDYWATER),
 					Map.entry(52, Moves.EARTHQUAKE)
 			)),
+	POOCHYENA ("Poochyena", 261, Type.DARK, new QuickFeet(), 35, 55, 35, 30, 30, 35, 18, 55, 0, 1, 255, 
+			Map.ofEntries(
+					Map.entry(5, Moves.HOWL),
+					Map.entry(13, Moves.BITE),
+					Map.entry(33, Moves.SCARYFACE),
+					Map.entry(45, Moves.TAKEDOWN),
+					Map.entry(53, Moves.CRUNCH)
+			)),
+	MIGHTYENA ("Mightyena", 262, Type.DARK, new QuickFeet(), 70, 90, 70, 60, 60, 70, -1, 128, 0, 2, 127, 
+			Map.ofEntries(
+					Map.entry(37, Moves.SCARYFACE),
+					Map.entry(52, Moves.TAKEDOWN)
+			)),
+	ZIGZAGOON ("Zigzagoon", 264, Type.NORMAL, new QuickFeet(), 38, 30, 41, 30, 41, 60, 25, 60, 0, 1, 255, 
+			Map.ofEntries(	
+					Map.entry(5, Moves.TAILWHIP), 
+					Map.entry(37, Moves.REST)
+			)),	
+	LINOONE ("Linoone", 263, Type.NORMAL, new QuickFeet(), 78, 70, 61, 50, 61, 100, -1, 128, 0, 2, 264, 
+			Map.ofEntries(	
+					Map.entry(5, Moves.TAILWHIP), 
+					Map.entry(41, Moves.SLASH),
+					Map.entry(47, Moves.REST)
+			)),	
 	WHISMUR ("Whismur", 293, Type.NORMAL, new SoundProof(), 64, 51, 23, 51, 23, 28, 20, 68, 3, 1, 190,
 			Map.ofEntries(
 					Map.entry(11, Moves.ASTONISH),
@@ -611,6 +635,23 @@ public enum Pokedex {
         		new Move(Moves.WATERGUN),
         		new Move(Moves.TACKLE),
         		new Move(Moves.GROWL)
+        ));  
+        moveMap.put(POOCHYENA, Arrays.asList(
+        		new Move(Moves.TACKLE)
+        ));  
+        moveMap.put(MIGHTYENA, Arrays.asList(
+        		new Move(Moves.TACKLE),
+        		new Move(Moves.HOWL)
+        ));  
+        moveMap.put(ZIGZAGOON, Arrays.asList(
+        		new Move(Moves.WATERGUN),
+        		new Move(Moves.TACKLE),
+        		new Move(Moves.GROWL)
+        ));  
+        moveMap.put(LINOONE, Arrays.asList(
+        		new Move(Moves.TACKLE),
+        		new Move(Moves.GROWL),
+        		new Move(Moves.TAILWHIP)        		
         ));  
         moveMap.put(WHISMUR, Arrays.asList(
         		new Move(Moves.POUND)

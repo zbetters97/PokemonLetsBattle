@@ -34,6 +34,13 @@ public class Ability {
     	this.attribute = attribute;
     	this.description = description;    	
     } 
+    public Ability(String name, Category category, String attribute, double factor, String description) {
+    	this.name = name;  
+    	this.category = category;
+    	this.attribute = attribute;
+    	this.factor = factor;
+    	this.description = description;    	
+    } 
     public Ability(String name, Category category, Status effect, String description) {
     	this.name = name;  
     	this.category = category;
@@ -42,6 +49,7 @@ public class Ability {
     }    
     /** END CONSTRUCTOR **/
     
+    public boolean isValid(Pokemon pokemon) { return false; }
     public boolean isValid(Pokemon attacker, Pokemon target, Move move) { return false; }
 	
 	/** GETTERS **/	
