@@ -20,7 +20,7 @@ public class NPC_Rival extends Entity {
 		
 		type = type_npc;
 		name = npcName;
-		direction = "down";
+		direction = "right";
 		speed = 1; defaultSpeed = speed;
 		animationSpeed = 12; 
 		
@@ -81,11 +81,19 @@ public class NPC_Rival extends Entity {
 	}
 	
 	public void setAction() {
-		if (!moving) getDirection(60);			
+		
+		if (hasBattle && !findBattle(5, 0)) {
+			getDirection(60);			
+		}
+		else if (!moving) {
+			getDirection(60);		
+			move();
+		}
+			
 		if (moving) walking();		
 	}
 	
-	public void getDirection(int rate) {		
+	public void getDirection(int rate) {	
 		
 		actionLockCounter++;			
 		if (actionLockCounter >= rate) {		
@@ -97,7 +105,6 @@ public class NPC_Rival extends Entity {
 			else if (dir == 4) direction = "right";
 			
 			actionLockCounter = 0;
-			move();
 		}		
 	}
 	

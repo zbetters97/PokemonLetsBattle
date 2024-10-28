@@ -16,6 +16,7 @@ import java.util.Map;
 
 import javax.swing.JPanel;
 
+import ai.PathFinder;
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
@@ -124,7 +125,8 @@ public class GamePanel extends JPanel implements Runnable {
 	public EnvironmentManager eManager = new EnvironmentManager(this);
 	public CollisionChecker cChecker = new CollisionChecker(this);	
 	public EventHandler eHandler = new EventHandler(this);	
-	public BattleManager btlManager = new BattleManager(this);	
+	public BattleManager btlManager = new BattleManager(this);
+	public PathFinder pFinder = new PathFinder(this);
 	
 	public ArrayList<Entity> entities = new ArrayList<>();
 	public Player player = new Player(this);	

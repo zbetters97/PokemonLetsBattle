@@ -166,6 +166,7 @@ public class Entity {
 	}		
 	
 	public void walking() {
+		
 		if (canMove) {			
 			switch (direction) {
 				case "up": worldY -= speed; break;
@@ -209,7 +210,7 @@ public class Entity {
 		}
 	}
 	
-	// DIRECTION
+	/** DIRECTION **/
 	public void getDirection(int rate) {		
 		
 		actionLockCounter++;			
@@ -237,6 +238,7 @@ public class Entity {
 		
 		return oppositeDirection;
 	}
+	/** END DIRECTION **/
 	
 	// DIALOGUE
 	public void startDialogue(Entity entity, int setNum) {
@@ -246,7 +248,7 @@ public class Entity {
 		gp.gameState = gp.dialogueState;
 	}
 	
-	// PATH FINDING
+	/** PATH FINDING **/
 	public void isOnPath(Entity target, int distance) {
 		if (getTileDistance(target) < distance) {
 			onPath = true;
@@ -307,6 +309,216 @@ public class Entity {
 		
 		return playerWithinBounds;		
 	}
+	public int getGoalCol(Entity target) {
+		int goalCol = (target.worldX + target.hitbox.x) / gp.tileSize;
+		return goalCol;
+	}
+	public int getGoalRow(Entity target) {
+		int goalRow = (target.worldY + target.hitbox.y) / gp.tileSize;
+		return goalRow;
+	}
+	public boolean findPath(int goalCol, int goalRow) {
+		
+		boolean pathFound = false;
+		
+		int startCol = (worldX + hitbox.x) / gp.tileSize;
+		int startRow = (worldY + hitbox.y) / gp.tileSize;
+		
+		// SET PATH
+		gp.pFinder.setNodes(startCol, startRow, goalCol, goalRow);
+		
+		if (gp.pFinder.search()) 
+			pathFound = true;
+			
+		return pathFound;
+	}	
+	public void followPath(int goalCol, int goalRow) {
+		
+		int startCol = (worldX + hitbox.x) / gp.tileSize;
+		int startRow = (worldY + hitbox.y) / gp.tileSize;
+		
+		// SET PATH
+		gp.pFinder.setNodes(startCol, startRow, goalCol, goalRow);
+		
+		// PATH FOUND
+		if (gp.pFinder.search()) {
+			
+			// NEXT WORLDX & WORLDY
+			int nextX = gp.pFinder.pathList.get(0).col * gp.tileSize;
+			int nextY = gp.pFinder.pathList.get(0).row * gp.tileSize;
+						
+			// ENTITY hitbox
+			int eLeftX = worldX + hitbox.x;
+			int eRightX = worldX + hitbox.x + hitbox.width;
+			int eTopY = worldY + hitbox.y;
+			int eBottomY = worldY + hitbox.y + hitbox.height;
+			
+			// FIND DIRECTION TO NEXT NODE
+			// UP OR DOWN
+			if (eTopY > nextY && eLeftX >= nextX && eRightX < nextX + gp.tileSize) 
+				direction = "up";			
+			else if (eTopY < nextY && eLeftX >= nextX && eRightX < nextX + gp.tileSize)
+				direction = "down";			
+			// LEFT OR RIGHT
+			else if (eTopY >= nextY && eBottomY < nextY + gp.tileSize) {				
+				if (eLeftX > nextX) direction = "left";
+				if (eLeftX < nextX) direction = "right";
+			}
+			// UP OR LEFT
+			else if (eTopY > nextY && eLeftX > nextX) {				
+				direction = "up";				
+				checkCollision();
+				if (collisionOn) direction = "left";			
+			}
+			// UP OR RIGHT
+			else if (eTopY > nextY && eLeftX < nextX) {
+				direction = "up";
+				checkCollision();
+				if (collisionOn) direction = "right";		
+			}
+			// DOWN OR LEFT
+			else if (eTopY < nextY && eLeftX > nextX) {
+				direction = "down";
+				checkCollision();
+				if (collisionOn) direction = "left";
+			}
+			// DOWN OR RIGHT
+			else if (eTopY < nextY && eLeftX < nextX) {
+				direction = "down";
+				checkCollision();
+				if (collisionOn) direction = "right";
+			}
+		}
+		// NO PATH FOUND
+		else {
+			onPath = false;
+		}
+		
+		// GOAL REACHED
+		if (gp.pFinder.pathList.size() > 0) {		
+			int nextCol = gp.pFinder.pathList.get(0).col;
+			int nextRow = gp.pFinder.pathList.get(0).row;
+			if (nextCol == goalCol && nextRow == goalRow)
+				pathCompleted = true;
+		}
+	}
+	/** END PATH FINDING **/
+		
+	/** PLAYER INTERACTION **/
+	public boolean findBattle(int tileDistance, int dialogueSet) {
+		
+		boolean playerFound = findPlayer(direction, tileDistance);		
+		if (playerFound) { 
+			
+			gp.player.stopMoving();
+			followPath(getGoalCol(gp.player), getGoalRow(gp.player));
+			
+			if (!moving) {				
+				move();				
+			}
+			if (pathCompleted) {			
+				
+				gp.player.direction = getOppositeDirection(direction);
+				gp.player.canMove = true;
+				
+				this.dialogueSet = dialogueSet;
+				startDialogue(this, this.dialogueSet);
+			}
+		}
+
+		return playerFound;
+	}
+	public boolean findPlayer(String direction, int tileDistance) {
+		
+		boolean playerFound = false;
+			
+		// PLAYER WITHIN 8 TILES
+		isOnPath(gp.player, tileDistance);			
+		if (onPath) {			
+			
+			isOffPath(gp.player, tileDistance);				
+			
+			// FIND IF PLAYER IS IN SIGHTS				
+			switch (direction) {
+				case "up":
+					if (worldY - gp.player.worldY >= 0 && worldX - gp.player.worldX == 0) {
+						if (pathOpen(direction)) playerFound = true;
+					}					
+					break;
+				case "down":
+					if (worldY - gp.player.worldY < 0 && worldX - gp.player.worldX == 0) {
+						if (pathOpen(direction)) playerFound = true;
+					}					
+					break;
+				case "left":
+					if (worldX - gp.player.worldX >= 0 && worldY - gp.player.worldY == 0) {
+						if (pathOpen(direction)) playerFound = true;
+					}							
+					break;
+				case "right":
+					if (worldX - gp.player.worldX < 0 && worldY - gp.player.worldY == 0) {								
+						if (pathOpen(direction)) playerFound = true;
+					}
+							
+					break;
+			}
+		}
+		else {
+			playerFound = false;
+		}
+			
+		return playerFound;
+	}
+	private boolean pathOpen(String direction) {		
+		
+		switch(direction) {
+			case "up":
+				for (int i = 0; i <= getTileDistance(gp.player); i++) {					
+					int wX = worldX / gp.tileSize;
+					int wY = (worldY - gp.tileSize * i) / gp.tileSize;
+					if (tileHasCollision(wX, wY))
+						return false;
+				}
+				break;
+			case "down":
+				for (int i = 0; i <= getTileDistance(gp.player); i++) {					
+					int wX = worldX / gp.tileSize;
+					int wY = (worldY + gp.tileSize * i) / gp.tileSize;
+					if (tileHasCollision(wX, wY))
+						return false;
+				}
+				break;
+			case "left":				
+				for (int i = 0; i <= getTileDistance(gp.player); i++) {					
+					int wX = (worldX - gp.tileSize * i) / gp.tileSize;
+					int wY = worldY / gp.tileSize;
+					if (tileHasCollision(wX, wY))
+						return false;
+				}				
+				break;
+			case "right":
+				for (int i = 0; i <= getTileDistance(gp.player); i++) {					
+					int wX = (worldX + gp.tileSize * i) / gp.tileSize;
+					int wY = worldY / gp.tileSize;
+					if (tileHasCollision(wX, wY))
+						return false;
+				}
+				break;
+		}		
+		
+		return true;
+	}
+	private boolean tileHasCollision(int wX, int wY) {
+		
+		boolean tileCollision = false;
+		
+		int tileNum = gp.tileM.mapTileNum[gp.currentMap][wX][wY];
+		if (gp.tileM.tile[tileNum].collision || gp.tileM.tile[tileNum].water) {
+			tileCollision = true;
+		}
+		
+		return tileCollision;
+	}
 	public void approachPlayer(int rate) {
 		
 		actionLockCounter++;
@@ -333,14 +545,7 @@ public class Entity {
 			actionLockCounter = 0;
 		}
 	}
-	public int getGoalCol(Entity target) {
-		int goalCol = (target.worldX + target.hitbox.x) / gp.tileSize;
-		return goalCol;
-	}
-	public int getGoalRow(Entity target) {
-		int goalRow = (target.worldY + target.hitbox.y) / gp.tileSize;
-		return goalRow;
-	}
+	/** END PLAYER INTERACTION **/
 	
 	public boolean hasPokemon() {
 		
@@ -366,6 +571,8 @@ public class Entity {
 		
 		return availablePokemon;
 	}
+	
+	/** WILD ENCOUNTER **/
 	protected void checkWildEncounter() {
 		// random encounter formula reference: https://bulbapedia.bulbagarden.net/wiki/Wild_Pok%C3%A9mon
 						
@@ -415,6 +622,8 @@ public class Entity {
 		
 		return wildPokemon;
 	}
+	/** END WILD ENCOUNTER **/
+	
 	public boolean healPokemonParty() {
 		
 		if (pokeParty.size() > 0) {
@@ -431,6 +640,7 @@ public class Entity {
 			return false;
 		}		
 	}	
+	
 	public Pokemon pokemonHasHM(String objectType) {
 		
 		Pokemon hmPokemon = null;
@@ -471,6 +681,7 @@ public class Entity {
 		return hmPokemon;		
 	}
 	
+	/** ITEM FUNCTIONS **/
 	public void useItem(Entity collectable, Entity person) {	
 		
 		ArrayList<Entity> inventory = null;
@@ -611,6 +822,7 @@ public class Entity {
 		
 		return itemIndex;		
 	}
+	/** END ITEM FUNCTIONS **/
 	
 	// MANAGE VALUES
 	public void manageValues() {
@@ -693,7 +905,7 @@ public class Entity {
 			}		
 		
 			g2.drawImage(image, tempScreenX, tempScreenY, null);
-								
+										
 			// DRAW HITBOX
 			if (gp.keyH.debug) {
 				g2.setColor(Color.RED);

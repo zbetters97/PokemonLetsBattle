@@ -183,7 +183,7 @@ public class Player extends Entity {
 /** UPDATER **/
 	public void update() {
 				
-		if (!moving) {			
+		if (!moving && canMove) {			
 			
 			if (gp.keyH.startPressed) {
 				
@@ -280,7 +280,7 @@ public class Player extends Entity {
 		
 		direction = tempDirection;
 	}
-	
+			
 	public void walking() {
 		
 		if (canMove) {
@@ -378,6 +378,14 @@ public class Player extends Entity {
 		else {
 			return false;
 		}
+	}
+	
+	public void stopMoving() {		
+		if (!moving) {
+			canMove = false;
+			running = false;
+			spriteNum = 1;	
+		}		
 	}
 	
 	public void manageValues() {
