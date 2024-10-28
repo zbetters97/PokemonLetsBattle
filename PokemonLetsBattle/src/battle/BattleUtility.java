@@ -1,4 +1,4 @@
-package application;
+package battle;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import application.GamePanel;
 import application.GamePanel.Weather;
 import entity.Entity;
 import moves.Move;

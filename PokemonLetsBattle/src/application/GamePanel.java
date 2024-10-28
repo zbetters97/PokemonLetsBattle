@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 import ai.PathFinder;
+import battle.BattleManager;
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;

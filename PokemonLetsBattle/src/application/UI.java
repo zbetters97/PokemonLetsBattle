@@ -49,13 +49,13 @@ public class UI {
 	// DIALOGUE HANDLER	
 	public Entity npc;
 	public String currentDialogue = "";
-	String battleDialogue;
+	public String battleDialogue;
 	public String combinedText = "";
 	public int dialogueCounter = 0;	
 	public int charIndex = 0;	
 	public int textSpeed = 2;
 	public int battleTextSpeed = 1;
-	boolean canSkip = false;
+	public boolean canSkip = false;
 	private BufferedImage dialogue_next;
 	
 	public int commandNum = 0;
@@ -2695,7 +2695,8 @@ public class UI {
 		g2.setStroke(new BasicStroke(3));
 		g2.fillRoundRect(x, y, width, height, 3, 3);				
 			
-		double remainHP = (double)gp.btlManager.fighter[num].getHP() / (double)gp.btlManager.fighter[num].getBHP();	
+		double remainHP = (double)gp.btlManager.fighter[num].getHP() / 
+				(double)gp.btlManager.fighter[num].getBHP();	
 					
 		if (remainHP >= .50) g2.setColor(hp_green);
 		else if (remainHP >= .25) g2.setColor(hp_yellow);

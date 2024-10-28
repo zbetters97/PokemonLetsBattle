@@ -478,9 +478,11 @@ public class Pokemon {
 	
 	public boolean isAlive() { return isAlive; }
 	public void setAlive(boolean isAlive) {	
+		this.hp = 0;
 		this.isAlive = isAlive; 
 		this.status = null; 
 		this.isProtected = false;
+		resetMovesPP();
 	}
 	
 	public boolean getAttacking() { return attacking; }

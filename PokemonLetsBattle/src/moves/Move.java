@@ -57,11 +57,24 @@ public class Move {
 	
 	public int getTurns() {	return move.getTurns(); }	
 	
-	public boolean isReady() { 		
-		return turnCount <= 0;	
+	public boolean isReady() { 
+		
+		if (move.getRecharge()) {
+			if (turnCount == move.getTurns()) return true;			
+			else return false;			
+		}
+		else {
+			return turnCount <= 0;
+		}
 	}
-	public boolean isWaiting() {
-		return turnCount < getTurns();
+	
+	public void resetMove() {		
+		if (move.getRecharge()) turnCount--;		
+		else turnCount = getTurns();		
+	}
+	
+	public boolean isWaiting() {		
+		return turnCount < getTurns();		
 	}
 	/** END GETTERS AND SETTERS **/
 	
@@ -80,6 +93,7 @@ public class Move {
 	public int getPower() {	return move.getPower(); }	
 	public boolean getGoFirst() { return move.getGoFirst(); }	
 	public boolean getProtected() { return move.getProtected(); }	
+	public boolean getRecharge() { return move.getRecharge(); }
 	
 	public String getWeather() { return move.getWeather(); }
 	public String getDelay(String name) { return move.getDelay(name); }	
