@@ -608,15 +608,16 @@ public class BattleManager extends Thread {
 		Move move = currentTurn == playerTurn ? playerMove : cpuMove;
 		
 		getWeatherMoveDelay(move);
-		if (move.getTurns() == 0) {				
+				
+		if (move.isReady()) {				
 			
 			typeDialogue(atk.getName() + " used\n" + move.toString() + "!", false); 
 			
 			atk.setAttacking(true);
 			playSE(moves_SE, move.getName());
 			
-			move.setTurns(move.getNumTurns());
-			
+			move.setTurnCount(move.getTurns());
+									
 			// decrease move pp
 			if (trg.getAbility().getCategory() == Ability.Category.PP) {
 				move.setpp(move.getpp() - (int) trg.getAbility().getFactor());
@@ -626,23 +627,24 @@ public class BattleManager extends Thread {
 			}						
 			
 			attack(atk, trg, move);				
-		}			
-		else {						
-			typeDialogue(atk.getName() + " used\n" + move.toString() + "!");
-			typeDialogue(move.getDelay(atk.getName()));		
+		}		
+		else {
 			
-			move.setTurns(move.getTurns() - 1);
+			typeDialogue(atk.getName() + " used\n" + move.toString() + "!");
+			typeDialogue(move.getDelay(atk.getName()));	
+			
+			move.setTurnCount(move.getTurnCount() - 1);
 						
 			currentTurn = nextTurn;	
-			nextTurn = -1;							
-		}	
+			nextTurn = -1;		
+		}
 	}		
 	private void getWeatherMoveDelay(Move move) {
 		
 		switch (weather) {		
 			case SUNLIGHT:
 				if (move.getMove() == Moves.SOLARBEAM) {
-					move.setTurns(1);
+					move.setTurnCount(1);
 				}
 				break;
 			case RAIN:
@@ -766,7 +768,7 @@ public class BattleManager extends Thread {
 		
 		weather = Weather.valueOf(move.getWeather());
 		checkWeatherCondition();
-		weatherDays = move.getNumTurns();
+		weatherDays = move.getTurns();
 		
 		currentTurn = nextTurn;	
 		nextTurn = -1;
@@ -1550,13 +1552,13 @@ public class BattleManager extends Thread {
 		
 		// RESET NON-DELAYED MOVES
 		int delay = BattleUtility.getDelay(playerMove, cpuMove);	
-		
+				
 		if (delay == 0) { 
 			playerMove = null; 
 			cpuMove = null; 
 		}
 		else if (delay == 1) {
-			cpuMove = null;			
+			cpuMove = null;		
 		}
 		else if (delay == 2) {
 			playerMove = null;
@@ -1751,7 +1753,7 @@ public class BattleManager extends Thread {
 		
 		for (Pokemon p : gp.player.pokeParty) {
 			for (Move m : p.getMoveSet()) {
-				m.setTurns(m.getTurns());
+				m.setTurnCount(m.getTurns());
 			}
 		}
 				

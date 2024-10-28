@@ -142,24 +142,24 @@ public final class BattleUtility {
 		if (move1 != null && move2 != null) {
 			
 			// both fighters are waiting
-			if (!move1.isReady() && !move2.isReady()) {
+			if (move1.isWaiting() && move2.isWaiting()) {
 				delay = 3;	
 			}
 			// fighter 2 is waiting;
-			else if (!move2.isReady()) {
+			else if (move2.isWaiting()) {
 				delay = 2;	
 			}
 			// fighter 1 is waiting
-			else if (!move1.isReady()) {
+			else if (move1.isWaiting()) {
 				delay = 1;
 			}	
 		}
 		// CPU MOVE IS ACTIVE AND WAITING
-		else if (move2 != null && !move2.isReady()) {
+		else if (move2 != null && move2.isWaiting()) {
 			delay = 2;
 		}
 		// PLAYER MOVE IS ACTIVE AND WAITING
-		else if (move1 != null && !move1.isReady()) {
+		else if (move1 != null && move1.isWaiting()) {
 			delay = 1;
 		}
 				
