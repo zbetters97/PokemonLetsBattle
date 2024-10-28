@@ -45,6 +45,7 @@ public class Entity {
 	public boolean collision = true;
 	public boolean collisionOn = false;	
 	protected boolean hasShadow = true;
+	protected boolean battleFound = false;
 	
 	// SPRITE HANDLING
 	public int actionLockCounter;
@@ -74,12 +75,14 @@ public class Entity {
 	protected boolean running = false;	
 	public boolean onPath = false;
 	public boolean pathCompleted = false;
+	protected int steps = 0;
 		
 	// DIALOGUE
 	public String dialogues[][] = new String[20][20];
 	public int dialogueSet = 0;
 	public int dialogueIndex = 0;		
 	public String responses[][] = new String[10][3];
+	protected int battleIconTimer = 0;
 					
 	// DEFAULT HITBOX
 	public Rectangle hitbox = new Rectangle(0, 0, 48, 48);
@@ -182,7 +185,7 @@ public class Entity {
 		if (pixelCounter >= gp.tileSize) {
 			moving = false;
 			pixelCounter = 0;
-			spriteNum = 1;
+			steps++;
 		}
 	}
 	
@@ -225,6 +228,26 @@ public class Entity {
 			actionLockCounter = 0;
 		}		
 	}
+	public void getSquareDirection(int length) {
+		
+		if (steps == length) {
+			switch (direction) {
+				case "up":
+					direction = "right";
+					break;
+				case "down":
+					direction = "left";
+					break;
+				case "left":
+					direction = "up";
+					break;
+				case "right":
+					direction = "down";
+					break;
+			}			
+			steps = 0;
+		}		
+	}
 	protected String getOppositeDirection(String direction) {
 		
 		String oppositeDirection = "";
@@ -241,7 +264,7 @@ public class Entity {
 	/** END DIRECTION **/
 	
 	// DIALOGUE
-	public void startDialogue(Entity entity, int setNum) {
+	protected void startDialogue(Entity entity, int setNum) {
 		spriteNum = 1;
 		dialogueSet = setNum;
 		gp.ui.npc = entity;		
@@ -405,30 +428,52 @@ public class Entity {
 	/** END PATH FINDING **/
 		
 	/** PLAYER INTERACTION **/
-	public boolean findBattle(int tileDistance, int dialogueSet) {
+	protected boolean lookForBattle() {
 		
-		boolean playerFound = findPlayer(direction, tileDistance);		
-		if (playerFound) { 
+		if (battleFound) {
 			
-			gp.player.stopMoving();
 			followPath(getGoalCol(gp.player), getGoalRow(gp.player));
+				
+			if (!moving) move();	
+			if (pathCompleted) startBattle(0);	
 			
-			if (!moving) {				
-				move();				
-			}
-			if (pathCompleted) {			
-				
-				gp.player.direction = getOppositeDirection(direction);
-				gp.player.canMove = true;
-				
-				this.dialogueSet = dialogueSet;
-				startDialogue(this, this.dialogueSet);
-			}
+			return true;
 		}
-
-		return playerFound;
+		else {	
+			if (findPlayer(direction, 5)) { 
+				
+				spriteNum = 1;
+				gp.player.stopMoving();
+				
+				battleIconTimer++;
+				if (battleIconTimer == 1) {
+					gp.stopMusic();
+					gp.startMusic(0, gp.se.getFile(0, name));	
+				}
+				else if (battleIconTimer > 60) {
+					battleFound = true;
+					battleIconTimer = 0;
+				}
+				
+				return true;
+			}
+		}			
+		
+		return false;
 	}
-	public boolean findPlayer(String direction, int tileDistance) {
+	protected void startBattle(int dialogueSet) {
+		
+		gp.player.direction = getOppositeDirection(direction);
+		gp.player.canMove = true;
+		
+		battleFound = false;
+		pathCompleted = false;		
+		battleIconTimer = 0;
+			
+		this.dialogueSet = dialogueSet;
+		startDialogue(this, this.dialogueSet);
+	}
+	protected boolean findPlayer(String direction, int tileDistance) {
 		
 		boolean playerFound = false;
 			
@@ -519,7 +564,7 @@ public class Entity {
 		
 		return tileCollision;
 	}
-	public void approachPlayer(int rate) {
+	protected void approachPlayer(int rate) {
 		
 		actionLockCounter++;
 		if (actionLockCounter >= rate) {
@@ -905,6 +950,10 @@ public class Entity {
 			}		
 		
 			g2.drawImage(image, tempScreenX, tempScreenY, null);
+			
+			if (battleIconTimer > 0) {
+				g2.drawImage(gp.ui.battleIcon, tempScreenX, tempScreenY - gp.tileSize, null);
+			}
 										
 			// DRAW HITBOX
 			if (gp.keyH.debug) {

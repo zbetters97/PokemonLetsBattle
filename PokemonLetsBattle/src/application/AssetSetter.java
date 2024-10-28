@@ -18,6 +18,7 @@ public class AssetSetter {
 		int i = 0;
 						
 		gp.npc[mapNum][i] = new NPC_Rival(gp, 16, 16); i++;	
+		gp.npc[mapNum][i] = new NPC_Steve(gp, 24, 21); i++;	
 		
 		gp.npc[mapNum][i] = new NPC_Sign(gp, 18, 19, 0, "MAY'S HOUSE"); i++;
 		gp.npc[mapNum][i] = new NPC_Sign(gp, 27, 19, 1, "PETALBURG GYM"); i++;	

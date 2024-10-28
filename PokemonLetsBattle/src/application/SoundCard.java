@@ -41,7 +41,7 @@ public class SoundCard {
 		for (int i = 0; i < soundFiles.length; i++) {					
 		
 			String path = new File("").getAbsolutePath() + "/sound/" + 
-					library + "/" + soundFiles[i].getName();
+					library + "/" + soundFiles[i].getName().toLowerCase();
 			
 			sounds[i] = path;
 		}	
@@ -51,9 +51,9 @@ public class SoundCard {
 	
 	public int getFile(int category, String file) {
 		
-		if (category > 0 && file != null) {
+		if (category > -1 && file != null) {
 			for (int i = 0; i < sounds[category].length; i++) {	
-				if (sounds[category][i].contains(file)) {
+				if (sounds[category][i].contains(file.toLowerCase())) {					
 					return i;
 				}			
 			}	

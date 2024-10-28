@@ -187,12 +187,17 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	public void setupMusic() {					
-		if (currentMap == petalburg) startMusic(0, 0);
-		else if (currentMap == pokecenter) startMusic(0, 1);			
+		if (currentMap == petalburg) startMusic(0, "littleroot");
+		else if (currentMap == pokecenter) startMusic(0, "pokecenter");			
 	}
 
 	public void startMusic(int category, int record) {		
 		music.setFile(category, record);
+		music.play();
+		music.loop();
+	}
+	public void startMusic(int category, String file) {		
+		music.setFile(category, se.getFile(category, file));
 		music.play();
 		music.loop();
 	}

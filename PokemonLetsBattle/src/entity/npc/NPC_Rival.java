@@ -21,8 +21,8 @@ public class NPC_Rival extends Entity {
 		type = type_npc;
 		name = npcName;
 		direction = "right";
-		speed = 1; defaultSpeed = speed;
-		animationSpeed = 12; 
+		speed = 2; defaultSpeed = speed;
+		animationSpeed = 8; 
 		
 		hasBattle = true;
 		trainerClass = 5;
@@ -69,30 +69,29 @@ public class NPC_Rival extends Entity {
 	
 	public void speak() {	
 		
-		if (hasBattle) {
-			dialogueSet = 0;		
-		}
-		else {
-			dialogueSet = 2;
-		}
-		
+		if (hasBattle) dialogueSet = 0;		
+		else dialogueSet = 2;
+				
 		direction = getOppositeDirection(gp.player.direction);
 		startDialogue(this, dialogueSet);
 	}
 	
 	public void setAction() {
 		
-		if (hasBattle && !findBattle(5, 0)) {
-			getDirection(60);			
-		}
+		if (hasBattle) {			
+			if (!moving && !lookForBattle()) {
+				getDirection(45);	
+			}	
+		}	
 		else if (!moving) {
 			getDirection(60);		
-			move();
+			move();			
 		}
+		
 			
 		if (moving) walking();		
 	}
-	
+		
 	public void getDirection(int rate) {	
 		
 		actionLockCounter++;			

@@ -57,6 +57,7 @@ public class UI {
 	public int battleTextSpeed = 1;
 	public boolean canSkip = false;
 	private BufferedImage dialogue_next;
+	public BufferedImage battleIcon;
 	
 	public int commandNum = 0;
 	public int subState = 0;
@@ -146,6 +147,7 @@ public class UI {
 		this.gp = gp;
 		
 		dialogue_next = ball_empty = setup("/ui/dialogue/advance", (int) (gp.tileSize * 0.5), (int) (gp.tileSize * 0.5));
+		battleIcon = setup("/ui/dialogue/battle_icon", gp.tileSize, gp.tileSize);
 		
 		battle_arena = setup("/ui/arenas/grass", gp.tileSize * 7, gp.tileSize * 3);
 		battle_bkg = setup("/ui/arenas/grass-bkg", gp.screenWidth, gp.screenHeight);
