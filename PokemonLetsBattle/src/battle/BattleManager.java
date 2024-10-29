@@ -19,6 +19,7 @@ import properties.abilities.*;
 public class BattleManager extends Thread {
 			
 	private GamePanel gp;
+	public boolean set = true;
 	public boolean active = false;
 	public boolean running = false;
 	
@@ -1200,6 +1201,9 @@ public class BattleManager extends Thread {
 		// TRAINER 1 WINNER
 		if (winner == 0) {			
 			
+			playerMove.resetMove();
+			fighter[0].setProtected(false);
+			
 			gp.playSE(faint_SE, fighter[1].toString());
 			typeDialogue(fighter[1].getName() + " fainted!");	
 			
@@ -1210,6 +1214,9 @@ public class BattleManager extends Thread {
 		}
 		// TRAINER 2 WINNER
 		else if (winner == 1) {			
+			
+			cpuMove.resetMove();
+			fighter[1].setProtected(false);
 			
 			gp.playSE(faint_SE, fighter[0].toString());			
 			typeDialogue(fighter[0].getName() + " fainted!");	
@@ -1439,14 +1446,14 @@ public class BattleManager extends Thread {
 					
 					newFighter[1] = cpuSelectNextFighter();	
 					
-					if (gp.player.getAvailablePokemon() > 1) {
+					if (gp.player.getAvailablePokemon() > 1 && set) {
 						
 						typeDialogue("Trainer " + trainer.name + " is about\nto sent out " + 
 								newFighter[1].getName() + "!", true);
 						
-						typeDialogue("Will " + gp.player.name + " swap\nPokemon?", false);										
+						typeDialogue("Will " + gp.player.name + " swap\nPokemon?", false);							
+						gp.ui.battleState = gp.ui.battle_Confirm;	
 						
-						gp.ui.battleState = gp.ui.battle_Confirm;					
 						waitForKeyPress();
 						getSwapAnswer();
 					}

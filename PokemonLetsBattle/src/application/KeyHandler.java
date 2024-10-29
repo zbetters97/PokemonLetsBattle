@@ -75,18 +75,10 @@ public class KeyHandler implements KeyListener {
 	// PAUSE
 	private void pauseState(int code) { 		
 
-		if (code == gp.btn_UP) {
-			if (gp.ui.commandNum != 0) {
-				playCursorSE();
-				gp.ui.commandNum--;
-			}
-		}
-		if (code == gp.btn_DOWN) {
-			if (gp.ui.commandNum != 6) {
-				playCursorSE();
-				gp.ui.commandNum++;
-			}
-		}
+		if (code == gp.btn_UP) { upPressed = true; }
+		if (code == gp.btn_DOWN) { downPressed = true; }
+		if (code == gp.btn_LEFT) { leftPressed = true; }
+		if (code == gp.btn_RIGHT) { rightPressed = true; }
 		
 		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
 		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }

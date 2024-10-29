@@ -24,6 +24,10 @@ public class ConfigManager {
 			bw.write("FULLSCREEN\n" + gp.fullScreenOn);
 			bw.newLine();
 			
+			// SOUND EFFECTS VOLUME
+			bw.write("TEXT SPEED\n" + String.valueOf(gp.ui.textSpeed));	
+			bw.newLine();
+									
 			// MUSIC VOLUME
 			bw.write("MUSIC VOLUME\n" + String.valueOf(gp.music.volumeScale));			
 			bw.newLine();
@@ -33,7 +37,7 @@ public class ConfigManager {
 			bw.newLine();
 			
 			// SOUND EFFECTS VOLUME
-			bw.write("TEXT SPEED\n" + String.valueOf(gp.ui.textSpeed));	
+			bw.write("BATTLE SET\n" + String.valueOf(gp.btlManager.set));			
 			bw.newLine();
 			
 			// CLOSE FILE
@@ -49,11 +53,17 @@ public class ConfigManager {
 			// IMPORT FILE
 			BufferedReader br = new BufferedReader(new FileReader("config.txt"));
 			
+			String s;
 			br.readLine(); 
 			
 			// FULL SCREEN
-			String s = br.readLine();
+			s = br.readLine();
 			gp.fullScreenOn = Boolean.valueOf(s);
+			br.readLine();
+			
+			// TEXT SPEED
+			s = br.readLine();
+			gp.ui.textSpeed = Integer.parseInt(s);
 			br.readLine();
 			
 			// MUSIC VOLUME
@@ -66,9 +76,10 @@ public class ConfigManager {
 			gp.se.volumeScale = Integer.parseInt(s);
 			br.readLine();
 			
-			// TEXT SPEED
+			// BATTLE SET
 			s = br.readLine();
-			gp.ui.textSpeed = Integer.parseInt(s);
+			gp.btlManager.set = Boolean.valueOf(s);
+			br.readLine();			
 			
 			br.close();			
 		} 
@@ -77,14 +88,17 @@ public class ConfigManager {
 			// FULL SCREEN
 			gp.fullScreenOn = false;
 			
+			// TEXT SPEED
+			gp.ui.textSpeed = 2;
+			
 			// MUSIC VOLUME
 			gp.music.volumeScale = 3;
 			
 			// SOUND EFFECTS VOLUME
 			gp.se.volumeScale = 3;
 			
-			// TEXT SPEED
-			gp.ui.textSpeed = 2;
+			// BATTLE SET
+			gp.btlManager.set = true;	
 		}
 	}
 }

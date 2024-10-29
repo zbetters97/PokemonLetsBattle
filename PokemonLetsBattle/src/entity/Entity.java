@@ -833,12 +833,11 @@ public class Entity {
 	}
 	protected void throwPokeball() {
 		
-		if (gp.btlManager.active) {
-			
-			if (gp.btlManager.battleMode == gp.btlManager.wildBattle) {					
-				gp.player.useItem(this, gp.player);				
-			}
-			
+		if (gp.btlManager.active && 
+				gp.btlManager.battleMode == gp.btlManager.wildBattle) {					
+				
+			gp.player.useItem(this, gp.player);				
+									
 			gp.btlManager.ballUsed = this;
 			gp.btlManager.fightStage = gp.btlManager.fight_Capture;				
 			gp.btlManager.running = true;			
