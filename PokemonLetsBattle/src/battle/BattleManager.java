@@ -344,20 +344,7 @@ public class BattleManager extends Thread {
 			return false;
 		}		
 	}
-	
-	private Pokemon cpuSelectNextFighter() {
-		
-		if (fighter[0] == null) return trainer.pokeParty.get(0);
-		
-		int index = trainer.pokeParty.indexOf(fighter[1]);
-		if (index < 0 || index + 1 == trainer.pokeParty.size()) {
-			return null;
-		}
-		else {
-			 return trainer.pokeParty.get(index + 1);
-		}
-	}
-					
+						
 	// RUN BATTLE METHOD
 	private void runBattle() throws InterruptedException {
 						
@@ -869,14 +856,7 @@ public class BattleManager extends Thread {
 	}	
 	private void setDamage(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		
-		String hitSE;
-		
-		if (trg.getTypes() != null) {
-			hitSE = getHitSE(BattleUtility.effectiveness(trg.getTypes().get(0), move.getType()));	
-		}
-		else {
-			hitSE = getHitSE(BattleUtility.effectiveness(trg.getType(), move.getType()));		
-		}		
+		String hitSE = getHitSE(BattleUtility.getEffectiveness(trg, move.getType()));		
 		
 		gp.playSE(battle_SE, hitSE);
 		trg.setHit(true);
@@ -1211,7 +1191,6 @@ public class BattleManager extends Thread {
 		if (winner == 0) {			
 			
 			playerMove.resetMove();
-			fighter[0].setProtected(false);
 			
 			gp.playSE(faint_SE, fighter[1].toString());
 			typeDialogue(fighter[1].getName() + " fainted!");	
@@ -1225,7 +1204,6 @@ public class BattleManager extends Thread {
 		else if (winner == 1) {			
 			
 			cpuMove.resetMove();
-			fighter[1].setProtected(false);
 			
 			gp.playSE(faint_SE, fighter[0].toString());			
 			typeDialogue(fighter[0].getName() + " fainted!");	
@@ -1235,9 +1213,11 @@ public class BattleManager extends Thread {
 		// TIE GAME
 		else if (winner == 2) {
 		
+			playerMove.resetMove();
 			gp.playSE(faint_SE, fighter[0].toString());
 			typeDialogue(fighter[0].getName() + " fainted!");
 			
+			cpuMove.resetMove();
 			gp.playSE(faint_SE, fighter[1].toString());
 			typeDialogue(fighter[1].getName() + " fainted!");
 
@@ -1456,7 +1436,7 @@ public class BattleManager extends Thread {
 					
 					winner = -1;
 					
-					newFighter[1] = cpuSelectNextFighter();	
+					newFighter[1] = BattleUtility.getNextCPUFighter(fighter[1], trainer);	
 					
 					if (gp.player.getAvailablePokemon() > 1 && set) {
 						
@@ -1504,7 +1484,7 @@ public class BattleManager extends Thread {
 				if (gp.player.hasPokemon() && trainer.hasPokemon()) {
 					
 					// GET NEW FIGHTER
-					newFighter[1] = cpuSelectNextFighter();	
+					newFighter[1] = BattleUtility.getNextCPUFighter(fighter[1], trainer);	
 					
 					winner = -1;							
 					running = false;
@@ -1785,6 +1765,20 @@ public class BattleManager extends Thread {
 		gp.stopMusic();
 		gp.setupMusic();
 		
+		for (Pokemon p : gp.player.pokeParty) {
+			for (Move m : p.getMoveSet()) {
+				m.resetMove();
+			}
+		}
+		
+		if (trainer != null) {
+			for (Pokemon p : trainer.pokeParty) {
+				for (Move m : p.getMoveSet()) {
+					m.resetMove();
+				}
+			}	
+		}
+		
 		gp.ui.isFighterCaptured = false;
 		gp.ui.commandNum = 0;
 		
@@ -1820,6 +1814,8 @@ public class BattleManager extends Thread {
 		escapeAttempts = 0;
 	}
 
+	
+	
 	// MISC METHODS	
 	public void typeDialogue(String dialogue) throws InterruptedException {
 		
@@ -1848,13 +1844,11 @@ public class BattleManager extends Thread {
 			gp.keyH.aPressed = false;
 		}
 	}
-	
 	private void waitForKeyPress() throws InterruptedException {
 		while (!gp.keyH.aPressed) {
 			pause(5);
 		}
 	}	
-	
 	private void increaseHP(Pokemon pkm, int newHP, int damage) throws InterruptedException {
 		
 		int hpTimer = getHPTimer(damage);
@@ -1886,7 +1880,6 @@ public class BattleManager extends Thread {
 						
 		return hpTimer;		
 	}
-	
 	private void pause(int time) throws InterruptedException {
 		Thread.sleep(time); 
 	}

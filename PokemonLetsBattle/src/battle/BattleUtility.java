@@ -21,7 +21,7 @@ public final class BattleUtility {
 	
 	private BattleUtility(GamePanel gp) { }
 	
-	public static Move getBestMove(Pokemon attacker, Pokemon opponent, Weather weather) {
+	public static Move getBestMove(Pokemon attacker, Pokemon target, Weather weather) {
 		
 		Move bestMove;
 		
@@ -31,10 +31,10 @@ public final class BattleUtility {
 		// for each move in attacker's move set
 		for (Move move : attacker.getMoveSet()) {
 			
-			if (!move.isToSelf() && move.getpp() != 0) {
+			if (move.getPower() > 0 && move.getpp() != 0) {
 				
 				// find damage value of each move (no crit is assumed)
-				int damage = calculateDamage(attacker, opponent, move, weather);
+				int damage = calculateDamage(attacker, target, move, weather);
 				
 				// add move and corresponding damage value to k/v list
 				moves.put(move, damage);	
@@ -47,8 +47,8 @@ public final class BattleUtility {
 			bestMove = Collections.max(moves.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey(); 
 			
 			// if best move does not cause KO
-			int damage = calculateDamage(attacker, opponent, bestMove, weather);
-			if (damage < opponent.getHP()) {
+			int damage = calculateDamage(attacker, target, bestMove, weather);
+			if (damage < target.getHP()) {
 				
 				// 33% chance CPU selects random move instead of most powerful			
 				int val = 1 + (int)(Math.random() * 4);
@@ -203,22 +203,10 @@ public final class BattleUtility {
 		double A = getAttack(attacker, move, weather);
 		double D = getDefense(target, move, weather);
 		double STAB = attacker.checkType(move.getType()) ? 1.5 : 1.0;
-		double type1 = 1.0, type2 = 1.0, ability = 1.0;		
+		double type = getEffectiveness(target, move.getType());
 								
 		Random r = new Random();
 		double random = (double) (r.nextInt(100 - 85 + 1) + 85) / 100.0;
-		
-		if (target.getTypes() == null) {
-			Type targetType = target.getType();
-			type1 = effectiveness(targetType, move.getType());	
-		}
-		else {
-			Type targetType = target.getTypes().get(0);
-			type1 = effectiveness(targetType, move.getType());	
-			
-			targetType = target.getTypes().get(1);
-			type2 = effectiveness(targetType, move.getType());	
-		}
 		
 		if (attacker.getAbility().getCategory() == Ability.Category.ATTACK &&
 				attacker.getAbility().isValid(attacker, target, move)) {
@@ -227,7 +215,7 @@ public final class BattleUtility {
 		}
 		
 		damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
-			power * (A / D)) / 50)) + 2) * STAB * type1 * type2 * ability * random);
+			power * (A / D)) / 50)) + 2) * STAB * type * random);
 		
 		if (target.getAbility().getCategory() == Ability.Category.DEFENSE &&
 				target.getAbility().isValid(attacker, target, move)) {
@@ -308,15 +296,15 @@ public final class BattleUtility {
 		
 		return power;
 	}	
-	private static double getAttack(Pokemon pkm, Move move, Weather weather) {
+	private static double getAttack(Pokemon pokemon, Move move, Weather weather) {
 		
 		double attack = 1.0;
 		
 		if (move.getMType().equals(MoveType.SPECIAL)) {
-			attack = pkm.getSpAttack();
+			attack = pokemon.getSpAttack();
 		}
 		else if (move.getMType().equals(MoveType.PHYSICAL)) {
-			attack = pkm.getAttack();
+			attack = pokemon.getAttack();
 		}
 		
 		switch (weather) {
@@ -334,15 +322,15 @@ public final class BattleUtility {
 		
 		return attack;
 	}
-	private static double getDefense(Pokemon pkm, Move move, Weather weather) {
+	private static double getDefense(Pokemon pokemon, Move move, Weather weather) {
 		
 		double defense = 1.0;
 		
 		if (move.getMType().equals(MoveType.SPECIAL)) {
-			defense = pkm.getSpDefense();
+			defense = pokemon.getSpDefense();
 		}
 		else if (move.getMType().equals(MoveType.PHYSICAL)) {
-			defense = pkm.getDefense();
+			defense = pokemon.getDefense();
 		}
 		
 		switch (weather) {
@@ -355,7 +343,7 @@ public final class BattleUtility {
 			case HAIL:					
 				break;
 			case SANDSTORM:
-				if (pkm.getType() == Type.ROCK &&
+				if (pokemon.getType() == Type.ROCK &&
 						move.getMType().equals(MoveType.SPECIAL)) {
 					defense *= 1.5;
 				}
@@ -364,35 +352,81 @@ public final class BattleUtility {
 		
 		return defense;
 	}
-	
-	public static double effectiveness(Type trgType, Type type) {
+	public static double getEffectiveness(Pokemon pokemon, Type type) {
 		
-		// default value
 		double effect = 1.0;
 		
-		// if vulnerable, retrieve and return vulnerable value		
-		for (Type vulnType : trgType.getVulnerability().keySet()) {		
-			if (vulnType.getName().equals(type.getName())) {
-				effect = trgType.getVulnerability().get(vulnType);
-				return effect;
+		// if target is single type
+		if (pokemon.getTypes() == null) {
+			
+			// if vulnerable, retrieve and return vulnerable value		
+			for (Type vulnType : pokemon.getType().getVulnerability().keySet()) {		
+				if (vulnType.getName().equals(type.getName())) {
+					effect = pokemon.getType().getVulnerability().get(vulnType);
+					return effect;
+				}
+			}			
+			// if resistant, retrieve and return resistance value
+			for (Type resType : pokemon.getType().getResistance().keySet()) {			
+				if (resType.getName().equals(type.getName())) {
+					effect = pokemon.getType().getResistance().get(resType);
+					return effect;
+				}			
+			}		
+		}
+		// if target is multi type
+		else {
+			
+			// for each type in target
+			for (Type targetType : pokemon.getTypes()) {		
+				
+				// for each vulnerability			
+				vulnerabilityLoop:
+				for (Type vulnType : targetType.getVulnerability().keySet()) {		
+					
+					// if found, multiply by effect and move to next loop
+					if (vulnType.getName().equals(type.getName())) {						
+						effect *= targetType.getVulnerability().get(vulnType);		
+						break vulnerabilityLoop;
+					}
+				}	
+				
+				// for each resistance
+				resistanceLoop:
+				for (Type resType : targetType.getResistance().keySet()) {		
+					
+					// if found, multiply by effect and move to next loop
+					if (resType.getName().equals(type.getName())) {
+						effect *= targetType.getResistance().get(resType);
+						break resistanceLoop;
+					}
+				}
+			}			
+			
+			// vulnerable and resistant cancel out
+			if (effect == 0.75)	{
+				effect = 1.0;
 			}
 		}			
-		// if resistant, retrieve and return resistance value
-		for (Type resType : trgType.getResistance().keySet()) {			
-			if (resType.getName().equals(type.getName())) {
-				effect = trgType.getResistance().get(resType);
-				return effect;
-			}			
-		}
-		
-		if (effect == 0.75)	{
-			effect = 1;		
-		}
-								
+						
 		return effect;
 	}
 	
- 	public static Pokemon getBestFighter(ArrayList<Pokemon> pokeParty, Pokemon opponent) {
+	public static Pokemon getNextCPUFighter(Pokemon pokemon, Entity trainer) {
+		
+		if (pokemon == null) {
+			return trainer.pokeParty.get(0);
+		}
+		
+		int index = trainer.pokeParty.indexOf(pokemon);
+		if (index < 0 || index + 1 == trainer.pokeParty.size()) {
+			return null;
+		}
+		else {
+			 return trainer.pokeParty.get(index + 1);
+		}
+	}
+ 	public static Pokemon getBestCPUFighter(ArrayList<Pokemon> pokeParty, Pokemon target) {
 		
 		int available = 0;
 		
@@ -417,10 +451,10 @@ public final class BattleUtility {
 					if (p.getTypes() == null) {
 												
 						// if target is single type
-						if (opponent.getTypes() == null) {	
+						if (target.getTypes() == null) {	
 							
 							// loop through each type in target pokemon
-							for (Type vulnType : opponent.getType().getVulnerability().keySet()) {	
+							for (Type vulnType : target.getType().getVulnerability().keySet()) {	
 								
 								// if type matches target's vulnerability
 								if (vulnType.getName().equals(p.getType().getName()))
@@ -431,7 +465,7 @@ public final class BattleUtility {
 						else {			
 							
 							// for each type in target
-							for (Type type : opponent.getTypes()) {
+							for (Type type : target.getTypes()) {
 								
 								// loop through each vulnerability in type
 								for (Type vuln : type.getVulnerability().keySet()) {									
@@ -447,13 +481,13 @@ public final class BattleUtility {
 					else { 
 											
 						// if target is single type
-						if (opponent.getTypes() == null) {	
+						if (target.getTypes() == null) {	
 							
 							// for each type in party
 							for (Type type : p.getTypes()) {
 								
 								// loop through each vulnerability in target pokemon
-								for (Type vulnType : opponent.getType().getVulnerability().keySet()) {	
+								for (Type vulnType : target.getType().getVulnerability().keySet()) {	
 								
 									// if type matches target's vulnerability
 									if (vulnType.getName().equals(type.getName()))
@@ -470,7 +504,7 @@ public final class BattleUtility {
 							for (Type parType : p.getTypes()) {
 	
 								// for each type in target
-								for (Type tarType : opponent.getTypes()) {
+								for (Type tarType : target.getTypes()) {
 									
 									// loop through each vulnerability in type
 									for (Type vuln : tarType.getVulnerability().keySet()) {									
@@ -518,7 +552,7 @@ public final class BattleUtility {
 		}
 	}
  	
- 	public static boolean isCaptured(Pokemon pkm, Entity ball) {
+ 	public static boolean isCaptured(Pokemon pokemon, Entity ball) {
 		/** CATCH RATE FOMRULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Capture_method_(Generation_III-IV) **/
 			
 		boolean isCaptured = false;
@@ -529,12 +563,12 @@ public final class BattleUtility {
 		double catchRate = 1.0;
 		double statusBonus = 1.0;
 		
-		maxHP = pkm.getBHP(); if (maxHP == 0.0) maxHP = 1.0; 		
-		hp = pkm.getHP(); if (hp == 0.0) hp = 1.0;
-		catchRate = pkm.getCatchRate();
+		maxHP = pokemon.getBHP(); if (maxHP == 0.0) maxHP = 1.0; 		
+		hp = pokemon.getHP(); if (hp == 0.0) hp = 1.0;
+		catchRate = pokemon.getCatchRate();
 		
-		if (pkm.getStatus() != null) {			
-			switch(pkm.getStatus().getAbreviation()) {			
+		if (pokemon.getStatus() != null) {			
+			switch(pokemon.getStatus().getAbreviation()) {			
 				case "PAR": statusBonus = 1.5; break;
 				case "PSN": statusBonus = 1.5; break;
 				case "CNF": statusBonus = 1.0; break;
@@ -557,11 +591,11 @@ public final class BattleUtility {
 		
 	}
 	
-	public static int calculateEXPGain(Pokemon opponent, boolean trainerBattle) {
+	public static int calculateEXPGain(Pokemon target, boolean trainerBattle) {
 		// EXP FORMULA REFERENCE (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience		
 		
-		double b = opponent.getEXPYeild();
-		double L = opponent.getLevel();
+		double b = target.getEXPYeild();
+		double L = target.getLevel();
 		double s = 1.0;
 		double e = 1.0;
 		double a = trainerBattle ? 1.5 : 1.0;

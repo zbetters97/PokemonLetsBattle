@@ -425,9 +425,10 @@ public class Pokemon {
 	}
 	
 	public void resetMovesPP() {		
-		for (int i = 0; i < moveSet.size(); i++) {			
-			moveSet.get(i).resetpp();			
-		}		
+		for (Move m : moveSet) {
+			m.resetpp();
+			m.resetMove();
+		}
 	}
 	/** END ADD NEW MOVE METHOD **/
 	
