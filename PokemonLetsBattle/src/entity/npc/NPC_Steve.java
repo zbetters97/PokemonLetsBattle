@@ -77,8 +77,8 @@ public class NPC_Steve extends Entity {
 	public void setAction() {
 			
 		if (hasBattle) {
-			if (!moving && !lookForBattle()) {
-				getSquareDirection(2);			
+			if (!moving && !lookForBattle(6)) {
+				getSquareDirection(2);	
 				move();
 			}		
 		}

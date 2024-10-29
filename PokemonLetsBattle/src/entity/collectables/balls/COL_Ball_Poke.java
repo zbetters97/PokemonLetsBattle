@@ -22,6 +22,6 @@ public class COL_Ball_Poke extends Entity {
 	}	
 	
 	public void use() {		
-		throwPokeball();
+		throwBall();
 	}
 }

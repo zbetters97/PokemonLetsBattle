@@ -419,16 +419,19 @@ public class Entity {
 		
 		// GOAL REACHED
 		if (gp.pFinder.pathList.size() > 0) {		
+			
 			int nextCol = gp.pFinder.pathList.get(0).col;
 			int nextRow = gp.pFinder.pathList.get(0).row;
-			if (nextCol == goalCol && nextRow == goalRow)
+			
+			if (nextCol == goalCol && nextRow == goalRow) {				
 				pathCompleted = true;
+			}
 		}
 	}
 	/** END PATH FINDING **/
 		
 	/** PLAYER INTERACTION **/
-	protected boolean lookForBattle() {
+	protected boolean lookForBattle(int tileDistance) {
 		
 		if (battleFound) {
 			
@@ -436,13 +439,12 @@ public class Entity {
 				
 			if (!moving) move();	
 			if (pathCompleted) startBattle(0);	
-			
+							
 			return true;
 		}
 		else {	
-			if (findPlayer(direction, 5)) { 
-				
-				spriteNum = 1;
+			if (findPlayer(direction, tileDistance)) { 
+								
 				gp.player.stopMoving();
 				
 				battleIconTimer++;
@@ -727,46 +729,22 @@ public class Entity {
 	}
 	
 	/** ITEM FUNCTIONS **/
-	public void useItem(Entity collectable, Entity person) {	
+	public void useItem(String description) {
+
+		gp.ui.partyDialogue = description;
+		gp.ui.partyItem = this;
+		gp.ui.partyItemApply = true;
 		
-		ArrayList<Entity> inventory = null;
-		
-		if (collectable.collectableType == type_keyItem) {			
-			inventory = person.inventory_keyItems;
-		}
-		else if (collectable.collectableType == type_item) {			
-			inventory = person.inventory_items;
-		}
-		else if (collectable.collectableType == type_ball) {			
-			inventory = person.inventory_pokeballs;
-		}
-		else if (collectable.collectableType == type_move) {			
-			inventory = person.inventory_moves;
-		}
-		else {
-			return;
-		}
-		
-		for (int i = 0; i < inventory.size(); i++) {
-			
-			if (inventory.get(i).equals(collectable)) {
-				
-				inventory.get(i).amount--;
-				if (inventory.get(i).amount <= 0) {
-					inventory.remove(i);	
-					if (gp.ui.bagNum > 0) gp.ui.bagNum--;
-				}
-				
-				break;
-			}								
-		}		
-	}
-	public void give(Entity item, Pokemon p) {
+		gp.gameState = gp.pauseState;
+		gp.ui.pauseState = gp.ui.pause_Party;
+		gp.ui.partyState = gp.ui.party_Main_Select;
+	}	
+	public void giveItem(Entity item, Pokemon p) {
 		
 		if (p.getHeldItem() == null) {
 			
 			p.giveItem(item);			
-			useItem(this, gp.player);				
+			removeItem(this, gp.player);				
 			
 			gp.ui.bagNum = 0;
 			gp.ui.partyDialogue = p.getName() + " was given a\n" + item.name + " to hold.";
@@ -776,6 +754,42 @@ public class Entity {
 			gp.keyH.playErrorSE();
 		}
 	}
+	public void removeItem(Entity item, Entity person) {	
+		
+		ArrayList<Entity> inventory = null;
+		
+		if (item.collectableType == type_keyItem) {			
+			inventory = person.inventory_keyItems;
+		}
+		else if (item.collectableType == type_item) {			
+			inventory = person.inventory_items;
+		}
+		else if (item.collectableType == type_ball) {			
+			inventory = person.inventory_pokeballs;
+		}
+		else if (item.collectableType == type_move) {			
+			inventory = person.inventory_moves;
+		}
+		else {
+			return;
+		}
+		
+		for (int i = 0; i < inventory.size(); i++) {
+			
+			if (inventory.get(i).equals(item)) {
+				
+				inventory.get(i).amount--;
+				if (inventory.get(i).amount <= 0) {
+					inventory.remove(i);	
+					if (gp.ui.bagNum > 0) {
+						gp.ui.bagNum--;
+					}
+				}
+				
+				break;
+			}								
+		}		
+	}
 	
 	protected void revive(Entity entity, Pokemon p) {
 						
@@ -784,7 +798,7 @@ public class Entity {
 			gp.playSE(6, "heal");
 			p.setAlive(true);
 			p.setHP((int) (p.getBHP() / value));			
-			useItem(this, gp.player);						
+			removeItem(this, gp.player);						
 			
 			gp.ui.bagNum = 0;
 			gp.ui.partyDialogue = p.getName() + " was revived!";
@@ -805,7 +819,7 @@ public class Entity {
 			
 			gp.playSE(6, "heal");
 			p.addHP(value);			
-			useItem(this, entity);				
+			removeItem(this, entity);				
 		
 			gp.ui.bagNum = 0;
 			gp.ui.partyDialogue = p.getName() + " gained " + gainedHP + " HP.";
@@ -821,7 +835,7 @@ public class Entity {
 						
 			gp.playSE(6, "heal");
 			p.setStatus(null);			
-			useItem(this, entity);			
+			removeItem(this, entity);			
 			
 			gp.ui.bagNum = 0;
 			gp.ui.partyDialogue = p.getName() + " was healed.";
@@ -831,12 +845,13 @@ public class Entity {
 			gp.keyH.playErrorSE();
 		}
 	}
-	protected void throwPokeball() {
+	
+	protected void throwBall() {
 		
 		if (gp.btlManager.active && 
 				gp.btlManager.battleMode == gp.btlManager.wildBattle) {					
 				
-			gp.player.useItem(this, gp.player);				
+			gp.player.removeItem(this, gp.player);				
 									
 			gp.btlManager.ballUsed = this;
 			gp.btlManager.fightStage = gp.btlManager.fight_Capture;				
@@ -844,6 +859,8 @@ public class Entity {
 			new Thread(gp.btlManager).start();	
 			
 			gp.ui.bagNum = 0;
+			gp.ui.bagState = gp.ui.bag_Main;
+			
 			gp.ui.battleState = gp.ui.battle_Dialogue;
 			gp.gameState = gp.battleState;
 		}		

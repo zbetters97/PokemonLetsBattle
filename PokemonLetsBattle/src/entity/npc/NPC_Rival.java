@@ -79,15 +79,14 @@ public class NPC_Rival extends Entity {
 	public void setAction() {
 		
 		if (hasBattle) {			
-			if (!moving && !lookForBattle()) {
+			if (!moving && !lookForBattle(5)) {
 				getDirection(45);	
 			}	
 		}	
 		else if (!moving) {
 			getDirection(60);		
 			move();			
-		}
-		
+		}		
 			
 		if (moving) walking();		
 	}

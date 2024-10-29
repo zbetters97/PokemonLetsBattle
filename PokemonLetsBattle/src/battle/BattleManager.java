@@ -9,6 +9,7 @@ import application.GamePanel;
 import application.GamePanel.Weather;
 import entity.Entity;
 import entity.collectables.items.ITM_EXP_Share;
+import entity.npc.NPC_Red;
 import moves.Move;
 import moves.Moves;
 import pokemon.Pokemon;
@@ -151,7 +152,13 @@ public class BattleManager extends Thread {
 				break;
 			case trainerBattle: 
 				
-				gp.startMusic(1, 4);				
+				if (trainer.name.equals(NPC_Red.npcName)) {
+					gp.startMusic(1, 10);
+				}
+				else {
+					gp.startMusic(1, 4);	
+				}
+				
 				pause(1400);		
 				
 				typeDialogue("Trainer " + trainer.name + "\nwould like to battle!", true);	
@@ -1017,7 +1024,9 @@ public class BattleManager extends Thread {
 				}
 			}							
 		}	
-		else if (trg.getAbility().getCategory() == Ability.Category.STATUS) {				
+		// ABIITY CAUSES STATUS CONDITION
+		else if (trg.getAbility().getCategory() == Ability.Category.STATUS 
+				&& trg.getAbility().isValid(move)) {				
 			setStatus(atk, trg.getAbility().getEffect());
 		}			
 	}
@@ -1346,9 +1355,10 @@ public class BattleManager extends Thread {
 						break;
 					}
 				}
-				
+								
+				gp.gameState = gp.pauseState;
+				gp.ui.pauseState = gp.ui.pause_Party;
 				gp.ui.partyState = gp.ui.party_MoveSwap;
-				gp.gameState = gp.partyState;	
 				
 				while (oldMove == null && !gp.keyH.bPressed) {
 					pause(5);
@@ -1423,8 +1433,10 @@ public class BattleManager extends Thread {
 					running = false;
 					fightStage = fight_Swap;
 					
+					gp.gameState = gp.pauseState;
+					gp.ui.pauseState = gp.ui.pause_Party;
 					gp.ui.partyState = gp.ui.party_Main_Select;
-					gp.gameState = gp.partyState;
+					
 				}
 				// TRAINER 1 OUT OF POKEMON
 				else {					
@@ -1476,8 +1488,9 @@ public class BattleManager extends Thread {
 					running = false;
 					fightStage = fight_Swap;
 					
+					gp.gameState = gp.pauseState;
+					gp.ui.pauseState = gp.ui.pause_Party;
 					gp.ui.partyState = gp.ui.party_Main_Select;
-					gp.gameState = gp.partyState;
 				}
 				// TRAINER 1 OUT OF POKEMON
 				else {				
@@ -1497,8 +1510,9 @@ public class BattleManager extends Thread {
 					running = false;
 					fightStage = fight_Swap;
 					
+					gp.gameState = gp.pauseState;
+					gp.ui.pauseState = gp.ui.pause_Party;
 					gp.ui.partyState = gp.ui.party_Main_Select;
-					gp.gameState = gp.partyState;
 				}
 				// ONLY TRAINER 1 HAS MORE POKEMON
 				else if (gp.player.hasPokemon()) {
@@ -1531,8 +1545,9 @@ public class BattleManager extends Thread {
 			if (gp.ui.commandNum == 0) {
 				running = false;
 				
-				gp.ui.partyState = gp.ui.party_Main_Select;
-				gp.gameState = gp.partyState;								
+				gp.gameState = gp.pauseState;
+				gp.ui.pauseState = gp.ui.pause_Party;
+				gp.ui.partyState = gp.ui.party_Main_Select;	
 			}
 			
 			gp.ui.commandNum = 0;

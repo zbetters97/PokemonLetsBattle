@@ -1,10 +1,7 @@
 package properties.abilities;
 
-import java.util.Random;
-
 import moves.Move;
 import moves.Move.MoveType;
-import pokemon.Pokemon;
 import properties.Status;
 
 public class Static extends Ability {
@@ -14,17 +11,16 @@ public class Static extends Ability {
 				+ "PARALYZE when using a\nphysical attack.");
 	}
 	
-	public boolean isValid(Pokemon attacker, Pokemon target, Move move) {
+	public boolean isValid(Move move) {
 		
 		if (move.getMType() == MoveType.PHYSICAL) {
 			
-			int chance = new Random().nextInt(10);
-			if (chance >= 1) {
+			if (Math.random() < 0.30) {
 				return true;
 			}
 			else {
 				return false;
-			}	
+			}
 		}
 		else {
 			return false;

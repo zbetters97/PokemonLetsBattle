@@ -21,7 +21,7 @@ public class ITM_Repel extends Entity {
 	
 	public void use() {
 		gp.player.setRepel(value);
-		useItem(this, gp.player);
+		removeItem(this, gp.player);
 		
 		gp.ui.bagDialogue = "Repel has been used!";
 		gp.ui.bagState = gp.ui.bag_Dialogue;

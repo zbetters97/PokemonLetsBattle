@@ -49,6 +49,7 @@ public class Ability {
     }    
     /** END CONSTRUCTOR **/
     
+    public boolean isValid(Move move) { return false; }
     public boolean isValid(Pokemon pokemon) { return false; }
     public boolean isValid(Pokemon attacker, Pokemon target, Move move) { return false; }
 	

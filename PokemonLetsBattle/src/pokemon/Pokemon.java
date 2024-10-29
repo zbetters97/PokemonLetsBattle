@@ -7,6 +7,7 @@ import java.util.List;
 
 import entity.Entity;
 import moves.Move;
+import moves.Moves;
 import properties.Nature;
 import properties.Status;
 import properties.Type;
@@ -329,6 +330,19 @@ public class Pokemon {
             	p.learnMove(Pokedex.getMovemap().get(p.pokemon).get(i));
             } 	
         }
+	}
+	public void addMove(Moves move) {
+		if (this.getMoveSet().size() < 4) {
+			this.getMoveSet().add(new Move(move));
+		}
+	}
+	public void addMoves(List<Moves> moves) {			
+		this.getMoveSet().clear();
+		for (Moves move : moves) {
+			if (this.getMoveSet().size() < 4) {
+				this.getMoveSet().add(new Move(move));
+			}
+		}
 	}
 	public boolean learnMove(Move move) { 
 		

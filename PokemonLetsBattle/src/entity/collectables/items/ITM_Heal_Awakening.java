@@ -21,11 +21,7 @@ public class ITM_Heal_Awakening extends Entity {
 	}	
 	
 	public void use() {
-		gp.ui.partyDialogue = "Heal a POKEMON.";
-		gp.ui.partyItem = this;
-		gp.ui.partyItemApply = true;
-		gp.ui.partyState = gp.ui.party_Main_Select;
-		gp.gameState = gp.partyState;
+		useItem("Heal a POKEMON");
 	}
 	
 	public void apply(Entity entity, Pokemon p) {

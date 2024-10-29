@@ -25,7 +25,7 @@ public class KeyHandler implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		
-		int code = e.getKeyCode(); // key pressed by user
+		int code = e.getKeyCode(); 
 		
 		if (gp.gameState == gp.playState) {
 			playState(code);
@@ -41,12 +41,6 @@ public class KeyHandler implements KeyListener {
 		}	
 		else if (gp.gameState == gp.battleState) {
 			battleState(code);
-		}
-		else if (gp.gameState == gp.partyState) {
-			partyState(code);
-		}
-		else if (gp.gameState == gp.bagState) {
-			bagState(code);
 		}
 	}
 			
@@ -116,18 +110,6 @@ public class KeyHandler implements KeyListener {
 		}
 	}
 	
-	// BAG
-	private void bagState(int code) { 	
-		
-		if (code == gp.btn_UP) { upPressed = true; }
-		if (code == gp.btn_DOWN) { downPressed = true; }
-		if (code == gp.btn_LEFT) { leftPressed = true; }
-		if (code == gp.btn_RIGHT) {	rightPressed = true; }
-						
-		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
-		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
-	}
-	
 	// BATTLE
 	private void battleState(int code) { 
 		
@@ -138,21 +120,6 @@ public class KeyHandler implements KeyListener {
 
 		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
 		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
-	}
-	
-	// PARTY
-	private void partyState(int code) { 
-		
-		if (code == gp.btn_UP) { upPressed = true; }
-		if (code == gp.btn_DOWN) { downPressed = true; }
-		if (code == gp.btn_LEFT) { leftPressed = true; }
-		if (code == gp.btn_RIGHT) {	rightPressed = true; }
-						
-		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
-		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
-		
-		if (code == gp.btn_L) {	lPressed = true; }
-		if (code == gp.btn_R) {	rPressed = true; }
 	}
 		
 	// KEY RELEASED
