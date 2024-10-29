@@ -26,6 +26,12 @@ public class Move {
 		this.bpp = pp;			
 		this.turnCount = move.getTurns();	
 	}	
+	public Move (Moves move, int pp) {
+		this.move = move;
+		this.bpp = move.getpp();	
+		this.pp = pp;				
+		this.turnCount = move.getTurns();	
+	}
 	/** END CONSTRUCTORS **/
 	
 	/** GETTERS AND SETTERS **/	

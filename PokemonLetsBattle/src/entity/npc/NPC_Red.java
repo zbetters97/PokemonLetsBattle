@@ -47,49 +47,50 @@ public class NPC_Red extends Entity {
 		frontSprite = setup("/npc/red_battle_front", gp.tileSize * 4, gp.tileSize * 4);
 	}	
 	public void assignParty() {
+		/** RED PARTY REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Red_(game) **/
 		
 		pokeParty.add(Pokemon.getPokemon(Pokedex.PIKACHU, 88, null));
 		pokeParty.get(0).addMoves(Arrays.asList(
+				Moves.VOLTTACKLE,
+				Moves.IRONTAIL,
 				Moves.THUNDERBOLT,
-				Moves.EXTREMESPEED,
-				Moves.THUNDERWAVE,
 				Moves.QUICKATTACK)
 		);				
 		pokeParty.add(Pokemon.getPokemon(Pokedex.VENUSAUR, 84, null));
 		pokeParty.get(1).addMoves(Arrays.asList(
-				Moves.GIGADRAIN,
-				Moves.YAWN,
-				Moves.BODYSLAM,
-				Moves.LEAFSTORM)
+				Moves.FRENZYPLANT,
+				Moves.SLUDGEBOMB,
+				Moves.SLEEPPOWDER,
+				Moves.GIGADRAIN)
 		);			
 		
 		pokeParty.add(Pokemon.getPokemon(Pokedex.CHARIZARD, 84, null));
 		pokeParty.get(2).addMoves(Arrays.asList(
+				Moves.BLASTBURN,
+				Moves.AIRSLASH,
 				Moves.FLAREBLITZ,
-				Moves.SLASH,
-				Moves.FLY,
 				Moves.DRAGONPULSE)
 		);				
 		pokeParty.add(Pokemon.getPokemon(Pokedex.BLASTOISE, 84, null));
 		pokeParty.get(3).addMoves(Arrays.asList(
+				Moves.HYDROCANNON,
+				Moves.FOCUSBLAST,
 				Moves.BLIZZARD,
-				Moves.HYDROPUMP,
-				Moves.FLASHCANNON,
-				Moves.SURF)
+				Moves.FLASHCANNON)
 		);				
 		pokeParty.add(Pokemon.getPokemon(Pokedex.LAPRAS, 80, null));
 		pokeParty.get(4).addMoves(Arrays.asList(
 				Moves.BODYSLAM,
 				Moves.BLIZZARD,
 				Moves.PSYCHIC,
-				Moves.CALMMIND)
+				Moves.BRINE)
 		);				
 		pokeParty.add(Pokemon.getPokemon(Pokedex.SNORLAX, 82, null));
 		pokeParty.get(5).addMoves(Arrays.asList(
 				Moves.CRUNCH,
 				Moves.SHADOWBALL,
-				Moves.YAWN,
-				Moves.BLIZZARD)
+				Moves.BLIZZARD,
+				Moves.GIGAIMPACT)
 		);		
 	}
 	public void setDialogue() {

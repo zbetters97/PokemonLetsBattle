@@ -88,7 +88,7 @@ public class Pokemon {
 		isAlive = true;	
 		
 		moveSet = new ArrayList<>();
-	}		
+	}	
 	public Pokemon(Pokemon old, Pokedex p) {	
 		// STAT FORMULA REFERENCE: https://pokemon.fandom.com/wiki/Statistics
 		
@@ -141,6 +141,52 @@ public class Pokemon {
 		moveSet = old.getMoveSet();
 		item = old.item;
 	}		
+	public Pokemon(Pokedex p, Entity capturedBall, char sex, int level, int bxp, int xp, int nxp,
+			int hpIV, int attackIV, int defenseIV, int spAttackIV, int spDefenseIV, int speedIV,
+			int hp, int bhp, int attack, int defense, int spAttack, int spDefense, int speed, 
+			Nature nature, Status status, boolean isAlive, ArrayList<Move> moveSet) {	
+		
+		pokemon = p;
+		this.capturedBall = capturedBall;
+		this.sex = sex;		
+		this.level = level;			
+		this.bxp = xp;
+		this.xp = xp;
+		
+		this.hpIV = hpIV;
+		this.attackIV = attackIV;
+		this.defenseIV = defenseIV;
+		this.spAttackIV = spAttackIV;
+		this.spDefenseIV = spDefenseIV;
+		this.speedIV = speedIV;
+		
+		this.hp = hp;
+		this.bhp = bhp;
+		
+		this.attack = attack;
+		this.defense = defense;
+		this.spAttack = spAttack;
+		this.spDefense = spDefense;
+		this.speed = speed;
+		accuracy = 1;
+		
+		this.nature = nature;
+		
+		this.status = status;		
+		statusCounter = 0;
+		statusLimit = 0;
+		
+		speedStg = 0;
+		attackStg = 0;
+		defenseStg = 0;
+		spAttackStg = 0;
+		spDefenseStg = 0;
+		accuracyStg = 0;
+		
+		this.isAlive = isAlive;	
+		
+		this.moveSet = moveSet;
+	}	
 	/** END CONSTRUCTORS **/
 			
 	/** NATURE METHODS **/

@@ -1928,14 +1928,14 @@ public class UI {
 			
 			if (commandNum > 0) {
 				gp.keyH.playCursorSE();	
-				commandNum--;				
+				commandNum--;			
 			}				
 		}
 		if (gp.keyH.downPressed) {				
 			gp.keyH.downPressed = false;	
 			if (commandNum < gp.player.pokeParty.get(fighterNum).getMoveSet().size() - 1) {
 				gp.keyH.playCursorSE();	
-				commandNum++;				
+				commandNum++;		
 			}
 		}					
 		if (gp.keyH.leftPressed && !partyMove) {
