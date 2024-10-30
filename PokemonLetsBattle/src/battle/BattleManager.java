@@ -738,7 +738,13 @@ public class BattleManager extends Thread {
 				setStatus(atk, Status.SLEEP);		
 			}
 			else {				
-				setAttribute(atk, move.getStats(), move.getLevel());		
+				int level = move.getLevel();
+								
+				if (weather == Weather.SUNLIGHT && move.getMove() == Moves.GROWTH) {
+					level++;
+				}
+				
+				setAttribute(atk, move.getStats(), level);		
 			}
 		}
 		// if move changes target attributes
@@ -935,9 +941,9 @@ public class BattleManager extends Thread {
 	
 	private void absorbHP(Pokemon atk, Pokemon trg, Move move, int damage) throws InterruptedException {
 		
-		if (move.getName().equals(Moves.ABSORB.getName()) || 
-				move.getName().equals(Moves.GIGADRAIN.getName())) {
-			
+		if (move.getMove() == Moves.ABSORB || move.getMove() == Moves.GIGADRAIN ||
+				move.getMove() == Moves.MEGADRAIN) {
+						
 			int gainedHP = (damage / 2);
 			int result = atk.getHP() + gainedHP;
 			
