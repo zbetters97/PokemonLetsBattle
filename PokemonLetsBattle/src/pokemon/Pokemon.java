@@ -424,10 +424,15 @@ public class Pokemon {
 		return false;
 	}
 	
-	public void resetMovesPP() {		
+	public void resetMoves() {		
 		for (Move m : moveSet) {
-			m.resetpp();
-			m.resetMove();
+			m.resetPP();
+			m.resetMoveTurns();
+		}
+	}
+	public void resetMoveTurns() {
+		for (Move m : moveSet) {
+			m.resetMoveTurns();
 		}
 	}
 	/** END ADD NEW MOVE METHOD **/
@@ -543,7 +548,7 @@ public class Pokemon {
 		this.isAlive = isAlive; 
 		this.status = null; 
 		this.isProtected = false;
-		resetMovesPP();
+		resetMoves();
 	}
 	
 	public boolean getAttacking() { return attacking; }

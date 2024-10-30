@@ -75,7 +75,7 @@ public enum Status {
 		
 		switch (this.abr) {  	
 			case ("PAR"): recover = " grew\nparalyzed!"; break;
-			case ("PSN"): recover = " became\npoisonsed!"; break;
+			case ("PSN"): recover = " became\npoisoned!"; break;
 	    	case ("CNF"): recover = " became\nconfused!"; break;
 	    	case ("BRN"): recover = " suffered\na burn!"; break;
 	    	case ("FRZ"): recover = " froze\nin ice!"; break;

@@ -41,22 +41,22 @@ public class Move {
 	public Moves getMove() { return move; }
 	public String getName() { return move.getName(); }
 	
-	public int getpp() { return pp; }
-	public void setpp(int pp) {	
+	public int getPP() { return pp; }
+	public void setPP(int pp) {	
 		this.pp = pp; 
 		if (this.pp < 0) {
 			this.pp = 0; 
 		}
 	}
 	
-	public int getbpp() { return bpp; }
-	public void setbpp(int bpp) { 
+	public int getBPP() { return bpp; }
+	public void setBPP(int bpp) { 
 		this.bpp = bpp;  
 		if (this.bpp < 0) {
 			this.bpp = 0; 
 		}
 	}		
-	public void resetpp() { pp = bpp;}
+	public void resetPP() { pp = bpp;}
 	
 	public int getTurnCount() {	return turnCount; }
 	public void setTurnCount(int turnCount) { this.turnCount = turnCount; }
@@ -74,7 +74,7 @@ public class Move {
 		}
 	}
 	
-	public void resetMove() {		
+	public void resetMoveTurns() {		
 		if (move.getRecharge()) turnCount--;		
 		else turnCount = getTurns();		
 	}

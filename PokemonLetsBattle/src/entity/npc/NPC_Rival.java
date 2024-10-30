@@ -19,6 +19,7 @@ public class NPC_Rival extends Entity {
 		worldYStart = this.worldY;
 		
 		type = type_npc;
+		skillLevel = skill_rookie;
 		name = npcName;
 		direction = "right";
 		speed = 2; defaultSpeed = speed;

@@ -1,6 +1,5 @@
 package battle;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -21,47 +20,122 @@ public final class BattleUtility {
 	
 	private BattleUtility(GamePanel gp) { }
 	
-	public static Move getBestMove(Pokemon attacker, Pokemon target, Weather weather) {
+	public static Move chooseCPUMove(Entity trainer, Pokemon attacker, Pokemon target, Weather weather) {
+		/** SWITCH OUT LOGIC REFERENCE: https://www.youtube.com/watch?v=apuO7pvmGUo **/
+		
+		Move bestMove = null;
+		
+		if (trainer == null || trainer.skillLevel  == trainer.skill_rookie) {
+			bestMove = chooseCPUMove_Random(attacker);
+		}
+		else if (trainer.skillLevel == trainer.skill_smart) {
+			bestMove = chooseCPUMove_Power(attacker, target, weather);
+		}
+		else if (trainer.skillLevel == trainer.skill_elite) {
+			bestMove = chooseCPUMove_Best(attacker, target, weather);
+		}		
+		
+		return bestMove;
+	}
+ 	private static Move chooseCPUMove_Random(Pokemon attacker) {
 		
 		Move bestMove;
 		
-		// holds Map of Move and Damage Points
-		Map<Move, Integer> moves = new HashMap<>();
+		int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
+		bestMove = attacker.getMoveSet().get(ranMove);
+				
+		return bestMove;
+	}
+	private static Move chooseCPUMove_Power(Pokemon attacker, Pokemon target, Weather weather) {
 		
-		// for each move in attacker's move set
+		Move bestMove;
+		
+		Map<Move, Integer> damageMoves = new HashMap<>();
+		
 		for (Move move : attacker.getMoveSet()) {
 			
-			if (move.getPower() > 0 && move.getpp() != 0) {
+			if (move.getPower() > 0 && move.getPP() != 0) {
 				
-				// find damage value of each move (no crit is assumed)
-				int damage = calculateDamage(attacker, target, move, weather);
+				double power = getPower(move, attacker.getLevel(), weather);				
+				double type = getEffectiveness(target, move.getType());				
 				
-				// add move and corresponding damage value to k/v list
-				moves.put(move, damage);	
+				// CALCULATE POWER OF EACH MOVE
+				int result = (int) (power * type);
+				
+				damageMoves.put(move, result);	
+			}		
+		}
+				
+		if (damageMoves.isEmpty()) {		
+			
+			for (Move move : attacker.getMoveSet()) {
+				
+				if (move.getMType() == MoveType.STATUS) {
+					bestMove = move;
+					return bestMove;
+				}		
+			}
+			
+			int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
+			bestMove = attacker.getMoveSet().get(ranMove);				
+		}
+		else {
+
+			bestMove = Collections.max(damageMoves.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey(); 
+
+			int val = 1 + (int)(Math.random() * 4);
+			if (val == 1) {				
+				int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
+				bestMove = attacker.getMoveSet().get(ranMove);
+			}	
+		}
+		
+		return bestMove;
+	}
+	private static Move chooseCPUMove_Best(Pokemon attacker, Pokemon target, Weather weather) {
+		
+		Move bestMove;
+		
+		Map<Move, Integer> damageMoves = new HashMap<>();
+		Map<Move, Integer> koMoves = new HashMap<>();
+		
+		for (Move move : attacker.getMoveSet()) {
+			
+			if (move.getPower() > 0 && move.getPP() != 0) {
+				
+				int damage = calculateDamage(attacker, target, move, weather);				
+				damageMoves.put(move, damage);	
+				
+				if (damage >= target.getHP() && move.getGoFirst()) {
+					int accuracy = (int) getAccuracy(move, weather);
+					koMoves.put(move, accuracy);
+				}
 			}		
 		}
 		
-		// find max value in moves list based on value
-		if (!moves.isEmpty()) {
+		if (koMoves.isEmpty()) {
 			
-			bestMove = Collections.max(moves.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey(); 
-			
-			// if best move does not cause KO
-			int damage = calculateDamage(attacker, target, bestMove, weather);
-			if (damage < target.getHP()) {
+			if (damageMoves.isEmpty()) {		
 				
-				// 33% chance CPU selects random move instead of most powerful			
-				int val = 1 + (int)(Math.random() * 4);
-				if (val == 1) {				
-					int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
-					bestMove = attacker.getMoveSet().get(ranMove);
-				}	
-			}			
+				for (Move move : attacker.getMoveSet()) {
+					
+					if (move.getMType() == MoveType.STATUS) {
+						bestMove = move;
+						return bestMove;
+					}		
+				}
+				
+				int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
+				bestMove = attacker.getMoveSet().get(ranMove);				
+			}
+			else {						
+				bestMove = Collections.max(damageMoves.entrySet(), 
+						Comparator.comparingInt(Map.Entry::getValue)).getKey();			
+			}
 		}
-		// if list is empty, select random move
 		else {
-			int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
-			bestMove = attacker.getMoveSet().get(ranMove);
+			bestMove = Collections.max(koMoves.entrySet(), 
+					Comparator.comparingInt(Map.Entry::getValue)).getKey();	
 		}
 		
 		return bestMove;
@@ -226,7 +300,7 @@ public final class BattleUtility {
 		return damage;
 	}
 		
- 	public static double getAccuracy(Move move, Weather weather) {
+ 	private static double getAccuracy(Move move, Weather weather) {
 		
 		double accuracy = move.getAccuracy();
 		
@@ -352,6 +426,7 @@ public final class BattleUtility {
 		
 		return defense;
 	}
+	
 	public static double getEffectiveness(Pokemon pokemon, Type type) {
 		
 		double effect = 1.0;
@@ -412,144 +487,141 @@ public final class BattleUtility {
 		return effect;
 	}
 	
-	public static Pokemon getNextCPUFighter(Pokemon pokemon, Entity trainer) {
+	public static Pokemon getCPUFighter(Entity trainer, Pokemon fighter, Pokemon target, Weather weather) {
 		
-		if (pokemon == null) {
-			return trainer.pokeParty.get(0);
+		Pokemon nextFighter = null;
+		
+		if (trainer == null || trainer.skillLevel == trainer.skill_rookie) {
+			nextFighter = getCPUFighter_Next(trainer, fighter);
+		}
+		else if (trainer.skillLevel == trainer.skill_smart) {
+			nextFighter = getCPUFighter_Power(trainer, target, weather);
+		}
+		else if (trainer.skillLevel == trainer.skill_elite) {
+			nextFighter = getCPUFighter_Best(trainer, target, weather);
 		}
 		
-		int index = trainer.pokeParty.indexOf(pokemon);
-		if (index < 0 || index + 1 == trainer.pokeParty.size()) {
-			return null;
-		}
-		else {
-			 return trainer.pokeParty.get(index + 1);
-		}
+		return nextFighter;		
+	}	
+ 	private static Pokemon getCPUFighter_Next(Entity trainer, Pokemon fighter) {
+		
+ 		if (fighter == null) { 
+ 			return trainer.pokeParty.get(0); 
+ 		}
+ 		else {
+ 			int index = trainer.pokeParty.indexOf(fighter);
+ 			if (index < 0 || index + 1 == trainer.pokeParty.size()) {
+ 				return null;
+ 			}
+ 			else {
+ 				 return trainer.pokeParty.get(index + 1);
+ 			}	
+ 		}	
 	}
- 	public static Pokemon getBestCPUFighter(ArrayList<Pokemon> pokeParty, Pokemon target) {
-		
-		int available = 0;
-		
-		// list to hold all candidates based on type effectiveness
-		Map<Pokemon, Integer> pokemonList = new HashMap<>();
-		
-		for (Pokemon p : pokeParty) {
-			if (p.isAlive()) {
-				available++;
-			}
-		}
-		
-		// if more than 1 pokemon in CPU party
-		if (available > 1) {
-			
-			// loop through each pokemon in party
-			for (Pokemon p : pokeParty) {
-				
-				if (p.isAlive()) {
-				
-					// if party is single type
-					if (p.getTypes() == null) {
-												
-						// if target is single type
-						if (target.getTypes() == null) {	
-							
-							// loop through each type in target pokemon
-							for (Type vulnType : target.getType().getVulnerability().keySet()) {	
-								
-								// if type matches target's vulnerability
-								if (vulnType.getName().equals(p.getType().getName()))
-									pokemonList.put(p, p.getLevel());
-							}
-						}					
-						// if target is multi type
-						else {			
-							
-							// for each type in target
-							for (Type type : target.getTypes()) {
-								
-								// loop through each vulnerability in type
-								for (Type vuln : type.getVulnerability().keySet()) {									
-	
-									// if type matches target's vulnerability
-									if (vuln.getName().equals(p.getType().getName()))
-										pokemonList.put(p, p.getLevel());
-								}
-							}						
-						}					
-					}				
-					// if party is multi type
-					else { 
-											
-						// if target is single type
-						if (target.getTypes() == null) {	
-							
-							// for each type in party
-							for (Type type : p.getTypes()) {
-								
-								// loop through each vulnerability in target pokemon
-								for (Type vulnType : target.getType().getVulnerability().keySet()) {	
-								
-									// if type matches target's vulnerability
-									if (vulnType.getName().equals(type.getName()))
-										pokemonList.put(p, p.getLevel());
-								}
-							}
-							
-							
-						}					
-						// if target is multi type
-						else {			
-							
-							// for each type in party
-							for (Type parType : p.getTypes()) {
-	
-								// for each type in target
-								for (Type tarType : target.getTypes()) {
-									
-									// loop through each vulnerability in type
-									for (Type vuln : tarType.getVulnerability().keySet()) {									
-		
-										// if type matches target's vulnerability
-										if (vuln.getName().equals(parType.getName()))
-											pokemonList.put(p, p.getLevel());
-									}
-								}		
-							}
-						}
-					}
-				}				
-			}
-		}
-		// if 1 pokemon remaining in party
-		else if (available == 1) {
-			for (Pokemon p : pokeParty) {				
-				if (p.isAlive()) {
-					return p;
-				}
-			}
-		}
-		
-		// if 0 pokemon remaining in party
-		else {
-			return null;
-		}
-			
-		Pokemon bestPokemon;
-		
-		// find best pokemon based on max level
-		if (!pokemonList.isEmpty()) {
-			bestPokemon = Collections.max(pokemonList.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
-			return bestPokemon;
-		}
-		else {			
-			// loop through party and find highest level pokemon
-			for (Pokemon p : pokeParty) {
-				pokemonList.put(p, p.getLevel());
+ 	private static Pokemon getCPUFighter_Power(Entity trainer, Pokemon target, Weather weather) {
+ 		
+ 		Pokemon bestFighter = null;
+ 		
+ 		Map<Pokemon, Integer> fighters = new HashMap<>();
+ 		Map<Move, Integer> powerMoves = new HashMap<>();
+ 		
+ 		for (Pokemon p : trainer.pokeParty) {
+ 			
+ 			if (p.isAlive()) {
+ 				
+ 				for (Move m : p.getMoveSet()) {
+ 					
+ 					if (m.getPower() > 0 && m.getPP() != 0) {
+ 						
+ 						double power = getPower(m, p.getLevel(), weather);				
+ 						double type = getEffectiveness(target, m.getType());				
+ 						
+ 						// CALCULATE POWER OF EACH MOVE
+ 						int result = (int) (power * type); 	 
+ 						
+ 						powerMoves.put(m, result);
+ 					}		 					
+ 				} 	
+ 				
+ 				if (!powerMoves.isEmpty()) {
+ 					
+ 					int power = Collections.max(powerMoves.entrySet(), 
+ 							Comparator.comparingInt(Map.Entry::getValue)).getValue(); 
+ 					
+ 					fighters.put(p, power);
+ 				} 			
+ 				
+ 				powerMoves.clear();
+ 			} 			
+ 		}
+ 		
+ 		if (fighters.isEmpty()) {
+ 			
+ 			// loop through party and find highest level pokemon
+			for (Pokemon p : trainer.pokeParty) {
+				fighters.put(p, p.getLevel());
 			}
 			
-			bestPokemon = Collections.max(pokemonList.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
-			return bestPokemon;
-		}
+			bestFighter = Collections.max(fighters.entrySet(), 
+					Comparator.comparingInt(Map.Entry::getValue)).getKey();
+		
+ 		}
+ 		else {
+ 			bestFighter = Collections.max(fighters.entrySet(), 
+					Comparator.comparingInt(Map.Entry::getValue)).getKey(); 
+ 		}
+ 		 		 		
+ 		return bestFighter; 		
+ 	}
+ 	private static Pokemon getCPUFighter_Best(Entity trainer, Pokemon target, Weather weather) {
+		
+		Pokemon bestFighter = null;
+ 		
+ 		Map<Pokemon, Integer> fighters = new HashMap<>();
+ 		Map<Move, Integer> damageMoves = new HashMap<>();
+ 		
+ 		for (Pokemon p : trainer.pokeParty) {
+ 			
+ 			if (p.isAlive()) {
+ 				
+ 				for (Move m : p.getMoveSet()) {
+ 					
+ 					if (m.getPower() > 0 && m.getPP() != 0) {
+ 						
+ 						int damage = calculateDamage(p, target, m, weather);				
+ 						damageMoves.put(m, damage);	
+ 					}		 					
+ 				} 	
+ 				
+ 				if (!damageMoves.isEmpty()) {
+ 					
+ 					int damage = Collections.max(damageMoves.entrySet(), 
+ 							Comparator.comparingInt(Map.Entry::getValue)).getValue(); 
+ 					
+ 					fighters.put(p, damage);
+ 				} 			
+ 				
+ 				damageMoves.clear();
+ 			} 			
+ 		}
+ 		
+ 		if (fighters.isEmpty()) {
+ 			
+ 			// loop through party and find highest level pokemon
+			for (Pokemon p : trainer.pokeParty) {
+				fighters.put(p, p.getLevel());
+			}
+			
+			bestFighter = Collections.max(fighters.entrySet(), 
+					Comparator.comparingInt(Map.Entry::getValue)).getKey();
+		
+ 		}
+ 		else {
+ 			bestFighter = Collections.max(fighters.entrySet(), 
+					Comparator.comparingInt(Map.Entry::getValue)).getKey(); 
+ 		}
+ 		 		 		
+ 		return bestFighter; 		
 	}
  	
  	public static boolean isCaptured(Pokemon pokemon, Entity ball) {

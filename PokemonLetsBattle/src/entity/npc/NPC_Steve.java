@@ -19,6 +19,7 @@ public class NPC_Steve extends Entity {
 		worldYStart = this.worldY;
 		
 		type = type_npc;
+		skillLevel = skill_smart;
 		name = npcName;
 		direction = "right";
 		speed = 2; defaultSpeed = speed;

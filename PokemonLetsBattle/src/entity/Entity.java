@@ -76,6 +76,11 @@ public class Entity {
 	public boolean onPath = false;
 	public boolean pathCompleted = false;
 	protected int steps = 0;
+	
+	public int skillLevel = 0;
+	public final int skill_rookie = 1;
+	public final int skill_smart = 2;
+	public final int skill_elite = 3;
 		
 	// DIALOGUE
 	public String dialogues[][] = new String[20][20];
@@ -677,7 +682,7 @@ public class Entity {
 			for (Pokemon p : pokeParty) {				
 				p.setAlive(true);
 				p.setHP(p.getBHP());
-				p.resetMovesPP();
+				p.resetMoves();
 				p.setStatus(null);				
 			}
 			

@@ -1868,7 +1868,7 @@ public class UI {
 			drawText(text, textX, textY, battle_white, Color.BLACK);	
 			
 			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));						
-			text = m.getpp() + "/" + m.getbpp();
+			text = m.getPP() + "/" + m.getBPP();
 			textX = getXforRightAlignText(text, (int) (gp.tileSize * 15.7));
 			drawText(text, textX, textY, battle_white, Color.BLACK);
 			
@@ -2264,7 +2264,7 @@ public class UI {
 			drawText(text, textX, textY, battle_white, Color.BLACK);	
 			
 			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45F));						
-			text = m.getpp() + "/" + m.getbpp();
+			text = m.getPP() + "/" + m.getBPP();
 			textX = getXforRightAlignText(text, (int) (gp.tileSize * 15.7));
 			drawText(text, textX, textY, battle_white, Color.BLACK);
 			
@@ -3010,8 +3010,9 @@ public class UI {
 		height -= 5;
 		g2.fillRoundRect(x, y, width, height, 3, 3);		
 				
-		double remainXP = (double) (gp.btlManager.fighter[0].getXP() - gp.btlManager.fighter[0].getBXP()) / 
-				(double) gp.btlManager.fighter[0].getNextXP();
+		double remainXP = 
+				(double) (gp.btlManager.fighter[0].getXP() - gp.btlManager.fighter[0].getBXP()) / 
+				(double) (gp.btlManager.fighter[0].getNextXP());
 		
 		width *= remainXP;	
 		g2.setColor(battle_blue);
@@ -3249,7 +3250,7 @@ public class UI {
 			
 			Move pMove = gp.btlManager.getPlayerMove(commandNum);
 			
-			if (pMove.getpp() <= 0) {
+			if (pMove.getPP() <= 0) {
 				gp.keyH.playErrorSE();
 			}
 			else {
@@ -3283,8 +3284,8 @@ public class UI {
 						
 		x += gp.tileSize * 0.3;
 		y = (int) (gp.screenHeight - gp.tileSize * 2.2);	
-		text = "PP " + gp.btlManager.fighter[0].getMoveSet().get(commandNum).getpp() + "/" + 
-				gp.btlManager.fighter[0].getMoveSet().get(commandNum).getbpp();
+		text = "PP " + gp.btlManager.fighter[0].getMoveSet().get(commandNum).getPP() + "/" + 
+				gp.btlManager.fighter[0].getMoveSet().get(commandNum).getBPP();
 		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));	
 		drawText(text, x, y, battle_white, Color.BLACK);
