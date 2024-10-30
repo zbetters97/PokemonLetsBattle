@@ -23,56 +23,126 @@ public enum Pokedex {
 	
 	BULBASAUR ("Bulbasaur", 1, Type.GRASS, new Overgrow(), 45, 49, 49, 65, 65, 45, 16, 64, 3, 1, 45,
 			Map.ofEntries(
+					Map.entry(3, Moves.GROWL),
+					//Map.entry(7, Moves.LEECHSEED),
 					Map.entry(9, Moves.VINEWHIP),
-					Map.entry(12, Moves.POISONPOWDER),
+					Map.entry(13, Moves.POISONPOWDER),
+					Map.entry(14, Moves.SLEEPPOWDER),
 					Map.entry(15, Moves.TAKEDOWN),
 					Map.entry(19, Moves.RAZORLEAF),
+					//Map.entry(21, Moves.SWEETSCENT),
+					//Map.entry(25, Moves.GROWTH),
 					Map.entry(27, Moves.DOUBLEEDGE)
+					//Map.entry(37, Moves.SEEDBOMB)
 			)),
 	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), new Overgrow(), 60, 62, 63, 80, 80, 60, 32, 141, 3, 2, 45, 
 			Map.ofEntries(					
+					Map.entry(3, Moves.GROWL),
+					//Map.entry(7, Moves.LEECHSEED),
+					Map.entry(13, Moves.POISONPOWDER),
+					Map.entry(14, Moves.SLEEPPOWDER),
+					Map.entry(15, Moves.TAKEDOWN),
 					Map.entry(20, Moves.RAZORLEAF),
+					//Map.entry(23, Moves.SWEETSCENT),
+					//Map.entry(28, Moves.GROWTH),
 					Map.entry(31, Moves.DOUBLEEDGE),
 					Map.entry(44, Moves.SOLARBEAM)
 			)),
 	VENUSAUR ("Venusaur", 3, Arrays.asList(Type.GRASS, Type.POISON), new Overgrow(), 80, 82, 83, 100, 100, 80, -1, 208, 3, 3, 45,
 			Map.ofEntries(					
+					Map.entry(3, Moves.GROWL),
+					//Map.entry(7, Moves.LEECHSEED),
+					Map.entry(9, Moves.VINEWHIP),
+					Map.entry(13, Moves.POISONPOWDER),
+					Map.entry(14, Moves.SLEEPPOWDER),
+					Map.entry(15, Moves.TAKEDOWN),
+					Map.entry(20, Moves.RAZORLEAF),
+					//Map.entry(23, Moves.SWEETSCENT),
+					//Map.entry(28, Moves.GROWTH),
+					Map.entry(31, Moves.DOUBLEEDGE),
+					//Map.entry(32, Moves.PETALDANCE),
+					//Map.entry(37, Moves.SEEDBOMB)
 					Map.entry(53, Moves.SOLARBEAM)
 			)),
 	CHARMANDER ("Charmander", 4, Type.FIRE, new Blaze(), 39, 52, 43, 60, 50, 65, 16, 65, 3, 1, 45,
 			Map.ofEntries(
 					Map.entry(7, Moves.EMBER),
+					//Map.entry(10, Moves.SMOKESCREEN),
+					//Map.entry(16, Moves.DRAGONRAGE),
+					//Map.entry(19, Moves.SCARYFACE),
 					Map.entry(25, Moves.FIREFANG),
 					Map.entry(28, Moves.SLASH),
 					Map.entry(34, Moves.FLAMETHROWER)
+					//Map.entry(37, Moves.FIRESPIN)
 			)),
 	CHARMELEON ("Charmeleon", 5, Type.FIRE, new Blaze(), 58, 64, 58, 80, 65, 80, 36, 142, 3, 2, 45,
 			Map.ofEntries(
+					Map.entry(7, Moves.EMBER),
+					//Map.entry(10, Moves.SMOKESCREEN),
+					//Map.entry(17, Moves.DRAGONRAGE),
+					//Map.entry(21, Moves.SCARYFACE),
 					Map.entry(28, Moves.FIREFANG),
 					Map.entry(32, Moves.SLASH),
 					Map.entry(39, Moves.FLAMETHROWER)
+					//Map.entry(43, Moves.FIRESPIN)
 			)),
 	CHARIZARD ("Charizard", 6, Arrays.asList(Type.FIRE, Type.FLYING), new Blaze(), 78, 84, 78, 109, 85, 100, -1, 209, 3, 3, 45,
 			Map.ofEntries(
+					Map.entry(7, Moves.EMBER),
+					//Map.entry(10, Moves.SMOKESCREEN),
+					//Map.entry(17, Moves.DRAGONRAGE),
+					//Map.entry(21, Moves.SCARYFACE),
+					Map.entry(28, Moves.FIREFANG),
+					Map.entry(32, Moves.SLASH),
+					//Map.entry(36, Moves.WINGATTACK),
 					Map.entry(42, Moves.FLAMETHROWER),
+					//Map.entry(49, Moves.FIRESPIN),
+					//Map.entry(59, Moves.HEATWAVE),
 					Map.entry(66, Moves.FLAREBLITZ)
 			)),
 	SQUIRTLE ("Squirtle", 7, Type.WATER, new Torrent(), 44, 48, 65, 50, 64, 43, 16, 66, 3, 1, 45,
 			Map.ofEntries(
+					Map.entry(4, Moves.TAILWHIP),
 					Map.entry(7, Moves.BUBBLE),
+					//Map.entry(10, Moves.WITHDRAW),
 					Map.entry(13, Moves.WATERGUN),
+					Map.entry(16, Moves.BITE),
+					//Map.entry(19, Moves.RAPIDSPIN),
+					//Map.entry(22, Moves.PROTECT),
 					Map.entry(25, Moves.WATERPULSE),
 					Map.entry(28, Moves.AQUATAIL),
+					//Map.entry(31, Moves.SKULLBASH),
+					Map.entry(34, Moves.RAINDANCE),
 					Map.entry(37, Moves.HYDROPUMP)
 			)),
 	WARTORTLE ("Wartortle", 8, Type.WATER, new Torrent(), 59, 63, 80, 65, 80, 58, 36, 143, 3, 2, 45,
 			Map.ofEntries(
+					Map.entry(4, Moves.TAILWHIP),
+					Map.entry(7, Moves.BUBBLE),
+					//Map.entry(10, Moves.WITHDRAW),
+					Map.entry(13, Moves.WATERGUN),
+					Map.entry(16, Moves.BITE),
+					//Map.entry(20, Moves.RAPIDSPIN),
+					//Map.entry(24, Moves.PROTECT),
 					Map.entry(28, Moves.WATERPULSE),
 					Map.entry(32, Moves.AQUATAIL),
+					//Map.entry(36, Moves.SKULLBASH),
+					Map.entry(40, Moves.RAINDANCE),
 					Map.entry(44, Moves.HYDROPUMP)
 			)),
 	BLASTOISE ("Blastoise", 9, Type.WATER, new Torrent(), 79, 83, 100, 85, 105, 78, -1, 210, 3, 3, 45,
 			Map.ofEntries(
+					Map.entry(4, Moves.TAILWHIP),
+					Map.entry(7, Moves.BUBBLE),
+					//Map.entry(10, Moves.WITHDRAW),
+					Map.entry(13, Moves.WATERGUN),
+					Map.entry(16, Moves.BITE),
+					//Map.entry(20, Moves.RAPIDSPIN),
+					//Map.entry(24, Moves.PROTECT),
+					Map.entry(28, Moves.WATERPULSE),
+					Map.entry(32, Moves.AQUATAIL),
+					//Map.entry(39, Moves.SKULLBASH),
+					Map.entry(46, Moves.RAINDANCE),
 					Map.entry(53, Moves.HYDROPUMP)
 			)),
 	PIKACHU ("Pikachu", 25, Type.ELECTRIC, new Static(), 55, 55, 40, 50, 50, 90, 30, 82, 0, 2, 190,
@@ -80,9 +150,11 @@ public enum Pokedex {
 					Map.entry(5, Moves.TAILWHIP),
 					Map.entry(10, Moves.THUNDERWAVE),
 					Map.entry(13, Moves.QUICKATTACK),
+					//Map.entry(18, Moves.DOUBLETEAM),
 					Map.entry(21, Moves.SLAM),
 					Map.entry(26, Moves.THUNDERBOLT),
 					Map.entry(34, Moves.AGILITY),
+					//Map.entry(37, Moves.DISCHARGE),
 					Map.entry(45, Moves.THUNDER)
 			)),
 	RAICHU ("Raichu", 26, Type.ELECTRIC, new Static(), 60, 90, 55, 90, 80, 110, -1, 122, 0, 3, 75, null),
@@ -91,128 +163,200 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(16, Moves.CONFUSION),
 					Map.entry(24, Moves.PSYBEAM),
+					//Map.entry(30, Moves.RECOVER),
 					Map.entry(34, Moves.PSYCHOCUT),
 					Map.entry(40, Moves.PSYCHIC)
 			)),
 	ALAKAZAM ("Alakazam", 65, Type.PSYCHIC, new InnerFocus(), 55, 50, 45, 135, 95, 120, -1, 186, 3, 3, 50,
 			Map.ofEntries(
+					Map.entry(16, Moves.CONFUSION),
+					Map.entry(24, Moves.PSYBEAM),
+					//Map.entry(30, Moves.RECOVER),
+					Map.entry(34, Moves.PSYCHOCUT),
 					Map.entry(36, Moves.CALMMIND),
 					Map.entry(40, Moves.PSYCHIC)
 			)),
 	MACHOP ("Machop", 66, Type.FIGHTING, new Guts(), 70, 80, 50, 35, 35, 35, 28, 75, 3, 1, 180,
 			Map.ofEntries(
+					//Map.entry(10, Moves.KARATECHOP),
 					Map.entry(19, Moves.SEISMICTOSS),
+					//Map.entry(22, Moves.REVENGE),
 					Map.entry(25, Moves.VITALTHROW),
+					//Map.entry(31, Moves.SUBMISSION),
+					//Map.entry(34, Moves.WAKEUPSLAP),
 					Map.entry(37, Moves.CROSSCHOP),
+					//Map.entry(43, Moves.SCARYFACE),
 					Map.entry(46, Moves.DYNAMICPUNCH)
 			)),
 	MACHOKE ("Machoke", 67, Type.FIGHTING, new Guts(), 80, 100, 70, 50, 60, 45, 40, 146, 3, 2, 90,
 			Map.ofEntries(
+					//Map.entry(10, Moves.KARATECHOP),
 					Map.entry(19, Moves.SEISMICTOSS),
+					//Map.entry(22, Moves.REVENGE),
 					Map.entry(25, Moves.VITALTHROW),
+					//Map.entry(32, Moves.SUBMISSION),
+					//Map.entry(36, Moves.WAKEUPSLAP),
 					Map.entry(40, Moves.CROSSCHOP),
+					//Map.entry(44, Moves.SCARYFACE),
 					Map.entry(51, Moves.DYNAMICPUNCH)
 			)),
 	MACHAMP ("Machamp", 68, Type.FIGHTING, new Guts(), 90, 130, 80, 65, 85, 55, -1, 193, 3, 3, 45,
 			Map.ofEntries(
+					//Map.entry(10, Moves.KARATECHOP),
+					Map.entry(19, Moves.SEISMICTOSS),
+					//Map.entry(22, Moves.REVENGE),
+					Map.entry(25, Moves.VITALTHROW),
+					//Map.entry(32, Moves.SUBMISSION),
+					//Map.entry(36, Moves.WAKEUPSLAP),
 					Map.entry(40, Moves.CROSSCHOP),
+					//Map.entry(44, Moves.SCARYFACE),
 					Map.entry(51, Moves.DYNAMICPUNCH)
 			)),
 	GEODUDE ("Geodude", 74, Arrays.asList(Type.ROCK, Type.GROUND), new RockHead(), 40, 80, 100, 30, 30, 20, 25, 73, 3, 1, 255,
 			Map.ofEntries(
+					//Map.entry(8, Moves.ROCKPOLISH),
 					Map.entry(11, Moves.ROCKTHROW),
+					//Map.entry(15, Moves.MAGNITUDE),
+					//Map.entry(18, Moves.SELFDESTRUCT),
 					Map.entry(22, Moves.ROLLOUT),
+					//Map.entry(25, Moves.ROCKBLAST),
 					Map.entry(29, Moves.EARTHQUAKE),
+					//Map.entry(32, Moves.EXPLOSION),
 					Map.entry(36, Moves.DOUBLEEDGE)
+					//Map.entry(39, Moves.STONEEDGE)
 			)),
 	GRAVELER ("Graveler", 75, Arrays.asList(Type.ROCK, Type.GROUND), new RockHead(), 55, 95, 115, 45, 45, 35, 40, 134, 3, 2, 120,
 			Map.ofEntries(
+					//Map.entry(8, Moves.ROCKPOLISH),
 					Map.entry(11, Moves.ROCKTHROW),
+					//Map.entry(15, Moves.MAGNITUDE),
+					//Map.entry(18, Moves.SELFDESTRUCT),
 					Map.entry(22, Moves.ROLLOUT),
+					//Map.entry(27, Moves.ROCKBLAST),
 					Map.entry(33, Moves.EARTHQUAKE),
-					Map.entry(36, Moves.DOUBLEEDGE)
+					//Map.entry(38, Moves.EXPLOSION),
+					Map.entry(44, Moves.DOUBLEEDGE)
+					//Map.entry(49, Moves.STONEEDGE)
 			)),
 	GOLEM ("Golem", 76, Arrays.asList(Type.ROCK, Type.GROUND), new Levitate(), 80, 120, 130, 55, 65, 45, -1, 177, 3, 3, 45,
 			Map.ofEntries(
+					//Map.entry(8, Moves.ROCKPOLISH),
 					Map.entry(11, Moves.ROCKTHROW),
+					//Map.entry(15, Moves.MAGNITUDE),
+					//Map.entry(18, Moves.SELFDESTRUCT),
 					Map.entry(22, Moves.ROLLOUT),
+					//Map.entry(27, Moves.ROCKBLAST),
 					Map.entry(33, Moves.EARTHQUAKE),
+					//Map.entry(38, Moves.EXPLOSION),
 					Map.entry(44, Moves.DOUBLEEDGE)
+					//Map.entry(49, Moves.STONEEDGE)
 			)),
 	GASTLY ("Gastly", 92, Arrays.asList(Type.GHOST, Type.POISON), new Levitate(), 30, 35, 30, 100, 35, 80, 25, 95, 3, 1, 190,
 			Map.ofEntries(
+					//Map.entry(15, Moves.NIGHTSHADE),
 					Map.entry(19, Moves.CONFUSERAY),
+					//Map.entry(22, Moves.SUCKERPUNCH),
 					Map.entry(26, Moves.PAYBACK),
 					Map.entry(29, Moves.SHADOWBALL),
+					//Map.entry(33, Moves.DREAMEATER),
 					Map.entry(36, Moves.DARKPULSE)
 			)),
 	HAUNTER ("Haunter", 93, Arrays.asList(Type.GHOST, Type.POISON), new Levitate(), 45, 50, 45, 115, 55, 96, 40, 126, 3, 2, 90,
 			Map.ofEntries(
+					//Map.entry(15, Moves.NIGHTSHADE),
 					Map.entry(19, Moves.CONFUSERAY),
-					Map.entry(25, Moves.SHADOWPUNCH),
+					//Map.entry(22, Moves.SUCKERPUNCH),
+					//Map.entry(25, Moves.SHADOWPUNCH),
 					Map.entry(28, Moves.PAYBACK),
 					Map.entry(33, Moves.SHADOWBALL),
+					//Map.entry(39, Moves.DREAMEATER),
 					Map.entry(44, Moves.DARKPULSE)
 			)),
 	GENGAR ("Gengar", 94, Arrays.asList(Type.GHOST, Type.POISON), new Levitate(), 60, 65, 60, 130, 75, 110, -1, 190, 3, 3, 45,
 			Map.ofEntries(
+					//Map.entry(15, Moves.NIGHTSHADE),
 					Map.entry(19, Moves.CONFUSERAY),
-					Map.entry(25, Moves.SHADOWPUNCH),
+					//Map.entry(22, Moves.SUCKERPUNCH),
+					//Map.entry(25, Moves.SHADOWPUNCH),
 					Map.entry(28, Moves.PAYBACK),
 					Map.entry(33, Moves.SHADOWBALL),
+					//Map.entry(39, Moves.DREAMEATER),
 					Map.entry(44, Moves.DARKPULSE)
 			)),
 	HORSEA ("Horsea", 116, Type.WATER, new Sniper(), 30, 40, 70, 70, 25, 60, 32, 83, 0, 1, 225,
 			Map.ofEntries(
+					//Map.entry(4, Moves.SMOKESCREEN),
 					Map.entry(8, Moves.LEER),
 					Map.entry(11, Moves.WATERGUN),
+					//Map.entry(18, Moves.BUBBLEBEAM),
 					Map.entry(23, Moves.AGILITY),
 					Map.entry(26, Moves.TWISTER),
+					Map.entry(30, Moves.BRINE),
 					Map.entry(35, Moves.HYDROPUMP),
+					//Map.entry(38, Moves.DRAGONDANCE),
 					Map.entry(42, Moves.DRAGONPULSE)
 			)),
 	SEADRA ("Seadra", 117, Type.WATER, new Sniper(), 55, 65, 95, 95, 45, 85, 45, 155, 0, 2, 75,
 			Map.ofEntries(
+					//Map.entry(4, Moves.SMOKESCREEN),
 					Map.entry(8, Moves.LEER),
 					Map.entry(11, Moves.WATERGUN),
+					//Map.entry(18, Moves.BUBBLEBEAM),
 					Map.entry(23, Moves.AGILITY),
 					Map.entry(26, Moves.TWISTER),
+					Map.entry(30, Moves.BRINE),
 					Map.entry(40, Moves.HYDROPUMP),
+					//Map.entry(48, Moves.DRAGONDANCE),
 					Map.entry(57, Moves.DRAGONPULSE)
 			)),
 	LAPRAS ("Lapras", 131, Arrays.asList(Type.WATER, Type.ICE), new ShellArmor(), 130, 85, 80, 85, 95, 60, -1, 219, 5, 2, 45,
 			Map.ofEntries(
 					Map.entry(7, Moves.CONFUSERAY),
+					//Map.entry(10, Moves.ICESHARD),
 					Map.entry(14, Moves.WATERPULSE),
 					Map.entry(18, Moves.BODYSLAM),
+					Map.entry(22, Moves.RAINDANCE),
 					Map.entry(32, Moves.ICEBEAM),
+					Map.entry(37, Moves.BRINE),
 					Map.entry(49, Moves.HYDROPUMP),
 					Map.entry(55, Moves.SHEERCOLD)
 			)),
 	SNORLAX ("Snorlax", 143, Type.NORMAL, new ThickFat(), 160, 110, 65, 65, 110, 30, -1, 154, 5, 2, 25,
 			Map.ofEntries(
 					Map.entry(4, Moves.DEFENSECURL),
+					//Map.entry(9, Moves.AMNESIA),
 					Map.entry(12, Moves.LICK),
 					Map.entry(20, Moves.YAWN),
+					Map.entry(25, Moves.REST),
+					//Map.entry(28, Moves.SNORE),
+					Map.entry(29, Moves.SLEEPTALK),
 					Map.entry(33, Moves.BODYSLAM),
 					Map.entry(41, Moves.ROLLOUT),
-					Map.entry(44, Moves.CRUNCH)
+					Map.entry(44, Moves.CRUNCH),
+					Map.entry(49, Moves.GIGAIMPACT)
 			)),
 	KINGDRA ("Kingdra", 230, Arrays.asList(Type.WATER, Type.DRAGON), new Sniper(), 75, 95, 95, 95, 95, 85, -1, 207, 0, 3, 45,
 			Map.ofEntries(
+					//Map.entry(4, Moves.SMOKESCREEN),
 					Map.entry(8, Moves.LEER),
 					Map.entry(11, Moves.WATERGUN),
+					//Map.entry(18, Moves.BUBBLEBEAM),
 					Map.entry(23, Moves.AGILITY),
 					Map.entry(26, Moves.TWISTER),
+					Map.entry(30, Moves.BRINE),
 					Map.entry(40, Moves.HYDROPUMP),
+					//Map.entry(48, Moves.DRAGONDANCE),
 					Map.entry(57, Moves.DRAGONPULSE)
 			)),
 	RAIKOU ("Raikou", 243, Type.ELECTRIC, new Pressure(), 90, 85, 75, 115, 100, 115, -1, 216, 5, 3, 3,
 			Map.ofEntries(
 					Map.entry(8, Moves.THUNDERSHOCK),
 					Map.entry(22, Moves.QUICKATTACK),
+					//Map.entry(29, Moves.SPARK),
+					//Map.entry(36, Moves.REFLECT),
 					Map.entry(43, Moves.CRUNCH),
 					Map.entry(50, Moves.THUNDERFANG),
+					//Map.entry(57, Moves.DISCHARGE),
 					Map.entry(64, Moves.EXTRASENSORY),
 					Map.entry(71, Moves.THUNDER),
 					Map.entry(78, Moves.CALMMIND)
@@ -220,13 +364,21 @@ public enum Pokedex {
 	ENTEI ("Entei", 244, Type.FIRE, new Pressure(), 115, 115, 85, 90, 75, 100, -1, 217, 5, 3, 3,
 			Map.ofEntries(
 					Map.entry(8, Moves.EMBER),
+					//Map.entry(22, Moves.FIRESPIN),
+					//Map.entry(29, Moves.STOMP),
 					Map.entry(36, Moves.FLAMETHROWER),
+					//Map.entry(43, Moves.SWAGGER),
 					Map.entry(50, Moves.FIREFANG),
+					//Map.entry(57, Moves.LAVAPLUME),
 					Map.entry(64, Moves.EXTRASENSORY),
+					//Map.entry(71, Moves.FIREBLAST),
 					Map.entry(78, Moves.CALMMIND)
 			)),
 	SUICUNE ("Suicune", 245, Type.WATER, new Pressure(), 100, 75, 115, 90, 115, 85, -1, 215, 5, 3, 3,
 			Map.ofEntries(
+					//Map.entry(8, Moves.BUBBLEBEAM),
+					Map.entry(15, Moves.RAINDANCE),
+					//Map.entry(22, Moves.GUST),
 					Map.entry(29, Moves.AURORABEAM),
 					Map.entry(50, Moves.ICEFANG),
 					Map.entry(64, Moves.EXTRASENSORY),
@@ -235,84 +387,152 @@ public enum Pokedex {
 			)),
 	TREECKO ("Treecko", 252, Type.GRASS, new Overgrow(), 40, 45, 35, 65, 55, 70, 16, 65, 3, 1, 45, 
 			Map.ofEntries(
-					Map.entry(6, Moves.QUICKATTACK),
+					Map.entry(6, Moves.ABSORB),
 					Map.entry(11, Moves.QUICKATTACK),
+					//Map.entry(16, Moves.PURSUIT),
+					//Map.entry(21, Moves.SCREECH),
+					//Map.entry(26, Moves.MEGADRAIN),
 					Map.entry(31, Moves.AGILITY),
 					Map.entry(36, Moves.SLAM),
 					Map.entry(46, Moves.GIGADRAIN)
+					//Map.entry(51, Moves.ENERGYBALL),
 			)),
 	GROVYLE ("Grovyle", 253, Type.GRASS, new Overgrow(), 50, 65, 45, 85, 65, 95, 36, 141, 3, 2, 45, 
 			Map.ofEntries(
+					Map.entry(6, Moves.ABSORB),
+					Map.entry(11, Moves.QUICKATTACK),
+					//Map.entry(16, Moves.FURYCUTTER),
+					//Map.entry(17, Moves.PURSUIT),
+					//Map.entry(23, Moves.SCREECH),
 					Map.entry(29, Moves.LEAFBLADE),
 					Map.entry(35, Moves.AGILITY),
-					Map.entry(41, Moves.SLAM)
+					Map.entry(41, Moves.SLAM),
+					//Map.entry(53, Moves.FALSESWIPE),
+					Map.entry(59, Moves.LEAFSTORM)
 			)),
 	SCEPTILE ("Sceptile", 254, Type.GRASS, new Overgrow(), 70, 85, 65, 105, 85, 120, -1, 208, 3, 3, 45,
 			Map.ofEntries(
+					Map.entry(6, Moves.ABSORB),
+					Map.entry(11, Moves.QUICKATTACK),
+					//Map.entry(16, Moves.FURYCUTTER),
+					//Map.entry(17, Moves.PURSUIT),
+					//Map.entry(23, Moves.SCREECH),
 					Map.entry(29, Moves.LEAFBLADE),
 					Map.entry(35, Moves.AGILITY),
-					Map.entry(41, Moves.SLAM)
+					Map.entry(43, Moves.SLAM),
+					//Map.entry(59, Moves.FALSESWIPE),
+					Map.entry(67, Moves.LEAFSTORM)
 			)),
 	TORCHIC ("Torchic", 255, Type.FIRE, new Blaze(), 45, 60, 40, 70, 50, 45, 16, 65, 3, 1, 45,
 			Map.ofEntries(
 					Map.entry(10, Moves.EMBER),
+					//Map.entry(16, Moves.PECK),
+					//Map.entry(19, Moves.SANDATTACK),
+					//Map.entry(25, Moves.FIRESPIN),
 					Map.entry(28, Moves.QUICKATTACK),
 					Map.entry(34, Moves.SLASH),
 					Map.entry(43, Moves.FLAMETHROWER)
 			)),
 	COMBUSKEN ("Combusken", 256, Arrays.asList(Type.FIRE, Type.FIGHTING), new Blaze(), 60, 85, 60, 85, 60, 55, 36, 142, 3, 2, 45,
 			Map.ofEntries(
+					Map.entry(13, Moves.EMBER),
 					Map.entry(16, Moves.DOUBLEKICK),
-					Map.entry(28, Moves.QUICKATTACK),
-					Map.entry(39, Moves.SLASH)
+					//Map.entry(17, Moves.PECK),
+					//Map.entry(21, Moves.SANDATTACK),
+					//Map.entry(28, Moves.BULKUP),
+					Map.entry(32, Moves.QUICKATTACK),
+					Map.entry(39, Moves.SLASH),
+					Map.entry(50, Moves.SKYUPPERCUT),
+					Map.entry(54, Moves.FLAREBLITZ)
 			)),
 	BLAZIKEN ("Blaziken", 257, Arrays.asList(Type.FIRE, Type.FIGHTING), new Blaze(), 80, 120, 70, 110, 70, 80, -1, 209, 3, 3, 45, 
 			Map.ofEntries(
+					Map.entry(13, Moves.EMBER),
+					Map.entry(16, Moves.DOUBLEKICK),
+					//Map.entry(17, Moves.PECK),
+					//Map.entry(21, Moves.SANDATTACK),
+					//Map.entry(28, Moves.BULKUP),
+					Map.entry(32, Moves.QUICKATTACK),
 					Map.entry(36, Moves.BLAZEKICK),
 					Map.entry(42, Moves.SLASH),
-					Map.entry(59, Moves.SKYUPPERCUT)
+					//Map.entry(49, Moves.BRAVEBIRD),
+					Map.entry(59, Moves.SKYUPPERCUT),
+					Map.entry(66, Moves.FLAREBLITZ)
 			)),
 	MUDKIP ("Mudkip", 258, Type.WATER, new Torrent(), 50, 70, 50, 50, 50, 40, 16, 65, 3, 1, 45, 
 			Map.ofEntries(
-					Map.entry(6, Moves.WATERGUN),
+					Map.entry(6, Moves.MUDSLAP),
+					Map.entry(10, Moves.WATERGUN),
 					Map.entry(28, Moves.TAKEDOWN),
+					//MAP.ENTRY(37, Moves.PROTECT),
 					Map.entry(42, Moves.HYDROPUMP)
+					//Map.entry(46, Moves.ENDEAVOR)
 			)),
 	MARSHTOMP ("Marshtomp", 259, Arrays.asList(Type.WATER, Type.GROUND), new Torrent(), 70, 85, 70, 60, 70, 50, 36, 143, 3, 2, 45,
 			Map.ofEntries(
+					Map.entry(6, Moves.MUDSLAP),
+					Map.entry(10, Moves.WATERGUN),
 					Map.entry(16, Moves.MUDSHOT),
-					Map.entry(31, Moves.TAKEDOWN),
+					Map.entry(25, Moves.MUDBOMB),
+					Map.entry(31, Moves.TAKEDOWN),					
 					Map.entry(37, Moves.MUDDYWATER),
+					//MAP.ENTRY(42, Moves.PROTECT),
 					Map.entry(46, Moves.EARTHQUAKE)
+					//Map.entry(53, Moves.ENDEAVOR)
 			)),	
 	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), new Torrent(), 100, 110, 90, 85, 90, 60, -1, 210, 3, 3, 45,
 			Map.ofEntries(
+					Map.entry(6, Moves.MUDSLAP),
+					Map.entry(10, Moves.WATERGUN),
+					Map.entry(16, Moves.MUDSHOT),
+					Map.entry(25, Moves.MUDBOMB),
+					Map.entry(31, Moves.TAKEDOWN),					
 					Map.entry(39, Moves.MUDDYWATER),
+					//MAP.ENTRY(46, Moves.PROTECT),
 					Map.entry(52, Moves.EARTHQUAKE)
+					//Map.entry(61, Moves.ENDEAVOR),
+					//Map.entry(69, Moves.HAMMERARM)
 			)),
 	POOCHYENA ("Poochyena", 261, Type.DARK, new QuickFeet(), 35, 55, 35, 30, 30, 35, 18, 55, 0, 1, 255, 
 			Map.ofEntries(
 					Map.entry(5, Moves.HOWL),
+					//Map.entry(9, Moves.SANDATTACK),
 					Map.entry(13, Moves.BITE),
+					//Map.entry(25, Moves.SWAGGER),
+					//Map.entry(29, Moves.ASSURANCE),
 					Map.entry(33, Moves.SCARYFACE),
 					Map.entry(45, Moves.TAKEDOWN),
+					//Map.entry(49, Moves.SUCKERPUNCH),
 					Map.entry(53, Moves.CRUNCH)
 			)),
 	MIGHTYENA ("Mightyena", 262, Type.DARK, new QuickFeet(), 70, 90, 70, 60, 60, 70, -1, 128, 0, 2, 127, 
 			Map.ofEntries(
+					Map.entry(5, Moves.HOWL),
+					//Map.entry(9, Moves.SANDATTACK),
+					Map.entry(13, Moves.BITE),
+					//Map.entry(27, Moves.SWAGGER),
+					//Map.entry(32, Moves.ASSURANCE),
 					Map.entry(37, Moves.SCARYFACE),
 					Map.entry(52, Moves.TAKEDOWN)
+					//Map.entry(62, Moves.SUCKERPUNCH),
 			)),
 	ZIGZAGOON ("Zigzagoon", 264, Type.NORMAL, new QuickFeet(), 38, 30, 41, 30, 41, 60, 25, 60, 0, 1, 255, 
 			Map.ofEntries(	
 					Map.entry(5, Moves.TAILWHIP), 
+					//Map.entry(9, Moves.HEADBUTT),
+					//Map.entry(13, Moves.SANDATTACK),
+					//Map.entry(33, Moves.FLAIL),
 					Map.entry(37, Moves.REST)
+					//Map.entry(45, Moves.FLING)
 			)),	
 	LINOONE ("Linoone", 265, Type.NORMAL, new QuickFeet(), 78, 70, 61, 50, 61, 100, -1, 128, 0, 2, 264, 
 			Map.ofEntries(	
 					Map.entry(5, Moves.TAILWHIP), 
+					//Map.entry(9, Moves.HEADBUTT),
+					//Map.entry(13, Moves.SANDATTACK),
 					Map.entry(41, Moves.SLASH),
 					Map.entry(47, Moves.REST)
+					//Map.entry(59, Moves.FLING)
 			)),	
 	WHISMUR ("Whismur", 293, Type.NORMAL, new SoundProof(), 64, 51, 23, 51, 23, 28, 20, 68, 3, 1, 190,
 			Map.ofEntries(
@@ -327,6 +547,8 @@ public enum Pokedex {
 			)),
 	LOUDRED ("Loudred", 294, Type.NORMAL, new SoundProof(), 84, 71, 43, 71, 43, 48, 40, 126, 3, 2, 120,
 			Map.ofEntries(
+					Map.entry(11, Moves.ASTONISH),
+					Map.entry(15, Moves.HOWL),
 					Map.entry(20, Moves.BITE),
 					Map.entry(23, Moves.SUPERSONIC),
 					Map.entry(29, Moves.STOMP),
@@ -337,6 +559,8 @@ public enum Pokedex {
 			)),
 	EXPLOUD ("Exploud", 295, Type.NORMAL, new SoundProof(), 104, 91, 63, 91, 63, 68, -1, 184, 3, 3, 45,
 			Map.ofEntries(
+					Map.entry(11, Moves.ASTONISH),
+					Map.entry(15, Moves.HOWL),
 					Map.entry(20, Moves.BITE),
 					Map.entry(23, Moves.SUPERSONIC),
 					Map.entry(29, Moves.STOMP),
@@ -351,6 +575,9 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(19, Moves.BODYSLAM),
 					Map.entry(25, Moves.AURORABEAM),
+					Map.entry(31, Moves.HAIL),
+					Map.entry(37, Moves.REST),
+					//Map.entry(38, Moves.SNORE),
 					Map.entry(43, Moves.BLIZZARD),
 					Map.entry(49, Moves.SHEERCOLD)
 			)),
@@ -358,26 +585,66 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(19, Moves.BODYSLAM),
 					Map.entry(25, Moves.AURORABEAM),
+					Map.entry(31, Moves.HAIL),
+					//Map.entry(32, Moves.SWAGGER),
+					Map.entry(39, Moves.REST),
+					//Map.entry(40, Moves.SNORE),
 					Map.entry(47, Moves.BLIZZARD),
 					Map.entry(55, Moves.SHEERCOLD)
 			)),
 	WALREIN("Walrein", 365, Arrays.asList(Type.ICE, Type.WATER), new ThickFat(), 110, 80, 90, 95, 90, 65, -1, 192, 3, 3, 45, 
 			Map.ofEntries(
-					Map.entry(50, Moves.BLIZZARD),
-					Map.entry(61, Moves.SHEERCOLD)
+					Map.entry(19, Moves.BODYSLAM),
+					Map.entry(25, Moves.AURORABEAM),
+					Map.entry(31, Moves.HAIL),
+					//Map.entry(32, Moves.SWAGGER),
+					Map.entry(39, Moves.REST),
+					//Map.entry(40, Moves.SNORE),
+					Map.entry(44, Moves.ICEFANG),
+					Map.entry(52, Moves.BLIZZARD),
+					Map.entry(65, Moves.SHEERCOLD)
 			)),
 	KYOGRE ("Kyogre", 382, Type.WATER, new Drizzle(), 100, 100, 90, 150, 140, 90, -1, 218, 5, 3, 3,
 			Map.ofEntries(
+					//Map.entry(5, Moves.SCARYFACE),
+					//Map.entry(15, Moves.ANCIENTPOWER),
+					Map.entry(20, Moves.BODYSLAM),
+					Map.entry(30, Moves.CALMMIND),
+					Map.entry(35, Moves.ICEBEAM),
+					Map.entry(45, Moves.HYDROPUMP),
+					Map.entry(50, Moves.REST),
 					Map.entry(60, Moves.SHEERCOLD),
-					Map.entry(65, Moves.DOUBLEEDGE)
+					Map.entry(65, Moves.DOUBLEEDGE),
+					Map.entry(75, Moves.AQUATAIL)
+					//Map.entry(80, Moves.WATERSPOUT),
 			)), 
 	GROUDON ("Groudon", 383, Type.GROUND, new Drought(), 100, 150, 140, 100, 90, 90, -1, 218, 5, 3, 3,
 			Map.ofEntries(
+					//Map.entry(5, Moves.SCARYFACE),
+					//Map.entry(15, Moves.ANCIENTPOWER),
+					Map.entry(20, Moves.SLASH),
+					//Map.entry(30, Moves.BULKUP),
+					Map.entry(35, Moves.EARTHQUAKE),
+					//Map.entry(45, Moves.FIREBLAST),
+					Map.entry(50, Moves.REST),
+					//Map.entry(60, Moves.FISSURE),
 					Map.entry(65, Moves.SOLARBEAM)
+					//Map.entry(75, Moves.EARTHPOWER),
+					//Map.entry(80, Moves.ERUPTION)
 			)),
 	RAYQUAZA ("Rayquaza", 384, Arrays.asList(Type.DRAGON, Type.FLYING), new AirLock(), 105, 150, 90, 150, 90, 95, -1, 220, 5, 3, 3,
 			Map.ofEntries(
-					Map.entry(60, Moves.EXTREMESPEED)
+					//Map.entry(5, Moves.SCARYFACE),
+					//Map.entry(15, Moves.ANCIENTPOWER),
+					Map.entry(20, Moves.DRAGONCLAW),
+					//Map.entry(30, Moves.DRAGONDANCE),
+					Map.entry(35, Moves.CRUNCH),
+					Map.entry(45, Moves.FLY),
+					Map.entry(50, Moves.REST),
+					Map.entry(60, Moves.EXTREMESPEED),
+					Map.entry(65, Moves.HYPERBEAM)
+					//Map.entry(75, Moves.DRAGONPULSE),
+					//Map.entry(80, Moves.OUTRAGE)
 			));
 	/** END INITIALIZE ENUMS **/
 				
