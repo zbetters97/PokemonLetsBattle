@@ -6,15 +6,12 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 
 import application.GamePanel;
 import entity.collectables.balls.*;
 import entity.collectables.items.*;
-import moves.Moves;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
-import properties.Status;
 
 /** PLAYER CLASS **/
 public class Player extends Entity {
@@ -28,9 +25,6 @@ public class Player extends Entity {
 	private int tempScreenY;
 	public int defaultWorldX;
 	public int defaultWorldY;
-	
-	// INVENTORY
-	public final int maxItemInventorySize = 10;
 	
 	public boolean repelActive = false;
 	private int repelSteps = 0;
@@ -65,56 +59,10 @@ public class Player extends Entity {
 /** DEFAULT HANDLERS **/
 	
 	// DEFAULT VALUES
-	public void assignParty() {
-		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.GOLEM, 85, new COL_Ball_Poke(gp)));
-		pokeParty.get(0).setStatus(Status.CONFUSE);
-		pokeParty.get(0).addMoves(Arrays.asList(
-				Moves.PROTECT,
-				Moves.SLEEPTALK,
-				Moves.HAMMERARM,
-				Moves.DEFENSECURL)
-		);
-						
-		pokeParty.add(Pokemon.getPokemon(Pokedex.BLAZIKEN, 87, new COL_Ball_Poke(gp)));
-		pokeParty.get(1).addMoves(Arrays.asList(
-				Moves.FIREPUNCH,
-				Moves.SKYUPPERCUT,
-				Moves.EXTREMESPEED,
-				Moves.FLAMETHROWER)
-		);	
-		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.WALREIN, 87, new COL_Ball_Poke(gp)));
-		pokeParty.get(2).addMoves(Arrays.asList(
-				Moves.SURF,
-				Moves.ICEBEAM,
-				Moves.HYDROPUMP,
-				Moves.SHEERCOLD)
-		);	
-		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.ALAKAZAM, 87, new COL_Ball_Poke(gp)));
-		pokeParty.get(3).addMoves(Arrays.asList(
-				Moves.PSYCHIC,
-				Moves.CONFUSION,
-				Moves.CONFUSERAY,
-				Moves.CALMMIND)
-		);	
-		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.GENGAR, 87, new COL_Ball_Poke(gp)));
-		pokeParty.get(4).addMoves(Arrays.asList(
-				Moves.SHADOWBALL,
-				Moves.ASTONISH,
-				Moves.CONFUSERAY,
-				Moves.CONFUSION)
-		);	
-		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.RAIKOU, 87, new COL_Ball_Poke(gp)));
-		pokeParty.get(5).addMoves(Arrays.asList(
-				Moves.THUNDERBOLT,
-				Moves.EXTREMESPEED,
-				Moves.EXTRASENSORY,
-				Moves.THUNDERWAVE)
-		);	
+	public void assignParty() {		
+		pokeParty.add(Pokemon.getPokemon(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.MARSHTOMP, 16, new COL_Ball_Great(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36, new COL_Ball_Master(gp)));
 	}
 	public void setDefaultValues() {
 					
@@ -231,7 +179,7 @@ public class Player extends Entity {
 	
 /** UPDATER **/
 	public void update() {
-				
+		
 		if (!moving && canMove) {			
 			
 			if (gp.keyH.startPressed) {

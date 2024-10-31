@@ -824,7 +824,7 @@ public class Entity {
 			
 			gp.playSE(6, "heal");
 			p.addHP(value);			
-			removeItem(this, entity);				
+			removeItem(this, gp.player);				
 		
 			gp.ui.bagNum = 0;
 			gp.ui.partyDialogue = p.getName() + " gained " + gainedHP + " HP.";
@@ -840,7 +840,7 @@ public class Entity {
 						
 			gp.playSE(6, "heal");
 			p.setStatus(null);			
-			removeItem(this, entity);			
+			removeItem(this, gp.player);			
 			
 			gp.ui.bagNum = 0;
 			gp.ui.partyDialogue = p.getName() + " was healed.";
@@ -864,7 +864,9 @@ public class Entity {
 			new Thread(gp.btlManager).start();	
 			
 			gp.ui.bagNum = 0;
+			gp.ui.bagTab = gp.ui.bag_KeyItems;
 			gp.ui.bagState = gp.ui.bag_Main;
+			gp.ui.pauseState = gp.ui.pause_Main;
 			
 			gp.ui.battleState = gp.ui.battle_Dialogue;
 			gp.gameState = gp.battleState;

@@ -659,7 +659,7 @@ public class UI {
 	
 	/** BAG SCREEN **/
 	private void pause_Bag() {
-			
+		
 		ArrayList<Entity> items = new ArrayList<>();
 		
 		switch (bagTab) {
@@ -770,7 +770,7 @@ public class UI {
 			if (gp.btlManager.active) {
 				bagTab = 0;
 				bagStart = 0;
-				bagNum = 1;
+				bagNum = 0;
 				commandNum = 1;
 				gp.gameState = gp.battleState;		
 			}
@@ -1207,6 +1207,7 @@ public class UI {
 			partyItemApply = false;
 			fighterNum = 0;	
 			commandNum = 0;
+			bagNum = 0;
 			bagState = bag_Main;
 			pauseState = pause_Bag;
 		}
@@ -1836,7 +1837,7 @@ public class UI {
 		
 		tempY += gp.tileSize;		
 		if (fighter.getMoveSet().get(commandNum).getAccuracy() == 0) { text = "---"; }
-		else { text = Integer.toString(fighter.getMoveSet().get(commandNum).getAccuracy()); }		
+		else { text = Integer.toString(fighter.getMoveSet().get(commandNum).getAccuracy()); }	
 		g2.drawString(text, tempX, tempY);	
 		
 		// MOVES BOX
@@ -1850,7 +1851,8 @@ public class UI {
 		x = frameX;
 		y = frameY;		
 		width = (int) (gp.tileSize * 2);
-		height = gp.tileSize;		
+		height = gp.tileSize;	
+		
 		for (Move m : fighter.getMoveSet()) {			
 				
 			drawSubWindow(x, y, width, height, 10, 3, m.getType().getColor(), Color.BLACK);		
@@ -1918,8 +1920,8 @@ public class UI {
 		y += gp.tileSize * 0.8;
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));
 		g2.setColor(Color.BLACK);
-		for (String line : fighter.getMoveSet().get(commandNum).getInfo().split("\n")) {			
-			g2.drawString(line, x, y);
+		for (String line : fighter.getMoveSet().get(commandNum).getInfo().split("\n")) {	
+		g2.drawString(line, x, y);
 			y += gp.tileSize * 0.8;
 		} 					
 				

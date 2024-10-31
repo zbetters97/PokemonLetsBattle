@@ -304,6 +304,9 @@ public class BattleManager extends Thread {
 		else {			
 			
 			fighter[0].setProtected(false);
+			fighter[0].resetMoveTurns();
+			fighter[0].resetStats();
+			fighter[0].resetStatStages();
 			
 			if (otherFighters.contains(newFighter[0])) {
 				otherFighters.remove(newFighter[0]);
@@ -1879,12 +1882,16 @@ public class BattleManager extends Thread {
 		gp.setupMusic();
 		
 		for (Pokemon p : gp.player.pokeParty) {
+			p.resetStats();
+			p.resetStatStages();
 			p.resetMoveTurns();
 		}
 		
 		if (trainer != null) {
 			for (Pokemon p : trainer.pokeParty) {
 				p.resetMoveTurns();
+				p.resetStats();
+				p.resetStatStages();
 			}	
 		}
 		

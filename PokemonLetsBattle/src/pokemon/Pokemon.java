@@ -24,6 +24,7 @@ public class Pokemon {
 	private int level, bhp, hp, xp, bxp, nxp;
 	private int hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV;
 	private double speed, attack, defense, spAttack, spDefense, accuracy, evasion;	
+	private double speedBase, attackBase, defenseBase, spAttackBase, spDefenseBase, accuracyBase, evasionBase;
 	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg, evasionStg;
 	private Status status;
 	private boolean isAlive = true, attacking = false, hit = false, isProtected = false;
@@ -61,27 +62,22 @@ public class Pokemon {
 			return (int)(Math.floor(0.01 * (2 * base + IV + Math.floor(0.25 * EV)) * lev)) + 5;
 		};		
 		
-		attack = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
-		defense = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
-		spAttack = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
-		spDefense = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
-		speed = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
-		accuracy = 1;
-		evasion = 1;
+		attackBase = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
+		defenseBase = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
+		spAttackBase = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
+		spDefenseBase = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
+		speedBase = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
+		accuracyBase = 1;
+		evasionBase = 1;
+		
+		resetStats();
+		resetStatStages();
 		
 		// random Nature selection
 		int num = 0 + (int)(Math.random() * ((Nature.getNatures().size() - 0) + 0));
 		nature = Nature.getNatures().get(num);
 		
 		setNature();
-				
-		speedStg = 0;
-		attackStg = 0;
-		defenseStg = 0;
-		spAttackStg= 0;
-		spDefenseStg = 0;
-		accuracyStg = 0;
-		evasionStg = 0;
 		
 		status = null;
 		statusCounter = 0;
@@ -117,25 +113,20 @@ public class Pokemon {
 			return (int)(Math.floor(0.01 * (2 * base + IV + Math.floor(0.25 * EV)) * lev)) + 5;
 		};		
 		
-		attack = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
-		defense = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
-		spAttack = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
-		spDefense = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
-		speed = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
-		accuracy = 1;	
-		evasion = 1;
+		attackBase = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
+		defenseBase = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
+		spAttackBase = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
+		spDefenseBase = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
+		speedBase = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
+		accuracyBase = 1;	
+		evasionBase = 1;
+		
+		resetStats();
+		resetStatStages();
 		
 		nature = old.getNature();		
 		setNature();
 				
-		speedStg = 0;
-		attackStg = 0;
-		defenseStg = 0;
-		spAttackStg= 0;
-		spDefenseStg = 0;
-		accuracyStg = 0;
-		evasionStg = 0;
-		
 		status = old.getStatus();
 		statusCounter = 0;
 		statusLimit = 0;
@@ -167,28 +158,23 @@ public class Pokemon {
 		this.hp = hp;
 		this.bhp = bhp;
 		
-		this.attack = attack;
-		this.defense = defense;
-		this.spAttack = spAttack;
-		this.spDefense = spDefense;
-		this.speed = speed;
-		accuracy = 1;
-		evasion = 1;
+		this.attackBase = attack;
+		this.defenseBase = defense;
+		this.spAttackBase = spAttack;
+		this.spDefenseBase = spDefense;
+		this.speedBase = speed;
+		accuracyBase = 1;
+		evasionBase = 1;
+		
+		resetStats();
+		resetStatStages();
 		
 		this.nature = nature;
 		
 		this.status = status;		
 		statusCounter = 0;
 		statusLimit = 0;
-		
-		speedStg = 0;
-		attackStg = 0;
-		defenseStg = 0;
-		spAttackStg = 0;
-		spDefenseStg = 0;
-		accuracyStg = 0;
-		evasionStg = 0;
-		
+						
 		this.isAlive = isAlive;	
 		
 		this.moveSet = moveSet;
@@ -559,6 +545,8 @@ public class Pokemon {
 		this.status = null; 
 		this.isProtected = false;
 		resetMoves();
+		resetStats();
+		resetStatStages();
 	}
 	
 	public boolean getAttacking() { return attacking; }
@@ -613,109 +601,226 @@ public class Pokemon {
 	public BufferedImage getBackSprite() { return pokemon.getBackSprite(); }
 	public BufferedImage getMenuSprite() { return pokemon.getMenuSprite(); }	
 	/** END GETTERS **/
+		
+	
 	
 	public String changeStat(String stat, int level) {	
 		
 		String output = "";
 		
-		switch (stat) {
-			case "attack":
-				if (this.attackStg + level > 6 || this.attackStg + level < -6) {
-					if (level >= 1) 
-						output = getName() + "'s attack won't go any higher!";
-					else if (level <= -1) 
-						output = getName() + "'s attack won't go any lower!";
-				}
-				else {	
-					this.attackStg += level;
-					this.attack *= Math.max(2, 2 + (double) this.attackStg) / Math.max(2, 2 - (double) this.attackStg);	
+		int difference = 0;
+		int change = 0;				
 		
-					output = outputChange(stat, level);
-				}	
-				break;
-			case "sp. attack":
-				if (this.spAttackStg + level > 6 || this.spAttackStg + level < -6) {
-					if (level >= 1) 
-						output = getName() + "'s sp. attack won't go any higher!";
-					else if (level <= -1) 
-						output = getName() + "'s sp. attack won't go any lower!";					
+		switch (stat) {		
+			case "attack":							
+				
+				difference = attackStg + level;
+				
+				if (level > 0) {
+					while (attackStg < difference && attackStg < 6) { 
+						attackStg++; change++; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any higher!";
+					}
+					else { 
+						attack = Math.floor(attackBase * ((2.0 + attackStg) / 2.0)); 
+						output = outputChange(stat, change); 
+					}
 				}
-				else {	
-					this.spAttackStg += level;
-					this.spAttack *= Math.max(2, 2 + (double) this.spAttackStg) / Math.max(2, 2 - (double) this.spAttackStg);	
-					
-					output = outputChange(stat, level);
+				else if (level < 0) {
+					while (attackStg > difference && attackStg > -6) { 
+						attackStg--; change--; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any lower!";
+					}
+					else { 
+						attack = Math.floor(attackBase * (2.0 / (2.0 - attackStg))); 
+						output = outputChange(stat, change); 
+					}
 				}
+				
+				break;			
+				
+			case "sp. attack":	
+				
+				difference = spAttackStg + level;
+				
+				if (level > 0) {
+					while (spAttackStg < difference && spAttackStg < 6) { 
+						spAttackStg++; change++; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any higher!";
+					}
+					else { 
+						spAttack = Math.floor(spAttackBase * ((2.0 + spAttackStg) / 2.0)); 
+						output = outputChange(stat, change); 
+					}
+				}
+				else if (level < 0) {
+					while (spAttackStg > difference && spAttackStg > -6) { 
+						spAttackStg--; change--; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any lower!";
+					}
+					else { 
+						spAttack = Math.floor(spAttackBase * (2.0 / (2.0 - spAttackStg))); 
+						output = outputChange(stat, change); 
+					}
+				}				
 				break;
+				
 			case "defense":
-				if (this.defenseStg + level > 6 || this.defenseStg + level < -6) {
-					if (level >= 1) 
-						output = getName() + "'s defense won't go any higher!";
-					else if (level <= -1) 
-						output = getName() + "'s defense won't go any lower!";
+				
+				difference = defenseStg + level;
+				
+				if (level > 0) {
+					while (defenseStg < difference && defenseStg < 6) { 
+						defenseStg++; change++; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any higher!";
+					}
+					else { 
+						defense = Math.floor(defenseBase * ((2.0 + defenseStg) / 2.0)); 
+						output = outputChange(stat, change); 
+					}
 				}
-				else {	
-					this.defenseStg += level;
-					this.defense *= Math.max(2, 2 + (double) this.defenseStg) / Math.max(2, 2 - (double) this.defenseStg);
-					
-					output = outputChange(stat, level);
-				}	
+				else if (level < 0) {
+					while (defenseStg > difference && defenseStg > -6) { 
+						defenseStg--; change--; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any lower!";
+					}
+					else { 
+						defense = Math.floor(defenseBase * (2.0 / (2.0 - defenseStg))); 
+						output = outputChange(stat, change); 
+					}
+				}
 				break;
+				
 			case "sp. defense":
-				if (this.spDefenseStg + level > 6 || this.spDefenseStg  + level < -6) {
-					if (level >= 1) 
-						output = getName() + "'s sp. defense won't go any higher!";
-					else if (level <= -1) 
-						output = getName() + "'s sp. defense won't go any lower!";
+				
+				difference = spDefenseStg + level;
+				
+				if (level > 0) {
+					while (spDefenseStg < difference && spDefenseStg < 6) { 
+						spDefenseStg++; change++; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any higher!";
+					}
+					else { 
+						spDefense = Math.floor(spDefenseBase * ((2.0 + spDefenseStg) / 2.0)); 
+						output = outputChange(stat, change); 
+					}
 				}
-				else {	
-					this.spDefenseStg  += level;
-					this.spDefense *= Math.max(2, 2 + (double) this.spDefenseStg ) / Math.max(2, 2 - (double) this.spDefenseStg);	
-					
-					output = outputChange(stat, level);
-				}	
+				else if (level < 0) {
+					while (spDefenseStg > difference && spDefenseStg > -6) { 
+						spDefenseStg--; change--; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any lower!";
+					}
+					else { 
+						spDefense = Math.floor(spDefenseBase * (2.0 / (2.0 - spDefenseStg))); 
+						output = outputChange(stat, change); 
+					}
+				}
 				break;
+				
 			case "speed":
-				if (this.speedStg + level > 6 || this.speedStg + level < -6) {
-					if (level >= 1) 
-						output = getName() + "'s speed won't go any higher!";
-					else if (level <= -1) 
-						output = getName() + "'s speed won't go any lower!";
+				
+				difference = speedStg + level;
+				
+				if (level > 0) {
+					while (speedStg < difference && speedStg < 6) { 
+						speedStg++; change++; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any higher!";
+					}
+					else { 
+						speed = Math.floor(speedBase * ((2.0 + speedStg) / 2.0)); 
+						output = outputChange(stat, change); 
+					}
 				}
-				else {	
-					this.speedStg += level;					
-					this.speed *= Math.max(2, 2 + (double) this.speedStg) / Math.max(2, 2 - (double) this.speedStg);	
-					
-					output = outputChange(stat, level);
-				}	
+				else if (level < 0) {
+					while (speedStg > difference && speedStg > -6) { 
+						speedStg--; change--; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any lower!";
+					}
+					else { 
+						speed = Math.floor(speedBase * (2.0 / (2.0 - speedStg))); 
+						output = outputChange(stat, change); 
+					}
+				}
 				break;
+				
 			case "accuracy":
-				if (this.accuracyStg + level > 6 || this.accuracyStg + level < -6) {
-					if (level >= 1) 
-						output = getName() + "'s accuracy won't go any higher!";
-					else if (level <= -1) 
-						output = getName() + "'s accuracy won't go any lower!";
+				
+				difference = accuracyStg + level;
+				
+				if (level > 0) {
+					while (accuracyStg < difference && accuracyStg < 6) { 
+						accuracyStg++; change++; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any higher!";
+					}
+					else { 
+						accuracy = Math.floor(accuracyBase * ((3.0 + accuracyStg) / 3.0)); 
+						output = outputChange(stat, change); 
+					}
 				}
-				else {	
-					this.accuracyStg += level;
-					this.accuracy = Math.max(3, 3 + (double) this.accuracyStg) / Math.max(3, 3 - (double) this.accuracyStg);	
-					
-					output = outputChange(stat, level);
-				}	
+				else if (level < 0) {
+					while (accuracyStg > difference && accuracyStg > -6) { 
+						accuracyStg--; change--; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any lower!";
+					}
+					else { 
+						accuracy = Math.floor(accuracyBase * (3.0 / (3.0 - accuracyStg))); 
+						output = outputChange(stat, change); 
+					}
+				}				
 				break;
+				
 			case "evasion":
-				if (this.evasionStg + level > 6 || this.evasionStg + level < -6) {
-					if (level >= 1) 
-						output = getName() + "'s evasion won't go any higher!";
-					else if (level <= -1) 
-						output = getName() + "'s evasion won't go any lower!";
+				
+				difference = attackStg + level;
+				
+				if (level > 0) {
+					while (evasionStg < difference && evasionStg < 6) { 
+						evasionStg++; change++; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any higher!";
+					}
+					else { 
+						evasion = Math.floor(evasionBase * ((3.0 + evasionStg) / 3.0)); 
+						output = outputChange(stat, change); 
+					}
 				}
-				else {	
-					this.evasionStg += level;
-					this.evasion = Math.max(3, 3 + (double) this.evasionStg) / Math.max(3, 3 - (double) this.evasionStg);	
-					
-					output = outputChange(stat, level);
-				}	
+				else if (level < 0) {
+					while (evasionStg > difference && evasionStg > -6) { 
+						evasionStg--; change--; 
+					}
+					if (change == 0) { 
+						output = getName() + "'s " + stat + "\nwon't go any lower!";
+					}
+					else { 
+						evasion = Math.floor(evasionBase * (3.0 / (3.0 - evasionStg))); 
+						output = outputChange(stat, change); 
+					}
+				}				
 				break;
 		}
 		
@@ -733,6 +838,25 @@ public class Pokemon {
 		else if (level <= -3) output = getName() + "'s " + stat + "\nseverely fell!";
 		
 		return output;
+	}
+	
+	public void resetStats() {
+		attack = attackBase;
+		defense = defenseBase;
+		spAttack = spAttackBase;
+		spDefense = defenseBase;
+		speed = speedBase;
+		accuracy = accuracyBase;
+		evasion = evasionBase;
+	}
+	public void resetStatStages() {		
+		speedStg = 0;
+		attackStg = 0;
+		defenseStg = 0;
+		spAttackStg= 0;
+		spDefenseStg = 0;
+		accuracyStg = 0;
+		evasionStg = 0;
 	}
 }
 /*** END MOVE CLASS ***/
