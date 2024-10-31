@@ -14,6 +14,7 @@ import entity.collectables.items.*;
 import moves.Moves;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
+import properties.Status;
 
 /** PLAYER CLASS **/
 public class Player extends Entity {
@@ -66,11 +67,11 @@ public class Player extends Entity {
 	// DEFAULT VALUES
 	public void assignParty() {
 		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.GOLEM, 87, new COL_Ball_Poke(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.GOLEM, 6, new COL_Ball_Poke(gp)));
 		pokeParty.get(0).addMoves(Arrays.asList(
-				Moves.EARTHQUAKE,
-				Moves.ROCKTHROW,
-				Moves.BLASTBURN,
+				Moves.SNORE,
+				Moves.SLEEPTALK,
+				Moves.HAMMERARM,
 				Moves.DEFENSECURL)
 		);
 						

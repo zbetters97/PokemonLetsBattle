@@ -1,6 +1,7 @@
 package moves;
 
 import java.util.List;
+import java.util.Random;
 
 import properties.Status;
 import properties.Type;
@@ -24,7 +25,7 @@ public class Move {
 		this.move = move;
 		this.pp = move.getpp();
 		this.bpp = pp;			
-		this.turnCount = move.getTurns();	
+		this.turnCount = getTurns();		
 	}	
 	public Move (Moves move, int pp) {
 		this.move = move;
@@ -61,25 +62,49 @@ public class Move {
 	public int getTurnCount() {	return turnCount; }
 	public void setTurnCount(int turnCount) { this.turnCount = turnCount; }
 	
-	public int getTurns() {	return move.getTurns(); }	
+	public int getTurns() {	
+		
+		if (move == Moves.OUTRAGE || move == Moves.PETALDANCE) {
+			return new Random().nextInt(3 - 2 + 1) + 2;		
+		}
+		else if (move == Moves.ROLLOUT) {
+			return new Random().nextInt(5 - 2 + 1) + 2;
+		}
+		else {		
+			return move.getTurns(); 
+		}
+	}	
 	
 	public boolean isReady() { 
 		
-		if (move.getRecharge()) {
-			if (turnCount == move.getTurns()) return true;			
+		if (move == Moves.ROLLOUT || move == Moves.PETALDANCE || move == Moves.OUTRAGE) {
+			return true;
+		}
+		else if (move.getRecharge()) {
+			if (turnCount == move.getTurns()) return true;				
 			else return false;			
+			
 		}
 		else {
 			return turnCount <= 0;
 		}
 	}
 	
-	public void resetMoveTurns() {		
-		if (move.getRecharge()) turnCount--;		
-		else turnCount = getTurns();		
+	public void resetMoveTurns() {	
+		
+		if (move == Moves.ROLLOUT || move == Moves.PETALDANCE || move == Moves.OUTRAGE) {
+			if (turnCount > 0) turnCount--;			
+			else turnCount = getTurns();			
+		}
+		else if (move.getRecharge()) {
+			turnCount--;		
+		}
+		else {
+			turnCount = getTurns();		
+		}
 	}
 	
-	public boolean isWaiting() {		
+	public boolean isWaiting() {	
 		return turnCount < getTurns();		
 	}
 	/** END GETTERS AND SETTERS **/

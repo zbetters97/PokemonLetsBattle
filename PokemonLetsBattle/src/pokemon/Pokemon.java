@@ -23,8 +23,8 @@ public class Pokemon {
 	private Nature nature;
 	private int level, bhp, hp, xp, bxp, nxp;
 	private int hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV;
-	private double speed, attack, defense, spAttack, spDefense, accuracy;	
-	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg;
+	private double speed, attack, defense, spAttack, spDefense, accuracy, evasion;	
+	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg, evasionStg;
 	private Status status;
 	private boolean isAlive = true, attacking = false, hit = false, isProtected = false;
 	private int statusCounter, statusLimit;
@@ -66,7 +66,8 @@ public class Pokemon {
 		spAttack = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
 		spDefense = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
 		speed = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
-		accuracy = 1;	
+		accuracy = 1;
+		evasion = 1;
 		
 		// random Nature selection
 		int num = 0 + (int)(Math.random() * ((Nature.getNatures().size() - 0) + 0));
@@ -80,6 +81,7 @@ public class Pokemon {
 		spAttackStg= 0;
 		spDefenseStg = 0;
 		accuracyStg = 0;
+		evasionStg = 0;
 		
 		status = null;
 		statusCounter = 0;
@@ -121,6 +123,7 @@ public class Pokemon {
 		spDefense = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
 		speed = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
 		accuracy = 1;	
+		evasion = 1;
 		
 		nature = old.getNature();		
 		setNature();
@@ -131,6 +134,7 @@ public class Pokemon {
 		spAttackStg= 0;
 		spDefenseStg = 0;
 		accuracyStg = 0;
+		evasionStg = 0;
 		
 		status = old.getStatus();
 		statusCounter = 0;
@@ -169,6 +173,7 @@ public class Pokemon {
 		this.spDefense = spDefense;
 		this.speed = speed;
 		accuracy = 1;
+		evasion = 1;
 		
 		this.nature = nature;
 		
@@ -182,6 +187,7 @@ public class Pokemon {
 		spAttackStg = 0;
 		spDefenseStg = 0;
 		accuracyStg = 0;
+		evasionStg = 0;
 		
 		this.isAlive = isAlive;	
 		
@@ -510,7 +516,9 @@ public class Pokemon {
 	public double getSpDefense() {	return spDefense; }
 	public void setSpDefense(int spDefense) { this.spDefense = spDefense; }	
 	public double getAccuracy() { return accuracy; }
-	public void setAccuracy(int accuracy) { this.accuracy = accuracy; }
+	public void setAccuracy(int accuracy) { this.accuracy = accuracy; }	
+	public double getEvasion() { return evasion; }
+	public void setEvasion(int evasion) { this.evasion = evasion; }
 	
 	public int getSpeedStg() { return speedStg; }
 	public void setSpeedStg(int speedStg) { this.speedStg = speedStg; }
@@ -524,6 +532,8 @@ public class Pokemon {
 	public void setSpDefenseStg(int spDefenseStg) { this.spDefenseStg = spDefenseStg; }
 	public int getAccuracyStg() { return accuracyStg; }
 	public void setAccuracyStg(int accuracyStg) { this.accuracyStg = accuracyStg; }
+	public int getEvasionStg() { return evasionStg; }
+	public void setEvasionStg(int evasionStg) { this.evasionStg = evasionStg; }
 	
 	public int getEXPYeild() { return pokemon.getEXPYeild(); }
 	public int getEV() { return pokemon.getEV(); }
@@ -689,6 +699,20 @@ public class Pokemon {
 				else {	
 					this.accuracyStg += level;
 					this.accuracy = Math.max(3, 3 + (double) this.accuracyStg) / Math.max(3, 3 - (double) this.accuracyStg);	
+					
+					output = outputChange(stat, level);
+				}	
+				break;
+			case "evasion":
+				if (this.evasionStg + level > 6 || this.evasionStg + level < -6) {
+					if (level >= 1) 
+						output = getName() + "'s evasion won't go any higher!";
+					else if (level <= -1) 
+						output = getName() + "'s evasion won't go any lower!";
+				}
+				else {	
+					this.evasionStg += level;
+					this.evasion = Math.max(3, 3 + (double) this.evasionStg) / Math.max(3, 3 - (double) this.evasionStg);	
 					
 					output = outputChange(stat, level);
 				}	

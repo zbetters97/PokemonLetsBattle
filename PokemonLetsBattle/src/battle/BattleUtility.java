@@ -56,7 +56,7 @@ public final class BattleUtility {
 			
 			if (move.getPower() > 0 && move.getPP() != 0) {
 				
-				double power = getPower(move, attacker.getLevel(), weather);				
+				double power = getPower(move, attacker, target, weather);				
 				double type = getEffectiveness(target, move.getType());				
 				
 				// CALCULATE POWER OF EACH MOVE
@@ -241,7 +241,27 @@ public final class BattleUtility {
 		return delay;
 	}	
 	
+	public static void getWeatherMoveDelay(Weather weather, Move move) {
+		
+		switch (weather) {		
+			case SUNLIGHT:
+				if (move.getMove() == Moves.SOLARBEAM) {
+					move.setTurnCount(1);
+				}
+				break;
+			case RAIN:
+				break;
+			case HAIL:
+				break;
+			case SANDSTORM:
+				break;
+			case CLEAR:
+				break;
+		}		
+	}
+	
 	public static boolean hit(Pokemon attacker, Pokemon target, Move move, Weather weather) {
+		/** PROBABILITY FORMULA REFERENCE: https://monster-master.fandom.com/wiki/Evasion **/
 		
 		boolean hit;
 		
@@ -254,8 +274,10 @@ public final class BattleUtility {
 				hit = true; 
 			}
 			else {
-				double accuracy = BattleUtility.getAccuracy(move, weather) * attacker.getAccuracy();
+				double accuracy = BattleUtility.getAccuracy(move, weather) * (attacker.getAccuracy() / target.getEvasion());
 			
+				System.out.println(move.getAccuracy() + " " + attacker.getAccuracy() + " " + target.getEvasion() + " " + accuracy);
+				
 				Random r = new Random();
 				float chance = r.nextFloat();
 				
@@ -273,7 +295,7 @@ public final class BattleUtility {
 		int damage = 0;
 		
 		double level = attacker.getLevel();		
-		double power = getPower(move, level, weather);
+		double power = getPower(move, attacker, target, weather);
 		double A = getAttack(attacker, move, weather);
 		double D = getDefense(target, move, weather);
 		double STAB = attacker.checkType(move.getType()) ? 1.5 : 1.0;
@@ -295,6 +317,15 @@ public final class BattleUtility {
 				target.getAbility().isValid(attacker, target, move)) {
 			
 			damage *= target.getAbility().getFactor();
+		}
+		
+		if (move.getMove() == Moves.ENDEAVOR) {
+			
+			if (target.getHP() < attacker.getHP()) damage = 0;			
+			else damage = target.getHP() - attacker.getHP();			
+		}
+		else if (move.getMove() == Moves.DRAGONRAGE) {
+			damage = 40;
 		}
 						
 		return damage;
@@ -328,11 +359,19 @@ public final class BattleUtility {
 		
 		return accuracy;
 	}
-	private static double getPower(Move move, double level, Weather weather) {
+	private static double getPower(Move move, Pokemon attacker, Pokemon target, Weather weather) {
 		
 		double power = 1.0; 
 		
-		power = (move.getPower() == -1) ? level : move.getPower();	
+		if (move.getPower() == -1) {
+			power = attacker.getLevel();
+		}
+		else if (move.getPower() == 1) {
+			power = target.getLevel();
+		}
+		else {
+			power = move.getPower();
+		}
 		
 		switch (weather) {	
 			case CLEAR:
@@ -533,7 +572,7 @@ public final class BattleUtility {
  					
  					if (m.getPower() > 0 && m.getPP() != 0) {
  						
- 						double power = getPower(m, p.getLevel(), weather);				
+ 						double power = getPower(m, p, target, weather);				
  						double type = getEffectiveness(target, m.getType());				
  						
  						// CALCULATE POWER OF EACH MOVE

@@ -2,7 +2,9 @@ package battle;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import application.GamePanel;
@@ -34,6 +36,7 @@ public class BattleManager extends Thread {
 	private Move playerMove, cpuMove;
 	public Move newMove = null;
 	public Move oldMove = null;
+	Map<Move, Pokemon> activeMoves = new HashMap<>();
 	
 	private Weather weather = Weather.CLEAR;
 	private int weatherDays = -1;
@@ -350,8 +353,9 @@ public class BattleManager extends Thread {
 			getWinningTrainer();
 		}		
 		else {
+			checkActiveMoves();
 			checkStatusDamage();	
-			checkWeatherDamage();
+			checkWeatherDamage();			
 			
 			if (hasWinningPokemon()) {
 				getWinningPokemon();
@@ -435,8 +439,10 @@ public class BattleManager extends Thread {
 	private void startTurn() throws InterruptedException {	
 		
 		if (currentTurn != -1) {		
+			
+			Move move = currentTurn == playerTurn ? playerMove : cpuMove;
 
-			if (canMove(fighter[currentTurn])) {					
+			if (canMove(fighter[currentTurn], move)) {					
 				move();					
 			}
 			else {
@@ -449,7 +455,7 @@ public class BattleManager extends Thread {
 	}		
 	
 	// STATUS CONDITION METHODS
-	private boolean canMove(Pokemon pkm) throws InterruptedException {
+	private boolean canMove(Pokemon pkm, Move move) throws InterruptedException {
 		
 		boolean canMove = true;
 		
@@ -460,7 +466,7 @@ public class BattleManager extends Thread {
 			switch (pkm.getStatus().getAbreviation()) {			
 				case "PAR":	canMove = paralyzed(pkm); break;					
 				case "FRZ": canMove = frozen(pkm); break;			
-				case "SLP": canMove = asleep(pkm); break;
+				case "SLP": canMove = asleep(pkm, move); break;
 				case "CNF": canMove = confused(pkm); break;
 			}
 		}	
@@ -494,10 +500,13 @@ public class BattleManager extends Thread {
 			return false;		
 		}
 	}
-	private boolean asleep(Pokemon pkm) throws InterruptedException {
+	private boolean asleep(Pokemon pkm, Move move) throws InterruptedException {
 				
+		if (move.getMove() == Moves.SNORE || move.getMove() == Moves.SLEEPTALK) {
+			return true;
+		}		
 		// if number of moves under status hit limit, remove status
-		if (recoverStatus(pkm)) {			
+		else if (recoverStatus(pkm)) {			
 			return true;
 		}
 		// pokemon still under status status
@@ -590,7 +599,7 @@ public class BattleManager extends Thread {
 			return false;
 		}
 	}
-	
+		
 	// MOVE METHOD
 	private void move() throws InterruptedException {		
 				
@@ -598,7 +607,8 @@ public class BattleManager extends Thread {
 		Pokemon trg = currentTurn == playerTurn ? fighter[1] : fighter[0];		
 		Move move = currentTurn == playerTurn ? playerMove : cpuMove;
 		
-		getWeatherMoveDelay(move);
+		checkSleepTalk(atk, move);				
+		BattleUtility.getWeatherMoveDelay(weather, move);
 				
 		if (move.isReady()) {				
 			
@@ -607,17 +617,27 @@ public class BattleManager extends Thread {
 			atk.setAttacking(true);
 			playSE(moves_SE, move.getName());
 			
-			move.resetMoveTurns();
-			
-			// decrease move pp
-			if (trg.getAbility().getCategory() == Ability.Category.PP) {
-				move.setPP(move.getPP() - (int) trg.getAbility().getFactor());
+			if (validMove(atk, trg, move)) {
+				
+				move.resetMoveTurns();
+				
+				// decrease move pp
+				if (trg.getAbility().getCategory() == Ability.Category.PP) {
+					move.setPP(move.getPP() - (int) trg.getAbility().getFactor());
+				}
+				else {				
+					move.setPP(move.getPP() - 1);
+				}						
+				
+				attack(atk, trg, move);		
 			}
-			else {				
-				move.setPP(move.getPP() - 1);
-			}						
-			
-			attack(atk, trg, move);				
+			else {
+				typeDialogue("It had no affect!");
+				
+				currentTurn = nextTurn;	
+				nextTurn = -1;		
+				return;		
+			}
 		}		
 		else if (move.getRecharge()) {
 			
@@ -643,23 +663,40 @@ public class BattleManager extends Thread {
 			nextTurn = -1;		
 		}
 	}		
-	private void getWeatherMoveDelay(Move move) {
+	private void checkSleepTalk(Pokemon atk, Move move) throws InterruptedException {
 		
-		switch (weather) {		
-			case SUNLIGHT:
-				if (move.getMove() == Moves.SOLARBEAM) {
-					move.setTurnCount(1);
-				}
-				break;
-			case RAIN:
-				break;
-			case HAIL:
-				break;
-			case SANDSTORM:
-				break;
-			case CLEAR:
-				break;
-		}		
+		if (move.getMove() == Moves.SLEEPTALK) {
+			
+			typeDialogue(atk.getName() + " used\n" + move.toString() + "!"); 
+			
+			if (atk.getStatus() != null && atk.getStatus() == Status.SLEEP) {	
+				
+				Move randomMove = null; 
+				
+				do { randomMove = atk.getMoveSet().get(new Random().nextInt(atk.getMoveSet().size())); }
+				while (randomMove.getMove() == Moves.SLEEPTALK);
+				
+				move = randomMove;
+			}
+			else {				
+				typeDialogue("It had no affect!");
+				
+				currentTurn = nextTurn;	
+				nextTurn = -1;		
+				return;		
+			}
+		}
+	}
+	private boolean validMove(Pokemon atk, Pokemon trg, Move move) {
+		
+		if ((move.getMove() == Moves.SNORE && (atk.getStatus() == null || atk.getStatus() != Status.SLEEP)) ||
+			(move.getMove() == Moves.DREAMEATER && (trg.getStatus() == null || trg.getStatus() != Status.SLEEP)) ||
+			(move.getMove() == Moves.SUCKERPUNCH && nextTurn == -1)) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 	
 	// ATTACK METHOD
@@ -750,6 +787,10 @@ public class BattleManager extends Thread {
 		// if move changes target attributes
 		else {
 			setAttribute(trg, move.getStats(), move.getLevel());
+			
+			if (move.getMove() == Moves.SWAGGER) {
+				setStatus(trg, Status.CONFUSE);
+			}
 		}			
 		
 		currentTurn = nextTurn;	
@@ -808,9 +849,16 @@ public class BattleManager extends Thread {
 	}
 	
 	// OTHER MOVE
-	private void otherMove(Pokemon atk, Pokemon trg, Move move) {
+	private void otherMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		if (move.getMove() == Moves.TELEPORT) {
 			
+		}
+		else if (move.getMove() == Moves.LEECHSEED) {
+			activeMoves.put(move, trg);
+			typeDialogue(atk.getName() + " planted\na seed on " + trg.getName() + "!");
+			
+			currentTurn = nextTurn;
+			nextTurn = -1;
 		}
 	}
 	
@@ -942,7 +990,7 @@ public class BattleManager extends Thread {
 	private void absorbHP(Pokemon atk, Pokemon trg, Move move, int damage) throws InterruptedException {
 		
 		if (move.getMove() == Moves.ABSORB || move.getMove() == Moves.GIGADRAIN ||
-				move.getMove() == Moves.MEGADRAIN) {
+				move.getMove() == Moves.MEGADRAIN || move.getMove() == Moves.DREAMEATER) {
 						
 			int gainedHP = (damage / 2);
 			int result = atk.getHP() + gainedHP;
@@ -990,14 +1038,34 @@ public class BattleManager extends Thread {
 	}
 	private void applyEffect(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 
+		if (move.getMove() == Moves.RAPIDSPIN) {
+			
+			for (Move m : activeMoves.keySet()) {
+				if (m.getMove() == Moves.LEECHSEED && activeMoves.get(m) == trg) {
+					activeMoves.remove(m);
+					typeDialogue(trg.getName() + " broke free\nof " + m.getName() + "!");					
+				}
+			}
+		}
+		else if (move.getMove() == Moves.OUTRAGE || move.getMove() == Moves.PETALDANCE) {
+			if (!move.isWaiting()) {
+				setStatus(atk, Status.CONFUSE);				
+			}
+		}
 		// move causes attribute or status effect
-		if (move.getProbability() != 0.0) {								
+		else if (move.getProbability() != 0.0) {								
 										
 			// chance for effect to apply
 			if (new Random().nextDouble() <= move.getProbability()) {
 				
 				if (move.getStats() != null) {
-					setAttribute(trg, move.getStats(), move.getLevel());
+					
+					if (move.isToSelf()) {
+						setAttribute(atk, move.getStats(), move.getLevel());
+					}
+					else {
+						setAttribute(trg, move.getStats(), move.getLevel());	
+					}					
 				}
 				else {			
 					setStatus(trg, move.getEffect());						
@@ -1773,8 +1841,53 @@ public class BattleManager extends Thread {
 		return;
 	}
 	
+	private void checkActiveMoves() throws InterruptedException {
+		
+		for (Move move : activeMoves.keySet()) {
+			
+			if (move.getMove() == Moves.LEECHSEED) {
+				leechSeed(move);				
+			}			
+		}		
+	}
+	
+	private void leechSeed(Move move) throws InterruptedException {
+		
+		Pokemon trg = activeMoves.get(move);
+		
+		if (trg.isAlive()) {
+			
+			int stolenHP = (int) (trg.getHP() * 0.125);
+			
+			int result = trg.getHP() - stolenHP;
+			if (result < 0) result = 0;
+			
+			decreaseHP(trg, result, stolenHP);
+			
+			Pokemon atk = trg == fighter[1] ? fighter[0] : fighter[1];
+			
+			result = atk.getHP() + stolenHP;			
+			if (atk.getHP() != atk.getBHP()) {
+				
+				if (stolenHP + atk.getHP() > atk.getBHP()) {
+					
+					stolenHP = atk.getBHP() - atk.getHP();										
+					increaseHP(atk, atk.getBHP(), stolenHP);					
+				}
+				else {		
+					increaseHP(atk, result, stolenHP);
+				}
+			}
+			else {
+				stolenHP = 0;
+			}
+			
+			typeDialogue(atk.getName() + "\nabsorbed " + stolenHP + " HP!");
+		}
+	}
+	
 	// BATTLE END METHOD
-	public void endBattle() {
+ 	public void endBattle() {
 		gp.stopMusic();
 		gp.setupMusic();
 		
