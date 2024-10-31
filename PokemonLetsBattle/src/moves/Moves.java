@@ -218,6 +218,8 @@ public enum Moves {
 			"A cloud of poisonous dust\nis scattered on the foe.\nIt may poison the target."),
 	POUND ("Pound", MoveType.PHYSICAL, Type.NORMAL, 35, 40, 100, 
 			"The foe is physically\npounded with a long tail or\na foreleg, etc."),
+	PROTECT ("Protect", MoveType.OTHER, Type.NORMAL, 10, -1, -1,
+			"It enables the user to\nevade all attacks."),
 	PSYBEAM ("Psybeam", MoveType.SPECIAL, Type.PSYCHIC, Status.CONFUSE, 1.0, 20, 95, 100, 
 			"The foe is attacked with a\npeculiar ray.\nIt may also leave the\ntarget confused."),
 	PSYCHIC ("Psychic", MoveType.SPECIAL, Type.PSYCHIC, 10, 135, 100, 

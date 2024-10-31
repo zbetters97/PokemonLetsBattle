@@ -12,10 +12,10 @@ public enum Type {
 	NORMAL ("Normal", 0.5), 
 	FIRE ("Fire", 0.5), 
 	WATER ("Water", 0.5), 
-	ELECTRIC ("Electric", 0.5), 
+	ELECTRIC ("Electr", 0.5), 
 	GRASS ("Grass", 0.5), 
 	ICE ("Ice", 0.5), 
-	FIGHTING ("Fighting", 0.5),
+	FIGHTING ("Fight", 0.5),
 	POISON ("Poison", 0.5), 
 	GROUND ("Ground", 0.5),
 	FLYING ("Flying", 0.5),
@@ -183,10 +183,10 @@ public enum Type {
 	    	case ("Normal"): color = new Color(168,167,119); break;    	
 	    	case ("Fire"): color = new Color(240,127,47); break;
 	    	case ("Water"): color = new Color(101,142,244); break;
-	    	case ("Electric"): color = new Color(245,209,43); break;
+	    	case ("Electr"): color = new Color(245,209,43); break;
 	    	case ("Grass"): color = new Color(119,198,82); break;
 	    	case ("Ice"): color = new Color(152,216,216); break;
-	    	case ("Fighting"): color = new Color(192,46,36); break;
+	    	case ("Fight"): color = new Color(192,46,36); break;
 	    	case ("Poison"): color = new Color(159,64,162); break;
 	    	case ("Ground"): color = new Color(224,191,96); break;
 	    	case ("Flying"): color = new Color(167,144,239); break;
@@ -214,7 +214,7 @@ public enum Type {
     public Hashtable<Type, Double> getResistance() { return this.resistance; }
     public Hashtable<Type, Double> getVulnerability() { return this.vulnerability; }  
  
-    public String getName() { return this.name; }
+    public String getName() { return this.name.toUpperCase(); }
     public Double getStrength() { System.out.println(this.strength); return this.strength; }
 }
 /*** END TYPE CLASS ***/

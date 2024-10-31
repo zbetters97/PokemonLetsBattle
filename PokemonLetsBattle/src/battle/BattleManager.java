@@ -1,7 +1,10 @@
 package battle;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +29,7 @@ public class BattleManager extends Thread {
 	public boolean active = false;
 	public boolean running = false;
 	
-	// GENERAL VALUES		
+	// GENERAL VALUES				
 	public Entity trainer;
 	
 	public Pokemon[] fighter = new Pokemon[2];
@@ -44,18 +47,23 @@ public class BattleManager extends Thread {
 	private int escapeAttempts = 0;
 		
 	public Entity ballUsed;
-			
-	// TURN VALUES
-	private int currentTurn;
-	private int nextTurn;
-	private final int playerTurn = 0;
-	private final int cpuTurn = 1;	
 					
 	// SOUND LIBRARIES
 	private final int cry_SE = 3;
 	private final int faint_SE = 4;
 	private final int moves_SE = 5;
 	private final int battle_SE = 6;
+	
+	// BATTLE QUEUE
+	public Deque<Integer> battleQueue = new ArrayDeque<>();	
+	private final int queue_GetCPUMove = 1;
+	private final int queue_Rotation = 2;
+	private final int queue_PlayerMove = 3;
+	private final int queue_CPUMove = 4;
+	private final int queue_ActiveMoves = 5;
+	private final int queue_StatusDamage = 6;
+	private final int queue_WeatherDamage = 7;
+	private final int queue_TurnReset = 8;
 	
 	// BATTLE STATES
 	public int battleMode;
@@ -342,27 +350,59 @@ public class BattleManager extends Thread {
 						
 	// RUN BATTLE METHOD
 	private void runBattle() throws InterruptedException {
-						
-		getCPUMove();
-		setRotation();	
+					
+		battleQueue.addAll(Arrays.asList(
+				queue_GetCPUMove,
+				queue_Rotation,
+				queue_ActiveMoves,
+				queue_StatusDamage,
+				queue_WeatherDamage,
+				queue_TurnReset
+		));
 		
-		startTurn();
-		
-		if (hasWinningPokemon()) {
-			getWinningPokemon();
-			getWinningTrainer();
-		}		
-		else {
-			checkActiveMoves();
-			checkStatusDamage();	
-			checkWeatherDamage();			
+		while (!battleQueue.isEmpty()) {
+			
+			int action = battleQueue.poll();
+			
+			switch (action) {
+			
+				case queue_GetCPUMove: 
+					getCPUMove();
+					break;			
+					
+				case queue_Rotation: 
+					setRotation();	
+					break;		
+					
+				case queue_PlayerMove: 
+					playerMove(); 
+					break;			
+					
+				case queue_CPUMove: 
+					cpuMove(); 
+					break;			
+					
+				case queue_ActiveMoves: 
+					checkActiveMoves();
+					break;				
+					
+				case queue_StatusDamage:
+					checkStatusDamage();
+					break;			
+					
+				case queue_WeatherDamage:
+					checkWeatherDamage();	
+					break;		
+					
+				case queue_TurnReset:
+					getDelayedTurn();
+					break;
+			}
 			
 			if (hasWinningPokemon()) {
 				getWinningPokemon();
 				getWinningTrainer();
-			}
-			else {
-				getDelayedTurn();
+				battleQueue.clear();
 			}
 		}
 	}
@@ -398,64 +438,54 @@ public class BattleManager extends Thread {
 	
 	// SET ROTATION METHODS
 	private void setRotation() {		
+		// 0 if neither	goes first
 		// 1 if player moves first
 		// 2 if cpu moves first
-		// 3 if only cpu
-		// 4 if only player
-		// 5 if neither		
+		// 3 if only cpu moves
+		// 4 if only player	moves	
 		
 		if (fighter[0].isAlive() && fighter[1].isAlive()) {
 							
 			int firstTurn = BattleUtility.getFirstTurn(fighter[0], fighter[1], playerMove, cpuMove);	
 			
-			if (firstTurn == 1) { 
-				currentTurn = playerTurn;
-				nextTurn = cpuTurn;
+			if (firstTurn == 1) { 				
+				battleQueue.addFirst(queue_CPUMove);
+				battleQueue.addFirst(queue_PlayerMove);
 			}	
-			else if (firstTurn == 2) { 
-				currentTurn = cpuTurn;
-				nextTurn = playerTurn;
+			else if (firstTurn == 2) { 				
+				battleQueue.addFirst(queue_PlayerMove);
+				battleQueue.addFirst(queue_CPUMove);
 			}				
 			else if (firstTurn == 3) { 
-				currentTurn = cpuTurn;
-				nextTurn = -1;
+				battleQueue.addFirst(queue_CPUMove);
 			}				
 			else if (firstTurn == 4) { 
-				currentTurn = playerTurn;
-				nextTurn = -1;
-			}
-			else if (firstTurn == 5) {
-				currentTurn = -1;
-				nextTurn = -1;
-			}
-			else {
-				currentTurn = -1;
-				nextTurn = -1;
+				battleQueue.addFirst(queue_PlayerMove);
 			}
 		}
 	}
 		
-	// START TURN METHOD
-	private void startTurn() throws InterruptedException {	
+	private void playerMove() throws InterruptedException {
 		
-		if (currentTurn != -1) {		
-			
-			Move move = currentTurn == playerTurn ? playerMove : cpuMove;
-
-			if (canMove(fighter[currentTurn], move)) {					
-				move();					
-			}
-			else {
-				currentTurn = nextTurn;
-				nextTurn = -1;
-			}
-			
-			startTurn();
+		if (canMove(fighter[0], playerMove)) {
+			move(fighter[0], fighter[1], playerMove, cpuMove);	
 		}	
-	}		
+		else {
+			playerMove.resetMoveTurns();
+		}
+	}	
+	private void cpuMove() throws InterruptedException {
+		
+		if (canMove(fighter[1], cpuMove)) {
+			move(fighter[1], fighter[0], cpuMove, playerMove);
+		}		
+		else {
+			cpuMove.resetMoveTurns();
+		}
+	}
 	
 	// STATUS CONDITION METHODS
-	private boolean canMove(Pokemon pkm, Move move) throws InterruptedException {
+ 	private boolean canMove(Pokemon pkm, Move move) throws InterruptedException {
 		
 		boolean canMove = true;
 		
@@ -544,21 +574,13 @@ public class BattleManager extends Thread {
 		}
 	}
 	private boolean confusionDamage(Pokemon pkm) throws InterruptedException {
-
+				
 		// 1/2 chance of hurting self
 		int val = 1 + (int)(Math.random() * 2);	
 				
 		if (val == 1) {					
 			
-			double level = pkm.getLevel();
-			double power = 1.0;
-			double A = pkm.getAttack();
-			double D = pkm.getDefense();
-					
-			// confusion damage reference: https://fighterlp.fandom.com/wiki/Confusion_(status)
-			int damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
-				power * (A / D)) / 50)) + 2));
-		
+			int damage = BattleUtility.getConfusionDamage(pkm);		
 			int hp = pkm.getHP() - damage;
 			
 			// pokemon defeated itself in confusion damage
@@ -601,66 +623,52 @@ public class BattleManager extends Thread {
 	}
 		
 	// MOVE METHOD
-	private void move() throws InterruptedException {		
+	private void move(Pokemon atk, Pokemon trg, Move atkMove, Move trgMove) throws InterruptedException {		
+						
+		checkSleepTalk(atk, atkMove);				
+		BattleUtility.getWeatherMoveDelay(weather, atkMove);
 				
-		Pokemon atk = currentTurn == playerTurn ? fighter[0] : fighter[1];
-		Pokemon trg = currentTurn == playerTurn ? fighter[1] : fighter[0];		
-		Move move = currentTurn == playerTurn ? playerMove : cpuMove;
-		
-		checkSleepTalk(atk, move);				
-		BattleUtility.getWeatherMoveDelay(weather, move);
-				
-		if (move.isReady()) {				
+		if (atkMove.isReady()) {				
 			
-			typeDialogue(atk.getName() + " used\n" + move.toString() + "!", false); 
+			typeDialogue(atk.getName() + " used\n" + atkMove.toString() + "!", false); 
 			
 			atk.setAttacking(true);
-			playSE(moves_SE, move.getName());
+			playSE(moves_SE, atkMove.getName());
 			
-			if (validMove(atk, trg, move)) {
+			if (validMove(atk, trg, atkMove)) {
 				
-				move.resetMoveTurns();
+				atkMove.resetMoveTurns();
 				
-				// decrease move pp
+				// decrease atkMove pp
 				if (trg.getAbility().getCategory() == Ability.Category.PP) {
-					move.setPP(move.getPP() - (int) trg.getAbility().getFactor());
+					atkMove.setPP(atkMove.getPP() - (int) trg.getAbility().getFactor());
 				}
 				else {				
-					move.setPP(move.getPP() - 1);
+					atkMove.setPP(atkMove.getPP() - 1);
 				}						
 				
-				attack(atk, trg, move);		
+				attack(atk, trg, atkMove);		
 			}
 			else {
 				typeDialogue("It had no affect!");
-				
-				currentTurn = nextTurn;	
-				nextTurn = -1;		
-				return;		
 			}
 		}		
-		else if (move.getRecharge()) {
+		else if (atkMove.getRecharge()) {
 			
-			typeDialogue(move.getDelay(atk.getName()));	
+			typeDialogue(atkMove.getDelay(atk.getName()));	
 			
-			move.setTurnCount(move.getTurns());
-						
-			currentTurn = nextTurn;	
-			nextTurn = -1;		
+			atkMove.setTurnCount(atkMove.getTurns());
 		}
 		else {
 			
-			typeDialogue(atk.getName() + " used\n" + move.toString() + "!");
-			typeDialogue(move.getDelay(atk.getName()));	
+			typeDialogue(atk.getName() + " used\n" + atkMove.toString() + "!");
+			typeDialogue(atkMove.getDelay(atk.getName()));	
 			
-			if (move.getProtected()) {
+			if (atkMove.getProtected()) {
 				atk.setProtected(true);
 			}
 			
-			move.setTurnCount(move.getTurnCount() - 1);
-						
-			currentTurn = nextTurn;	
-			nextTurn = -1;		
+			atkMove.setTurnCount(atkMove.getTurnCount() - 1);
 		}
 	}		
 	private void checkSleepTalk(Pokemon atk, Move move) throws InterruptedException {
@@ -680,9 +688,6 @@ public class BattleManager extends Thread {
 			}
 			else {				
 				typeDialogue("It had no affect!");
-				
-				currentTurn = nextTurn;	
-				nextTurn = -1;		
 				return;		
 			}
 		}
@@ -691,7 +696,7 @@ public class BattleManager extends Thread {
 		
 		if ((move.getMove() == Moves.SNORE && (atk.getStatus() == null || atk.getStatus() != Status.SLEEP)) ||
 			(move.getMove() == Moves.DREAMEATER && (trg.getStatus() == null || trg.getStatus() != Status.SLEEP)) ||
-			(move.getMove() == Moves.SUCKERPUNCH && nextTurn == -1)) {
+			(move.getMove() == Moves.SUCKERPUNCH && battleQueue.peek() == queue_ActiveMoves)) {
 			return false;
 		}
 		else {
@@ -729,18 +734,12 @@ public class BattleManager extends Thread {
 		}
 		else {
 			typeDialogue("The attack missed!");
-			currentTurn = nextTurn;	
-			nextTurn = -1;
 		}			
 	}		
 	
 	// STATUS MOVE
-	private void statusMove(Pokemon pkm, Move move) throws InterruptedException {
-		
+	private void statusMove(Pokemon pkm, Move move) throws InterruptedException {		
 		setStatus(pkm, move.getEffect());
-		
-		currentTurn = nextTurn;	
-		nextTurn = -1;
 	}
 	private void setStatus(Pokemon pkm, Status status) throws InterruptedException {
 		
@@ -792,9 +791,6 @@ public class BattleManager extends Thread {
 				setStatus(trg, Status.CONFUSE);
 			}
 		}			
-		
-		currentTurn = nextTurn;	
-		nextTurn = -1;
 	}
 	private void setAttribute(Pokemon pkm, List<String> stats, int level) throws InterruptedException {
 		
@@ -820,9 +816,6 @@ public class BattleManager extends Thread {
 		weather = Weather.valueOf(move.getWeather());
 		checkWeatherCondition();
 		weatherDays = move.getTurns();
-		
-		currentTurn = nextTurn;	
-		nextTurn = -1;
 	}
 	private void checkWeatherCondition() throws InterruptedException {
 		
@@ -850,15 +843,23 @@ public class BattleManager extends Thread {
 	
 	// OTHER MOVE
 	private void otherMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
-		if (move.getMove() == Moves.TELEPORT) {
-			
+		
+		if (move.getMove() == Moves.TELEPORT) {						
+			if (trainer == null) {
+				typeDialogue(atk.getName() + " teleported\naway!");	
+				endBattle();
+			}
+			else {
+				typeDialogue("It had no affect!");
+			}						
 		}
 		else if (move.getMove() == Moves.LEECHSEED) {
 			activeMoves.put(move, trg);
 			typeDialogue(atk.getName() + " planted\na seed on " + trg.getName() + "!");
-			
-			currentTurn = nextTurn;
-			nextTurn = -1;
+		}
+		else if (move.getMove() == Moves.PROTECT) {
+			atk.setProtected(true);
+			typeDialogue(atk.getName() + " protected\nitself!");
 		}
 	}
 	
@@ -872,34 +873,26 @@ public class BattleManager extends Thread {
 			
 			applyEffect(atk, trg, move);
 							
-			if (nextTurn != -1 && flinched(trg, move)) {
-				currentTurn = -1;	
-				nextTurn = -1;					
-			}
-			else {
-				currentTurn = nextTurn;	
-				nextTurn = -1;	
-			}			
+			if (battleQueue.peek() != queue_ActiveMoves && flinched(trg, move)) {
+				battleQueue.removeFirst();		
+			}		
 		}
 		// BOTH POKEMON FAINTED
 		else if (trg.getHP() <= 0 && atk.getHP() <= 0) {
-			
-			currentTurn = -1;
-			nextTurn = -1;
+			battleQueue.remove(queue_PlayerMove);
+			battleQueue.remove(queue_CPUMove);
 		}
 		// TARGET FAINTED
-		else if (trg.getHP() <= 0) {
+		else if (trg.getHP() <= 0) {			
 			applyEffect(atk, trg, move);
-			
-			currentTurn = -1;
-			nextTurn = -1;
+			battleQueue.remove(queue_PlayerMove);
+			battleQueue.remove(queue_CPUMove);
 		}
 		// ATTACKER FAINTED
-		else if (atk.getHP() <= 0) {
-			applyEffect(atk, trg, move);
-			
-			currentTurn = -1;
-			nextTurn = -1;
+		else if (atk.getHP() <= 0) {			
+			applyEffect(atk, trg, move);		
+			battleQueue.remove(queue_PlayerMove);
+			battleQueue.remove(queue_CPUMove);
 		}	
 	}	
 	private void setDamage(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
@@ -921,8 +914,6 @@ public class BattleManager extends Thread {
 		
 		if (damage <= 0) {
 			typeDialogue("It had no effect!");
-			currentTurn = nextTurn;	
-			nextTurn = -1;	
 		}
 		else {
 			
@@ -1096,16 +1087,59 @@ public class BattleManager extends Thread {
 		return flinched;
 	}
 	
+	private void checkActiveMoves() throws InterruptedException {
+		
+		for (Move move : activeMoves.keySet()) {
+			
+			if (move.getMove() == Moves.LEECHSEED) {
+				leechSeed(move);				
+			}			
+		}		
+	}	
+	private void leechSeed(Move move) throws InterruptedException {
+		
+		Pokemon trg = activeMoves.get(move);
+		Pokemon atk = trg == fighter[1] ? fighter[0] : fighter[1];
+		
+		if (trg.isAlive() && atk.isAlive()) {
+			
+			int stolenHP = (int) (trg.getHP() * 0.125);
+			
+			int result = trg.getHP() - stolenHP;
+			if (result < 0) result = 0;
+			
+			decreaseHP(trg, result, stolenHP);
+			
+			result = atk.getHP() + stolenHP;			
+			if (atk.getHP() != atk.getBHP()) {
+				
+				if (stolenHP + atk.getHP() > atk.getBHP()) {
+					
+					stolenHP = atk.getBHP() - atk.getHP();										
+					increaseHP(atk, atk.getBHP(), stolenHP);					
+				}
+				else {		
+					increaseHP(atk, result, stolenHP);
+				}
+			}
+			else {
+				stolenHP = 0;
+			}
+			
+			typeDialogue(atk.getName() + "\nabsorbed " + stolenHP + " HP!");
+		}
+	}
+	
 	// STATUS METHODS
 	private void checkStatusDamage() throws InterruptedException {					
 		if (fighter[0].isAlive()) {
-			getStatusDamage(fighter[0]);
+			setStatusDamage(fighter[0]);
 		}	
 		if (fighter[1].isAlive()) {
-			getStatusDamage(fighter[1]);
+			setStatusDamage(fighter[1]);
 		}	
 	}
-	private void getStatusDamage(Pokemon pkm) throws InterruptedException {
+	private void setStatusDamage(Pokemon pkm) throws InterruptedException {
 		// status effects reference: https://pokemon.fandom.com/wiki/Status_Effects		
 		
 		if (pkm.getStatus() != null) {				
@@ -1178,13 +1212,11 @@ public class BattleManager extends Thread {
 				gp.playSE(battle_SE, "hail");
 				typeDialogue("Hail continues to fall!");	
 				
-				if (fighter[0].isAlive() &&
-						!fighter[0].checkType(Type.ICE)) {
-					getWeatherDamage(fighter[0]);
+				if (fighter[0].isAlive() && !fighter[0].checkType(Type.ICE)) {
+					setWeatherDamage(fighter[0]);
 				}
-				if (fighter[1].isAlive() &&
-						!fighter[1].checkType(Type.ICE)) {
-					getWeatherDamage(fighter[1]);
+				if (fighter[1].isAlive() &&	!fighter[1].checkType(Type.ICE)) {
+					setWeatherDamage(fighter[1]);
 				}	
 				
 				break;
@@ -1196,19 +1228,19 @@ public class BattleManager extends Thread {
 						!fighter[0].checkType(Type.ROCK) && 
 						!fighter[0].checkType(Type.STEEL) &&
 						!fighter[0].checkType(Type.GROUND)) {
-					getWeatherDamage(fighter[0]);
+					setWeatherDamage(fighter[0]);
 				}
 				if (fighter[1].isAlive() &&
 						!fighter[1].checkType(Type.ROCK) && 
 						!fighter[1].checkType(Type.STEEL) &&
 						!fighter[1].checkType(Type.GROUND)) {
-					getWeatherDamage(fighter[1]);
+					setWeatherDamage(fighter[1]);
 				}
 				
 				break;
 		}
 	}
-	private void getWeatherDamage(Pokemon pkm) throws InterruptedException {
+	private void setWeatherDamage(Pokemon pkm) throws InterruptedException {
 		
 		int damage = (int) Math.ceil((pkm.getHP() * 0.0625));
 		int newHP = pkm.getHP() - damage;		
@@ -1625,7 +1657,7 @@ public class BattleManager extends Thread {
 			int dialogueSet = trainer.dialogueSet + 1;
 			typeDialogue(trainer.dialogues[dialogueSet][0], true);
 			
-			int moneyEarned = BattleUtility.calculatePay(trainer);
+			int moneyEarned = BattleUtility.calculateMoneyEarned(trainer);
 			gp.player.money += moneyEarned;
 			typeDialogue(gp.player.name + " got $" + moneyEarned + "\nfor winning!", true);	
 			
@@ -1840,52 +1872,7 @@ public class BattleManager extends Thread {
 		
 		return;
 	}
-	
-	private void checkActiveMoves() throws InterruptedException {
 		
-		for (Move move : activeMoves.keySet()) {
-			
-			if (move.getMove() == Moves.LEECHSEED) {
-				leechSeed(move);				
-			}			
-		}		
-	}
-	
-	private void leechSeed(Move move) throws InterruptedException {
-		
-		Pokemon trg = activeMoves.get(move);
-		
-		if (trg.isAlive()) {
-			
-			int stolenHP = (int) (trg.getHP() * 0.125);
-			
-			int result = trg.getHP() - stolenHP;
-			if (result < 0) result = 0;
-			
-			decreaseHP(trg, result, stolenHP);
-			
-			Pokemon atk = trg == fighter[1] ? fighter[0] : fighter[1];
-			
-			result = atk.getHP() + stolenHP;			
-			if (atk.getHP() != atk.getBHP()) {
-				
-				if (stolenHP + atk.getHP() > atk.getBHP()) {
-					
-					stolenHP = atk.getBHP() - atk.getHP();										
-					increaseHP(atk, atk.getBHP(), stolenHP);					
-				}
-				else {		
-					increaseHP(atk, result, stolenHP);
-				}
-			}
-			else {
-				stolenHP = 0;
-			}
-			
-			typeDialogue(atk.getName() + "\nabsorbed " + stolenHP + " HP!");
-		}
-	}
-	
 	// BATTLE END METHOD
  	public void endBattle() {
 		gp.stopMusic();
@@ -1912,8 +1899,7 @@ public class BattleManager extends Thread {
 		active = false;
 		running = false;
 						
-		currentTurn = -1;
-		nextTurn = -1;
+		battleQueue.clear();		
 		
 		trainer = null;
 		fighter[0] = null;

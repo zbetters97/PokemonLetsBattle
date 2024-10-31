@@ -146,7 +146,7 @@ public final class BattleUtility {
 		int first = 1;
 		
 		if (move1 == null && move2 == null) {
-			first = 5;
+			first = 0;
 		}
 		else if (move1 == null) {
 			first = 3;
@@ -241,6 +241,26 @@ public final class BattleUtility {
 		return delay;
 	}	
 	
+	public static int getConfusionDamage(Pokemon pkm) {
+ 		/** CONFUSION DAMAGE FORMULA REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition)#Effect **/
+		
+ 		
+ 		int damage = 0;
+		
+		double level = pkm.getLevel();		
+		double power = 40.0;
+		double A = pkm.getAttack();
+		double D = pkm.getDefense();
+								
+		Random r = new Random();
+		double random = (double) (r.nextInt(100 - 85 + 1) + 85) / 100.0;
+		
+		damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
+			power * (A / D)) / 50)) + 2) * random);
+						
+		return damage;
+ 	}
+	
 	public static void getWeatherMoveDelay(Weather weather, Move move) {
 		
 		switch (weather) {		
@@ -276,8 +296,6 @@ public final class BattleUtility {
 			else {
 				double accuracy = BattleUtility.getAccuracy(move, weather) * (attacker.getAccuracy() / target.getEvasion());
 			
-				System.out.println(move.getAccuracy() + " " + attacker.getAccuracy() + " " + target.getEvasion() + " " + accuracy);
-				
 				Random r = new Random();
 				float chance = r.nextFloat();
 				
@@ -330,7 +348,7 @@ public final class BattleUtility {
 						
 		return damage;
 	}
-		
+ 			
  	private static double getAccuracy(Move move, Weather weather) {
 		
 		double accuracy = move.getAccuracy();
@@ -717,8 +735,9 @@ public final class BattleUtility {
 		return (int) exp;
 	}
 	
-	public static int calculatePay(Entity trainer) {
+	public static int calculateMoneyEarned(Entity trainer) {
 		// MONEY EARNED FORMULA REFERENCE (ALL GEN): https://bulbapedia.bulbagarden.net/wiki/Prize_money
+		
 		
 		int payout  = 0;
 		

@@ -2018,28 +2018,28 @@ public class UI {
 	
 		// FIGHTER LEVEL AND NO.
 		x = (int) (gp.tileSize * 0.3);
-		y += gp.tileSize * 0.85;
+		y += gp.tileSize * 0.9;
 		text = "Lv" + fighter.getLevel();
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));	
 		g2.setColor(Color.BLACK);
 		g2.drawString(text, x, y);
 		
+		// FIGHTER STATUS
+		if (fighter.getStatus() != null) {
+			battle_Status((int) (x + (gp.tileSize * 1.65)), (int) (y - (gp.tileSize * 0.52)), fighter, 30F);
+			g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));
+		}
+		
 		text = fighter.getNature().getName();
 		x = getXforRightAlignText(text, x + (int) (gp.tileSize * 6.9));		
 		g2.drawString(text, x, y);
-		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));	
+				
 		x = (int) (gp.tileSize * 5.8);
-		y -= gp.tileSize * 1.2;
+		y -= gp.tileSize * 1.2;		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));	
 		text = "No." + String.format("%03d", fighter.getIndex());	
 		drawText(text, x, y, Color.WHITE, Color.BLACK);
-		
-		// FIGHTER STATUS
-		if (fighter.getStatus() != null) {
-			battle_Status((int) (x + (gp.tileSize * 1.5)), (int) (y - (gp.tileSize * 0.53)), fighter, 30F);
-			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 38F));
-		}
-		
+						
 		// FIGHTER SPRITE
 		x = (int) (gp.tileSize * 1.3);
 		y = (int) (gp.tileSize * 4.2);

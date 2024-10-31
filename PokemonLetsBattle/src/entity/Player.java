@@ -67,9 +67,10 @@ public class Player extends Entity {
 	// DEFAULT VALUES
 	public void assignParty() {
 		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.GOLEM, 6, new COL_Ball_Poke(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.GOLEM, 85, new COL_Ball_Poke(gp)));
+		pokeParty.get(0).setStatus(Status.CONFUSE);
 		pokeParty.get(0).addMoves(Arrays.asList(
-				Moves.SNORE,
+				Moves.PROTECT,
 				Moves.SLEEPTALK,
 				Moves.HAMMERARM,
 				Moves.DEFENSECURL)
