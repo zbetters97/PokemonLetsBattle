@@ -158,6 +158,55 @@ public enum Pokedex {
 					Map.entry(45, Moves.THUNDER)
 			)),
 	RAICHU ("Raichu", 26, Type.ELECTRIC, new Static(), 60, 90, 55, 90, 80, 110, -1, 122, 0, 3, 75, null),
+	ZUBAT ("Zubat", 41, Arrays.asList(Type.FLYING, Type.POISON), new InnerFocus(), 40, 45, 35, 30, 40, 55, 22, 54, 0, 1, 255, 
+			Map.ofEntries(
+					Map.entry(5, Moves.SUPERSONIC),
+					Map.entry(9, Moves.ASTONISH),
+					Map.entry(13, Moves.BITE),
+					Map.entry(17, Moves.WINGATTACK),
+					Map.entry(21, Moves.CONFUSERAY),
+					//Map.entry(25, Moves.AIRCUTTER),
+					//Map.entry(29, Moves.MEANLOOK),
+					//Map.entry(33, Moves.POISONFANG),
+					//Map.entry(37, Moves.HAZE),
+					Map.entry(41, Moves.AIRSLASH)
+					
+			)),
+	GOLBAT ("Golbat", 42, Arrays.asList(Type.FLYING, Type.POISON), new InnerFocus(), 75, 80, 70, 65, 75, 90, 40, 171, 0, 2, 90, 
+			Map.ofEntries(
+					Map.entry(5, Moves.SUPERSONIC),
+					Map.entry(9, Moves.ASTONISH),
+					Map.entry(13, Moves.BITE),
+					Map.entry(17, Moves.WINGATTACK),
+					Map.entry(21, Moves.CONFUSERAY),
+					//Map.entry(27, Moves.AIRCUTTER),
+					//Map.entry(33, Moves.MEANLOOK),
+					//Map.entry(39, Moves.POISONFANG),
+					//Map.entry(45, Moves.HAZE),
+					Map.entry(51, Moves.AIRSLASH)
+					
+			)),
+	GROWLITHE ("Growlithe", 58, Type.FIRE, new FlashFire(), 55, 70, 45, 70, 50, 60, 26, 91, 5, 1, 190, 
+			Map.ofEntries(
+					Map.entry(6, Moves.EMBER),
+					Map.entry(9, Moves.LEER),
+					//Map.entry(14, Moves.ODERSLEUTH),
+					//Map.entry(20, Moves.FLAMEWHEEL),
+					//Map.entry(25, Moves.REVERSAL),
+					Map.entry(28, Moves.FIREFANG),
+					Map.entry(31, Moves.TAKEDOWN),
+					Map.entry(34, Moves.FLAMETHROWER),
+					Map.entry(39, Moves.AGILITY),
+					Map.entry(42, Moves.CRUNCH),
+					Map.entry(45, Moves.HEATWAVE),
+					Map.entry(48, Moves.FLAREBLITZ)
+					
+			)),
+	ARCANINE ("Arcanine", 59, Type.FIRE, new FlashFire(), 90, 110, 80, 100, 80, 95, -1, 213, 5, 2, 75, 
+			Map.ofEntries(
+					Map.entry(39, Moves.EXTREMESPEED)
+					
+			)),
 	ABRA ("Abra", 63, Type.PSYCHIC, new InnerFocus(), 25, 20, 15, 105, 55, 90, 16, 75, 3, 1, 200, null),
 	KADABRA ("Kadabra", 64, Type.PSYCHIC, new InnerFocus(), 40, 35, 30, 120, 70, 105, 36, 145, 3, 2, 100,
 			Map.ofEntries(
@@ -251,6 +300,33 @@ public enum Pokedex {
 					Map.entry(44, Moves.DOUBLEEDGE),
 					Map.entry(49, Moves.STONEEDGE)
 			)),
+	PONYTA ("Ponyta", 77, Type.FIRE, new FlashFire(), 50, 85, 55, 65, 65, 90, 45, 152, 0, 1, 190,
+			Map.ofEntries(
+					Map.entry(7, Moves.GROWL),
+					Map.entry(10, Moves.TAILWHIP),
+					Map.entry(16, Moves.EMBER),
+					Map.entry(19, Moves.STOMP),
+					Map.entry(25, Moves.FIRESPIN),
+					Map.entry(28, Moves.TAKEDOWN),
+					Map.entry(34, Moves.AGILITY),
+					Map.entry(38, Moves.FIREBLAST),
+					//Map.entry(44, Moves.BOUNCE),
+					Map.entry(48, Moves.FLAREBLITZ)
+			)),
+	RAPIDASH ("Rapidash", 78, Type.FIRE, new FlashFire(), 65, 100, 70, 80, 80, 105, -1, 192, 0, 2, 60,
+			Map.ofEntries(
+					Map.entry(7, Moves.GROWL),
+					Map.entry(10, Moves.TAILWHIP),
+					Map.entry(16, Moves.EMBER),
+					Map.entry(19, Moves.STOMP),
+					Map.entry(25, Moves.FIRESPIN),
+					Map.entry(28, Moves.TAKEDOWN),
+					Map.entry(34, Moves.AGILITY),
+					Map.entry(38, Moves.FIREBLAST),
+					//Map.entry(40, Moves.FURYATTACK),
+					//Map.entry(49, Moves.BOUNCE),
+					Map.entry(58, Moves.FLAREBLITZ)
+			)),
 	GASTLY ("Gastly", 92, Arrays.asList(Type.GHOST, Type.POISON), new Levitate(), 30, 35, 30, 100, 35, 80, 25, 95, 3, 1, 190,
 			Map.ofEntries(
 					Map.entry(15, Moves.NIGHTSHADE),
@@ -309,6 +385,24 @@ public enum Pokedex {
 					Map.entry(48, Moves.DRAGONDANCE),
 					Map.entry(57, Moves.DRAGONPULSE)
 			)),
+	MAGIKARP ("Magikarp", 129, Type.WATER, new SwiftSwim(), 20, 10, 55, 15, 20, 80, 20, 20, 5, 1, 255,
+			Map.ofEntries(
+					Map.entry(15, Moves.TACKLE),
+					Map.entry(30, Moves.FLAIL)
+			)),
+	GYARADOS ("Gyarados", 130, Arrays.asList(Type.WATER, Type.DRAGON), new Intimidate(), 95, 125, 79, 60, 100, 81, -1, 214, 5, 2, 45,
+			Map.ofEntries(
+					Map.entry(20, Moves.BITE),
+					Map.entry(23, Moves.DRAGONRAGE),
+					Map.entry(26, Moves.LEER),
+					Map.entry(29, Moves.TWISTER),
+					Map.entry(32, Moves.ICEFANG),
+					Map.entry(35, Moves.AQUATAIL),
+					Map.entry(38, Moves.RAINDANCE),
+					Map.entry(41, Moves.HYDROPUMP),
+					Map.entry(44, Moves.DRAGONDANCE),
+					Map.entry(47, Moves.HYPERBEAM)
+			)),
 	LAPRAS ("Lapras", 131, Arrays.asList(Type.WATER, Type.ICE), new ShellArmor(), 130, 85, 80, 85, 95, 60, -1, 219, 5, 2, 45,
 			Map.ofEntries(
 					Map.entry(7, Moves.CONFUSERAY),
@@ -334,6 +428,32 @@ public enum Pokedex {
 					Map.entry(41, Moves.ROLLOUT),
 					Map.entry(44, Moves.CRUNCH),
 					Map.entry(49, Moves.GIGAIMPACT)
+			)),
+	MEWTWO ("Mewtwo", 150, Type.PSYCHIC, new Pressure(), 106, 110, 90, 154, 90, 130, -1, 220, 5, 3, 3,
+			Map.ofEntries(
+					//Map.entry(8, Moves.BARRIER),
+					//Map.entry(15, Moves.SWIFT),
+					//Map.entry(22, Moves.FUTURESIGHT),
+					//Map.entry(29, Moves.PSYCHUP),
+					//Map.entry(36, Moves.MIRACLEEYE),
+					//Map.entry(43, Moves.MIST),
+					Map.entry(50, Moves.PSYCHOCUT),
+					Map.entry(57, Moves.AMNESIA),
+					Map.entry(71, Moves.PSYCHIC),
+					Map.entry(86, Moves.RECOVER)
+					//Map.entry(93, Moves.SAFEGUARD),
+					//Map.entry(100, Moves.AURASPHERE)
+			)),
+	MEW ("Mew", 151, Type.PSYCHIC, new Synchronize(), 100, 100, 100, 100, 100, 100, -1, 64, 3, 5, 45,
+			Map.ofEntries(
+					//Map.entry(10, Moves.MEGAPUNCH),
+					//Map.entry(20, Moves.METRONOME),
+					Map.entry(30, Moves.PSYCHIC),
+					//Map.entry(40, Moves.BARRIER),
+					Map.entry(50, Moves.ANCIENTPOWER),
+					Map.entry(60, Moves.AMNESIA)
+					//Map.entry(90, Moves.NASTYPLOT),
+					//Map.entry(100, Moves.AURASPHERE)
 			)),
 	KINGDRA ("Kingdra", 230, Arrays.asList(Type.WATER, Type.DRAGON), new Sniper(), 75, 95, 95, 95, 95, 85, -1, 207, 0, 3, 45,
 			Map.ofEntries(
@@ -956,7 +1076,50 @@ public enum Pokedex {
         ));
         moveMap.put(RAYQUAZA, Arrays.asList(
         		new Move(Moves.TWISTER)
-        )); 
+        ));
+        
+        moveMap.put(ZUBAT, Arrays.asList(
+        		//new Move(Moves.LEECHLIFE)
+        ));
+        moveMap.put(GOLBAT, Arrays.asList(
+        		new Move(Moves.SCREECH),
+        		//new Move(Moves.LEECHLIFE),
+        		new Move(Moves.SUPERSONIC),
+        		new Move(Moves.ASTONISH)
+        ));
+        moveMap.put(GROWLITHE, Arrays.asList(
+        		new Move(Moves.BITE)
+        		//new Move(Moves.ROAR)
+        ));
+        moveMap.put(ARCANINE, Arrays.asList(
+        		new Move(Moves.THUNDERFANG),
+        		new Move(Moves.BITE),
+        		//new Move(Moves.ROAR),
+        		//new Move(Moves.ODORSLEUTH),
+        		new Move(Moves.FIREFANG)        		
+        ));
+        moveMap.put(PONYTA, Arrays.asList(
+        		new Move(Moves.TACKLE)
+        ));
+        moveMap.put(RAPIDASH, Arrays.asList(
+        		new Move(Moves.QUICKATTACK),
+        		//new Move(Moves.MEGAHORN),
+        		//new Move(Moves.POISONJAB),
+        		new Move(Moves.GROWL)
+        ));
+        moveMap.put(MAGIKARP, Arrays.asList(
+        		//new Move(Moves.SPLASH)
+        ));
+        moveMap.put(GYARADOS, Arrays.asList(
+        		//new Move(Moves.THRASH)
+        ));
+        
+        moveMap.put(MEWTWO, Arrays.asList(
+        		new Move(Moves.CONFUSION)
+        ));
+        moveMap.put(MEW, Arrays.asList(
+        		new Move(Moves.POUND)
+        ));
 	}
 	/** END POKEMON MOVES STATIC MAP **/
 	
