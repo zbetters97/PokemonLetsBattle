@@ -70,8 +70,14 @@ public class NPC_Rival extends Entity {
 	
 	public void speak() {	
 		
-		if (hasBattle) dialogueSet = 0;		
-		else dialogueSet = 2;
+		if (hasBattle) {
+			gp.stopMusic();
+			gp.startMusic(0, gp.se.getFile(0, name));	
+			dialogueSet = 0;				
+		}
+		else {
+			dialogueSet = 2;
+		}
 				
 		direction = getOppositeDirection(gp.player.direction);
 		startDialogue(this, dialogueSet);

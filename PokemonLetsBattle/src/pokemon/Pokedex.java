@@ -154,7 +154,7 @@ public enum Pokedex {
 					Map.entry(21, Moves.SLAM),
 					Map.entry(26, Moves.THUNDERBOLT),
 					Map.entry(34, Moves.AGILITY),
-					//Map.entry(37, Moves.DISCHARGE),
+					Map.entry(37, Moves.DISCHARGE),
 					Map.entry(45, Moves.THUNDER)
 			)),
 	RAICHU ("Raichu", 26, Type.ELECTRIC, new Static(), 60, 90, 55, 90, 80, 110, -1, 122, 0, 3, 75, null),
@@ -163,7 +163,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(16, Moves.CONFUSION),
 					Map.entry(24, Moves.PSYBEAM),
-					//Map.entry(30, Moves.RECOVER),
+					Map.entry(30, Moves.RECOVER),
 					Map.entry(34, Moves.PSYCHOCUT),
 					Map.entry(40, Moves.PSYCHIC)
 			)),
@@ -171,7 +171,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(16, Moves.CONFUSION),
 					Map.entry(24, Moves.PSYBEAM),
-					//Map.entry(30, Moves.RECOVER),
+					Map.entry(30, Moves.RECOVER),
 					Map.entry(34, Moves.PSYCHOCUT),
 					Map.entry(36, Moves.CALMMIND),
 					Map.entry(40, Moves.PSYCHIC)
@@ -182,8 +182,8 @@ public enum Pokedex {
 					Map.entry(19, Moves.SEISMICTOSS),
 					//Map.entry(22, Moves.REVENGE),
 					Map.entry(25, Moves.VITALTHROW),
-					//Map.entry(31, Moves.SUBMISSION),
-					//Map.entry(34, Moves.WAKEUPSLAP),
+					Map.entry(31, Moves.SUBMISSION),
+					Map.entry(34, Moves.WAKEUPSLAP),
 					Map.entry(37, Moves.CROSSCHOP),
 					Map.entry(43, Moves.SCARYFACE),
 					Map.entry(46, Moves.DYNAMICPUNCH)
@@ -194,8 +194,8 @@ public enum Pokedex {
 					Map.entry(19, Moves.SEISMICTOSS),
 					//Map.entry(22, Moves.REVENGE),
 					Map.entry(25, Moves.VITALTHROW),
-					//Map.entry(32, Moves.SUBMISSION),
-					//Map.entry(36, Moves.WAKEUPSLAP),
+					Map.entry(32, Moves.SUBMISSION),
+					Map.entry(36, Moves.WAKEUPSLAP),
 					Map.entry(40, Moves.CROSSCHOP),
 					Map.entry(44, Moves.SCARYFACE),
 					Map.entry(51, Moves.DYNAMICPUNCH)
@@ -206,50 +206,50 @@ public enum Pokedex {
 					Map.entry(19, Moves.SEISMICTOSS),
 					//Map.entry(22, Moves.REVENGE),
 					Map.entry(25, Moves.VITALTHROW),
-					//Map.entry(32, Moves.SUBMISSION),
-					//Map.entry(36, Moves.WAKEUPSLAP),
+					Map.entry(32, Moves.SUBMISSION),
+					Map.entry(36, Moves.WAKEUPSLAP),
 					Map.entry(40, Moves.CROSSCHOP),
 					Map.entry(44, Moves.SCARYFACE),
 					Map.entry(51, Moves.DYNAMICPUNCH)
 			)),
 	GEODUDE ("Geodude", 74, Arrays.asList(Type.ROCK, Type.GROUND), new RockHead(), 40, 80, 100, 30, 30, 20, 25, 73, 3, 1, 255,
 			Map.ofEntries(
-					//Map.entry(8, Moves.ROCKPOLISH),
+					Map.entry(8, Moves.ROCKPOLISH),
 					Map.entry(11, Moves.ROCKTHROW),
-					//Map.entry(15, Moves.MAGNITUDE),
-					//Map.entry(18, Moves.SELFDESTRUCT),
+					Map.entry(15, Moves.MAGNITUDE),
+					Map.entry(18, Moves.SELFDESTRUCT),
 					Map.entry(22, Moves.ROLLOUT),
-					//Map.entry(25, Moves.ROCKBLAST),
+					Map.entry(25, Moves.ROCKBLAST),
 					Map.entry(29, Moves.EARTHQUAKE),
-					//Map.entry(32, Moves.EXPLOSION),
-					Map.entry(36, Moves.DOUBLEEDGE)
-					//Map.entry(39, Moves.STONEEDGE)
+					Map.entry(32, Moves.EXPLOSION),
+					Map.entry(36, Moves.DOUBLEEDGE),
+					Map.entry(39, Moves.STONEEDGE)
 			)),
 	GRAVELER ("Graveler", 75, Arrays.asList(Type.ROCK, Type.GROUND), new RockHead(), 55, 95, 115, 45, 45, 35, 40, 134, 3, 2, 120,
 			Map.ofEntries(
-					//Map.entry(8, Moves.ROCKPOLISH),
+					Map.entry(8, Moves.ROCKPOLISH),
 					Map.entry(11, Moves.ROCKTHROW),
-					//Map.entry(15, Moves.MAGNITUDE),
-					//Map.entry(18, Moves.SELFDESTRUCT),
+					Map.entry(15, Moves.MAGNITUDE),
+					Map.entry(18, Moves.SELFDESTRUCT),
 					Map.entry(22, Moves.ROLLOUT),
-					//Map.entry(27, Moves.ROCKBLAST),
+					Map.entry(27, Moves.ROCKBLAST),
 					Map.entry(33, Moves.EARTHQUAKE),
-					//Map.entry(38, Moves.EXPLOSION),
-					Map.entry(44, Moves.DOUBLEEDGE)
-					//Map.entry(49, Moves.STONEEDGE)
+					Map.entry(38, Moves.EXPLOSION),
+					Map.entry(44, Moves.DOUBLEEDGE),
+					Map.entry(49, Moves.STONEEDGE)
 			)),
 	GOLEM ("Golem", 76, Arrays.asList(Type.ROCK, Type.GROUND), new Levitate(), 80, 120, 130, 55, 65, 45, -1, 177, 3, 3, 45,
 			Map.ofEntries(
-					//Map.entry(8, Moves.ROCKPOLISH),
+					Map.entry(8, Moves.ROCKPOLISH),
 					Map.entry(11, Moves.ROCKTHROW),
-					//Map.entry(15, Moves.MAGNITUDE),
-					//Map.entry(18, Moves.SELFDESTRUCT),
+					Map.entry(15, Moves.MAGNITUDE),
+					Map.entry(18, Moves.SELFDESTRUCT),
 					Map.entry(22, Moves.ROLLOUT),
-					//Map.entry(27, Moves.ROCKBLAST),
+					Map.entry(27, Moves.ROCKBLAST),
 					Map.entry(33, Moves.EARTHQUAKE),
-					//Map.entry(38, Moves.EXPLOSION),
-					Map.entry(44, Moves.DOUBLEEDGE)
-					//Map.entry(49, Moves.STONEEDGE)
+					Map.entry(38, Moves.EXPLOSION),
+					Map.entry(44, Moves.DOUBLEEDGE),
+					Map.entry(49, Moves.STONEEDGE)
 			)),
 	GASTLY ("Gastly", 92, Arrays.asList(Type.GHOST, Type.POISON), new Levitate(), 30, 35, 30, 100, 35, 80, 25, 95, 3, 1, 190,
 			Map.ofEntries(
@@ -352,11 +352,11 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(8, Moves.THUNDERSHOCK),
 					Map.entry(22, Moves.QUICKATTACK),
-					//Map.entry(29, Moves.SPARK),
-					//Map.entry(36, Moves.REFLECT),
+					Map.entry(29, Moves.SPARK),
+					Map.entry(36, Moves.REFLECT),
 					Map.entry(43, Moves.CRUNCH),
 					Map.entry(50, Moves.THUNDERFANG),
-					//Map.entry(57, Moves.DISCHARGE),
+					Map.entry(57, Moves.DISCHARGE),
 					Map.entry(64, Moves.EXTRASENSORY),
 					Map.entry(71, Moves.THUNDER),
 					Map.entry(78, Moves.CALMMIND)
@@ -369,7 +369,7 @@ public enum Pokedex {
 					Map.entry(36, Moves.FLAMETHROWER),
 					Map.entry(43, Moves.SWAGGER),
 					Map.entry(50, Moves.FIREFANG),
-					//Map.entry(57, Moves.LAVAPLUME),
+					Map.entry(57, Moves.LAVAPLUME),
 					Map.entry(64, Moves.EXTRASENSORY),
 					Map.entry(71, Moves.FIREBLAST),
 					Map.entry(78, Moves.CALMMIND)
@@ -389,7 +389,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(6, Moves.ABSORB),
 					Map.entry(11, Moves.QUICKATTACK),
-					//Map.entry(16, Moves.PURSUIT),
+					Map.entry(16, Moves.PURSUIT),
 					Map.entry(21, Moves.SCREECH),
 					Map.entry(26, Moves.MEGADRAIN),
 					Map.entry(31, Moves.AGILITY),
@@ -402,12 +402,12 @@ public enum Pokedex {
 					Map.entry(6, Moves.ABSORB),
 					Map.entry(11, Moves.QUICKATTACK),
 					Map.entry(16, Moves.FURYCUTTER),
-					//Map.entry(17, Moves.PURSUIT),
+					Map.entry(17, Moves.PURSUIT),
 					Map.entry(23, Moves.SCREECH),
 					Map.entry(29, Moves.LEAFBLADE),
 					Map.entry(35, Moves.AGILITY),
 					Map.entry(41, Moves.SLAM),
-					//Map.entry(53, Moves.FALSESWIPE),
+					Map.entry(53, Moves.FALSESWIPE),
 					Map.entry(59, Moves.LEAFSTORM)
 			)),
 	SCEPTILE ("Sceptile", 254, Type.GRASS, new Overgrow(), 70, 85, 65, 105, 85, 120, -1, 208, 3, 3, 45,
@@ -415,12 +415,12 @@ public enum Pokedex {
 					Map.entry(6, Moves.ABSORB),
 					Map.entry(11, Moves.QUICKATTACK),
 					Map.entry(16, Moves.FURYCUTTER),
-					//Map.entry(17, Moves.PURSUIT),
+					Map.entry(17, Moves.PURSUIT),
 					Map.entry(23, Moves.SCREECH),
 					Map.entry(29, Moves.LEAFBLADE),
 					Map.entry(35, Moves.AGILITY),
 					Map.entry(43, Moves.SLAM),
-					//Map.entry(59, Moves.FALSESWIPE),
+					Map.entry(59, Moves.FALSESWIPE),
 					Map.entry(67, Moves.LEAFSTORM)
 			)),
 	TORCHIC ("Torchic", 255, Type.FIRE, new Blaze(), 45, 60, 40, 70, 50, 45, 16, 65, 3, 1, 45,
@@ -521,7 +521,7 @@ public enum Pokedex {
 					Map.entry(5, Moves.TAILWHIP), 
 					Map.entry(9, Moves.HEADBUTT),
 					Map.entry(13, Moves.SANDATTACK),
-					//Map.entry(33, Moves.FLAIL),
+					Map.entry(33, Moves.FLAIL),
 					Map.entry(37, Moves.REST)
 					//Map.entry(45, Moves.FLING)
 			)),	
@@ -607,7 +607,7 @@ public enum Pokedex {
 	KYOGRE ("Kyogre", 382, Type.WATER, new Drizzle(), 100, 100, 90, 150, 140, 90, -1, 218, 5, 3, 3,
 			Map.ofEntries(
 					Map.entry(5, Moves.SCARYFACE),
-					//Map.entry(15, Moves.ANCIENTPOWER),
+					Map.entry(15, Moves.ANCIENTPOWER),
 					Map.entry(20, Moves.BODYSLAM),
 					Map.entry(30, Moves.CALMMIND),
 					Map.entry(35, Moves.ICEBEAM),
@@ -615,19 +615,19 @@ public enum Pokedex {
 					Map.entry(50, Moves.REST),
 					Map.entry(60, Moves.SHEERCOLD),
 					Map.entry(65, Moves.DOUBLEEDGE),
-					Map.entry(75, Moves.AQUATAIL)
-					//Map.entry(80, Moves.WATERSPOUT),
+					Map.entry(75, Moves.AQUATAIL),
+					Map.entry(80, Moves.WATERSPOUT)
 			)), 
 	GROUDON ("Groudon", 383, Type.GROUND, new Drought(), 100, 150, 140, 100, 90, 90, -1, 218, 5, 3, 3,
 			Map.ofEntries(
 					Map.entry(5, Moves.SCARYFACE),
-					//Map.entry(15, Moves.ANCIENTPOWER),
+					Map.entry(15, Moves.ANCIENTPOWER),
 					Map.entry(20, Moves.SLASH),
 					Map.entry(30, Moves.BULKUP),
 					Map.entry(35, Moves.EARTHQUAKE),
 					Map.entry(45, Moves.FIREBLAST),
 					Map.entry(50, Moves.REST),
-					//Map.entry(60, Moves.FISSURE),
+					Map.entry(60, Moves.FISSURE),
 					Map.entry(65, Moves.SOLARBEAM)
 					//Map.entry(75, Moves.EARTHPOWER),
 					//Map.entry(80, Moves.ERUPTION)
@@ -635,7 +635,7 @@ public enum Pokedex {
 	RAYQUAZA ("Rayquaza", 384, Arrays.asList(Type.DRAGON, Type.FLYING), new AirLock(), 105, 150, 90, 150, 90, 95, -1, 220, 5, 3, 3,
 			Map.ofEntries(
 					Map.entry(5, Moves.SCARYFACE),
-					//Map.entry(15, Moves.ANCIENTPOWER),
+					Map.entry(15, Moves.ANCIENTPOWER),
 					Map.entry(20, Moves.DRAGONCLAW),
 					Map.entry(30, Moves.DRAGONDANCE),
 					Map.entry(35, Moves.CRUNCH),

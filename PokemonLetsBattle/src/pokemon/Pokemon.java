@@ -29,7 +29,7 @@ public class Pokemon {
 	private Status status;
 	private boolean isAlive = true, attacking = false, hit = false, isProtected = false;
 	private int statusCounter, statusLimit;
-	private List<Move> moveSet;
+	private List<Move> moveSet, activeMoves;
 	private Entity item, capturedBall;
 	/** END INITIALIZE VALUES **/
 	
@@ -86,6 +86,7 @@ public class Pokemon {
 		isAlive = true;	
 		
 		moveSet = new ArrayList<>();
+		activeMoves = new ArrayList<>();
 	}	
 	public Pokemon(Pokemon old, Pokedex p) {	
 		// STAT FORMULA REFERENCE: https://pokemon.fandom.com/wiki/Statistics
@@ -134,6 +135,7 @@ public class Pokemon {
 		isAlive = old.isAlive;		
 		
 		moveSet = old.getMoveSet();
+		activeMoves = new ArrayList<>();
 		item = old.item;
 	}		
 	public Pokemon(Pokedex p, Entity capturedBall, char sex, int level, int bxp, int xp, int nxp,
@@ -177,7 +179,8 @@ public class Pokemon {
 						
 		this.isAlive = isAlive;	
 		
-		this.moveSet = moveSet;
+		this.moveSet = moveSet;		
+		activeMoves = new ArrayList<>();
 	}	
 	/** END CONSTRUCTORS **/
 			
@@ -421,16 +424,42 @@ public class Pokemon {
 			m.resetPP();
 			m.resetMoveTurns();
 		}
+		for (Move m : activeMoves) {
+			m.setTurnCount(m.getTurns());
+			activeMoves.remove(m);
+		}
 	}
 	public void resetMoveTurns() {
 		for (Move m : moveSet) {
 			m.resetMoveTurns();
 		}
 	}
+	
+	/** ACTIVE MOVES METHODS **/
+	public void addActiveMove(Moves move) {
+		activeMoves.add(new Move(move));
+	}	
+	public boolean hasActiveMove(Moves move) {		
+		return activeMoves.stream().anyMatch(m -> m.getMove().equals(move));
+	}
+	public Move getActiveMove(Moves move) {		
+		return activeMoves.stream().filter(m -> m.getMove().equals(move)).findAny().orElse(null);
+	}
+	public void removeActiveMove(Move move) {
+		activeMoves.remove(move);		
+	}
+	public void removeActiveMove(Moves move) {
+		activeMoves.removeIf(m -> m.getMove() == move);
+		
+	}
+	public void clearActiveMoves() {
+		activeMoves.clear();		
+	}
+	
 	/** END ADD NEW MOVE METHOD **/
 	
 	/** GET POKEMON METHODS **/	
-	public static Pokemon getPokemon(Pokedex poke, int level, Entity capturedBall) {
+ 	public static Pokemon getPokemon(Pokedex poke, int level, Entity capturedBall) {
 		
 		Pokemon pokemon = null;
 		
@@ -540,10 +569,12 @@ public class Pokemon {
 	
 	public boolean isAlive() { return isAlive; }
 	public void setAlive(boolean isAlive) {	
-		this.hp = 0;
 		this.isAlive = isAlive; 
-		this.status = null; 
-		this.isProtected = false;
+		hp = 0;		
+		status = null; 
+		statusLimit = 0;
+		statusCounter = 0;
+		isProtected = false;
 		resetMoves();
 		resetStats();
 		resetStatStages();
@@ -563,6 +594,9 @@ public class Pokemon {
 	
 	public Entity getHeldItem() { return item; }
 	public void giveItem(Entity item) { this.item = item; }
+	
+	public List<Move> getActiveMoves() { return activeMoves; }
+	public void setActiveMoves(List<Move> activeMoves) { this.activeMoves = activeMoves; }
 	
 	public Entity getBall() { return capturedBall; }
 	public void setBall(Entity capturedBall) { this.capturedBall = capturedBall; }

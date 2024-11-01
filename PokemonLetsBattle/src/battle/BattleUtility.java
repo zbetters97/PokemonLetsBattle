@@ -18,6 +18,16 @@ import properties.abilities.Ability;
 
 public final class BattleUtility {
 	
+	private static final Map<Integer, Integer> magnitudeTable = Map.ofEntries(
+			Map.entry(4, 5), 
+			Map.entry(5, 10), 
+			Map.entry(6, 20), 
+			Map.entry(7, 30), 
+			Map.entry(8, 20), 
+			Map.entry(9, 10), 
+			Map.entry(10, 5)
+	);
+	
 	private BattleUtility(GamePanel gp) { }
 	
 	public static Move chooseCPUMove(Entity trainer, Pokemon attacker, Pokemon target, Weather weather) {
@@ -330,20 +340,22 @@ public final class BattleUtility {
 		
 		damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
 			power * (A / D)) / 50)) + 2) * STAB * type * random);
-		
-		if (target.getAbility().getCategory() == Ability.Category.DEFENSE &&
-				target.getAbility().isValid(attacker, target, move)) {
-			
-			damage *= target.getAbility().getFactor();
-		}
-		
-		if (move.getMove() == Moves.ENDEAVOR) {
-			
+						
+		if (move.getMove() == Moves.ENDEAVOR) {			
 			if (target.getHP() < attacker.getHP()) damage = 0;			
 			else damage = target.getHP() - attacker.getHP();			
 		}
 		else if (move.getMove() == Moves.DRAGONRAGE) {
 			damage = 40;
+		}
+		else if (move.getMove() == Moves.SEISMICTOSS) {
+			damage = target.getLevel();
+		}
+		
+		if (target.getAbility().getCategory() == Ability.Category.DEFENSE &&
+				target.getAbility().isValid(attacker, target, move)) {
+			
+			damage *= target.getAbility().getFactor();
 		}
 						
 		return damage;
@@ -378,55 +390,99 @@ public final class BattleUtility {
 		return accuracy;
 	}
 	private static double getPower(Move move, Pokemon attacker, Pokemon target, Weather weather) {
-		
+		/** FLAIL POWER FORMULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Flail_(move) **/
+				
 		double power = 1.0; 
 		
-		if (move.getPower() == -1) {
-			power = attacker.getLevel();
-		}
-		else if (move.getPower() == 1) {
-			power = target.getLevel();
-		}
-		else {
-			power = move.getPower();
-		}
+		if (move.getMove() == Moves.WATERSPOUT) power = move_WaterSpout(attacker, move);
+		else if (move.getMove() == Moves.FLAIL) power = move_Flail(attacker);
+		else if (move.getMove() == Moves.MAGNITUDE) power = move_Magnitude();		
+		else if (move.getPower() == -1) power = attacker.getLevel();		
+		else if (move.getPower() == 1) power = target.getLevel();		
+		else power = move.getPower();		
 		
 		switch (weather) {	
 			case CLEAR:
 				break;
 			case SUNLIGHT:
-				if (move.getType() == Type.FIRE) {
-					power *= 1.5;
-				}
-				else if (move.getType() == Type.WATER) {
-					power *= 0.5;
-				}
+				if (move.getType() == Type.FIRE) power *= 1.5;
+				else if (move.getType() == Type.WATER) power *= 0.5;
+				
 				break;
 			case RAIN:
-				if (move.getType() == Type.WATER) {
-					power *= 1.5;
-				}
-				else if (move.getType() == Type.FIRE) {
-					power *= 0.5;
-				}
-				if (move.getMove() == Moves.SOLARBEAM) {
-					power *= 0.5;
-				}
+				if (move.getType() == Type.WATER) power *= 1.5;				
+				else if (move.getType() == Type.FIRE) power *= 0.5;
+				
+				if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;
+				
 				break;
 			case HAIL:
-				if (move.getMove() == Moves.SOLARBEAM) {
-					power *= 0.5;
-				}
+				if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;
 				break;
 			case SANDSTORM:
-				if (move.getMove() == Moves.SOLARBEAM) {
-					power *= 0.5;
-				}
+				if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;
 				break;
 		}		
 		
 		return power;
 	}	
+	private static double move_WaterSpout(Pokemon attacker, Move move) {
+		
+		double power = 1.0;
+		
+		power = Math.ceil((attacker.getHP() * move.getPower()) / attacker.getBHP());
+		
+		return power;
+	}
+	private static double move_Flail(Pokemon attacker) {
+		
+		double power = 1.0;
+		
+		double remainHP = attacker.getHP() / attacker.getBHP();
+		
+		if (remainHP >= 0.672) power = 20.0;
+		else if (0.672 > remainHP && remainHP >= 0.344) power = 40;
+		else if (0.344 > remainHP && remainHP >= 0.203) power = 80;
+		else if (0.203 > remainHP && remainHP >= 0.094) power = 100;
+		else if (0.094 > remainHP && remainHP >= 0.031) power = 150;
+		else if (0.031 > remainHP) power = 200;	
+		
+		return power;
+	}
+	private static double move_Magnitude() {
+ 		
+ 		double power = 1.0;
+ 		
+ 		int strength = 4;
+		
+		// RANDOM NUM 0-100
+		int chance = new Random().nextInt(100);
+		int total = 0;
+				
+		// FOR EACH MAGNITUDE VALUE
+		for (Integer magnitude : magnitudeTable.keySet()) {
+			
+			// GET PROBABILITY OF MAGNITUDE
+			int rate = magnitudeTable.get(magnitude); 
+			total += rate;
+			
+			// MAGNITUDE RANDOMLY SELECTED, ASSIGN TO STRENGTH
+			if (chance <= total) {	
+				strength = magnitude;
+				break;
+			}	
+		}
+		
+		if (strength == 4) power = 10;
+		else if (strength == 5) power = 30;
+		else if (strength == 6) power = 50;
+		else if (strength == 7) power = 70;
+		else if (strength == 8) power = 90;
+		else if (strength == 9) power = 110;
+		else if (strength == 10) power = 150;
+		
+		return power;
+ 	}
 	private static double getAttack(Pokemon pokemon, Move move, Weather weather) {
 		
 		double attack = 1.0;
@@ -483,7 +539,6 @@ public final class BattleUtility {
 		
 		return defense;
 	}
-	
 	public static double getEffectiveness(Pokemon pokemon, Type type) {
 		
 		double effect = 1.0;

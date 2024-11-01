@@ -67,7 +67,7 @@ public class Move {
 		if (move == Moves.OUTRAGE || move == Moves.PETALDANCE) {
 			return new Random().nextInt(3 - 2 + 1) + 2;		
 		}
-		else if (move == Moves.ROLLOUT) {
+		else if (move == Moves.ROLLOUT || move == Moves.ROCKBLAST) {
 			return new Random().nextInt(5 - 2 + 1) + 2;
 		}
 		else {		
@@ -77,7 +77,11 @@ public class Move {
 	
 	public boolean isReady() { 
 		
-		if (move == Moves.ROLLOUT || move == Moves.PETALDANCE || move == Moves.OUTRAGE) {
+		if (move == Moves.ROLLOUT || 
+				move == Moves.PETALDANCE || 
+				move == Moves.OUTRAGE || 
+				move == Moves.REFLECT || 
+				move == Moves.ROCKBLAST) {
 			return true;
 		}
 		else if (move.getRecharge()) {
@@ -92,7 +96,10 @@ public class Move {
 	
 	public void resetMoveTurns() {	
 		
-		if (move == Moves.ROLLOUT || move == Moves.PETALDANCE || move == Moves.OUTRAGE) {
+		if (move == Moves.ROLLOUT || 
+				move == Moves.PETALDANCE || 
+				move == Moves.OUTRAGE || 
+				move == Moves.ROCKBLAST) {
 			if (turnCount > 0) turnCount--;			
 			else turnCount = getTurns();			
 		}
@@ -105,7 +112,12 @@ public class Move {
 	}
 	
 	public boolean isWaiting() {	
-		return turnCount < getTurns();		
+		if (getMType() == MoveType.OTHER) {
+			return false;
+		}
+		else {
+			return turnCount < getTurns();			
+		}		
 	}
 	/** END GETTERS AND SETTERS **/
 	

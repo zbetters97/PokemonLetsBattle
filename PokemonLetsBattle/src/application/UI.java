@@ -1322,7 +1322,9 @@ public class UI {
 						gp.keyH.playCursorSE();	
 						
 						commandNum = 0;
-						fighterNum = 0;			
+						fighterNum = 0;	
+						partyState = party_Main_Select;
+						pauseState = pause_Main;
 						
 						gp.btlManager.running = true;
 						gp.btlManager.fightStage = gp.btlManager.fight_Swap;
@@ -1831,12 +1833,13 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 55F));			
 		tempX += gp.tileSize * 5.35;
 		tempY -= gp.tileSize;		
-		if (fighter.getMoveSet().get(commandNum).getPower() == 0) { text = "---"; }
-		else { text = Integer.toString(fighter.getMoveSet().get(commandNum).getPower()); }
+		int power = fighter.getMoveSet().get(commandNum).getPower();
+		if (power <= 0 || 999 <= power) { text = "---"; }
+		else { text = Integer.toString(power); }
 		g2.drawString(text, tempX, tempY);	
 		
 		tempY += gp.tileSize;		
-		if (fighter.getMoveSet().get(commandNum).getAccuracy() == 0) { text = "---"; }
+		if (fighter.getMoveSet().get(commandNum).getAccuracy() <= 0) { text = "---"; }
 		else { text = Integer.toString(fighter.getMoveSet().get(commandNum).getAccuracy()); }	
 		g2.drawString(text, tempX, tempY);	
 		

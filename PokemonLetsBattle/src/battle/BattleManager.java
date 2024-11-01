@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import application.GamePanel;
@@ -16,6 +15,7 @@ import entity.Entity;
 import entity.collectables.items.ITM_EXP_Share;
 import entity.npc.NPC_Red;
 import moves.Move;
+import moves.Move.MoveType;
 import moves.Moves;
 import pokemon.Pokemon;
 import properties.Status;
@@ -39,7 +39,6 @@ public class BattleManager extends Thread {
 	private Move playerMove, cpuMove;
 	public Move newMove = null;
 	public Move oldMove = null;
-	Map<Move, Pokemon> activeMoves = new HashMap<>();
 	
 	private Weather weather = Weather.CLEAR;
 	private int weatherDays = -1;
@@ -303,11 +302,6 @@ public class BattleManager extends Thread {
 		// MID BATTLE SWAP OUT
 		else {			
 			
-			fighter[0].setProtected(false);
-			fighter[0].resetMoveTurns();
-			fighter[0].resetStats();
-			fighter[0].resetStatStages();
-			
 			if (otherFighters.contains(newFighter[0])) {
 				otherFighters.remove(newFighter[0]);
 			}
@@ -337,6 +331,12 @@ public class BattleManager extends Thread {
 		}
 		
 		if (gp.player.pokeParty.get(partySlot).isAlive()) {
+						
+			fighter[0].resetStats();
+			fighter[0].resetStatStages();
+			fighter[0].setProtected(false);
+			fighter[0].resetMoveTurns();
+			fighter[0].clearActiveMoves();
 			
 			newFighter[0] = gp.player.pokeParty.get(partySlot);
 						
@@ -386,7 +386,8 @@ public class BattleManager extends Thread {
 					break;			
 					
 				case queue_ActiveMoves: 
-					checkActiveMoves();
+					checkActiveMoves(0, 1);
+					checkActiveMoves(1, 0);
 					break;				
 					
 				case queue_StatusDamage:
@@ -406,7 +407,7 @@ public class BattleManager extends Thread {
 				getWinningPokemon();
 				getWinningTrainer();
 				battleQueue.clear();
-			}
+			}			
 		}
 	}
 	
@@ -523,9 +524,7 @@ public class BattleManager extends Thread {
 		// 1/4 chance attacker can thaw from ice
 		int val = 1 + (int)(Math.random() * 4);
 		if (val == 1) {
-			Status status = pkm.getStatus();
-			pkm.setStatus(null);
-			typeDialogue(pkm.getName() + "" + status.printRecover());			
+			removeStatus(pkm);	
 			return true;
 		}
 		else {	
@@ -584,16 +583,12 @@ public class BattleManager extends Thread {
 		if (val == 1) {					
 			
 			int damage = BattleUtility.getConfusionDamage(pkm);		
-			int hp = pkm.getHP() - damage;
-			
-			// pokemon defeated itself in confusion damage
-			if (hp <= 0) {
-				hp = 0;					
-			}									
+			if (damage > pkm.getHP()) damage = pkm.getHP();
 			
 			pkm.setHit(true);
 			gp.playSE(battle_SE, "hit-normal");	
-			decreaseHP(pkm, hp, damage);	
+			decreaseHP(pkm, damage);			
+			
 			pkm.getStatus().printStatus(gp, pkm.getName());
 			
 			return true;	
@@ -612,12 +607,7 @@ public class BattleManager extends Thread {
 		// if number of moves under status hit limit, remove status
 		if (pkm.getStatusCounter() >= pkm.getStatusLimit()) {									
 			
-			Status status = pkm.getStatus();
-			pkm.setStatusCounter(0); 
-			pkm.setStatusLimit(0);			
-			pkm.setStatus(null);
-			typeDialogue(pkm.getName() + status.printRecover());				
-			
+			removeStatus(pkm);			
 			return true;
 		}
 		else {
@@ -761,6 +751,13 @@ public class BattleManager extends Thread {
 			}			
 		}
 	}
+	private void removeStatus(Pokemon pkm) throws InterruptedException {
+		Status status = pkm.getStatus();
+		pkm.setStatus(null);
+		pkm.setStatusCounter(0); 
+		pkm.setStatusLimit(0);			
+		typeDialogue(pkm.getName() + status.printRecover());	
+	}
 
 	// ATTRIBUTE MOVE
 	private void attributeMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
@@ -771,8 +768,7 @@ public class BattleManager extends Thread {
 			if (move.getMove() == Moves.REST) {
 				
 				int gainedHP = atk.getBHP() - atk.getHP();
-				int result = atk.getHP() + gainedHP;
-				increaseHP(atk, result, gainedHP);
+				increaseHP(atk, gainedHP);
 				
 				setStatus(atk, Status.SLEEP);		
 			}
@@ -857,12 +853,42 @@ public class BattleManager extends Thread {
 			}						
 		}
 		else if (move.getMove() == Moves.LEECHSEED) {
-			activeMoves.put(move, trg);
-			typeDialogue(atk.getName() + " planted\na seed on " + trg.getName() + "!");
+			
+			if (trg.hasActiveMove(move.getMove())) {
+				typeDialogue("It had no affect!");
+			}
+			else {
+				trg.addActiveMove(move.getMove());
+				typeDialogue(atk.getName() + " planted\na seed on " + trg.getName() + "!");	
+			}
 		}
 		else if (move.getMove() == Moves.PROTECT) {
 			atk.setProtected(true);
 			typeDialogue(atk.getName() + " protected\nitself!");
+		}
+		else if (move.getMove() == Moves.RECOVER) {			
+			if (atk.getHP() < atk.getBHP()) {
+				
+				int gainedHP = atk.getBHP() - atk.getHP();
+				int halfHP = (int) Math.floor(atk.getBHP() / 2.0);
+				if (gainedHP > halfHP) gainedHP = halfHP;
+				
+				increaseHP(atk, gainedHP);				
+				typeDialogue(atk.getName() + "\nregained health!");
+			}
+			else {
+				typeDialogue("It had no affect!");
+			}
+		}
+		else if (move.getMove() == Moves.REFLECT) {		
+			
+			if (atk.hasActiveMove(move.getMove())) {
+				typeDialogue("It had no affect!");
+			}
+			else {
+				atk.addActiveMove(move.getMove());
+				typeDialogue(atk.getName() + "'s " + move.toString() + "\nraised DEFENSE!");					
+			}			
 		}
 	}
 	
@@ -905,26 +931,27 @@ public class BattleManager extends Thread {
 		gp.playSE(battle_SE, hitSE);
 		trg.setHit(true);
 					
-		double crit = getCritical(atk, trg, move);
-		int damage = 1;
+		double crit = getCritical(atk, trg, move);		
+		int damage = (int) (BattleUtility.calculateDamage(atk, trg, move, weather) * crit);	
+				
+		if (move.getMove() == Moves.PURSUIT) { }
 		
-		if (move.getPower() == -1) {
-			 damage = (int) (atk.getLevel() * crit);
-		}
-		else {
-			damage = (int) (BattleUtility.calculateDamage(atk, trg, move, weather) * crit);	
-		}
+		if (trg.hasActiveMove(Moves.REFLECT) && move.getMType() == MoveType.PHYSICAL) {
+			damage /= 2;			
+		}		
 		
 		if (damage <= 0) {
 			typeDialogue("It had no effect!");
 		}
-		else {
-			
-			if (damage > trg.getHP()) {
-				damage = trg.getHP();
+		else {							
+			if (damage >= trg.getHP()) {					
+				damage = trg.getHP();			
+				if (move.getMove() == Moves.FALSESWIPE) {
+					damage--;			
+				}
 			}
 			
-			decreaseHP(trg, trg.getHP() - damage, damage);		
+			decreaseHP(trg, damage);		
 			
 			if (crit == 1.5) {
 				typeDialogue("A critical hit!");
@@ -987,7 +1014,6 @@ public class BattleManager extends Thread {
 				move.getMove() == Moves.MEGADRAIN || move.getMove() == Moves.DREAMEATER) {
 						
 			int gainedHP = (damage / 2);
-			int result = atk.getHP() + gainedHP;
 			
 			// if attacker not at full health
 			if (atk.getHP() != atk.getBHP()) {
@@ -998,10 +1024,10 @@ public class BattleManager extends Thread {
 					// gained hp is set to amount need to hit hp limit									
 					gainedHP = atk.getBHP() - atk.getHP();					
 					
-					increaseHP(atk, atk.getBHP(), gainedHP);					
+					increaseHP(atk, gainedHP);					
 				}
 				else {		
-					increaseHP(atk, result, gainedHP);
+					increaseHP(atk, gainedHP);
 				}
 				
 				typeDialogue(atk.getName() + "\nabsorbed " + gainedHP + " HP!");
@@ -1010,22 +1036,22 @@ public class BattleManager extends Thread {
 	}
 	private void getRecoil(Pokemon pkm, Move move, int damage) throws InterruptedException {
 		
-		if (move.getSelfInflict() != 0.0) {	
+		if (move.getMove() == Moves.EXPLOSION || move.getMove() == Moves.SELFDESTRUCT) {			
+			decreaseHP(pkm, pkm.getHP());
+			typeDialogue(pkm.getName() + " was hit\nwith recoil damage!");									
+		}		
+		else if (move.getSelfInflict() != 0.0) {	
 			
 			int recoilDamage = (int)(Math.ceil(damage * move.getSelfInflict()));	
 
-			// subtract damage dealt from total HP
-			int result = pkm.getHP() - recoilDamage;		
-			
 			if (pkm.getAbility().getCategory() == Ability.Category.RECOIL) {
-				result *= pkm.getAbility().getFactor();
+				recoilDamage *= pkm.getAbility().getFactor();
 			}
 
-			if (result <= 0) {
-				result = 0;
-			}
-			else {
-				decreaseHP(pkm, result, recoilDamage);
+			if (recoilDamage > pkm.getHP()) recoilDamage = pkm.getHP();
+			
+			if (recoilDamage > 0) {
+				decreaseHP(pkm, recoilDamage);
 				typeDialogue(pkm.getName() + " was hit\nwith recoil damage!");		
 			}			
 		}
@@ -1034,16 +1060,19 @@ public class BattleManager extends Thread {
 
 		if (move.getMove() == Moves.RAPIDSPIN) {
 			
-			for (Move m : activeMoves.keySet()) {
-				if (m.getMove() == Moves.LEECHSEED && activeMoves.get(m) == trg) {
-					activeMoves.remove(m);
-					typeDialogue(trg.getName() + " broke free\nof " + m.getName() + "!");					
-				}
+			if (trg.hasActiveMove(Moves.LEECHSEED)) {					
+				typeDialogue(trg.getName() + " broke free\nof LEECH SEED !");		
+				trg.removeActiveMove(Moves.LEECHSEED);
 			}
 		}
 		else if (move.getMove() == Moves.OUTRAGE || move.getMove() == Moves.PETALDANCE) {
 			if (!move.isWaiting()) {
 				setStatus(atk, Status.CONFUSE);				
+			}
+		}
+		else if (move.getMove() == Moves.WAKEUPSLAP) {
+			if (trg.getStatus() != null && trg.getStatus() == Status.SLEEP) {
+				removeStatus(trg);
 			}
 		}
 		// move causes attribute or status effect
@@ -1090,39 +1119,44 @@ public class BattleManager extends Thread {
 		return flinched;
 	}
 	
-	private void checkActiveMoves() throws InterruptedException {
-		
-		for (Move move : activeMoves.keySet()) {
+	private void checkActiveMoves(int trg, int atk) throws InterruptedException {
+			
+		Iterator<Move> iterator = fighter[trg].getActiveMoves().iterator();
+		while (iterator.hasNext()) {
+			
+			Move move = iterator.next();
 			
 			if (move.getMove() == Moves.LEECHSEED) {
-				leechSeed(move);				
-			}			
-		}		
+				leechSeed(fighter[trg], fighter[atk]);
+			}
+			else if (move.getMove() == Moves.REFLECT) {
+				
+				move.setTurnCount(move.getTurnCount() - 1);
+				
+				if (move.getTurnCount() <= 0) {		
+					iterator.remove();						
+					typeDialogue(move.getDelay(move.getName()));
+				}
+			}
+		}
 	}	
-	private void leechSeed(Move move) throws InterruptedException {
-		
-		Pokemon trg = activeMoves.get(move);
-		Pokemon atk = trg == fighter[1] ? fighter[0] : fighter[1];
+	private void leechSeed(Pokemon trg, Pokemon atk) throws InterruptedException {
 		
 		if (trg.isAlive() && atk.isAlive()) {
 			
-			int stolenHP = (int) (trg.getHP() * 0.125);
+			int stolenHP = (int) (trg.getHP() * 0.125);						
+			if (stolenHP > trg.getHP()) stolenHP = trg.getHP();
 			
-			int result = trg.getHP() - stolenHP;
-			if (result < 0) result = 0;
-			
-			decreaseHP(trg, result, stolenHP);
-			
-			result = atk.getHP() + stolenHP;			
+			decreaseHP(trg, stolenHP);
+				
 			if (atk.getHP() != atk.getBHP()) {
 				
-				if (stolenHP + atk.getHP() > atk.getBHP()) {
-					
+				if (stolenHP + atk.getHP() > atk.getBHP()) {					
 					stolenHP = atk.getBHP() - atk.getHP();										
-					increaseHP(atk, atk.getBHP(), stolenHP);					
+					increaseHP(atk, stolenHP);					
 				}
 				else {		
-					increaseHP(atk, result, stolenHP);
+					increaseHP(atk, stolenHP);
 				}
 			}
 			else {
@@ -1153,15 +1187,11 @@ public class BattleManager extends Thread {
 					pkm.getStatus().getAbreviation().equals("BRN")) {
 									
 				int damage = (int) Math.ceil((pkm.getHP() * 0.16));
-				int newHP = pkm.getHP() - damage;		
-				
-				if (newHP <= 0) {
-					newHP = 0;
-				}
+				if (damage > pkm.getHP()) damage = pkm.getHP();
 				
 				gp.playSE(battle_SE, pkm.getStatus().getStatus());
 				pkm.setHit(true);
-				decreaseHP(pkm, newHP, damage);
+				decreaseHP(pkm, damage);
 				
 				pkm.getStatus().printStatus(gp, pkm.getName());
 			}		
@@ -1246,15 +1276,11 @@ public class BattleManager extends Thread {
 	private void setWeatherDamage(Pokemon pkm) throws InterruptedException {
 		
 		int damage = (int) Math.ceil((pkm.getHP() * 0.0625));
-		int newHP = pkm.getHP() - damage;		
-		
-		if (newHP <= 0) {
-			newHP = 0;
-		}
+		if (damage > pkm.getHP()) damage = pkm.getHP();
 		
 		gp.playSE(battle_SE, "hit-normal");
 		pkm.setHit(true);
-		decreaseHP(pkm, newHP, damage);
+		decreaseHP(pkm, damage);
 		
 		typeDialogue(pkm.getName() + " was hurt\nby the " + weather.toString().toLowerCase() + "!");
 	}
@@ -1885,6 +1911,7 @@ public class BattleManager extends Thread {
 			p.resetStats();
 			p.resetStatStages();
 			p.resetMoveTurns();
+			p.clearActiveMoves();
 		}
 		
 		if (trainer != null) {
@@ -1892,6 +1919,7 @@ public class BattleManager extends Thread {
 				p.resetMoveTurns();
 				p.resetStats();
 				p.resetStatStages();
+				p.clearActiveMoves();
 			}	
 		}
 		
@@ -1927,9 +1955,7 @@ public class BattleManager extends Thread {
 		loser = -1;
 		
 		escapeAttempts = 0;
-	}
-
-	
+	}	
 	
 	// MISC METHODS	
 	public void typeDialogue(String dialogue) throws InterruptedException {
@@ -1964,19 +1990,21 @@ public class BattleManager extends Thread {
 			pause(5);
 		}
 	}	
-	private void increaseHP(Pokemon pkm, int newHP, int damage) throws InterruptedException {
+	private void increaseHP(Pokemon pkm, int gainedHP) throws InterruptedException {
+				
+		int hpTimer = getHPTimer(gainedHP);
 		
-		int hpTimer = getHPTimer(damage);
-		
+		int newHP = pkm.getHP() + gainedHP;
 		while (pkm.getHP() < newHP) {			
 			pkm.setHP(pkm.getHP() + 1);
 			pause(hpTimer);
 		}	 
 	}
-	private void decreaseHP(Pokemon pkm, int newHP, int damage) throws InterruptedException {
+	private void decreaseHP(Pokemon pkm, int lostHP) throws InterruptedException {
 		
-		int hpTimer = getHPTimer(damage);
+		int hpTimer = getHPTimer(lostHP);
 		
+		int newHP = pkm.getHP() - lostHP;
 		while (newHP < pkm.getHP()) {			
 			pkm.setHP(pkm.getHP() - 1);
 			pause(hpTimer);
