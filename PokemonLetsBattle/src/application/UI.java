@@ -1298,7 +1298,7 @@ public class UI {
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;					
 				partyState = party_Skills;	
-				gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  
+				gp.playSE(gp.cry_SE, gp.player.pokeParty.get(fighterNum).toString());  
 				commandNum = 0;			
 			}
 		}
@@ -2056,7 +2056,7 @@ public class UI {
 				if (0 < fighterNum) {
 					fighterNum--;
 					commandNum = 0;
-					gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  		
+					gp.playSE(gp.cry_SE, gp.player.pokeParty.get(fighterNum).toString());  		
 				}
 			}
 			if (gp.keyH.rPressed) {				
@@ -2064,7 +2064,7 @@ public class UI {
 				if (fighterNum < gp.player.pokeParty.size() - 1) {
 					fighterNum++;
 					commandNum = 0;
-					gp.playSE(3, gp.player.pokeParty.get(fighterNum).toString());  		
+					gp.playSE(gp.cry_SE, gp.player.pokeParty.get(fighterNum).toString());  		
 				}
 			}
 		}
@@ -2903,7 +2903,7 @@ public class UI {
 				if (remainHP > 0) {
 					hpCounter++;
 					if (hpCounter == 33) {
-						gp.playSE(6, "hp-low");
+						gp.playSE(gp.battle_SE, "hp-low");
 						hpCounter = 0;
 					}	
 				}

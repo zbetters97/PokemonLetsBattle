@@ -800,7 +800,7 @@ public class Entity {
 						
 		if (!p.isAlive()) {
 			
-			gp.playSE(6, "heal");
+			gp.playSE(gp.battle_SE, "heal");
 			p.setAlive(true);
 			p.setHP((int) (p.getBHP() / value));			
 			removeItem(this, gp.player);						
@@ -822,7 +822,7 @@ public class Entity {
 				gainedHP = p.getBHP() - p.getHP();
 			}	
 			
-			gp.playSE(6, "heal");
+			gp.playSE(gp.battle_SE, "heal");
 			p.addHP(value);			
 			removeItem(this, gp.player);				
 		
@@ -838,7 +838,7 @@ public class Entity {
 		
 		if (p.isAlive() && p.getStatus() != null && (p.getStatus().equals(status) || status == null)) {
 						
-			gp.playSE(6, "heal");
+			gp.playSE(gp.battle_SE, "heal");
 			p.setStatus(null);			
 			removeItem(this, gp.player);			
 			

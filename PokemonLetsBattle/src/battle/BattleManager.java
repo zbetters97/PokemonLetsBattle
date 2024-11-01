@@ -46,13 +46,7 @@ public class BattleManager extends Thread {
 	private int escapeAttempts = 0;
 		
 	public Entity ballUsed;
-					
-	// SOUND LIBRARIES
-	private final int cry_SE = 3;
-	private final int faint_SE = 4;
-	private final int moves_SE = 5;
-	private final int battle_SE = 6;
-	
+						
 	// BATTLE QUEUE
 	public Deque<Integer> battleQueue = new ArrayDeque<>();	
 	private final int queue_GetCPUMove = 1;
@@ -154,7 +148,7 @@ public class BattleManager extends Thread {
 				gp.startMusic(1, 1);				
 				pause(1400);
 				
-				gp.playSE(cry_SE, fighter[1].toString());	
+				gp.playSE(gp.cry_SE, fighter[1].toString());	
 				typeDialogue("A wild " + fighter[1].getName() + "\nappeared!", true);	
 				
 				gp.ui.battleState = gp.ui.battle_Dialogue;
@@ -177,7 +171,7 @@ public class BattleManager extends Thread {
 				
 				fighter[1] = trainer.pokeParty.get(0);
 				
-				gp.playSE(cry_SE, fighter[1].toString());	
+				gp.playSE(gp.cry_SE, fighter[1].toString());	
 				typeDialogue("Trainer " + trainer.name + "\nsent out " + fighter[1].getName() + "!");				
 				pause(100);
 				
@@ -187,7 +181,7 @@ public class BattleManager extends Thread {
 		fighter[0] = gp.player.pokeParty.get(0);
 		getOtherFighters();
 		
-		gp.playSE(cry_SE, fighter[0].toString());	
+		gp.playSE(gp.cry_SE, fighter[0].toString());	
 		typeDialogue("Go, " + fighter[0].getName() + "!");					
 		pause(100);
 		
@@ -263,14 +257,14 @@ public class BattleManager extends Thread {
 				
 				fighter[0] = newFighter[0];		
 				
-				gp.playSE(cry_SE, fighter[0].toString());	
+				gp.playSE(gp.cry_SE, fighter[0].toString());	
 				typeDialogue("Go, " + fighter[0].getName() + "!");					
 				pause(100);
 			}
 			
 			fighter[1] = newFighter[1];
 			
-			gp.playSE(cry_SE, fighter[1].toString());	
+			gp.playSE(gp.cry_SE, fighter[1].toString());	
 			typeDialogue("Trainer " + trainer.name + "\nsent out " + fighter[1].getName() + "!");				
 			pause(100);
 			
@@ -289,7 +283,7 @@ public class BattleManager extends Thread {
 			
 			fighter[0] = newFighter[0];		
 			
-			gp.playSE(cry_SE, fighter[0].toString());	
+			gp.playSE(gp.cry_SE, fighter[0].toString());	
 			typeDialogue("Go, " + fighter[0].getName() + "!");					
 			pause(100);
 			
@@ -312,7 +306,7 @@ public class BattleManager extends Thread {
 
 			fighter[0] = newFighter[0];		
 			
-			gp.playSE(cry_SE, fighter[0].toString());
+			gp.playSE(gp.cry_SE, fighter[0].toString());
 			typeDialogue("Go, " + fighter[0].getName() + "!");	
 			pause(100);
 			
@@ -553,7 +547,7 @@ public class BattleManager extends Thread {
 	}
 	private boolean confused(Pokemon pkm) throws InterruptedException {
 		
-		gp.playSE(battle_SE, pkm.getStatus().getStatus());
+		gp.playSE(gp.battle_SE, pkm.getStatus().getStatus());
 		typeDialogue(pkm.getName() + " is\n" + pkm.getStatus().getStatus() + "...");
 		
 		// if number of moves under status hit limit, remove status
@@ -586,7 +580,7 @@ public class BattleManager extends Thread {
 			if (damage > pkm.getHP()) damage = pkm.getHP();
 			
 			pkm.setHit(true);
-			gp.playSE(battle_SE, "hit-normal");	
+			gp.playSE(gp.battle_SE, "hit-normal");	
 			decreaseHP(pkm, damage);			
 			
 			pkm.getStatus().printStatus(gp, pkm.getName());
@@ -626,7 +620,7 @@ public class BattleManager extends Thread {
 			typeDialogue(atk.getName() + " used\n" + atkMove.toString() + "!", false); 
 			
 			atk.setAttacking(true);
-			playSE(moves_SE, atkMove.getName());
+			playSE(gp.moves_SE, atkMove.getName());
 			
 			if (validMove(atk, trg, atkMove)) {
 				
@@ -742,7 +736,7 @@ public class BattleManager extends Thread {
 				
 				pkm.setStatus(status);		
 				
-				gp.playSE(battle_SE, status.getStatus());
+				gp.playSE(gp.battle_SE, status.getStatus());
 				typeDialogue(pkm.getName() + status.printCondition());
 			}
 			else {				
@@ -798,11 +792,11 @@ public class BattleManager extends Thread {
 			
 			// attributes raised
 			if (level > 0) {
-				gp.playSE(battle_SE, "stat-up");
+				gp.playSE(gp.battle_SE, "stat-up");
 			}
 			// attributes lowered
 			else {
-				gp.playSE(battle_SE, "stat-down");
+				gp.playSE(gp.battle_SE, "stat-down");
 			}
 			
 			typeDialogue(pkm.changeStat(stat, level));	
@@ -822,19 +816,19 @@ public class BattleManager extends Thread {
 			case CLEAR:
 				break;
 			case SUNLIGHT:
-				gp.playSE(battle_SE, "sunlight");
+				gp.playSE(gp.battle_SE, "sunlight");
 				typeDialogue("The sun shines intensely!");	
 				break;
 			case RAIN:
-				gp.playSE(battle_SE, "rain");
+				gp.playSE(gp.battle_SE, "rain");
 				typeDialogue("Rain started to fall!");	
 				break;
 			case HAIL:
-				gp.playSE(battle_SE, "hail");
+				gp.playSE(gp.battle_SE, "hail");
 				typeDialogue("Hail started to fall!");	
 				break;
 			case SANDSTORM:
-				gp.playSE(battle_SE, "sandstorm");
+				gp.playSE(gp.battle_SE, "sandstorm");
 				typeDialogue("A sandstorm started to\n rage!");	
 				break;
 		}		
@@ -928,7 +922,7 @@ public class BattleManager extends Thread {
 		
 		String hitSE = getHitSE(BattleUtility.getEffectiveness(trg, move.getType()));		
 		
-		gp.playSE(battle_SE, hitSE);
+		gp.playSE(gp.battle_SE, hitSE);
 		trg.setHit(true);
 					
 		double crit = getCritical(atk, trg, move);		
@@ -1189,7 +1183,7 @@ public class BattleManager extends Thread {
 				int damage = (int) Math.ceil((pkm.getHP() * 0.16));
 				if (damage > pkm.getHP()) damage = pkm.getHP();
 				
-				gp.playSE(battle_SE, pkm.getStatus().getStatus());
+				gp.playSE(gp.battle_SE, pkm.getStatus().getStatus());
 				pkm.setHit(true);
 				decreaseHP(pkm, damage);
 				
@@ -1234,15 +1228,15 @@ public class BattleManager extends Thread {
 			case CLEAR:
 				break;
 			case SUNLIGHT:
-				gp.playSE(battle_SE, "sunlight");
+				gp.playSE(gp.battle_SE, "sunlight");
 				typeDialogue("The sunlight continues\nto shine intensely!");	
 				break;
 			case RAIN:
-				gp.playSE(battle_SE, "rain");
+				gp.playSE(gp.battle_SE, "rain");
 				typeDialogue("Rain continues to fall!");	
 				break;
 			case HAIL:
-				gp.playSE(battle_SE, "hail");
+				gp.playSE(gp.battle_SE, "hail");
 				typeDialogue("Hail continues to fall!");	
 				
 				if (fighter[0].isAlive() && !fighter[0].checkType(Type.ICE)) {
@@ -1254,7 +1248,7 @@ public class BattleManager extends Thread {
 				
 				break;
 			case SANDSTORM:
-				gp.playSE(battle_SE, "sandstorm");
+				gp.playSE(gp.battle_SE, "sandstorm");
 				typeDialogue("The sandstorm continues to rage!");	
 				
 				if (fighter[0].isAlive() &&
@@ -1278,7 +1272,7 @@ public class BattleManager extends Thread {
 		int damage = (int) Math.ceil((pkm.getHP() * 0.0625));
 		if (damage > pkm.getHP()) damage = pkm.getHP();
 		
-		gp.playSE(battle_SE, "hit-normal");
+		gp.playSE(gp.battle_SE, "hit-normal");
 		pkm.setHit(true);
 		decreaseHP(pkm, damage);
 		
@@ -1330,7 +1324,7 @@ public class BattleManager extends Thread {
 			playerMove = null;
 			fighter[0].setProtected(false);
 					
-			gp.playSE(faint_SE, fighter[1].toString());
+			gp.playSE(gp.faint_SE, fighter[1].toString());
 			typeDialogue(fighter[1].getName() + " fainted!");	
 			
 			gainXP();
@@ -1342,7 +1336,7 @@ public class BattleManager extends Thread {
 			cpuMove = null;
 			fighter[1].setProtected(false);
 			
-			gp.playSE(faint_SE, fighter[0].toString());			
+			gp.playSE(gp.faint_SE, fighter[0].toString());			
 			typeDialogue(fighter[0].getName() + " fainted!");	
 		}
 		// TIE GAME
@@ -1351,10 +1345,10 @@ public class BattleManager extends Thread {
 			playerMove = null;
 			cpuMove = null;
 			
-			gp.playSE(faint_SE, fighter[0].toString());
+			gp.playSE(gp.faint_SE, fighter[0].toString());
 			typeDialogue(fighter[0].getName() + " fainted!");
 			
-			gp.playSE(faint_SE, fighter[1].toString());
+			gp.playSE(gp.faint_SE, fighter[1].toString());
 			typeDialogue(fighter[1].getName() + " fainted!");
 		}
 	}		
@@ -1405,12 +1399,12 @@ public class BattleManager extends Thread {
 			if (p.getXP() >= p.getBXP() + p.getNextXP()) {			
 				
 				gp.pauseMusic();
-				gp.playSE(battle_SE, "level-up");
+				gp.playSE(gp.battle_SE, "level-up");
 				
 				p.levelUp();					
 				gp.ui.battleState = gp.ui.battle_LevelUp;
 			
-				gp.playSE(battle_SE, "upgrade");
+				gp.playSE(gp.battle_SE, "upgrade");
 				typeDialogue(p.getName() + " grew to\nLv. " + 
 						(p.getLevel()) + "!", true);
 				
@@ -1429,7 +1423,7 @@ public class BattleManager extends Thread {
 			
 			if (pokemon.learnMove(newMove)) {
 				
-				gp.playSE(battle_SE, "upgrade");
+				gp.playSE(gp.battle_SE, "upgrade");
 				typeDialogue(pokemon.getName() + " learned\n" + 
 						newMove.getName() + "!", true);
 				
@@ -1490,7 +1484,7 @@ public class BattleManager extends Thread {
 					typeDialogue("And...", true);
 					
 					gp.pauseMusic();
-					gp.playSE(battle_SE, "upgrade");
+					gp.playSE(gp.battle_SE, "upgrade");
 					
 					typeDialogue(pokemon.getName() + " learned\n" + newMove.getName() + "!", true);	
 					
@@ -1746,13 +1740,13 @@ public class BattleManager extends Thread {
 		if (trainer == null) {			
 			
 			typeDialogue(gp.player.name + " used a\n" + ballUsed.name + "!", false);
-			playSE(battle_SE, "ball-throw");
+			playSE(gp.battle_SE, "ball-throw");
 			gp.ui.isFighterCaptured = true;
-			playSE(battle_SE, "ball-open");
-			playSE(battle_SE, "ball-bounce");
+			playSE(gp.battle_SE, "ball-open");
+			playSE(gp.battle_SE, "ball-bounce");
 			
 			for (int i = 0; i < 3; i++) {
-				playSE(battle_SE, "ball-shake");
+				playSE(gp.battle_SE, "ball-shake");
 				Thread.sleep(800);	
 			}	
 			
@@ -1760,9 +1754,9 @@ public class BattleManager extends Thread {
 				capturePokemon();
 			}
 			else {
-				gp.playSE(battle_SE, "ball-open");
+				gp.playSE(gp.battle_SE, "ball-open");
 				gp.ui.isFighterCaptured = false;		
-				gp.playSE(battle_SE, "ball-open");
+				gp.playSE(gp.battle_SE, "ball-open");
 				typeDialogue("Oh no!\n" + fighter[1].getName() + " broke free!", true);
 				fightStage = fight_Start;			
 			}	
@@ -1822,7 +1816,7 @@ public class BattleManager extends Thread {
 			}	
 			
 			if (escape) {
-				gp.playSE(battle_SE, "run");
+				gp.playSE(gp.battle_SE, "run");
 				typeDialogue("Got away safely!", true);
 				endBattle();
 			}
@@ -1852,7 +1846,7 @@ public class BattleManager extends Thread {
 				gp.ui.evolvePokemon = oldEvolve;
 				gp.ui.battleState = gp.ui.battle_Evolve;
 				
-				gp.playSE(3, gp.se.getFile(3, oldEvolve.toString()));
+				gp.playSE(gp.cry_SE, gp.se.getFile(3, oldEvolve.toString()));
 				
 				typeDialogue("What?\n" + oldEvolve.getName() + " is evolving?");
 												

@@ -26,7 +26,7 @@ public class ITM_Full_Restore extends Entity {
 		
 		if (p.isAlive() && (p.getHP() < p.getBHP() || p.getStatus() != null)) {
 						
-			gp.playSE(6, "heal");
+			gp.playSE(gp.battle_SE, "heal");
 			p.setHP(p.getBHP());
 			p.setStatus(null);					
 			removeItem(this, entity);

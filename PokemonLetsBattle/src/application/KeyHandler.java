@@ -150,15 +150,15 @@ public class KeyHandler implements KeyListener {
 	
 	// SOUND EFFECTS
 	public void playCursorSE() {
-		gp.playSE(2, "select");
+		gp.playSE(gp.menu_SE, "select");
 	}
 	public void playErrorSE() {
-		gp.playSE(2, "error");
+		gp.playSE(gp.menu_SE, "error");
 	}
 	public void playMenuOpenSE() {
-		gp.playSE(2, "menu-open");
+		gp.playSE(gp.menu_SE, "menu-open");
 	}
 	public void playMenuCloseSE() {
-		gp.playSE(2, "back");
+		gp.playSE(gp.menu_SE, "back");
 	}
 }

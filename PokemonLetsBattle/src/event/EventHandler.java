@@ -192,6 +192,6 @@ public class EventHandler {
 	}
 	
 	private void playExitSE() { 
-		gp.playSE(7, "exit");
+		gp.playSE(gp.world_SE, "exit");
 	}
 }

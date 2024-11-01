@@ -119,6 +119,15 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int petalburg = 0;		
 	public final int pokecenter = 1;
 	
+
+	// SOUND LIBRARIES
+	public final int menu_SE = 2;
+	public final int cry_SE = 3;
+	public final int faint_SE = 4;
+	public final int moves_SE = 5;
+	public final int battle_SE = 6;
+	public final int world_SE = 7;
+	
 	public TileManager tileM = new TileManager(this);
 	public AssetSetter aSetter = new AssetSetter(this);
 	public EnvironmentManager eManager = new EnvironmentManager(this);

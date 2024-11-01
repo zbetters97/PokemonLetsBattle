@@ -215,6 +215,6 @@ public enum Type {
     public Hashtable<Type, Double> getVulnerability() { return this.vulnerability; }  
  
     public String getName() { return this.name.toUpperCase(); }
-    public Double getStrength() { System.out.println(this.strength); return this.strength; }
+    public Double getStrength() { return this.strength; }
 }
 /*** END TYPE CLASS ***/

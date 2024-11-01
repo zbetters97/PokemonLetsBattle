@@ -103,9 +103,9 @@ public class OBJ_Door extends Entity {
 	}
 	
 	public void playOpenSE() {
-		gp.playSE(7, "door-shop");
+		gp.playSE(gp.world_SE, "door-shop");
 	}
 	public void playCloseSE() {
-		gp.playSE(7, "exit");
+		gp.playSE(gp.world_SE, "exit");
 	}
 }
