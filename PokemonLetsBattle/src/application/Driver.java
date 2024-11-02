@@ -4,7 +4,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 public class Driver {
-	
+		
 	protected static JFrame window;
 	
 	public static void main(String[] args) {

@@ -1,8 +1,10 @@
 package battle;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -13,11 +15,14 @@ import moves.Move;
 import moves.Moves;
 import moves.Move.MoveType;
 import pokemon.Pokemon;
+import pokemon.Pokemon.Protection;
 import properties.Type;
 import properties.abilities.Ability;
 
 public final class BattleUtility {
 	
+	private static final List<Moves> digMoves = Arrays.asList(Moves.EARTHQUAKE, Moves.FISSURE, Moves.MAGNITUDE);
+
 	private static final Map<Integer, Integer> magnitudeTable = Map.ofEntries(
 			Map.entry(4, 5), 
 			Map.entry(5, 10), 
@@ -292,25 +297,35 @@ public final class BattleUtility {
 	
 	public static boolean hit(Pokemon attacker, Pokemon target, Move move, Weather weather) {
 		/** PROBABILITY FORMULA REFERENCE: https://monster-master.fandom.com/wiki/Evasion **/
+		/** PROTECTED MOVES REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Semi-invulnerable_turn **/
 		
 		boolean hit;
 		
-		if (target.isProtected()) {
+		if (target.getProtectedState() == Protection.FLY) {
 			hit = false;
+		}
+		else if (target.getProtectedState() == Protection.DIG && 
+				!digMoves.contains(move.getMove())) {
+			hit = false;			
 		}
 		else {
 			// if move never misses, return true
 			if (move.getAccuracy() == -1) {
 				hit = true; 
 			}
-			else {
-				double accuracy = BattleUtility.getAccuracy(move, weather) * (attacker.getAccuracy() / target.getEvasion());
-			
-				Random r = new Random();
-				float chance = r.nextFloat();
-				
-				// chance of missing is accuracy / 100
-				hit = (chance <= ((float) accuracy / 100)) ? true : false;	
+			else {				
+				if (target.hasActiveMove(Moves.ODERSLEUTH)) {
+					hit = true;
+				}
+				else {
+					double accuracy = getAccuracy(move, weather) * (attacker.getAccuracy() / target.getEvasion());
+									
+					Random r = new Random();
+					float chance = r.nextFloat();
+					
+					// chance of missing is accuracy / 100
+					hit = (chance <= ((float) accuracy / 100)) ? true : false;	
+				}
 			}
 		}
 		
@@ -542,6 +557,12 @@ public final class BattleUtility {
 	public static double getEffectiveness(Pokemon pokemon, Type type) {
 		
 		double effect = 1.0;
+		
+		if ((type == Type.NORMAL || type == Type.FIGHTING) &&
+				pokemon.checkType(Type.GHOST) &&
+				pokemon.hasActiveMove(Moves.ODERSLEUTH)) {
+			return effect;
+		}
 		
 		// if target is single type
 		if (pokemon.getTypes() == null) {

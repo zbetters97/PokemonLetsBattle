@@ -21,6 +21,7 @@ import entity.Entity;
 import entity.npc.NPC_Nurse;
 import moves.Move;
 import pokemon.Pokemon;
+import pokemon.Pokemon.Protection;
 
 public class UI {
 	
@@ -2715,7 +2716,8 @@ public class UI {
 		g2.drawImage(battle_arena, fighter_one_platform_endX, fighter_one_platform_Y, null);		
 		g2.drawImage(battle_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
 		
-		if (gp.btlManager.fighter[0] != null) {			
+		if (gp.btlManager.fighter[0] != null &&
+				gp.btlManager.fighter[0].getProtectedState() == Protection.NONE) {			
 			
 			if (gp.btlManager.fighter[0].getAttacking()) animateAttack_One();			
 			else fighter_one_X = fighter_one_endX;
@@ -2734,10 +2736,12 @@ public class UI {
 					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
 				}
 			}
-			g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);	
+			
+			g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);		
 			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));			
 		}
-		if (gp.btlManager.fighter[1] != null) {				
+		if (gp.btlManager.fighter[1] != null &&
+				gp.btlManager.fighter[1].getProtectedState() == Protection.NONE) {				
 			
 			if (isFighterCaptured) {				
 				g2.drawImage(gp.btlManager.ballUsed.image3, fighter_two_X + (int)(gp.tileSize * 2.2), fighter_two_Y + (int)(gp.tileSize * 3.2), null);	

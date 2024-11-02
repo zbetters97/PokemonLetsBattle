@@ -3,6 +3,7 @@ package moves;
 import java.util.List;
 import java.util.Random;
 
+import pokemon.Pokemon.Protection;
 import properties.Status;
 import properties.Type;
 
@@ -135,11 +136,11 @@ public class Move {
 	}
 	public int getPower() {	return move.getPower(); }	
 	public boolean getGoFirst() { return move.getGoFirst(); }	
-	public boolean getProtected() { return move.getProtected(); }	
 	public boolean getRecharge() { return move.getRecharge(); }
 	
 	public String getWeather() { return move.getWeather(); }
 	public String getDelay(String name) { return move.getDelay(name); }	
+	public Protection getProtection() { return move.getProtection(); }
 	public String getInfo() {	return move.getInfo(); }	
 	public int getCrit() { return move.getCrit(); }	
 	public int getLevel() { return move.getLevel(); }	

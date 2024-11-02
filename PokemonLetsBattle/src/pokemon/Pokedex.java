@@ -21,6 +21,7 @@ public enum Pokedex {
 	/** XP GROWTH REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_experience_type **/	
 	/** CATCH RATE REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pokémon_by_catch_rate **/
 	
+	
 	BULBASAUR ("Bulbasaur", 1, Type.GRASS, new Overgrow(), 45, 49, 49, 65, 65, 45, 16, 64, 3, 1, 45,
 			Map.ofEntries(
 					Map.entry(3, Moves.GROWL),
@@ -190,7 +191,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(6, Moves.EMBER),
 					Map.entry(9, Moves.LEER),
-					//Map.entry(14, Moves.ODERSLEUTH),
+					Map.entry(14, Moves.ODERSLEUTH),
 					//Map.entry(20, Moves.FLAMEWHEEL),
 					//Map.entry(25, Moves.REVERSAL),
 					Map.entry(28, Moves.FIREFANG),
@@ -204,8 +205,7 @@ public enum Pokedex {
 			)),
 	ARCANINE ("Arcanine", 59, Type.FIRE, new FlashFire(), 90, 110, 80, 100, 80, 95, -1, 213, 5, 2, 75, 
 			Map.ofEntries(
-					Map.entry(39, Moves.EXTREMESPEED)
-					
+					Map.entry(39, Moves.EXTREMESPEED)					
 			)),
 	ABRA ("Abra", 63, Type.PSYCHIC, new InnerFocus(), 25, 20, 15, 105, 55, 90, 16, 75, 3, 1, 200, null),
 	KADABRA ("Kadabra", 64, Type.PSYCHIC, new InnerFocus(), 40, 35, 30, 120, 70, 105, 36, 145, 3, 2, 100,
@@ -898,6 +898,26 @@ public enum Pokedex {
         		new Move(Moves.QUICKATTACK), 
         		new Move(Moves.TAILWHIP)
         ));          
+        moveMap.put(ZUBAT, Arrays.asList(
+        		new Move(Moves.LEECHLIFE)
+        ));
+        moveMap.put(GOLBAT, Arrays.asList(
+        		new Move(Moves.SCREECH),
+        		new Move(Moves.LEECHLIFE),
+        		new Move(Moves.SUPERSONIC),
+        		new Move(Moves.ASTONISH)
+        ));
+        moveMap.put(GROWLITHE, Arrays.asList(
+        		new Move(Moves.BITE)
+        		//new Move(Moves.ROAR)
+        ));
+        moveMap.put(ARCANINE, Arrays.asList(
+        		new Move(Moves.THUNDERFANG),
+        		new Move(Moves.BITE),
+        		//new Move(Moves.ROAR),
+        		new Move(Moves.ODERSLEUTH),
+        		new Move(Moves.FIREFANG)        		
+        ));
         moveMap.put(ABRA, Arrays.asList(
         		new Move(Moves.TELEPORT)
         ));
@@ -935,6 +955,15 @@ public enum Pokedex {
         		new Move(Moves.TACKLE), 
         		new Move(Moves.DEFENSECURL)
         ));          
+        moveMap.put(PONYTA, Arrays.asList(
+        		new Move(Moves.TACKLE)
+        ));
+        moveMap.put(RAPIDASH, Arrays.asList(
+        		new Move(Moves.QUICKATTACK),
+        		//new Move(Moves.MEGAHORN),
+        		//new Move(Moves.POISONJAB),
+        		new Move(Moves.GROWL)
+        ));
         moveMap.put(GASTLY, Arrays.asList(
         		new Move(Moves.LICK), 
         		new Move(Moves.HYPNOSIS)
@@ -961,6 +990,12 @@ public enum Pokedex {
         		new Move(Moves.YAWN),
         		new Move(Moves.LEER)
         ));            
+        moveMap.put(MAGIKARP, Arrays.asList(
+        		//new Move(Moves.SPLASH)
+        ));
+        moveMap.put(GYARADOS, Arrays.asList(
+        		//new Move(Moves.THRASH)
+        ));
         moveMap.put(LAPRAS, Arrays.asList(
         		new Move(Moves.WATERGUN), 
         		new Move(Moves.GROWL)
@@ -976,7 +1011,13 @@ public enum Pokedex {
         ));
         moveMap.put(SUICUNE, Arrays.asList(
         		new Move(Moves.LEER)
-        ));        
+        ));    
+        moveMap.put(MEWTWO, Arrays.asList(
+        		new Move(Moves.CONFUSION)
+        ));
+        moveMap.put(MEW, Arrays.asList(
+        		new Move(Moves.POUND)
+        ));
         moveMap.put(TREECKO, Arrays.asList(
         		new Move(Moves.POUND), 
         		new Move(Moves.LEER)
@@ -1076,49 +1117,6 @@ public enum Pokedex {
         ));
         moveMap.put(RAYQUAZA, Arrays.asList(
         		new Move(Moves.TWISTER)
-        ));
-        
-        moveMap.put(ZUBAT, Arrays.asList(
-        		//new Move(Moves.LEECHLIFE)
-        ));
-        moveMap.put(GOLBAT, Arrays.asList(
-        		new Move(Moves.SCREECH),
-        		//new Move(Moves.LEECHLIFE),
-        		new Move(Moves.SUPERSONIC),
-        		new Move(Moves.ASTONISH)
-        ));
-        moveMap.put(GROWLITHE, Arrays.asList(
-        		new Move(Moves.BITE)
-        		//new Move(Moves.ROAR)
-        ));
-        moveMap.put(ARCANINE, Arrays.asList(
-        		new Move(Moves.THUNDERFANG),
-        		new Move(Moves.BITE),
-        		//new Move(Moves.ROAR),
-        		//new Move(Moves.ODORSLEUTH),
-        		new Move(Moves.FIREFANG)        		
-        ));
-        moveMap.put(PONYTA, Arrays.asList(
-        		new Move(Moves.TACKLE)
-        ));
-        moveMap.put(RAPIDASH, Arrays.asList(
-        		new Move(Moves.QUICKATTACK),
-        		//new Move(Moves.MEGAHORN),
-        		//new Move(Moves.POISONJAB),
-        		new Move(Moves.GROWL)
-        ));
-        moveMap.put(MAGIKARP, Arrays.asList(
-        		//new Move(Moves.SPLASH)
-        ));
-        moveMap.put(GYARADOS, Arrays.asList(
-        		//new Move(Moves.THRASH)
-        ));
-        
-        moveMap.put(MEWTWO, Arrays.asList(
-        		new Move(Moves.CONFUSION)
-        ));
-        moveMap.put(MEW, Arrays.asList(
-        		new Move(Moves.POUND)
         ));
 	}
 	/** END POKEMON MOVES STATIC MAP **/

@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import moves.Move.MoveType;
+import pokemon.Pokemon.Protection;
 import properties.*;
 
 /*** MOVES ENUM ***/
@@ -31,7 +32,7 @@ public enum Moves {
 			"The foe is hit with a rainbow\n-colored beam."),
 	BITE ("Bite", MoveType.PHYSICAL, Type.DARK, 0.30, 25, 60, 100,  
 			"The foe is bitten with\nviciously sharp fangs. It\nmay make the target\nflinch."),
-	BLASTBURN ("Blast Burn", MoveType.SPECIAL, Type.FIRE, 5, 150, 90, 1, false, true, 
+	BLASTBURN ("Blast Burn", MoveType.SPECIAL, Type.FIRE, 5, 150, 90, 1, true, Protection.NONE,
 			"is\nresting...",
 			"The target is razed by a\nfiery explosion. The user\ncan't move on the next\nturn."),
 	BLAZEKICK ("Blaze Kick", MoveType.PHYSICAL, Type.FIRE, Status.BURN, 0.10, 10, 85, 90, 1, 
@@ -66,7 +67,7 @@ public enum Moves {
 			"The user releases a horrible\naura imbued with dark\nthoughts. It may also make\nthe target flinch."),
 	DEFENSECURL ("Defense Curl", MoveType.ATTRIBUTE, Type.NORMAL, true, 40, -1, 1, Arrays.asList("defense"), 
 			"The user curls up to conceal\nweak spots and raise its\nDefense stat."),
-	DIG ("Dig", MoveType.PHYSICAL, Type.GROUND, 10, 80, 100, 1, true, false,
+	DIG ("Dig", MoveType.PHYSICAL, Type.GROUND, 10, 80, 100, 1, false, Protection.DIG,
 			"dug\ninto the ground!", 
 			"The user burrows, then\nattacks on the second turn.\nIt can also be used to exit\ndungeons."),
 	DISCHARGE ("Discharge", MoveType.SPECIAL, Type.ELECTRIC, Status.PARALYZE, 0.30, 15, 80, 100, 
@@ -125,19 +126,19 @@ public enum Moves {
 			"The foe is scorched with an\nintense blast of fire.\nThe target may also be\nleft with a burn."),
 	FLASHCANNON ("Flash Cannon", MoveType.SPECIAL, Type.STEEL, 10, 80, 100, 
 			"The user gathers all its\nlight energy and releases it at\nonce."),
-	FLY ("Fly", MoveType.PHYSICAL, Type.FLYING, 15, 90, 95, 1, true, false,
+	FLY ("Fly", MoveType.PHYSICAL, Type.FLYING, 15, 90, 95, 1, false, Protection.FLY,
 			"took\nflight!", 
 			"The user soars, then\nstrikes on the second turn.\nIt can also be used for\nflying to any familiar town."),
 	FOCUSBLAST ("Focus Blast", MoveType.SPECIAL, Type.FIGHTING, false, 0.10, 5, 120, 70, -1, Arrays.asList("sp. defense"), 
 			"The user heightens its\nmental focus and unleashes\nits power. It may also\nlower the target's Sp. Def."),
-	FRENZYPLANT ("Frenzy Plant", MoveType.SPECIAL, Type.GRASS, 5, 150, 90, 1, false, true,
+	FRENZYPLANT ("Frenzy Plant", MoveType.SPECIAL, Type.GRASS, 5, 150, 90, 1, true, Protection.NONE,
 			"is\nresting...",
 			"The foe is slammed with an\nenormous tree. The user\ncan't move on the next\nturn."),
 	FURYCUTTER ("Fury Cutter", MoveType.PHYSICAL, Type.BUG, 20, 10, 95,
 			"The foe is slashed with\nscythes or claws."),
 	GIGADRAIN ("Giga Drain", MoveType.SPECIAL, Type.GRASS, 10, 60, 100, 
 			"A nutrient-draining attack.\nThe user's HP is restored\nby half the damage taken by\nthe target."),
-	GIGAIMPACT ("Giga Impact", MoveType.PHYSICAL, Type.NORMAL, 5, 150, 90, 1, false, true,
+	GIGAIMPACT ("Giga Impact", MoveType.PHYSICAL, Type.NORMAL, 5, 150, 90, 1, true, Protection.NONE,
 			"is\nresting...",
 			"The user charges at the foe\nusing every bit of its power.\nThe user must rest on the\nnext turn."),
 	GROWL ("Growl", MoveType.ATTRIBUTE, Type.NORMAL, false, 40, 100, -1, Arrays.asList("attack"), 
@@ -160,12 +161,12 @@ public enum Moves {
 			"This relentless attack does\nmassive damage to a target\naffected by status\nconditions."),
 	HOWL ("Howl", MoveType.ATTRIBUTE, Type.NORMAL, true, 40, -1, 1, Arrays.asList("attack"),
 			"The user howls loudly to\nraise its spirit, boosting\nits Attack stat."),
-	HYDROCANNON ("Hydro Cannon", MoveType.SPECIAL, Type.WATER, 5, 150, 90, 1, false, true,
+	HYDROCANNON ("Hydro Cannon", MoveType.SPECIAL, Type.WATER, 5, 150, 90, 1, true, Protection.NONE,
 			"is\nresting...",
 			"The foe is hit with a watery\nblast. The user must rest\non the next turn, however."),
 	HYDROPUMP ("Hydro Pump", MoveType.SPECIAL, Type.WATER, 5, 165, 80, 
 			"The foe is blasted by a huge\nvolume of water launched\nunder great pressure."),
-	HYPERBEAM ("Hyper Beam", MoveType.SPECIAL, Type.NORMAL, 5, 150, 90, 1, false, true,
+	HYPERBEAM ("Hyper Beam", MoveType.SPECIAL, Type.NORMAL, 5, 150, 90, 1, true, Protection.NONE,
 			"is\nrecharging...",
 			"The foe is attacked with a\npowerful beam. The user\nmust rest on the next turn\nto regain its energy."),
 	HYPERVOICE ("Hyper Voice", MoveType.SPECIAL, Type.NORMAL, 10, 90, 100, 
@@ -192,6 +193,8 @@ public enum Moves {
 			"The user handles a sharp\nleaf like a sword and\nattacks by cutting its\ntarget."),
 	LEAFSTORM ("Leaf Storm", MoveType.SPECIAL, Type.GRASS, 5, 140, 90, 
 			"A storm of sharp leaves is\nwhipped up."),
+	LEECHLIFE ("Leech Life", MoveType.PHYSICAL, Type.BUG, 15, 20, 100, 
+			"A blood-draining attack. The\nuser's HP is restored by\nhalf the damage taken by the\ntarget."),
 	LEECHSEED ("Leech Seed", MoveType.OTHER, Type.GRASS, 10, -1, 90, 
 			"A seed is planted on the foe.\nIt steals some HP from the\nfoe to heal the user on\nevery turn."),
 	LEER ("Leer", MoveType.ATTRIBUTE, Type.NORMAL, false, 30, 100, -1, Arrays.asList("defense"), 
@@ -216,7 +219,9 @@ public enum Moves {
 			"The user attacks by\nshooting out muddy water.\nIt may also lower the foe's\nAccuracy."),
 	NIGHTSHADE ("Night Shade", MoveType.SPECIAL, Type.GHOST, 15, 1, 100, 
 			"The user makes the foe see\na mirage. It inflicts damage\nmatching the user's level."),
-	OUTRAGE ("Outrage", MoveType.PHYSICAL, Type.DRAGON, 15, 120, 100, 2, false, false, 
+	ODERSLEUTH ("Oder Sleuth", MoveType.OTHER, Type.NORMAL, 40, -1, -1, 
+			"Enables the user to hit a\nGhost type with any type of\nmove. It also enables the\nuser to hit an evasive foe."),
+	OUTRAGE ("Outrage", MoveType.PHYSICAL, Type.DRAGON, 15, 120, 100, 2, false, Protection.NONE,
 			"",
 			"The user rampages and\nattacks for two to three\nturns. However, it then\nbecomes confused."),
 	PAYBACK ("Payback", MoveType.PHYSICAL, Type.DARK, 10, 50, 100, 
@@ -225,7 +230,7 @@ public enum Moves {
 			"The foe is jabbed with a\nsharply pointed beak or\nhorn."),
 	PETALBLIZZARD ("Petal Blizzard", MoveType.PHYSICAL, Type.GRASS, 15, 135, 100, 
 			"The user stirs up a violent\npetal blizzard and attacks\neverything around it."),
-	PETALDANCE ("Petal Dance", MoveType.SPECIAL, Type.GRASS, 20, 90, 100, 2, false, false, 
+	PETALDANCE ("Petal Dance", MoveType.SPECIAL, Type.GRASS, 20, 90, 100, 2, false, Protection.NONE,
 			"",
 			"The user attacks by scatt-\nering petals for two to\nthree turns. The user then\nbecomes confused."),
 	PLAYNICE ("Play Nice", MoveType.ATTRIBUTE, Type.NORMAL, false, 20, -1, -1, Arrays.asList("attack"), 
@@ -259,14 +264,14 @@ public enum Moves {
 			"A wondrous wall of light is\nput up to suppress damage\nfrom physical attacks for\nfive turns."),
 	REST ("Rest", MoveType.ATTRIBUTE, Type.NORMAL, true, 10, -1, -1, null,
 			"The user goes to sleep for\ntwo turns. It fully\nrestores the user's HP and\nheals any status problem."),
-	ROCKBLAST ("Rock Blast", MoveType.PHYSICAL, Type.ROCK, 10, 25, 80, 2, false, false,
+	ROCKBLAST ("Rock Blast", MoveType.PHYSICAL, Type.ROCK, 10, 25, 80, 2, false, Protection.NONE,
 			"",
 			"The user hurls hard rocks at\nthe foe. Two to five rocks\nare launched in quick\nsuccession."),
 	ROCKPOLISH ("Rock Polish", MoveType.ATTRIBUTE, Type.ROCK, true, 20, -1, 2, Arrays.asList("speed"), 
 			"The user polishes its body\nto reduce drag. It can\nsharply raise the Speed\nstat."),	
 	ROCKTHROW ("Rock Throw", MoveType.PHYSICAL, Type.ROCK, 15, 75, 90, 
 			"The user picks up and\nthrows a small rock at the\nfoe to attack."),
-	ROLLOUT ("Rollout", MoveType.PHYSICAL, Type.ROCK, 20, 45, 90, 2, false, false,
+	ROLLOUT ("Rollout", MoveType.PHYSICAL, Type.ROCK, 20, 45, 90, 2, false, Protection.NONE,
 			"",
 			"The user continually rolls\ninto the foe two to five\nturns."),
 	SANDATTACK ("Sand Attack", MoveType.ATTRIBUTE, Type.GROUND, false, 15, 100, -1, Arrays.asList("accuracy"),
@@ -291,7 +296,7 @@ public enum Moves {
 			"The user throws a punch at\nthe foe from the shadows.\nThe punch lands without\nfail."),
 	SHEERCOLD ("Sheer Cold", MoveType.SPECIAL, Type.ICE, 5, 1000, 30, 
 			"The foe is attacked with a\nblast of absolute-zero\ncold. The foe instantly\nfaints if it hits."),
-	SKULLBASH ("Skull Bash", MoveType.PHYSICAL, Type.NORMAL, 15, 100, 100, 1, false, false,
+	SKULLBASH ("Skull Bash", MoveType.PHYSICAL, Type.NORMAL, 15, 100, 100, 1, false, Protection.NONE,
 			"is\npreparing its attack...",
 			"The user tucks in its head\nto raise its Defense in the\nfirst turn, then rams the\nfoe on the next turn."),
 	SKYUPPERCUT ("Sky Uppercut", MoveType.PHYSICAL, Type.FIGHTING, 15, 120, 100, 
@@ -310,7 +315,7 @@ public enum Moves {
 			"The user releases an obscu-\nring cloud of smoke or ink.\nIt reduces the target's\naccuracy."),
 	SNORE ("Snore", MoveType.SPECIAL, Type.NORMAL, 0.30, 15, 40, 100, 
 			"An attack that can be used\nonly if the user is asleep.\nThe harsh noise may also\nmake the foe flinch."),
-	SOLARBEAM ("Solar Beam", MoveType.SPECIAL, Type.GRASS, 10, 180, 100, 1, false, false,
+	SOLARBEAM ("Solar Beam", MoveType.SPECIAL, Type.GRASS, 10, 180, 100, 1, false, Protection.NONE,
 			"is\ncharging a light beam...", 
 			"A two-turn attack. The\nuser gathers light, then\nblasts a bundled beam on\nthe second turn."),
 	SPARK ("Spark", MoveType.PHYSICAL, Type.ELECTRIC, Status.PARALYZE, 0.30, 20, 65, 100, 
@@ -390,9 +395,10 @@ public enum Moves {
 	private Type type;
 	private Status effect;
 	private int pp, power, accuracy, level, crit, turns;
-	private boolean goFirst, toSelf, isProtected, recharge;
+	private boolean goFirst, toSelf, recharge;
 	private double probability, damageToSelf, flinch;		
 	private List<String> stats;
+	private Protection protection;
 	/** END INITIALIZE VALUES **/	
 		
 	/** CONSTRUCTORS **/
@@ -401,7 +407,7 @@ public enum Moves {
 			List<String> stats, boolean toSelf,  
 			int pp, int power, int accuracy, int level, int crit, int turns,
 			double damageToSelf, double flinch,		
-			boolean goFirst, boolean isProtected, boolean recharge,
+			boolean goFirst, boolean recharge, Protection protection,
 			String weather, String delay, String info) {
 		this.name = name;
 		this.mType = mType;
@@ -421,8 +427,8 @@ public enum Moves {
 		this.turns = turns;
 		
 		this.goFirst = goFirst;
-		this.isProtected = isProtected;
 		this.recharge = recharge;
+		this.protection = protection;
 		
 		this.damageToSelf = damageToSelf;
 		this.flinch = flinch;
@@ -438,7 +444,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0, 
 				0.0, 0.0, 
-				false, false, false,
+				false, false, Protection.NONE,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, double flinch, int pp, int power, int accuracy, String info) {
@@ -448,7 +454,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0, 
 				0.0, flinch, 
-				false, false, false,
+				false, false, Protection.NONE,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, double damageToSelf, String info) {
@@ -457,7 +463,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0, 
 				damageToSelf, 0.0, 
-				false, false, false,
+				false, false, Protection.NONE,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, int crit, String info) {
@@ -466,7 +472,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, crit, 0, 
 				0.0, 0.0, 
-				false, false, false,
+				false, false, Protection.NONE,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, boolean goFirst, String info) {
@@ -475,16 +481,16 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0, 
 				0.0, 0.0, 
-				goFirst, false, false,
+				goFirst, false, Protection.NONE,
 				"", "", info);
 	}	
-	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, int turns, boolean isProtected, boolean recharge, String delay, String info) {
+	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, int turns, boolean recharge, Protection protection, String delay, String info) {
 		this(name, mType, type, 
 				null, 0.0, 
 				null, false, 
 				pp, power, accuracy, 0, 0, turns, 
 				0.0, 0.0, 
-				false, isProtected, recharge,
+				false, recharge, protection,
 				"", delay, info);
 	}
 	Moves (String name, MoveType mType, Type type, int pp, int power, int accuracy, int turns, String delay, String info) {
@@ -494,7 +500,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, turns, 
 				0.0, 0.0, 
-				false, false, false,
+				false, false, Protection.NONE,
 				"", delay, info);
 	}	
 	Moves (String name, MoveType mType, Type type, Status effect, int pp, int accuracy, String info) {
@@ -503,7 +509,7 @@ public enum Moves {
 				null, false, 
 				pp, 0, accuracy, 0, 0, 0, 
 				0.0, 0.0, 
-				false, false, false,
+				false, false, Protection.NONE,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, Status effect, double probability, int pp, int power, int accuracy, String info) {
@@ -512,7 +518,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0,
 				0.0, 0.0, 
-				false, false, false,
+				false, false, Protection.NONE,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, Status effect, double probability, double flinch, int pp, int power, int accuracy, String info) {
@@ -521,7 +527,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, 0, 0, 
 				0.0, flinch, 
-				false, false, false,
+				false, false, Protection.NONE,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, Status effect, double probability, int pp, int power, int accuracy, int crit, String info) {
@@ -530,7 +536,7 @@ public enum Moves {
 				null, false, 
 				pp, power, accuracy, 0, crit, 0, 
 				0.0, 0.0, 
-				false, false, false,
+				false, false, Protection.NONE,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, boolean toSelf, int pp, int accuracy, int level, List<String> stats, String info) {
@@ -539,7 +545,7 @@ public enum Moves {
 				stats, toSelf, 
 				pp, 0, accuracy, level, 0, 0, 
 				0.0, 0.0, 
-				false, false, false,
+				false, false, Protection.NONE,
 				"", "", info);
 	}	
 	Moves (String name, MoveType mType, Type type, boolean toSelf, double probability, int pp, int power, int accuracy, int level, List<String> stats, String info) {
@@ -548,7 +554,7 @@ public enum Moves {
 				stats, toSelf, 
 				pp, power, accuracy, level, 0, 0, 
 				0.0, 0.0, 
-				false, false, false,
+				false, false, Protection.NONE,
 				"", "", info);
 	}
 	Moves (String name, MoveType mType, Type type, int pp, int turns, String weather, String info) {
@@ -557,7 +563,7 @@ public enum Moves {
 				null, false, 
 				pp, 0, -1, 0, 0, turns, 
 				0.0, 0.0, 
-				false, false, false,
+				false, false, Protection.NONE,
 				weather, "", info);
 	}	
 	/** END CONSTRUCTORS **/
@@ -579,10 +585,10 @@ public enum Moves {
 	public int getPower() {	return power; }	
 	public int getTurns() { return turns; }
 	public boolean getGoFirst() { return goFirst; }	
-	public boolean getProtected() { return isProtected; }
 	public boolean getRecharge() { return recharge; }
 	public String getWeather() { return weather; }	
 	public String getDelay(String name) { return name + " " + delay; }	
+	public Protection getProtection() { return protection; }
 	public String getInfo() {	return info; }	
 	public int getCrit() { return crit; }	
 	public int getLevel() { return level; }	

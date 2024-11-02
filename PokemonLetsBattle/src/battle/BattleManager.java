@@ -18,12 +18,16 @@ import moves.Move;
 import moves.Move.MoveType;
 import moves.Moves;
 import pokemon.Pokemon;
+import pokemon.Pokemon.Protection;
 import properties.Status;
 import properties.Type;
 import properties.abilities.*;
 
 public class BattleManager extends Thread {
-			
+	
+	private static final List<Moves> absorbMoves = Arrays.asList(Moves.ABSORB, Moves.DREAMEATER, Moves.GIGADRAIN, 
+			Moves.LEECHLIFE, Moves.MEGADRAIN);
+	
 	private GamePanel gp;
 	public boolean set = true;
 	public boolean active = false;
@@ -37,8 +41,7 @@ public class BattleManager extends Thread {
 	private ArrayList<Pokemon> otherFighters = new ArrayList<>();
 	
 	private Move playerMove, cpuMove;
-	public Move newMove = null;
-	public Move oldMove = null;
+	public Move newMove = null, oldMove = null;
 	
 	private Weather weather = Weather.CLEAR;
 	private int weatherDays = -1;
@@ -328,7 +331,6 @@ public class BattleManager extends Thread {
 						
 			fighter[0].resetStats();
 			fighter[0].resetStatStages();
-			fighter[0].setProtected(false);
 			fighter[0].resetMoveTurns();
 			fighter[0].clearActiveMoves();
 			
@@ -401,7 +403,7 @@ public class BattleManager extends Thread {
 				getWinningPokemon();
 				getWinningTrainer();
 				battleQueue.clear();
-			}			
+			}		
 		}
 	}
 	
@@ -614,11 +616,12 @@ public class BattleManager extends Thread {
 						
 		checkSleepTalk(atk, atkMove);				
 		BattleUtility.getWeatherMoveDelay(weather, atkMove);
-				
+						
 		if (atkMove.isReady()) {				
 			
 			typeDialogue(atk.getName() + " used\n" + atkMove.toString() + "!", false); 
 			
+			atk.setProtectedState(Protection.NONE);			
 			atk.setAttacking(true);
 			playSE(gp.moves_SE, atkMove.getName());
 			
@@ -637,23 +640,17 @@ public class BattleManager extends Thread {
 				attack(atk, trg, atkMove);		
 			}
 			else {
-				typeDialogue("It had no affect!");
+				typeDialogue("It had no effect!");
 			}
 		}		
-		else if (atkMove.getRecharge()) {
-			
-			typeDialogue(atkMove.getDelay(atk.getName()));	
-			
+		else if (atkMove.getRecharge()) {			
+			typeDialogue(atkMove.getDelay(atk.getName()));				
 			atkMove.setTurnCount(atkMove.getTurns());
 		}
-		else {
-			
+		else {						
 			typeDialogue(atk.getName() + " used\n" + atkMove.toString() + "!");
+			atk.setProtectedState(atkMove.getProtection());				
 			typeDialogue(atkMove.getDelay(atk.getName()));	
-			
-			if (atkMove.getProtected()) {
-				atk.setProtected(true);
-			}
 			
 			atkMove.setTurnCount(atkMove.getTurnCount() - 1);
 		}
@@ -664,7 +661,7 @@ public class BattleManager extends Thread {
 			
 			typeDialogue(atk.getName() + " used\n" + move.toString() + "!"); 
 			
-			if (atk.getStatus() != null && atk.getStatus() == Status.SLEEP) {	
+			if (atk.hasStatus(Status.SLEEP)) {	
 				
 				Move randomMove = null; 
 				
@@ -674,15 +671,15 @@ public class BattleManager extends Thread {
 				move = randomMove;
 			}
 			else {				
-				typeDialogue("It had no affect!");
+				typeDialogue("It had no effect!");
 				return;		
 			}
 		}
 	}
 	private boolean validMove(Pokemon atk, Pokemon trg, Move move) {
 		
-		if ((move.getMove() == Moves.SNORE && (atk.getStatus() == null || atk.getStatus() != Status.SLEEP)) ||
-			(move.getMove() == Moves.DREAMEATER && (trg.getStatus() == null || trg.getStatus() != Status.SLEEP)) ||
+		if ((move.getMove() == Moves.SNORE && atk.hasStatus(Status.SLEEP)) ||
+			(move.getMove() == Moves.DREAMEATER && trg.hasStatus(Status.SLEEP)) ||
 			(move.getMove() == Moves.SUCKERPUNCH && battleQueue.peek() == queue_ActiveMoves)) {
 			return false;
 		}
@@ -699,7 +696,7 @@ public class BattleManager extends Thread {
 			switch (move.getMType()) {
 			
 				case STATUS:
-					statusMove(trg, move);					
+					statusMove(atk, trg, move);					
 					break;
 					
 				case ATTRIBUTE:
@@ -725,8 +722,8 @@ public class BattleManager extends Thread {
 	}		
 	
 	// STATUS MOVE
-	private void statusMove(Pokemon pkm, Move move) throws InterruptedException {		
-		setStatus(pkm, move.getEffect());
+	private void statusMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {		
+		setStatus(trg, move.getEffect());
 	}
 	private void setStatus(Pokemon pkm, Status status) throws InterruptedException {
 		
@@ -790,14 +787,8 @@ public class BattleManager extends Thread {
 		// loop through each specified attribute to be changed
 		for (String stat : stats) {				
 			
-			// attributes raised
-			if (level > 0) {
-				gp.playSE(gp.battle_SE, "stat-up");
-			}
-			// attributes lowered
-			else {
-				gp.playSE(gp.battle_SE, "stat-down");
-			}
+			if (level > 0) gp.playSE(gp.battle_SE, "stat-up");
+			else gp.playSE(gp.battle_SE, "stat-down");			
 			
 			typeDialogue(pkm.changeStat(stat, level));	
 		}			
@@ -837,52 +828,63 @@ public class BattleManager extends Thread {
 	// OTHER MOVE
 	private void otherMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		
-		if (move.getMove() == Moves.TELEPORT) {						
-			if (trainer == null) {
-				typeDialogue(atk.getName() + " teleported\naway!");	
-				endBattle();
-			}
-			else {
-				typeDialogue("It had no affect!");
-			}						
-		}
-		else if (move.getMove() == Moves.LEECHSEED) {
-			
-			if (trg.hasActiveMove(move.getMove())) {
-				typeDialogue("It had no affect!");
-			}
-			else {
-				trg.addActiveMove(move.getMove());
-				typeDialogue(atk.getName() + " planted\na seed on " + trg.getName() + "!");	
-			}
-		}
-		else if (move.getMove() == Moves.PROTECT) {
-			atk.setProtected(true);
-			typeDialogue(atk.getName() + " protected\nitself!");
-		}
-		else if (move.getMove() == Moves.RECOVER) {			
-			if (atk.getHP() < atk.getBHP()) {
-				
-				int gainedHP = atk.getBHP() - atk.getHP();
-				int halfHP = (int) Math.floor(atk.getBHP() / 2.0);
-				if (gainedHP > halfHP) gainedHP = halfHP;
-				
-				increaseHP(atk, gainedHP);				
-				typeDialogue(atk.getName() + "\nregained health!");
-			}
-			else {
-				typeDialogue("It had no affect!");
-			}
-		}
-		else if (move.getMove() == Moves.REFLECT) {		
-			
-			if (atk.hasActiveMove(move.getMove())) {
-				typeDialogue("It had no affect!");
-			}
-			else {
-				atk.addActiveMove(move.getMove());
-				typeDialogue(atk.getName() + "'s " + move.toString() + "\nraised DEFENSE!");					
-			}			
+		switch (move.getMove()) {		
+			case LEECHSEED:
+				if (trg.hasActiveMove(move.getMove())) {
+					typeDialogue("It had no effect!");
+				}
+				else {
+					trg.addActiveMove(move.getMove());
+					typeDialogue(atk.getName() + " planted\na seed on " + trg.getName() + "!");	
+				}
+				break;
+			case ODERSLEUTH:
+				if (trg.hasActiveMove(move.getMove())) {
+					typeDialogue("It had no effect!");
+				}
+				else {
+					trg.addActiveMove(move.getMove());
+					typeDialogue(atk.getName() + " identified\n" + trg.getName() + "!");					
+				}	
+				break;			
+			case PROTECT:
+				atk.addActiveMove(Moves.PROTECT);
+				typeDialogue(atk.getName() + " protected\nitself!");
+				break;
+			case RECOVER:
+				if (atk.getHP() < atk.getBHP()) {
+					
+					int gainedHP = atk.getBHP() - atk.getHP();
+					int halfHP = (int) Math.floor(atk.getBHP() / 2.0);
+					if (gainedHP > halfHP) gainedHP = halfHP;
+					
+					increaseHP(atk, gainedHP);				
+					typeDialogue(atk.getName() + "\nregained health!");
+				}
+				else {
+					typeDialogue("It had no effect!");
+				}
+				break;
+			case REFLECT:
+				if (atk.hasActiveMove(move.getMove())) {
+					typeDialogue("It had no effect!");
+				}
+				else {
+					atk.addActiveMove(move.getMove());
+					typeDialogue(atk.getName() + "'s " + move.toString() + "\nraised DEFENSE!");					
+				}			
+				break;			
+			case TELEPORT:
+				if (trainer == null) {
+					typeDialogue(atk.getName() + " teleported\naway!");	
+					endBattle();
+				}
+				else {
+					typeDialogue("It had no effect!");
+				}		
+				break;
+			default:
+				break;		
 		}
 	}
 	
@@ -951,12 +953,8 @@ public class BattleManager extends Thread {
 				typeDialogue("A critical hit!");
 			}
 			
-			if (hitSE.equals("hit-super")) {
-				typeDialogue("It's super effective!");
-			}
-			else if (hitSE.equals("hit-weak")) {
-				typeDialogue("It's not very effective...");
-			}	
+			if (hitSE.equals("hit-super")) typeDialogue("It's super effective!");			
+			else if (hitSE.equals("hit-weak")) typeDialogue("It's not very effective...");			
 			
 			typeDialogue(trg.getName() + " took\n" + damage + " damage!");		
 		}
@@ -1004,9 +1002,8 @@ public class BattleManager extends Thread {
 	
 	private void absorbHP(Pokemon atk, Pokemon trg, Move move, int damage) throws InterruptedException {
 		
-		if (move.getMove() == Moves.ABSORB || move.getMove() == Moves.GIGADRAIN ||
-				move.getMove() == Moves.MEGADRAIN || move.getMove() == Moves.DREAMEATER) {
-						
+		if (absorbMoves.contains(move.getMove())) {
+								
 			int gainedHP = (damage / 2);
 			
 			// if attacker not at full health
@@ -1065,7 +1062,7 @@ public class BattleManager extends Thread {
 			}
 		}
 		else if (move.getMove() == Moves.WAKEUPSLAP) {
-			if (trg.getStatus() != null && trg.getStatus() == Status.SLEEP) {
+			if (trg.hasStatus(Status.SLEEP)) {
 				removeStatus(trg);
 			}
 		}
@@ -1094,17 +1091,15 @@ public class BattleManager extends Thread {
 				&& trg.getAbility().isValid(move)) {
 			
 			setStatus(atk, trg.getAbility().getEffect());
-		}			
+		}		
 	}
 	private boolean flinched(Pokemon pkm, Move move) throws InterruptedException {
 		
 		boolean flinched = false;
 		
-		if (move.getFlinch() != 0.0 && 
-				pkm.getAbility().getCategory() != Ability.Category.FLINCH) {
+		if (move.getFlinch() != 0.0 && pkm.getAbility().getCategory() != Ability.Category.FLINCH) {
 			
-			if (new Random().nextDouble() <= move.getFlinch()) {
-				
+			if (new Random().nextDouble() <= move.getFlinch()) {				
 				typeDialogue(pkm.getName() + " flinched!");
 				flinched = true;
 			}
@@ -1120,17 +1115,20 @@ public class BattleManager extends Thread {
 			
 			Move move = iterator.next();
 			
-			if (move.getMove() == Moves.LEECHSEED) {
-				leechSeed(fighter[trg], fighter[atk]);
-			}
-			else if (move.getMove() == Moves.REFLECT) {
-				
-				move.setTurnCount(move.getTurnCount() - 1);
-				
-				if (move.getTurnCount() <= 0) {		
-					iterator.remove();						
-					typeDialogue(move.getDelay(move.getName()));
-				}
+			switch (move.getMove()) {
+				case LEECHSEED:
+					leechSeed(fighter[trg], fighter[atk]);
+					break;
+				case REFLECT:
+					move.setTurnCount(move.getTurnCount() - 1);
+					
+					if (move.getTurnCount() <= 0) {		
+						iterator.remove();						
+						typeDialogue(move.getDelay(move.getName()));
+					}
+					break;
+				default: 
+					break;
 			}
 		}
 	}	
@@ -1322,7 +1320,7 @@ public class BattleManager extends Thread {
 			
 			if (playerMove != null) playerMove.resetMoveTurns();
 			playerMove = null;
-			fighter[0].setProtected(false);
+			fighter[0].clearProtection();
 					
 			gp.playSE(gp.faint_SE, fighter[1].toString());
 			typeDialogue(fighter[1].getName() + " fainted!");	
@@ -1334,7 +1332,7 @@ public class BattleManager extends Thread {
 			
 			if (cpuMove != null) cpuMove.resetMoveTurns();
 			cpuMove = null;
-			fighter[1].setProtected(false);
+			fighter[1].clearProtection();
 			
 			gp.playSE(gp.faint_SE, fighter[0].toString());			
 			typeDialogue(fighter[0].getName() + " fainted!");	
@@ -1476,7 +1474,7 @@ public class BattleManager extends Thread {
 					
 					if (playerMove == oldMove) {
 						playerMove = null;
-						fighter[0].setProtected(false);
+						fighter[0].clearProtection();
 					}
 					
 					typeDialogue("1, 2, and.. .. ..\nPoof!", true);
@@ -1705,23 +1703,19 @@ public class BattleManager extends Thread {
 			
 			if (playerMove != null) playerMove.resetMoveTurns();
 			playerMove = null; 
-			fighter[0].setProtected(false);
 			
 			if (cpuMove != null) cpuMove.resetMoveTurns();			
 			cpuMove = null; 
-			fighter[1].setProtected(false);
 		}
 		else if (delay == 1) {
 			
 			if (cpuMove != null) cpuMove.resetMoveTurns();
 			cpuMove = null;	
-			fighter[1].setProtected(false);
 		}
 		else if (delay == 2) {
 			
 			if (playerMove != null) playerMove.resetMoveTurns();
 			playerMove = null;
-			fighter[0].setProtected(false);
 		}
 		
 		if (delay == 1 || delay == 3) {		
@@ -1896,7 +1890,7 @@ public class BattleManager extends Thread {
 		return;
 	}
 		
-	// BATTLE END METHOD
+	// BATTLE END METHODS
  	public void endBattle() {
 		gp.stopMusic();
 		gp.setupMusic();
@@ -1915,32 +1909,29 @@ public class BattleManager extends Thread {
 				p.resetStatStages();
 				p.clearActiveMoves();
 			}	
-		}
+		}		
 		
 		gp.ui.isFighterCaptured = false;
 		gp.ui.commandNum = 0;
 		
+		fightStage = fight_Encounter;
+		resetValues();
+		
 		gp.particleList.clear();
 		gp.gameState = gp.playState;
+	}	 	
+ 	private void resetValues() {
+		battleQueue.clear();	
 		
-		fightStage = fight_Encounter;
-		
-		active = false;
-		running = false;
-						
-		battleQueue.clear();		
-		
+		active = false; running = false;
+								
 		trainer = null;
-		fighter[0] = null;
-		fighter[1] = null;
-		newFighter[0] = null;
-		newFighter[1] = null;
+		fighter[0] = null; fighter[1] = null;
+		newFighter[0] = null; newFighter[1] = null;
 		otherFighters.clear();
 		
-		playerMove = null;
-		cpuMove = null;		
-		newMove = null;
-		ballUsed = null;		
+		playerMove = null; cpuMove = null;		
+		newMove = null; ballUsed = null;		
 				
 		weather = Weather.CLEAR;
 		weatherDays = -1;
@@ -1949,10 +1940,10 @@ public class BattleManager extends Thread {
 		loser = -1;
 		
 		escapeAttempts = 0;
-	}	
+ 	}
 	
 	// MISC METHODS	
-	public void typeDialogue(String dialogue) throws InterruptedException {
+ 	public void typeDialogue(String dialogue) throws InterruptedException {
 		
 		gp.ui.battleDialogue = "";
 		

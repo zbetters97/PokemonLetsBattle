@@ -1,7 +1,6 @@
 package properties.abilities;
 
-import moves.Move;
-import moves.Move.MoveType;
+import pokemon.Pokemon;
 import properties.Status;
 
 public class Synchronize extends Ability {
@@ -11,16 +10,9 @@ public class Synchronize extends Ability {
 				"When this Pokémon becomes\nPOISON, PARALYZE, or BURN,\nso does the opponent.");
 	}
 	
-	public boolean isValid(Move move) {
-		
-		if (move.getMType() == MoveType.PHYSICAL) {
-			
-			if (Math.random() < 0.30) {
-				return true;
-			}
-			else {
-				return false;
-			}
+	public boolean isValid(Pokemon pokemon) {		
+		if (pokemon.hasStatus(Status.POISON) || pokemon.hasStatus(Status.PARALYZE) || pokemon.hasStatus(Status.BURN)) {
+			return true;
 		}
 		else {
 			return false;

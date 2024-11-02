@@ -16,6 +16,10 @@ import properties.abilities.Ability;
 /*** MOVE CLASS ***/
 public class Pokemon {
 	
+	public enum Protection {
+		NONE, BOUNCE, DIG, DIVE, FLY, PHANTOMFORCE, SHADOWFORCE, SKYDROP
+	}
+	
 	/** INITIALIZE VALUES FOR UNIQUE MOVES **/
 	private Pokedex pokemon;
 	private String nickname = null;
@@ -27,10 +31,11 @@ public class Pokemon {
 	private double speedBase, attackBase, defenseBase, spAttackBase, spDefenseBase, accuracyBase, evasionBase;
 	private int speedStg, attackStg, defenseStg, spAttackStg, spDefenseStg, accuracyStg, evasionStg;
 	private Status status;
-	private boolean isAlive = true, attacking = false, hit = false, isProtected = false;
+	private boolean isAlive = true, attacking = false, hit = false;
 	private int statusCounter, statusLimit;
 	private List<Move> moveSet, activeMoves;
-	private Entity item, capturedBall;
+	private Protection protectedState;
+	private Entity item, capturedBall;	
 	/** END INITIALIZE VALUES **/
 	
 	/** CONSTRUCTORS **/
@@ -87,6 +92,8 @@ public class Pokemon {
 		
 		moveSet = new ArrayList<>();
 		activeMoves = new ArrayList<>();
+		
+		protectedState = Protection.NONE;
 	}	
 	public Pokemon(Pokemon old, Pokedex p) {	
 		// STAT FORMULA REFERENCE: https://pokemon.fandom.com/wiki/Statistics
@@ -137,6 +144,8 @@ public class Pokemon {
 		moveSet = old.getMoveSet();
 		activeMoves = new ArrayList<>();
 		item = old.item;
+		
+		protectedState = Protection.NONE;
 	}		
 	public Pokemon(Pokedex p, Entity capturedBall, char sex, int level, int bxp, int xp, int nxp,
 			int hpIV, int attackIV, int defenseIV, int spAttackIV, int spDefenseIV, int speedIV,
@@ -181,6 +190,8 @@ public class Pokemon {
 		
 		this.moveSet = moveSet;		
 		activeMoves = new ArrayList<>();
+		
+		protectedState = Protection.NONE;
 	}	
 	/** END CONSTRUCTORS **/
 			
@@ -562,6 +573,7 @@ public class Pokemon {
 
 	public Status getStatus() { return status; }
 	public void setStatus(Status status) { this.status = status; }	
+	public boolean hasStatus(Status status) { return (this.status != null && this.status == status);}
 	public int getStatusCounter() { return statusCounter; }
 	public void setStatusCounter(int statusCounter) { this.statusCounter = statusCounter; }	
 	public int getStatusLimit() { return statusLimit; }
@@ -574,10 +586,10 @@ public class Pokemon {
 		status = null; 
 		statusLimit = 0;
 		statusCounter = 0;
-		isProtected = false;
 		resetMoves();
 		resetStats();
 		resetStatStages();
+		clearProtection();
 	}
 	
 	public boolean getAttacking() { return attacking; }
@@ -585,10 +597,7 @@ public class Pokemon {
 	
 	public boolean getHit() { return hit; }
 	public void setHit(boolean hit) { this.hit = hit; }
-	
-	public boolean isProtected() { return isProtected; }
-	public void setProtected(boolean isProtected) { this.isProtected = isProtected; }
-	
+		
 	public List<Move> getMoveSet() { return moveSet; }
 	public void setMoveSet(ArrayList<Move> moveSet) { this.moveSet = moveSet; }
 	
@@ -597,6 +606,11 @@ public class Pokemon {
 	
 	public List<Move> getActiveMoves() { return activeMoves; }
 	public void setActiveMoves(List<Move> activeMoves) { this.activeMoves = activeMoves; }
+	
+	public Protection getProtectedState() { return protectedState; }
+	public void setProtectedState(Protection state) { this.protectedState = state; }
+	public void clearProtection() { protectedState = Protection.NONE; }
+	
 	
 	public Entity getBall() { return capturedBall; }
 	public void setBall(Entity capturedBall) { this.capturedBall = capturedBall; }
