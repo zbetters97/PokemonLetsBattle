@@ -586,6 +586,7 @@ public class Pokemon {
 		status = null; 
 		statusLimit = 0;
 		statusCounter = 0;
+		getAbility().setActive(false);
 		resetMoves();
 		resetStats();
 		resetStatStages();
@@ -610,8 +611,7 @@ public class Pokemon {
 	public Protection getProtectedState() { return protectedState; }
 	public void setProtectedState(Protection state) { this.protectedState = state; }
 	public void clearProtection() { protectedState = Protection.NONE; }
-	
-	
+		
 	public Entity getBall() { return capturedBall; }
 	public void setBall(Entity capturedBall) { this.capturedBall = capturedBall; }
 	/** END GETTERS AND SETTERS **/

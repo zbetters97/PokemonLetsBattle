@@ -736,32 +736,39 @@ public class BattleManager extends Thread {
 	
 	// STATUS MOVE
 	private void statusMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {		
-		setStatus(trg, move.getEffect());	
-	}
-	private void setStatus(Pokemon pkm, Status status) throws InterruptedException {
 		
-		if (pkm.getHP() > 0) {
+		if (trg.getStatus() == null) {			
+			setStatus(atk, trg, move.getEffect());	
+		}
+		else {				
+			typeDialogue(trg.getName() + " is\nalready " + 
+					trg.getStatus().getStatus() + "!");
+		}			
+	}
+	private void setStatus(Pokemon atk, Pokemon trg, Status status) throws InterruptedException {
+		
+		if (trg.getHP() > 0) {
 			
-			if (pkm.getStatus() == null) {
+			if (trg.getStatus() == null) {
 				
-				pkm.setStatus(status);		
+				trg.setStatus(status);		
 				
 				gp.playSE(gp.battle_SE, status.getStatus());
-				typeDialogue(pkm.getName() + status.printCondition());
+				typeDialogue(trg.getName() + status.printCondition());
 				
-				if (pkm.getAbility() == Ability.QUICKFEET && !pkm.getAbility().isActive()) {
-					pkm.getAbility().setActive(true);
-					setAttribute(pkm, Arrays.asList("speed"), 2);
+				if (trg.getAbility() == Ability.QUICKFEET && !trg.getAbility().isActive()) {
+					trg.getAbility().setActive(true);
+					setAttribute(trg, Arrays.asList("speed"), 2);
 				}
-				else if (pkm.getAbility() == Ability.GUTS && !pkm.getAbility().isActive()) {
-					pkm.getAbility().setActive(true);
-					setAttribute(pkm, Arrays.asList("attack"), 2);
+				else if (trg.getAbility() == Ability.GUTS && !trg.getAbility().isActive()) {
+					trg.getAbility().setActive(true);
+					setAttribute(trg, Arrays.asList("attack"), 2);
 				}
-			}
-			else {				
-				typeDialogue(pkm.getName() + " is\nalready " + 
-						pkm.getStatus().getStatus() + "!");
-			}			
+				else if ((trg.getAbility() == Ability.SYNCHRONIZE) && 
+						(status == Status.BURN || status == Status.PARALYZE || status == Status.POISON)) {						
+					setStatus(trg, atk, status);
+				}
+			}		
 		}
 	}
 	private void removeStatus(Pokemon pkm) throws InterruptedException {
@@ -783,7 +790,7 @@ public class BattleManager extends Thread {
 				int gainedHP = atk.getBHP() - atk.getHP();
 				increaseHP(atk, gainedHP);
 				
-				setStatus(atk, Status.SLEEP);		
+				setStatus(trg, atk, Status.SLEEP);		
 			}
 			else {				
 				int level = move.getLevel();
@@ -800,7 +807,7 @@ public class BattleManager extends Thread {
 			setAttribute(trg, move.getStats(), move.getLevel());
 			
 			if (move.getMove() == Moves.SWAGGER) {
-				setStatus(trg, Status.CONFUSE);
+				setStatus(atk, trg, Status.CONFUSE);
 			}
 		}			
 	}
@@ -958,6 +965,10 @@ public class BattleManager extends Thread {
 			damage /= 2;			
 		}		
 		
+		if (trg.getAbility() == Ability.FLASHFIRE && !trg.getAbility().isActive() && move.getType() == Type.FIRE) {
+			trg.getAbility().setActive(true);
+		}
+		
 		if (damage <= 0) {
 			typeDialogue("It had no effect!");
 		}
@@ -968,7 +979,7 @@ public class BattleManager extends Thread {
 					damage--;			
 				}
 			}
-			
+									
 			decreaseHP(trg, damage);		
 			
 			if (crit >= 1.5) typeDialogue("A critical hit!");
@@ -1067,7 +1078,7 @@ public class BattleManager extends Thread {
 		}
 		else if (move.getMove() == Moves.OUTRAGE || move.getMove() == Moves.PETALDANCE) {
 			if (!move.isWaiting()) {
-				setStatus(atk, Status.CONFUSE);				
+				setStatus(trg, atk, Status.CONFUSE);				
 			}
 		}
 		else if (move.getMove() == Moves.WAKEUPSLAP) {
@@ -1091,14 +1102,14 @@ public class BattleManager extends Thread {
 					}					
 				}
 				else {			
-					setStatus(trg, move.getEffect());						
+					setStatus(atk, trg, move.getEffect());						
 				}
 			}							
 		}
 		
 		if (atk.getStatus() == null && trg.getAbility() == Ability.STATIC && 
 				move.getMType() == MoveType.PHYSICAL && Math.random() < 0.30) {
-			setStatus(atk, Status.PARALYZE);						
+			setStatus(trg, atk, Status.PARALYZE);						
 		}
 	}
 	private boolean flinched(Pokemon pkm, Move move) throws InterruptedException {

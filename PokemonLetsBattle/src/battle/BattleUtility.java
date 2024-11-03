@@ -16,7 +16,6 @@ import moves.Moves;
 import moves.Move.MoveType;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Protection;
-import properties.Ability;
 import properties.Type;
 
 public final class BattleUtility {
@@ -348,29 +347,39 @@ public final class BattleUtility {
 				
 		damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
 			power * (A / D)) / 50)) + 2) * STAB * type * random);
+										
+		switch (move.getMove()) {
+			case ENDEAVOR: 		
+				if (target.getHP() < attacker.getHP()) damage = 0;			
+				else damage = target.getHP() - attacker.getHP();	
+				break;
+			case DRAGONRAGE:
+				damage = 40;
+				break;
+			case SEISMICTOSS:
+				damage = target.getLevel();
+				break;
+			default:
+				break;
+		}
 		
-		if (target.getAbility() == Ability.THICKFAT && (move.getType() == Type.FIRE) || move.getType() == Type.ICE) {
-			damage *= 0.5;
-		}
-						
-		if (move.getMove() == Moves.ENDEAVOR) {			
-			if (target.getHP() < attacker.getHP()) damage = 0;			
-			else damage = target.getHP() - attacker.getHP();			
-		}
-		else if (move.getMove() == Moves.DRAGONRAGE) {
-			damage = 40;
-		}
-		else if (move.getMove() == Moves.SEISMICTOSS) {
-			damage = target.getLevel();
+		switch (target.getAbility()) {
+			case FLASHFIRE:
+				if (move.getType() == Type.FIRE) damage = 0;			
+				break;
+			case LEVITATE:
+				if (move.getType() == Type.GROUND) damage = 0; 				
+				break;
+			case SOUNDPROOF:
+				if (soundMoves.contains(move.getMove())) damage = 0;				
+				break;
+			case THICKFAT:
+				if (move.getType() == Type.FIRE || move.getType() == Type.ICE) damage *= 0.5;				
+				break;
+			default:
+				break;
 		}
 		
-		if (target.getAbility() == Ability.LEVITATE && move.getType() == Type.GROUND) {
-			damage = 0; 
-		}
-		else if (target.getAbility() == Ability.SOUNDPROOF && soundMoves.contains(move.getMove())) {
-			damage = 0;
-		}
-						
 		return damage;
 	}
  			
