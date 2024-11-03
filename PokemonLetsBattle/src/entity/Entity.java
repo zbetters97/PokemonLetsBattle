@@ -455,7 +455,7 @@ public class Entity {
 				battleIconTimer++;
 				if (battleIconTimer == 1) {
 					gp.stopMusic();
-					gp.startMusic(0, gp.se.getFile(0, name));	
+					gp.startMusic(0, gp.se.getFile(0, "May"));	
 				}
 				else if (battleIconTimer > 60) {
 					battleFound = true;
