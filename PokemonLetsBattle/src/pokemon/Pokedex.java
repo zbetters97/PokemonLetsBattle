@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 import application.GamePanel;
 import moves.*;
 import properties.*;
-import properties.abilities.*;
+
 
 /*** POKEDEX ENUM CLASS ***/
 public enum Pokedex {	
@@ -20,9 +20,8 @@ public enum Pokedex {
 	/** EXP & EV REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield_in_Generation_IV **/
 	/** XP GROWTH REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_experience_type **/	
 	/** CATCH RATE REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pokémon_by_catch_rate **/
-	
-	
-	BULBASAUR ("Bulbasaur", 1, Type.GRASS, new Overgrow(), 45, 49, 49, 65, 65, 45, 16, 64, 3, 1, 45,
+		
+	BULBASAUR ("Bulbasaur", 1, Type.GRASS, Ability.OVERGROW, 45, 49, 49, 65, 65, 45, 16, 64, 3, 1, 45,
 			Map.ofEntries(
 					Map.entry(3, Moves.GROWL),
 					Map.entry(7, Moves.LEECHSEED),
@@ -36,7 +35,7 @@ public enum Pokedex {
 					Map.entry(27, Moves.DOUBLEEDGE),
 					Map.entry(37, Moves.SEEDBOMB)
 			)),
-	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), new Overgrow(), 60, 62, 63, 80, 80, 60, 32, 141, 3, 2, 45, 
+	IVYSAUR ("Ivysaur", 2, Arrays.asList(Type.GRASS, Type.POISON), Ability.OVERGROW, 60, 62, 63, 80, 80, 60, 32, 141, 3, 2, 45, 
 			Map.ofEntries(					
 					Map.entry(3, Moves.GROWL),
 					Map.entry(7, Moves.LEECHSEED),
@@ -49,7 +48,7 @@ public enum Pokedex {
 					Map.entry(31, Moves.DOUBLEEDGE),
 					Map.entry(44, Moves.SOLARBEAM)
 			)),
-	VENUSAUR ("Venusaur", 3, Arrays.asList(Type.GRASS, Type.POISON), new Overgrow(), 80, 82, 83, 100, 100, 80, -1, 208, 3, 3, 45,
+	VENUSAUR ("Venusaur", 3, Arrays.asList(Type.GRASS, Type.POISON), Ability.OVERGROW, 80, 82, 83, 100, 100, 80, -1, 208, 3, 3, 45,
 			Map.ofEntries(					
 					Map.entry(3, Moves.GROWL),
 					Map.entry(7, Moves.LEECHSEED),
@@ -65,7 +64,7 @@ public enum Pokedex {
 					Map.entry(37, Moves.SEEDBOMB),
 					Map.entry(53, Moves.SOLARBEAM)
 			)),
-	CHARMANDER ("Charmander", 4, Type.FIRE, new Blaze(), 39, 52, 43, 60, 50, 65, 16, 65, 3, 1, 45,
+	CHARMANDER ("Charmander", 4, Type.FIRE, Ability.BLAZE, 39, 52, 43, 60, 50, 65, 16, 65, 3, 1, 45,
 			Map.ofEntries(
 					Map.entry(7, Moves.EMBER),
 					Map.entry(10, Moves.SMOKESCREEN),
@@ -76,7 +75,7 @@ public enum Pokedex {
 					Map.entry(34, Moves.FLAMETHROWER),
 					Map.entry(37, Moves.FIRESPIN)
 			)),
-	CHARMELEON ("Charmeleon", 5, Type.FIRE, new Blaze(), 58, 64, 58, 80, 65, 80, 36, 142, 3, 2, 45,
+	CHARMELEON ("Charmeleon", 5, Type.FIRE, Ability.BLAZE, 58, 64, 58, 80, 65, 80, 36, 142, 3, 2, 45,
 			Map.ofEntries(
 					Map.entry(7, Moves.EMBER),
 					Map.entry(10, Moves.SMOKESCREEN),
@@ -87,7 +86,7 @@ public enum Pokedex {
 					Map.entry(39, Moves.FLAMETHROWER),
 					Map.entry(43, Moves.FIRESPIN)
 			)),
-	CHARIZARD ("Charizard", 6, Arrays.asList(Type.FIRE, Type.FLYING), new Blaze(), 78, 84, 78, 109, 85, 100, -1, 209, 3, 3, 45,
+	CHARIZARD ("Charizard", 6, Arrays.asList(Type.FIRE, Type.FLYING), Ability.BLAZE, 78, 84, 78, 109, 85, 100, -1, 209, 3, 3, 45,
 			Map.ofEntries(
 					Map.entry(7, Moves.EMBER),
 					Map.entry(10, Moves.SMOKESCREEN),
@@ -101,7 +100,7 @@ public enum Pokedex {
 					Map.entry(59, Moves.HEATWAVE),
 					Map.entry(66, Moves.FLAREBLITZ)
 			)),
-	SQUIRTLE ("Squirtle", 7, Type.WATER, new Torrent(), 44, 48, 65, 50, 64, 43, 16, 66, 3, 1, 45,
+	SQUIRTLE ("Squirtle", 7, Type.WATER, Ability.TORRENT, 44, 48, 65, 50, 64, 43, 16, 66, 3, 1, 45,
 			Map.ofEntries(
 					Map.entry(4, Moves.TAILWHIP),
 					Map.entry(7, Moves.BUBBLE),
@@ -116,7 +115,7 @@ public enum Pokedex {
 					Map.entry(34, Moves.RAINDANCE),
 					Map.entry(37, Moves.HYDROPUMP)
 			)),
-	WARTORTLE ("Wartortle", 8, Type.WATER, new Torrent(), 59, 63, 80, 65, 80, 58, 36, 143, 3, 2, 45,
+	WARTORTLE ("Wartortle", 8, Type.WATER, Ability.TORRENT, 59, 63, 80, 65, 80, 58, 36, 143, 3, 2, 45,
 			Map.ofEntries(
 					Map.entry(4, Moves.TAILWHIP),
 					Map.entry(7, Moves.BUBBLE),
@@ -131,7 +130,7 @@ public enum Pokedex {
 					Map.entry(40, Moves.RAINDANCE),
 					Map.entry(44, Moves.HYDROPUMP)
 			)),
-	BLASTOISE ("Blastoise", 9, Type.WATER, new Torrent(), 79, 83, 100, 85, 105, 78, -1, 210, 3, 3, 45,
+	BLASTOISE ("Blastoise", 9, Type.WATER, Ability.TORRENT, 79, 83, 100, 85, 105, 78, -1, 210, 3, 3, 45,
 			Map.ofEntries(
 					Map.entry(4, Moves.TAILWHIP),
 					Map.entry(7, Moves.BUBBLE),
@@ -146,7 +145,7 @@ public enum Pokedex {
 					Map.entry(46, Moves.RAINDANCE),
 					Map.entry(53, Moves.HYDROPUMP)
 			)),
-	PIKACHU ("Pikachu", 25, Type.ELECTRIC, new Static(), 55, 55, 40, 50, 50, 90, 30, 82, 0, 2, 190,
+	PIKACHU ("Pikachu", 25, Type.ELECTRIC, Ability.STATIC, 55, 55, 40, 50, 50, 90, 30, 82, 0, 2, 190,
 			Map.ofEntries(
 					Map.entry(5, Moves.TAILWHIP),
 					Map.entry(10, Moves.THUNDERWAVE),
@@ -158,8 +157,8 @@ public enum Pokedex {
 					Map.entry(37, Moves.DISCHARGE),
 					Map.entry(45, Moves.THUNDER)
 			)),
-	RAICHU ("Raichu", 26, Type.ELECTRIC, new Static(), 60, 90, 55, 90, 80, 110, -1, 122, 0, 3, 75, null),
-	ZUBAT ("Zubat", 41, Arrays.asList(Type.FLYING, Type.POISON), new InnerFocus(), 40, 45, 35, 30, 40, 55, 22, 54, 0, 1, 255, 
+	RAICHU ("Raichu", 26, Type.ELECTRIC, Ability.STATIC, 60, 90, 55, 90, 80, 110, -1, 122, 0, 3, 75, null),
+	ZUBAT ("Zubat", 41, Arrays.asList(Type.FLYING, Type.POISON), Ability.INNERFOCUS, 40, 45, 35, 30, 40, 55, 22, 54, 0, 1, 255, 
 			Map.ofEntries(
 					Map.entry(5, Moves.SUPERSONIC),
 					Map.entry(9, Moves.ASTONISH),
@@ -173,7 +172,7 @@ public enum Pokedex {
 					Map.entry(41, Moves.AIRSLASH)
 					
 			)),
-	GOLBAT ("Golbat", 42, Arrays.asList(Type.FLYING, Type.POISON), new InnerFocus(), 75, 80, 70, 65, 75, 90, 40, 171, 0, 2, 90, 
+	GOLBAT ("Golbat", 42, Arrays.asList(Type.FLYING, Type.POISON), Ability.INNERFOCUS, 75, 80, 70, 65, 75, 90, 40, 171, 0, 2, 90, 
 			Map.ofEntries(
 					Map.entry(5, Moves.SUPERSONIC),
 					Map.entry(9, Moves.ASTONISH),
@@ -187,7 +186,7 @@ public enum Pokedex {
 					Map.entry(51, Moves.AIRSLASH)
 					
 			)),
-	GROWLITHE ("Growlithe", 58, Type.FIRE, new FlashFire(), 55, 70, 45, 70, 50, 60, 26, 91, 5, 1, 190, 
+	GROWLITHE ("Growlithe", 58, Type.FIRE, Ability.FLASHFIRE, 55, 70, 45, 70, 50, 60, 26, 91, 5, 1, 190, 
 			Map.ofEntries(
 					Map.entry(6, Moves.EMBER),
 					Map.entry(9, Moves.LEER),
@@ -203,12 +202,12 @@ public enum Pokedex {
 					Map.entry(48, Moves.FLAREBLITZ)
 					
 			)),
-	ARCANINE ("Arcanine", 59, Type.FIRE, new FlashFire(), 90, 110, 80, 100, 80, 95, -1, 213, 5, 2, 75, 
+	ARCANINE ("Arcanine", 59, Type.FIRE, Ability.FLASHFIRE, 90, 110, 80, 100, 80, 95, -1, 213, 5, 2, 75, 
 			Map.ofEntries(
 					Map.entry(39, Moves.EXTREMESPEED)					
 			)),
-	ABRA ("Abra", 63, Type.PSYCHIC, new InnerFocus(), 25, 20, 15, 105, 55, 90, 16, 75, 3, 1, 200, null),
-	KADABRA ("Kadabra", 64, Type.PSYCHIC, new InnerFocus(), 40, 35, 30, 120, 70, 105, 36, 145, 3, 2, 100,
+	ABRA ("Abra", 63, Type.PSYCHIC, Ability.INNERFOCUS, 25, 20, 15, 105, 55, 90, 16, 75, 3, 1, 200, null),
+	KADABRA ("Kadabra", 64, Type.PSYCHIC, Ability.INNERFOCUS, 40, 35, 30, 120, 70, 105, 36, 145, 3, 2, 100,
 			Map.ofEntries(
 					Map.entry(16, Moves.CONFUSION),
 					Map.entry(24, Moves.PSYBEAM),
@@ -216,7 +215,7 @@ public enum Pokedex {
 					Map.entry(34, Moves.PSYCHOCUT),
 					Map.entry(40, Moves.PSYCHIC)
 			)),
-	ALAKAZAM ("Alakazam", 65, Type.PSYCHIC, new InnerFocus(), 55, 50, 45, 135, 95, 120, -1, 186, 3, 3, 50,
+	ALAKAZAM ("Alakazam", 65, Type.PSYCHIC, Ability.INNERFOCUS, 55, 50, 45, 135, 95, 120, -1, 186, 3, 3, 50,
 			Map.ofEntries(
 					Map.entry(16, Moves.CONFUSION),
 					Map.entry(24, Moves.PSYBEAM),
@@ -225,7 +224,7 @@ public enum Pokedex {
 					Map.entry(36, Moves.CALMMIND),
 					Map.entry(40, Moves.PSYCHIC)
 			)),
-	MACHOP ("Machop", 66, Type.FIGHTING, new Guts(), 70, 80, 50, 35, 35, 35, 28, 75, 3, 1, 180,
+	MACHOP ("Machop", 66, Type.FIGHTING, Ability.GUTS, 70, 80, 50, 35, 35, 35, 28, 75, 3, 1, 180,
 			Map.ofEntries(
 					Map.entry(10, Moves.KARATECHOP),
 					Map.entry(19, Moves.SEISMICTOSS),
@@ -237,7 +236,7 @@ public enum Pokedex {
 					Map.entry(43, Moves.SCARYFACE),
 					Map.entry(46, Moves.DYNAMICPUNCH)
 			)),
-	MACHOKE ("Machoke", 67, Type.FIGHTING, new Guts(), 80, 100, 70, 50, 60, 45, 40, 146, 3, 2, 90,
+	MACHOKE ("Machoke", 67, Type.FIGHTING, Ability.GUTS, 80, 100, 70, 50, 60, 45, 40, 146, 3, 2, 90,
 			Map.ofEntries(
 					Map.entry(10, Moves.KARATECHOP),
 					Map.entry(19, Moves.SEISMICTOSS),
@@ -249,7 +248,7 @@ public enum Pokedex {
 					Map.entry(44, Moves.SCARYFACE),
 					Map.entry(51, Moves.DYNAMICPUNCH)
 			)),
-	MACHAMP ("Machamp", 68, Type.FIGHTING, new Guts(), 90, 130, 80, 65, 85, 55, -1, 193, 3, 3, 45,
+	MACHAMP ("Machamp", 68, Type.FIGHTING, Ability.GUTS, 90, 130, 80, 65, 85, 55, -1, 193, 3, 3, 45,
 			Map.ofEntries(
 					Map.entry(10, Moves.KARATECHOP),
 					Map.entry(19, Moves.SEISMICTOSS),
@@ -261,7 +260,7 @@ public enum Pokedex {
 					Map.entry(44, Moves.SCARYFACE),
 					Map.entry(51, Moves.DYNAMICPUNCH)
 			)),
-	GEODUDE ("Geodude", 74, Arrays.asList(Type.ROCK, Type.GROUND), new RockHead(), 40, 80, 100, 30, 30, 20, 25, 73, 3, 1, 255,
+	GEODUDE ("Geodude", 74, Arrays.asList(Type.ROCK, Type.GROUND), Ability.ROCKHEAD, 40, 80, 100, 30, 30, 20, 25, 73, 3, 1, 255,
 			Map.ofEntries(
 					Map.entry(8, Moves.ROCKPOLISH),
 					Map.entry(11, Moves.ROCKTHROW),
@@ -274,7 +273,7 @@ public enum Pokedex {
 					Map.entry(36, Moves.DOUBLEEDGE),
 					Map.entry(39, Moves.STONEEDGE)
 			)),
-	GRAVELER ("Graveler", 75, Arrays.asList(Type.ROCK, Type.GROUND), new RockHead(), 55, 95, 115, 45, 45, 35, 40, 134, 3, 2, 120,
+	GRAVELER ("Graveler", 75, Arrays.asList(Type.ROCK, Type.GROUND), Ability.ROCKHEAD, 55, 95, 115, 45, 45, 35, 40, 134, 3, 2, 120,
 			Map.ofEntries(
 					Map.entry(8, Moves.ROCKPOLISH),
 					Map.entry(11, Moves.ROCKTHROW),
@@ -287,7 +286,7 @@ public enum Pokedex {
 					Map.entry(44, Moves.DOUBLEEDGE),
 					Map.entry(49, Moves.STONEEDGE)
 			)),
-	GOLEM ("Golem", 76, Arrays.asList(Type.ROCK, Type.GROUND), new Levitate(), 80, 120, 130, 55, 65, 45, -1, 177, 3, 3, 45,
+	GOLEM ("Golem", 76, Arrays.asList(Type.ROCK, Type.GROUND), Ability.LEVITATE, 80, 120, 130, 55, 65, 45, -1, 177, 3, 3, 45,
 			Map.ofEntries(
 					Map.entry(8, Moves.ROCKPOLISH),
 					Map.entry(11, Moves.ROCKTHROW),
@@ -300,7 +299,7 @@ public enum Pokedex {
 					Map.entry(44, Moves.DOUBLEEDGE),
 					Map.entry(49, Moves.STONEEDGE)
 			)),
-	PONYTA ("Ponyta", 77, Type.FIRE, new FlashFire(), 50, 85, 55, 65, 65, 90, 45, 152, 0, 1, 190,
+	PONYTA ("Ponyta", 77, Type.FIRE, Ability.FLASHFIRE, 50, 85, 55, 65, 65, 90, 45, 152, 0, 1, 190,
 			Map.ofEntries(
 					Map.entry(7, Moves.GROWL),
 					Map.entry(10, Moves.TAILWHIP),
@@ -313,7 +312,7 @@ public enum Pokedex {
 					//Map.entry(44, Moves.BOUNCE),
 					Map.entry(48, Moves.FLAREBLITZ)
 			)),
-	RAPIDASH ("Rapidash", 78, Type.FIRE, new FlashFire(), 65, 100, 70, 80, 80, 105, -1, 192, 0, 2, 60,
+	RAPIDASH ("Rapidash", 78, Type.FIRE, Ability.FLASHFIRE, 65, 100, 70, 80, 80, 105, -1, 192, 0, 2, 60,
 			Map.ofEntries(
 					Map.entry(7, Moves.GROWL),
 					Map.entry(10, Moves.TAILWHIP),
@@ -327,7 +326,7 @@ public enum Pokedex {
 					//Map.entry(49, Moves.BOUNCE),
 					Map.entry(58, Moves.FLAREBLITZ)
 			)),
-	GASTLY ("Gastly", 92, Arrays.asList(Type.GHOST, Type.POISON), new Levitate(), 30, 35, 30, 100, 35, 80, 25, 95, 3, 1, 190,
+	GASTLY ("Gastly", 92, Arrays.asList(Type.GHOST, Type.POISON), Ability.LEVITATE, 30, 35, 30, 100, 35, 80, 25, 95, 3, 1, 190,
 			Map.ofEntries(
 					Map.entry(15, Moves.NIGHTSHADE),
 					Map.entry(19, Moves.CONFUSERAY),
@@ -337,7 +336,7 @@ public enum Pokedex {
 					Map.entry(33, Moves.DREAMEATER),
 					Map.entry(36, Moves.DARKPULSE)
 			)),
-	HAUNTER ("Haunter", 93, Arrays.asList(Type.GHOST, Type.POISON), new Levitate(), 45, 50, 45, 115, 55, 96, 40, 126, 3, 2, 90,
+	HAUNTER ("Haunter", 93, Arrays.asList(Type.GHOST, Type.POISON), Ability.LEVITATE, 45, 50, 45, 115, 55, 96, 40, 126, 3, 2, 90,
 			Map.ofEntries(
 					Map.entry(15, Moves.NIGHTSHADE),
 					Map.entry(19, Moves.CONFUSERAY),
@@ -348,7 +347,7 @@ public enum Pokedex {
 					Map.entry(39, Moves.DREAMEATER),
 					Map.entry(44, Moves.DARKPULSE)
 			)),
-	GENGAR ("Gengar", 94, Arrays.asList(Type.GHOST, Type.POISON), new Levitate(), 60, 65, 60, 130, 75, 110, -1, 190, 3, 3, 45,
+	GENGAR ("Gengar", 94, Arrays.asList(Type.GHOST, Type.POISON), Ability.LEVITATE, 60, 65, 60, 130, 75, 110, -1, 190, 3, 3, 45,
 			Map.ofEntries(
 					Map.entry(15, Moves.NIGHTSHADE),
 					Map.entry(19, Moves.CONFUSERAY),
@@ -359,7 +358,7 @@ public enum Pokedex {
 					Map.entry(39, Moves.DREAMEATER),
 					Map.entry(44, Moves.DARKPULSE)
 			)),
-	HORSEA ("Horsea", 116, Type.WATER, new Sniper(), 30, 40, 70, 70, 25, 60, 32, 83, 0, 1, 225,
+	HORSEA ("Horsea", 116, Type.WATER, Ability.SNIPER, 30, 40, 70, 70, 25, 60, 32, 83, 0, 1, 225,
 			Map.ofEntries(
 					Map.entry(4, Moves.SMOKESCREEN),
 					Map.entry(8, Moves.LEER),
@@ -372,7 +371,7 @@ public enum Pokedex {
 					Map.entry(38, Moves.DRAGONDANCE),
 					Map.entry(42, Moves.DRAGONPULSE)
 			)),
-	SEADRA ("Seadra", 117, Type.WATER, new Sniper(), 55, 65, 95, 95, 45, 85, 45, 155, 0, 2, 75,
+	SEADRA ("Seadra", 117, Type.WATER, Ability.SNIPER, 55, 65, 95, 95, 45, 85, 45, 155, 0, 2, 75,
 			Map.ofEntries(
 					Map.entry(4, Moves.SMOKESCREEN),
 					Map.entry(8, Moves.LEER),
@@ -385,12 +384,12 @@ public enum Pokedex {
 					Map.entry(48, Moves.DRAGONDANCE),
 					Map.entry(57, Moves.DRAGONPULSE)
 			)),
-	MAGIKARP ("Magikarp", 129, Type.WATER, new SwiftSwim(), 20, 10, 55, 15, 20, 80, 20, 20, 5, 1, 255,
+	MAGIKARP ("Magikarp", 129, Type.WATER, Ability.SWIFTSWIM, 20, 10, 55, 15, 20, 80, 20, 20, 5, 1, 255,
 			Map.ofEntries(
 					Map.entry(15, Moves.TACKLE),
 					Map.entry(30, Moves.FLAIL)
 			)),
-	GYARADOS ("Gyarados", 130, Arrays.asList(Type.WATER, Type.DRAGON), new Intimidate(), 95, 125, 79, 60, 100, 81, -1, 214, 5, 2, 45,
+	GYARADOS ("Gyarados", 130, Arrays.asList(Type.WATER, Type.DRAGON), Ability.INTIMIDATE, 95, 125, 79, 60, 100, 81, -1, 214, 5, 2, 45,
 			Map.ofEntries(
 					Map.entry(20, Moves.BITE),
 					Map.entry(23, Moves.DRAGONRAGE),
@@ -403,7 +402,7 @@ public enum Pokedex {
 					Map.entry(44, Moves.DRAGONDANCE),
 					Map.entry(47, Moves.HYPERBEAM)
 			)),
-	LAPRAS ("Lapras", 131, Arrays.asList(Type.WATER, Type.ICE), new ShellArmor(), 130, 85, 80, 85, 95, 60, -1, 219, 5, 2, 45,
+	LAPRAS ("Lapras", 131, Arrays.asList(Type.WATER, Type.ICE), Ability.SHELLARMOR, 130, 85, 80, 85, 95, 60, -1, 219, 5, 2, 45,
 			Map.ofEntries(
 					Map.entry(7, Moves.CONFUSERAY),
 					Map.entry(10, Moves.ICESHARD),
@@ -415,7 +414,7 @@ public enum Pokedex {
 					Map.entry(49, Moves.HYDROPUMP),
 					Map.entry(55, Moves.SHEERCOLD)
 			)),
-	SNORLAX ("Snorlax", 143, Type.NORMAL, new ThickFat(), 160, 110, 65, 65, 110, 30, -1, 154, 5, 2, 25,
+	SNORLAX ("Snorlax", 143, Type.NORMAL, Ability.THICKFAT, 160, 110, 65, 65, 110, 30, -1, 154, 5, 2, 25,
 			Map.ofEntries(
 					Map.entry(4, Moves.DEFENSECURL),
 					Map.entry(9, Moves.AMNESIA),
@@ -429,7 +428,7 @@ public enum Pokedex {
 					Map.entry(44, Moves.CRUNCH),
 					Map.entry(49, Moves.GIGAIMPACT)
 			)),
-	MEWTWO ("Mewtwo", 150, Type.PSYCHIC, new Pressure(), 106, 110, 90, 154, 90, 130, -1, 220, 5, 3, 3,
+	MEWTWO ("Mewtwo", 150, Type.PSYCHIC, Ability.PRESSURE, 106, 110, 90, 154, 90, 130, -1, 220, 5, 3, 3,
 			Map.ofEntries(
 					//Map.entry(8, Moves.BARRIER),
 					//Map.entry(15, Moves.SWIFT),
@@ -444,7 +443,7 @@ public enum Pokedex {
 					//Map.entry(93, Moves.SAFEGUARD),
 					//Map.entry(100, Moves.AURASPHERE)
 			)),
-	MEW ("Mew", 151, Type.PSYCHIC, new Synchronize(), 100, 100, 100, 100, 100, 100, -1, 64, 3, 5, 45,
+	MEW ("Mew", 151, Type.PSYCHIC, Ability.SYNCHRONIZE, 100, 100, 100, 100, 100, 100, -1, 64, 3, 5, 45,
 			Map.ofEntries(
 					//Map.entry(10, Moves.MEGAPUNCH),
 					//Map.entry(20, Moves.METRONOME),
@@ -455,7 +454,7 @@ public enum Pokedex {
 					//Map.entry(90, Moves.NASTYPLOT),
 					//Map.entry(100, Moves.AURASPHERE)
 			)),
-	KINGDRA ("Kingdra", 230, Arrays.asList(Type.WATER, Type.DRAGON), new Sniper(), 75, 95, 95, 95, 95, 85, -1, 207, 0, 3, 45,
+	KINGDRA ("Kingdra", 230, Arrays.asList(Type.WATER, Type.DRAGON), Ability.SNIPER, 75, 95, 95, 95, 95, 85, -1, 207, 0, 3, 45,
 			Map.ofEntries(
 					Map.entry(4, Moves.SMOKESCREEN),
 					Map.entry(8, Moves.LEER),
@@ -468,7 +467,7 @@ public enum Pokedex {
 					Map.entry(48, Moves.DRAGONDANCE),
 					Map.entry(57, Moves.DRAGONPULSE)
 			)),
-	RAIKOU ("Raikou", 243, Type.ELECTRIC, new Pressure(), 90, 85, 75, 115, 100, 115, -1, 216, 5, 3, 3,
+	RAIKOU ("Raikou", 243, Type.ELECTRIC, Ability.PRESSURE, 90, 85, 75, 115, 100, 115, -1, 216, 5, 3, 3,
 			Map.ofEntries(
 					Map.entry(8, Moves.THUNDERSHOCK),
 					Map.entry(22, Moves.QUICKATTACK),
@@ -481,7 +480,7 @@ public enum Pokedex {
 					Map.entry(71, Moves.THUNDER),
 					Map.entry(78, Moves.CALMMIND)
 			)),
-	ENTEI ("Entei", 244, Type.FIRE, new Pressure(), 115, 115, 85, 90, 75, 100, -1, 217, 5, 3, 3,
+	ENTEI ("Entei", 244, Type.FIRE, Ability.PRESSURE, 115, 115, 85, 90, 75, 100, -1, 217, 5, 3, 3,
 			Map.ofEntries(
 					Map.entry(8, Moves.EMBER),
 					Map.entry(22, Moves.FIRESPIN),
@@ -494,7 +493,7 @@ public enum Pokedex {
 					Map.entry(71, Moves.FIREBLAST),
 					Map.entry(78, Moves.CALMMIND)
 			)),
-	SUICUNE ("Suicune", 245, Type.WATER, new Pressure(), 100, 75, 115, 90, 115, 85, -1, 215, 5, 3, 3,
+	SUICUNE ("Suicune", 245, Type.WATER, Ability.PRESSURE, 100, 75, 115, 90, 115, 85, -1, 215, 5, 3, 3,
 			Map.ofEntries(
 					Map.entry(8, Moves.BUBBLEBEAM),
 					Map.entry(15, Moves.RAINDANCE),
@@ -505,7 +504,7 @@ public enum Pokedex {
 					Map.entry(71, Moves.HYDROPUMP),
 					Map.entry(78, Moves.CALMMIND)
 			)),
-	TREECKO ("Treecko", 252, Type.GRASS, new Overgrow(), 40, 45, 35, 65, 55, 70, 16, 65, 3, 1, 45, 
+	TREECKO ("Treecko", 252, Type.GRASS, Ability.OVERGROW, 40, 45, 35, 65, 55, 70, 16, 65, 3, 1, 45, 
 			Map.ofEntries(
 					Map.entry(6, Moves.ABSORB),
 					Map.entry(11, Moves.QUICKATTACK),
@@ -517,7 +516,7 @@ public enum Pokedex {
 					Map.entry(46, Moves.GIGADRAIN),
 					Map.entry(51, Moves.ENERGYBALL)
 			)),
-	GROVYLE ("Grovyle", 253, Type.GRASS, new Overgrow(), 50, 65, 45, 85, 65, 95, 36, 141, 3, 2, 45, 
+	GROVYLE ("Grovyle", 253, Type.GRASS, Ability.OVERGROW, 50, 65, 45, 85, 65, 95, 36, 141, 3, 2, 45, 
 			Map.ofEntries(
 					Map.entry(6, Moves.ABSORB),
 					Map.entry(11, Moves.QUICKATTACK),
@@ -530,7 +529,7 @@ public enum Pokedex {
 					Map.entry(53, Moves.FALSESWIPE),
 					Map.entry(59, Moves.LEAFSTORM)
 			)),
-	SCEPTILE ("Sceptile", 254, Type.GRASS, new Overgrow(), 70, 85, 65, 105, 85, 120, -1, 208, 3, 3, 45,
+	SCEPTILE ("Sceptile", 254, Type.GRASS, Ability.OVERGROW, 70, 85, 65, 105, 85, 120, -1, 208, 3, 3, 45,
 			Map.ofEntries(
 					Map.entry(6, Moves.ABSORB),
 					Map.entry(11, Moves.QUICKATTACK),
@@ -543,7 +542,7 @@ public enum Pokedex {
 					Map.entry(59, Moves.FALSESWIPE),
 					Map.entry(67, Moves.LEAFSTORM)
 			)),
-	TORCHIC ("Torchic", 255, Type.FIRE, new Blaze(), 45, 60, 40, 70, 50, 45, 16, 65, 3, 1, 45,
+	TORCHIC ("Torchic", 255, Type.FIRE, Ability.BLAZE, 45, 60, 40, 70, 50, 45, 16, 65, 3, 1, 45,
 			Map.ofEntries(
 					Map.entry(10, Moves.EMBER),
 					Map.entry(16, Moves.PECK),
@@ -553,7 +552,7 @@ public enum Pokedex {
 					Map.entry(34, Moves.SLASH),
 					Map.entry(43, Moves.FLAMETHROWER)
 			)),
-	COMBUSKEN ("Combusken", 256, Arrays.asList(Type.FIRE, Type.FIGHTING), new Blaze(), 60, 85, 60, 85, 60, 55, 36, 142, 3, 2, 45,
+	COMBUSKEN ("Combusken", 256, Arrays.asList(Type.FIRE, Type.FIGHTING), Ability.BLAZE, 60, 85, 60, 85, 60, 55, 36, 142, 3, 2, 45,
 			Map.ofEntries(
 					Map.entry(13, Moves.EMBER),
 					Map.entry(16, Moves.DOUBLEKICK),
@@ -565,7 +564,7 @@ public enum Pokedex {
 					Map.entry(50, Moves.SKYUPPERCUT),
 					Map.entry(54, Moves.FLAREBLITZ)
 			)),
-	BLAZIKEN ("Blaziken", 257, Arrays.asList(Type.FIRE, Type.FIGHTING), new Blaze(), 80, 120, 70, 110, 70, 80, -1, 209, 3, 3, 45, 
+	BLAZIKEN ("Blaziken", 257, Arrays.asList(Type.FIRE, Type.FIGHTING), Ability.BLAZE, 80, 120, 70, 110, 70, 80, -1, 209, 3, 3, 45, 
 			Map.ofEntries(
 					Map.entry(13, Moves.EMBER),
 					Map.entry(16, Moves.DOUBLEKICK),
@@ -579,7 +578,7 @@ public enum Pokedex {
 					Map.entry(59, Moves.SKYUPPERCUT),
 					Map.entry(66, Moves.FLAREBLITZ)
 			)),
-	MUDKIP ("Mudkip", 258, Type.WATER, new Torrent(), 50, 70, 50, 50, 50, 40, 16, 65, 3, 1, 45, 
+	MUDKIP ("Mudkip", 258, Type.WATER, Ability.TORRENT, 50, 70, 50, 50, 50, 40, 16, 65, 3, 1, 45, 
 			Map.ofEntries(
 					Map.entry(6, Moves.MUDSLAP),
 					Map.entry(10, Moves.WATERGUN),
@@ -588,7 +587,7 @@ public enum Pokedex {
 					Map.entry(42, Moves.HYDROPUMP),
 					Map.entry(46, Moves.ENDEAVOR)
 			)),
-	MARSHTOMP ("Marshtomp", 259, Arrays.asList(Type.WATER, Type.GROUND), new Torrent(), 70, 85, 70, 60, 70, 50, 36, 143, 3, 2, 45,
+	MARSHTOMP ("Marshtomp", 259, Arrays.asList(Type.WATER, Type.GROUND), Ability.TORRENT, 70, 85, 70, 60, 70, 50, 36, 143, 3, 2, 45,
 			Map.ofEntries(
 					Map.entry(6, Moves.MUDSLAP),
 					Map.entry(10, Moves.WATERGUN),
@@ -600,7 +599,7 @@ public enum Pokedex {
 					Map.entry(46, Moves.EARTHQUAKE),
 					Map.entry(53, Moves.ENDEAVOR)
 			)),	
-	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), new Torrent(), 100, 110, 90, 85, 90, 60, -1, 210, 3, 3, 45,
+	SWAMPERT ("Swampert", 260, Arrays.asList(Type.WATER, Type.GROUND), Ability.TORRENT, 100, 110, 90, 85, 90, 60, -1, 210, 3, 3, 45,
 			Map.ofEntries(
 					Map.entry(6, Moves.MUDSLAP),
 					Map.entry(10, Moves.WATERGUN),
@@ -613,7 +612,7 @@ public enum Pokedex {
 					Map.entry(61, Moves.ENDEAVOR),
 					Map.entry(69, Moves.HAMMERARM)
 			)),
-	POOCHYENA ("Poochyena", 261, Type.DARK, new QuickFeet(), 35, 55, 35, 30, 30, 35, 18, 55, 0, 1, 255, 
+	POOCHYENA ("Poochyena", 261, Type.DARK, Ability.QUICKFEET, 35, 55, 35, 30, 30, 35, 18, 55, 0, 1, 255, 
 			Map.ofEntries(
 					Map.entry(5, Moves.HOWL),
 					Map.entry(9, Moves.SANDATTACK),
@@ -625,7 +624,7 @@ public enum Pokedex {
 					Map.entry(49, Moves.SUCKERPUNCH),
 					Map.entry(53, Moves.CRUNCH)
 			)),
-	MIGHTYENA ("Mightyena", 262, Type.DARK, new QuickFeet(), 70, 90, 70, 60, 60, 70, -1, 128, 0, 2, 127, 
+	MIGHTYENA ("Mightyena", 262, Type.DARK, Ability.QUICKFEET, 70, 90, 70, 60, 60, 70, -1, 128, 0, 2, 127, 
 			Map.ofEntries(
 					Map.entry(5, Moves.HOWL),
 					Map.entry(9, Moves.SANDATTACK),
@@ -636,7 +635,7 @@ public enum Pokedex {
 					Map.entry(52, Moves.TAKEDOWN),
 					Map.entry(62, Moves.SUCKERPUNCH)
 			)),
-	ZIGZAGOON ("Zigzagoon", 264, Type.NORMAL, new QuickFeet(), 38, 30, 41, 30, 41, 60, 25, 60, 0, 1, 255, 
+	ZIGZAGOON ("Zigzagoon", 264, Type.NORMAL, Ability.QUICKFEET, 38, 30, 41, 30, 41, 60, 25, 60, 0, 1, 255, 
 			Map.ofEntries(	
 					Map.entry(5, Moves.TAILWHIP), 
 					Map.entry(9, Moves.HEADBUTT),
@@ -645,7 +644,7 @@ public enum Pokedex {
 					Map.entry(37, Moves.REST)
 					//Map.entry(45, Moves.FLING)
 			)),	
-	LINOONE ("Linoone", 265, Type.NORMAL, new QuickFeet(), 78, 70, 61, 50, 61, 100, -1, 128, 0, 2, 264, 
+	LINOONE ("Linoone", 265, Type.NORMAL, Ability.QUICKFEET, 78, 70, 61, 50, 61, 100, -1, 128, 0, 2, 264, 
 			Map.ofEntries(	
 					Map.entry(5, Moves.TAILWHIP), 
 					Map.entry(9, Moves.HEADBUTT),
@@ -654,7 +653,7 @@ public enum Pokedex {
 					Map.entry(47, Moves.REST)
 					//Map.entry(59, Moves.FLING)
 			)),	
-	WHISMUR ("Whismur", 293, Type.NORMAL, new SoundProof(), 64, 51, 23, 51, 23, 28, 20, 68, 3, 1, 190,
+	WHISMUR ("Whismur", 293, Type.NORMAL, Ability.SOUNDPROOF, 64, 51, 23, 51, 23, 28, 20, 68, 3, 1, 190,
 			Map.ofEntries(
 					Map.entry(11, Moves.ASTONISH),
 					Map.entry(15, Moves.HOWL),
@@ -665,7 +664,7 @@ public enum Pokedex {
 					Map.entry(42, Moves.SLEEPTALK),
 					Map.entry(45, Moves.HYPERVOICE)
 			)),
-	LOUDRED ("Loudred", 294, Type.NORMAL, new SoundProof(), 84, 71, 43, 71, 43, 48, 40, 126, 3, 2, 120,
+	LOUDRED ("Loudred", 294, Type.NORMAL, Ability.SOUNDPROOF, 84, 71, 43, 71, 43, 48, 40, 126, 3, 2, 120,
 			Map.ofEntries(
 					Map.entry(11, Moves.ASTONISH),
 					Map.entry(15, Moves.HOWL),
@@ -677,7 +676,7 @@ public enum Pokedex {
 					Map.entry(52, Moves.SLEEPTALK),
 					Map.entry(57, Moves.HYPERVOICE)
 			)),
-	EXPLOUD ("Exploud", 295, Type.NORMAL, new SoundProof(), 104, 91, 63, 91, 63, 68, -1, 184, 3, 3, 45,
+	EXPLOUD ("Exploud", 295, Type.NORMAL, Ability.SOUNDPROOF, 104, 91, 63, 91, 63, 68, -1, 184, 3, 3, 45,
 			Map.ofEntries(
 					Map.entry(11, Moves.ASTONISH),
 					Map.entry(15, Moves.HOWL),
@@ -691,7 +690,7 @@ public enum Pokedex {
 					Map.entry(63, Moves.HYPERVOICE),
 					Map.entry(71, Moves.HYPERBEAM)
 			)),
-	SPHEAL("Spheal", 363, Arrays.asList(Type.ICE, Type.WATER), new ThickFat(), 70, 40, 50, 55, 50, 25, 32, 75, 3, 1, 255,
+	SPHEAL("Spheal", 363, Arrays.asList(Type.ICE, Type.WATER), Ability.THICKFAT, 70, 40, 50, 55, 50, 25, 32, 75, 3, 1, 255,
 			Map.ofEntries(
 					Map.entry(19, Moves.BODYSLAM),
 					Map.entry(25, Moves.AURORABEAM),
@@ -701,7 +700,7 @@ public enum Pokedex {
 					Map.entry(43, Moves.BLIZZARD),
 					Map.entry(49, Moves.SHEERCOLD)
 			)),
-	SEALEO("Sealeo", 364, Arrays.asList(Type.ICE, Type.WATER), new ThickFat(), 90, 60, 70, 75, 70, 45, 44, 128, 3, 2, 120, 
+	SEALEO("Sealeo", 364, Arrays.asList(Type.ICE, Type.WATER), Ability.THICKFAT, 90, 60, 70, 75, 70, 45, 44, 128, 3, 2, 120, 
 			Map.ofEntries(
 					Map.entry(19, Moves.BODYSLAM),
 					Map.entry(25, Moves.AURORABEAM),
@@ -712,7 +711,7 @@ public enum Pokedex {
 					Map.entry(47, Moves.BLIZZARD),
 					Map.entry(55, Moves.SHEERCOLD)
 			)),
-	WALREIN("Walrein", 365, Arrays.asList(Type.ICE, Type.WATER), new ThickFat(), 110, 80, 90, 95, 90, 65, -1, 192, 3, 3, 45, 
+	WALREIN("Walrein", 365, Arrays.asList(Type.ICE, Type.WATER), Ability.THICKFAT, 110, 80, 90, 95, 90, 65, -1, 192, 3, 3, 45, 
 			Map.ofEntries(
 					Map.entry(19, Moves.BODYSLAM),
 					Map.entry(25, Moves.AURORABEAM),
@@ -724,7 +723,7 @@ public enum Pokedex {
 					Map.entry(52, Moves.BLIZZARD),
 					Map.entry(65, Moves.SHEERCOLD)
 			)),
-	KYOGRE ("Kyogre", 382, Type.WATER, new Drizzle(), 100, 100, 90, 150, 140, 90, -1, 218, 5, 3, 3,
+	KYOGRE ("Kyogre", 382, Type.WATER, Ability.DRIZZLE, 100, 100, 90, 150, 140, 90, -1, 218, 5, 3, 3,
 			Map.ofEntries(
 					Map.entry(5, Moves.SCARYFACE),
 					Map.entry(15, Moves.ANCIENTPOWER),
@@ -738,7 +737,7 @@ public enum Pokedex {
 					Map.entry(75, Moves.AQUATAIL),
 					Map.entry(80, Moves.WATERSPOUT)
 			)), 
-	GROUDON ("Groudon", 383, Type.GROUND, new Drought(), 100, 150, 140, 100, 90, 90, -1, 218, 5, 3, 3,
+	GROUDON ("Groudon", 383, Type.GROUND, Ability.DROUGHT, 100, 150, 140, 100, 90, 90, -1, 218, 5, 3, 3,
 			Map.ofEntries(
 					Map.entry(5, Moves.SCARYFACE),
 					Map.entry(15, Moves.ANCIENTPOWER),
@@ -752,7 +751,7 @@ public enum Pokedex {
 					//Map.entry(75, Moves.EARTHPOWER),
 					//Map.entry(80, Moves.ERUPTION)
 			)),
-	RAYQUAZA ("Rayquaza", 384, Arrays.asList(Type.DRAGON, Type.FLYING), new AirLock(), 105, 150, 90, 150, 90, 95, -1, 220, 5, 3, 3,
+	RAYQUAZA ("Rayquaza", 384, Arrays.asList(Type.DRAGON, Type.FLYING), Ability.AIRLOCK, 105, 150, 90, 150, 90, 95, -1, 220, 5, 3, 3,
 			Map.ofEntries(
 					Map.entry(5, Moves.SCARYFACE),
 					Map.entry(15, Moves.ANCIENTPOWER),

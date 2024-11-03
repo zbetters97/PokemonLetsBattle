@@ -19,9 +19,9 @@ import moves.Move.MoveType;
 import moves.Moves;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Protection;
+import properties.Ability;
 import properties.Status;
 import properties.Type;
-import properties.abilities.*;
 
 public class BattleManager extends Thread {
 	
@@ -187,14 +187,63 @@ public class BattleManager extends Thread {
 		gp.playSE(gp.cry_SE, fighter[0].toString());	
 		typeDialogue("Go, " + fighter[0].getName() + "!");					
 		pause(100);
-		
-		getWeatherAbility();	
+								
+		getFighterAbility();	
 		checkWeatherCondition();
+		
+		if (weather == Weather.RAIN) {
+			if (fighter[0].getAbility() == Ability.SWIFTSWIM) {
+				setAttribute(fighter[0], Arrays.asList("speed"), 2);
+			}
+			if (fighter[1].getAbility() == Ability.SWIFTSWIM) {
+				setAttribute(fighter[1], Arrays.asList("speed"), 2);
+			}
+		}
 		
 		running = false;		
 		
 		gp.ui.battleState = gp.ui.battle_Options;
 	}	
+ 	private void getFighterAbility() throws InterruptedException {
+ 		
+ 		if (fighter[0].getAbility() == Ability.INTIMIDATE) {
+			setAttribute(fighter[1], Arrays.asList("attack"), -1);
+		}
+		if (fighter[1].getAbility() == Ability.INTIMIDATE) {
+			setAttribute(fighter[0], Arrays.asList("attack"), -1);
+		}
+		
+		else {
+			if (fighter[0].getAbility().getWeather() != null &&	fighter[1].getAbility().getWeather() != null) {
+				
+				// if fighter 1 is faster
+				if (fighter[0].getSpeed() > fighter[1].getSpeed()) {
+					weather = fighter[1].getAbility().getWeather();
+				}
+				// if fighter 2 is faster
+				else if (fighter[0].getSpeed() < fighter[1].getSpeed()) {
+					weather = fighter[0].getAbility().getWeather();
+				}
+				// if both fighters have equal speed, coin flip decides
+				else {
+					Random r = new Random();					
+					if (r.nextFloat() <= ((float) 1 / 2)) {
+						weather = fighter[1].getAbility().getWeather();
+					}
+					else {
+						weather = fighter[0].getAbility().getWeather();
+					}
+				}					
+			}
+			else if (fighter[0].getAbility().getWeather() != null) {									
+				weather = fighter[0].getAbility().getWeather();
+			}
+			else if (fighter[1].getAbility().getWeather() != null) {									
+				weather = fighter[1].getAbility().getWeather();
+			}	
+		}
+ 	}
+ 	
 	private void getOtherFighters() {
 		
 		for (Pokemon p : gp.player.pokeParty) {
@@ -204,40 +253,6 @@ public class BattleManager extends Thread {
 				otherFighters.add(p);
 			}
 		}
-	}
-		
-	// CHANGE WEATHER BASED ON FIGHTER ABILITY
-	private void getWeatherAbility() {
-			
-		if (fighter[0].getAbility().getCategory() == Ability.Category.WEATHER &&
-				fighter[1].getAbility().getCategory() == Ability.Category.WEATHER) {
-			
-			// if fighter 1 is faster
-			if (fighter[0].getSpeed() > fighter[1].getSpeed()) {
-				weather = Weather.valueOf(fighter[1].getAbility().getAttribute());
-			}
-			// if fighter 2 is faster
-			else if (fighter[0].getSpeed() < fighter[1].getSpeed()) {
-				weather = Weather.valueOf(fighter[0].getAbility().getAttribute());
-			}
-			// if both fighters have equal speed, coin flip decides
-			else {
-				Random r = new Random();					
-				if (r.nextFloat() <= ((float) 1 / 2)) {
-					weather = Weather.valueOf(fighter[1].getAbility().getAttribute());
-				}
-				else {
-					weather = Weather.valueOf(fighter[0].getAbility().getAttribute());
-				}
-			}					
-		}
-		else if (fighter[0].getAbility().getCategory() == Ability.Category.WEATHER) {									
-			weather = Weather.valueOf(fighter[0].getAbility().getAttribute());
-		}
-		else if (fighter[1].getAbility().getCategory() == Ability.Category.WEATHER) {									
-			weather = Weather.valueOf(fighter[1].getAbility().getAttribute());
-		}
-		
 	}
 	
 	// SWAP POKEMON METHODS
@@ -318,6 +333,8 @@ public class BattleManager extends Thread {
 			
 			fightStage = fight_Start;
 		}		
+		
+		getFighterAbility();
 	}
 	
 	// SWAP FIGHTER METHODS
@@ -628,15 +645,7 @@ public class BattleManager extends Thread {
 			if (validMove(atk, trg, atkMove)) {
 				
 				atkMove.resetMoveTurns();
-				
-				// decrease atkMove pp
-				if (trg.getAbility().getCategory() == Ability.Category.PP) {
-					atkMove.setPP(atkMove.getPP() - (int) trg.getAbility().getFactor());
-				}
-				else {				
-					atkMove.setPP(atkMove.getPP() - 1);
-				}						
-				
+				atkMove.setPP(atkMove.getPP() - 1);								
 				attack(atk, trg, atkMove);		
 			}
 			else {
@@ -715,6 +724,10 @@ public class BattleManager extends Thread {
 					damageMove(atk, trg, move);
 					break;
 			}		
+			
+			if (trg.getAbility() == Ability.PRESSURE) {
+				move.setPP(move.getPP() - 1);
+			}
 		}
 		else {
 			typeDialogue("The attack missed!");
@@ -723,7 +736,7 @@ public class BattleManager extends Thread {
 	
 	// STATUS MOVE
 	private void statusMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {		
-		setStatus(trg, move.getEffect());
+		setStatus(trg, move.getEffect());	
 	}
 	private void setStatus(Pokemon pkm, Status status) throws InterruptedException {
 		
@@ -735,6 +748,15 @@ public class BattleManager extends Thread {
 				
 				gp.playSE(gp.battle_SE, status.getStatus());
 				typeDialogue(pkm.getName() + status.printCondition());
+				
+				if (pkm.getAbility() == Ability.QUICKFEET && !pkm.getAbility().isActive()) {
+					pkm.getAbility().setActive(true);
+					setAttribute(pkm, Arrays.asList("speed"), 2);
+				}
+				else if (pkm.getAbility() == Ability.GUTS && !pkm.getAbility().isActive()) {
+					pkm.getAbility().setActive(true);
+					setAttribute(pkm, Arrays.asList("attack"), 2);
+				}
 			}
 			else {				
 				typeDialogue(pkm.getName() + " is\nalready " + 
@@ -812,7 +834,7 @@ public class BattleManager extends Thread {
 				break;
 			case RAIN:
 				gp.playSE(gp.battle_SE, "rain");
-				typeDialogue("Rain started to fall!");	
+				typeDialogue("Rain started to fall!");									
 				break;
 			case HAIL:
 				gp.playSE(gp.battle_SE, "hail");
@@ -949,9 +971,7 @@ public class BattleManager extends Thread {
 			
 			decreaseHP(trg, damage);		
 			
-			if (crit == 1.5) {
-				typeDialogue("A critical hit!");
-			}
+			if (crit >= 1.5) typeDialogue("A critical hit!");
 			
 			if (hitSE.equals("hit-super")) typeDialogue("It's super effective!");			
 			else if (hitSE.equals("hit-weak")) typeDialogue("It's not very effective...");			
@@ -982,22 +1002,16 @@ public class BattleManager extends Thread {
 		/** CRITICAL HIT REFERENCE: https://www.serebii.net/games/criticalhits.shtml (GEN II-V) **/
 		
 		int chance = 2;
-		double impact  = 1.5;
-						
+		double damage  = 1.5;
+		if (atk.getAbility() == Ability.SNIPER) damage = 3.0;
+		if (trg.getAbility() == Ability.SHELLARMOR) damage = 1.0;
+		
 		if (move.getCrit() == 1) {
 			chance = 4;
 		}
-		
-		if (trg.getAbility().getCategory() == Ability.Category.CRITICAL) {
-			chance *= trg.getAbility().getFactor();
-		}
-		
-		if (atk.getAbility().getCategory() == Ability.Category.CRITICAL) {
-			impact = atk.getAbility().getFactor();
-		}
-		
+						
 		Random r = new Random();		
-		return (r.nextFloat() <= ((float) chance / 25)) ? impact : 1.0;					
+		return (r.nextFloat() <= ((float) chance / 25)) ? damage : 1.0;					
 	}
 	
 	private void absorbHP(Pokemon atk, Pokemon trg, Move move, int damage) throws InterruptedException {
@@ -1030,21 +1044,16 @@ public class BattleManager extends Thread {
 		if (move.getMove() == Moves.EXPLOSION || move.getMove() == Moves.SELFDESTRUCT) {			
 			decreaseHP(pkm, pkm.getHP());
 			typeDialogue(pkm.getName() + " was hit\nwith recoil damage!");									
-		}		
-		else if (move.getSelfInflict() != 0.0) {	
+		}					
+		else if (move.getSelfInflict() != 0.0 && pkm.getAbility() != Ability.ROCKHEAD) {	
 			
 			int recoilDamage = (int)(Math.ceil(damage * move.getSelfInflict()));	
-
-			if (pkm.getAbility().getCategory() == Ability.Category.RECOIL) {
-				recoilDamage *= pkm.getAbility().getFactor();
-			}
-
 			if (recoilDamage > pkm.getHP()) recoilDamage = pkm.getHP();
 			
 			if (recoilDamage > 0) {
 				decreaseHP(pkm, recoilDamage);
 				typeDialogue(pkm.getName() + " was hit\nwith recoil damage!");		
-			}			
+			}					
 		}
 	}
 	private void applyEffect(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
@@ -1085,19 +1094,18 @@ public class BattleManager extends Thread {
 					setStatus(trg, move.getEffect());						
 				}
 			}							
-		}	
-		// ABIITY CAUSES STATUS CONDITION
-		else if (trg.getAbility().getCategory() == Ability.Category.STATUS 
-				&& trg.getAbility().isValid(move)) {
-			
-			setStatus(atk, trg.getAbility().getEffect());
-		}		
+		}
+		
+		if (atk.getStatus() == null && trg.getAbility() == Ability.STATIC && 
+				move.getMType() == MoveType.PHYSICAL && Math.random() < 0.30) {
+			setStatus(atk, Status.PARALYZE);						
+		}
 	}
 	private boolean flinched(Pokemon pkm, Move move) throws InterruptedException {
 		
 		boolean flinched = false;
 		
-		if (move.getFlinch() != 0.0 && pkm.getAbility().getCategory() != Ability.Category.FLINCH) {
+		if (move.getFlinch() != 0.0 && pkm.getAbility() != Ability.INNERFOCUS) {
 			
 			if (new Random().nextDouble() <= move.getFlinch()) {				
 				typeDialogue(pkm.getName() + " flinched!");

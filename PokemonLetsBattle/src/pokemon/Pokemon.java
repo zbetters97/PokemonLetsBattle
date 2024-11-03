@@ -11,7 +11,7 @@ import moves.Moves;
 import properties.Nature;
 import properties.Status;
 import properties.Type;
-import properties.abilities.Ability;
+import properties.Ability;
 
 /*** MOVE CLASS ***/
 public class Pokemon {

@@ -16,13 +16,23 @@ import moves.Moves;
 import moves.Move.MoveType;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Protection;
+import properties.Ability;
 import properties.Type;
-import properties.abilities.Ability;
 
 public final class BattleUtility {
 	
-	private static final List<Moves> digMoves = Arrays.asList(Moves.EARTHQUAKE, Moves.FISSURE, Moves.MAGNITUDE);
-
+	private static final List<Moves> digMoves = Arrays.asList(
+			Moves.EARTHQUAKE, 
+			Moves.FISSURE, 
+			Moves.MAGNITUDE
+	);
+	private static List<Moves> soundMoves = Arrays.asList(
+			Moves.ASTONISH, 
+			Moves.GROWL, 
+			Moves.HYPERBEAM, 
+			Moves.SCREECH,
+			Moves.SUPERSONIC
+	);
 	private static final Map<Integer, Integer> magnitudeTable = Map.ofEntries(
 			Map.entry(4, 5), 
 			Map.entry(5, 10), 
@@ -173,17 +183,6 @@ public final class BattleUtility {
 			
 			double speed1 = fighter1.getSpeed();
 			double speed2 = fighter2.getSpeed();
-			
-			if (fighter1.getAbility().getCategory() == Ability.Category.ATTRIBUTE &&
-					fighter1.getAbility().isValid(fighter1)) {
-				
-				speed1 *= fighter1.getAbility().getFactor();
-			}
-			if (fighter2.getAbility().getCategory() == Ability.Category.ATTRIBUTE &&
-					fighter2.getAbility().isValid(fighter2)) {
-				
-				speed2 *= fighter2.getAbility().getFactor();
-			}
 			
 			// if both moves go first (EX: Quick Attack)
 			if (move1.getGoFirst() && move2.getGoFirst()) {			
@@ -346,15 +345,13 @@ public final class BattleUtility {
 								
 		Random r = new Random();
 		double random = (double) (r.nextInt(100 - 85 + 1) + 85) / 100.0;
-		
-		if (attacker.getAbility().getCategory() == Ability.Category.ATTACK &&
-				attacker.getAbility().isValid(attacker, target, move)) {
-			
-			A *= attacker.getAbility().getFactor();
-		}
-		
+				
 		damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
 			power * (A / D)) / 50)) + 2) * STAB * type * random);
+		
+		if (target.getAbility() == Ability.THICKFAT && (move.getType() == Type.FIRE) || move.getType() == Type.ICE) {
+			damage *= 0.5;
+		}
 						
 		if (move.getMove() == Moves.ENDEAVOR) {			
 			if (target.getHP() < attacker.getHP()) damage = 0;			
@@ -367,10 +364,11 @@ public final class BattleUtility {
 			damage = target.getLevel();
 		}
 		
-		if (target.getAbility().getCategory() == Ability.Category.DEFENSE &&
-				target.getAbility().isValid(attacker, target, move)) {
-			
-			damage *= target.getAbility().getFactor();
+		if (target.getAbility() == Ability.LEVITATE && move.getType() == Type.GROUND) {
+			damage = 0; 
+		}
+		else if (target.getAbility() == Ability.SOUNDPROOF && soundMoves.contains(move.getMove())) {
+			damage = 0;
 		}
 						
 		return damage;
@@ -438,6 +436,31 @@ public final class BattleUtility {
 				if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;
 				break;
 		}		
+		
+		switch (attacker.getAbility()) {
+			case BLAZE:
+				if (move.getType() == Type.FIRE && ((double) attacker.getHP() / (double) attacker.getBHP() <= 0.33)) {
+					power *= 1.5;				
+				}
+				break;
+			case FLASHFIRE:
+				if (attacker.getAbility().isActive()) {
+					power *= 1.5;
+				}
+				break;
+			case OVERGROW:
+				if (move.getType() == Type.GRASS && ((double) attacker.getHP() / (double) attacker.getBHP() <= 0.33)) {
+					power *= 1.5;				
+				}
+				break;
+			case TORRENT:
+				if (move.getType() == Type.WATER && ((double) attacker.getHP() / (double) attacker.getBHP() <= 0.33)) {
+					power *= 1.5;				
+				}
+				break;
+			default:
+				break;
+		}
 		
 		return power;
 	}	
