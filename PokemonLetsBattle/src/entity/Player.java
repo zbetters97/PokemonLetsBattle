@@ -6,11 +6,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import application.GamePanel;
 import entity.collectables.balls.*;
 import entity.collectables.items.*;
-import moves.Moves;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
 
@@ -27,6 +27,8 @@ public class Player extends Entity {
 	public int defaultWorldX;
 	public int defaultWorldY;
 	
+	public ArrayList<Pokedex> personalDex = new ArrayList<>();
+	
 	public boolean repelActive = false;
 	private int repelSteps = 0;
 	private int repelStepsMax = 0;
@@ -38,7 +40,7 @@ public class Player extends Entity {
 	
 	public Player(GamePanel gp) {
 		super(gp);		
-		
+						
 		// PLAYER POSITION LOCKED TO CENTER
 		screenX = gp.screenWidth / 2 - (gp.tileSize / 2); 
 		screenY = gp.screenHeight / 2 - (gp.tileSize / 2);
@@ -61,8 +63,8 @@ public class Player extends Entity {
 	
 	// DEFAULT VALUES
 	public void assignParty() {		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.MEWTWO, 5, new COL_Ball_Poke(gp)));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.RAPIDASH, 16, new COL_Ball_Great(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.BULBASAUR, 5, new COL_Ball_Poke(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.VENUSAUR, 16, new COL_Ball_Great(gp)));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MEWTWO, 36, new COL_Ball_Master(gp)));
 	}
 	public void setDefaultValues() {
@@ -75,6 +77,10 @@ public class Player extends Entity {
 		setDialogue();
 		
 		getRunImage();
+		
+		personalDex.add(pokeParty.get(0).getPokemon());
+		personalDex.add(pokeParty.get(1).getPokemon());
+		personalDex.add(pokeParty.get(2).getPokemon());
 		
 		inventory_keyItems.add(new ITM_EXP_Share(gp));
 		
@@ -113,7 +119,6 @@ public class Player extends Entity {
 		inventory_pokeballs.add(new COL_Ball_Master(gp));
 	}
 	public void setDefaultPosition() {	
-
 		worldX = gp.tileSize * 15;
 		worldY = gp.tileSize * 18;		
 		defaultWorldX = worldX;

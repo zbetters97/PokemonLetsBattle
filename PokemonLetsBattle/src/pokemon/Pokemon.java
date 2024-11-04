@@ -470,7 +470,7 @@ public class Pokemon {
 	/** END ADD NEW MOVE METHOD **/
 	
 	/** GET POKEMON METHODS **/	
- 	public static Pokemon getPokemon(Pokedex poke, int level, Entity capturedBall) {
+	public static Pokemon getPokemon(Pokedex poke, int level, Entity capturedBall) {
 		
 		Pokemon pokemon = null;
 		
@@ -614,6 +614,8 @@ public class Pokemon {
 		
 	public Entity getBall() { return capturedBall; }
 	public void setBall(Entity capturedBall) { this.capturedBall = capturedBall; }
+	
+	public Pokedex getPokemon() { return pokemon; }
 	/** END GETTERS AND SETTERS **/
 	
 	/** GETTERS **/

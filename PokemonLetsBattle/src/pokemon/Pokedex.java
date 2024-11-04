@@ -1124,11 +1124,11 @@ public enum Pokedex {
 	protected boolean canEvolve() { return this.getEvLevel() != -1; }
 			
 	/** GETTERS **/	
-	protected BufferedImage getFrontSprite() { return frontSprite; }
+	public BufferedImage getFrontSprite() { return frontSprite; }
 	protected BufferedImage getBackSprite() { return backSprite; }
 	protected BufferedImage getMenuSprite() { return image1; }
 	public String getName() { return name; }
-	protected int getIndex() {	return index; }	
+	public int getIndex() {	return index; }	
 	protected Type getType() { return type; }
 	protected List<Type> getTypes() { return types; }	
 	protected Ability getAbility() { return ability; }
@@ -1148,6 +1148,20 @@ public enum Pokedex {
 	protected static List<Pokedex> getPokemonList() { return PokemonList; }
 	protected static Map<Pokedex, List<Move>> getMovemap() { return moveMap; }	
 	protected Map<Integer, Moves> getMoveLevelMap() { return moveLevels; }	
+	
+	public static Pokedex getByIndex(int index) {
+		
+		Pokedex pokemon = null;
+		
+		for (Pokedex p : Pokedex.values()) {
+			if (p.getIndex() == index) {
+				pokemon = p;
+				break;
+			}
+		}
+		
+		return pokemon;		
+	}	
 	/** END GETTERS **/
 	
 	// IMAGE MANAGERS

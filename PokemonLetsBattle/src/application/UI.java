@@ -20,6 +20,7 @@ import javax.imageio.ImageIO;
 import entity.Entity;
 import entity.npc.NPC_Nurse;
 import moves.Move;
+import pokemon.Pokedex;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Protection;
 
@@ -47,7 +48,8 @@ public class UI {
 	private Color party_faint = new Color(181,87,71);
 	private Color dialogue_blue = new Color(115,109,127);
 	private Color pause_yellow = new Color(245,170,68);
-		
+	private Color pause_orange = new Color(248,192,88);
+	
 	// DIALOGUE HANDLER	
 	public Entity npc;
 	public String currentDialogue = "";
@@ -76,6 +78,16 @@ public class UI {
 	public Entity partyItem;
 	public boolean partyItemApply = false;
 	private boolean partyItemGive = false;
+	private BufferedImage dex_ball;
+	
+	// BAG VALUES
+	private String bag_Subtitle = "";
+	private int bagStart = 0;
+	public int bagNum = 0;	
+	public String bagDialogue = "";
+	private BufferedImage bag_menu, bag_Image, bag_Tab;
+	private BufferedImage bag_keyItems, bag_items, bag_pokeballs, bag_moves;
+	private BufferedImage bag_tab_1, bag_tab_2, bag_tab_3, bag_tab_4;	
 	
 	// BATTLE VALUES
 	private BufferedImage battle_arena, battle_bkg;
@@ -86,15 +98,6 @@ public class UI {
 	private int hpCounter = 0;
 	public boolean isFighterCaptured = false;
 	public Pokemon evolvePokemon = null;
-	
-	// BAG VALUES
-	private String bag_Subtitle = "";
-	private int bagStart = 0;
-	public int bagNum = 0;	
-	public String bagDialogue = "";
-	private BufferedImage bag_menu, bag_Image, bag_Tab;
-	private BufferedImage bag_keyItems, bag_items, bag_pokeballs, bag_moves;
-	private BufferedImage bag_tab_1, bag_tab_2, bag_tab_3, bag_tab_4;	
 	
 	// FIGHTER X/Y VALUES
 	public int fighter_one_X;
@@ -118,6 +121,7 @@ public class UI {
 	public final int pause_Party = 1;
 	public final int pause_Bag = 2;
 	public final int pause_Options = 3;
+	public final int pause_Dex = 4;
 	
 	// BAG TABS
 	public int bagTab;
@@ -176,6 +180,8 @@ public class UI {
 		bag_items = setup("/ui/bag/bag-items", gp.tileSize * 5, gp.tileSize * 5);
 		bag_pokeballs = setup("/ui/bag/bag-pokeballs", gp.tileSize * 5, gp.tileSize * 5);
 		bag_moves = setup("/ui/bag/bag-moves", gp.tileSize * 5, gp.tileSize * 5);
+		
+		dex_ball = setup("/collectables/battle/ball_poke", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));	
 		
 		fighter_one_startX = gp.tileSize * 14;
 		fighter_two_startX = 0 - gp.tileSize * 3;
@@ -513,6 +519,8 @@ public class UI {
 			case pause_Options:
 				pause_Options();
 				break;
+			case pause_Dex:
+				pause_Dex();
 		}
 	}	
 	private void pause_Main() {
@@ -539,6 +547,10 @@ public class UI {
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
 				gp.keyH.playCursorSE();
+				
+				pauseState = pause_Dex;
+				bagNum = 0;
+				
 				commandNum = 0;
 			}
 		}
@@ -550,8 +562,7 @@ public class UI {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			if (gp.keyH.aPressed) {				
 				gp.keyH.aPressed = false;
-				gp.keyH.playCursorSE();
-				
+				gp.keyH.playCursorSE();				
 				
 				pauseState = pause_Party;
 				partyState = party_Main_Select;
@@ -573,6 +584,7 @@ public class UI {
 				pauseState = pause_Bag;
 				bagState = bag_Main;
 				bagTab = bag_KeyItems;
+				bagNum = 0;
 				
 				commandNum = 0;
 			}
@@ -1005,6 +1017,7 @@ public class UI {
 		for (int i = bagStart; i < bagStart + 9; i++) {
 								
 			if (i < items.size()) {
+												
 				text = items.get(i).name;
 				drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
 				
@@ -2584,6 +2597,125 @@ public class UI {
 		gp.config.saveConfig();
 	}
 	/** END OPTIONS SCREEN **/
+		
+	private void pause_Dex() {
+		
+		g2.setColor(party_green);  
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);	
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		int slotX;
+		int slotY;
+		int slotWidth;
+		int slotHeight;
+		String text;
+		Pokedex p;
+		
+		x = gp.tileSize * 3;
+		y = gp.tileSize * 2;
+		width = (int) (gp.tileSize * 5.8);
+		height = gp.tileSize * 8;		
+		drawSubWindow(x, y, width, height, 15, 5, battle_white, Color.BLACK);
+		
+		x = gp.tileSize * 9;
+		y = gp.tileSize;
+		width = (int) (gp.tileSize * 6.8);
+		height = gp.tileSize * 10;		
+		drawSubWindow(x, y, width, height, 15, 5, pause_orange, Color.BLACK);
+
+		x = (int) (gp.tileSize * 9.8);
+		y = (int) (gp.tileSize * 2.3);
+		slotX = (int) (gp.tileSize * 9.07);
+		slotY = (int) (y - gp.tileSize * 0.8);
+		slotWidth = (int) (gp.tileSize * 6.7);
+		slotHeight = gp.tileSize;
+		for (int i = bagStart; i < bagStart + 10; i++) {
+			
+			if (i < Pokedex.values().length) {
+				
+				p = Pokedex.values()[i];
+				
+				g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35f));
+				if (bagNum == i) {
+					g2.setColor(battle_white);
+					g2.fillRoundRect(slotX, slotY, slotWidth, slotHeight, 15, 15);
+				}
+				
+				int index = p.getIndex();
+				if (gp.player.pokeParty.stream().filter(o -> o.getIndex() == index).findFirst().isPresent()) {
+					g2.drawImage(dex_ball, x - (int) (gp.tileSize * 0.7), y - (int) (gp.tileSize * 0.6), null);
+				}
+				
+				drawText("No", x, y, Color.BLACK, Color.LIGHT_GRAY);
+				
+				g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48f));
+				if (gp.player.personalDex.contains(p)) {
+					text = p.getIndex() + " " + p.toString();			
+					drawText(text, x + (int) (gp.tileSize * 0.6), y, Color.BLACK, Color.LIGHT_GRAY);	
+				}
+				else {
+					g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48f));
+					text = p.getIndex() + " ----------";			
+					drawText(text, x + (int) (gp.tileSize * 0.6), y, Color.BLACK, Color.LIGHT_GRAY);	
+				}
+				
+				y += gp.tileSize * 0.9;
+				slotY += gp.tileSize * 0.9;
+			}
+			else {
+				break;
+			}	
+		}			
+				
+		if (0 < bagStart) {
+			x = (int) (gp.tileSize * 12.5);
+			y = (int) (gp.tileSize * 1.9);
+			drawText("^", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		}
+		
+		if (bagStart + 10 < Pokedex.values().length) {
+			x = (int) (gp.tileSize * 12.5);
+			y = (int) (gp.tileSize * 10.9);
+			drawText("v", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		}
+		
+		p = Pokedex.values()[bagNum];
+		if (gp.player.personalDex.contains(p)) {
+			x = (int) (gp.tileSize * 3.5);
+			y = (int) (gp.tileSize * 3.5);			
+			g2.drawImage(p.getFrontSprite(), x, y, null);	
+		}
+		
+		if (gp.keyH.upPressed) {
+			gp.keyH.upPressed = false;
+			gp.keyH.playCursorSE();
+		
+			if (bagNum > 0)	bagNum--;
+			if (bagStart > 0) bagStart--;
+		}
+		if (gp.keyH.downPressed) {
+			gp.keyH.downPressed = false;
+			gp.keyH.playCursorSE();
+			
+			if (bagNum < Pokedex.values().length - 1) bagNum++;
+			if (bagNum >= bagStart + 10) bagStart++;
+		}				
+		
+		if (gp.keyH.bPressed) {
+			gp.keyH.bPressed = false;
+			gp.keyH.playCursorSE();		
+			
+			bagNum = 0;
+			bagStart = 0;
+			commandNum = 0;
+			pauseState = pause_Main;			
+		}
+	}
+	
+	
 	/** END PAUSE SCREEN **/
 	
 	

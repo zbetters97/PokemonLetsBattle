@@ -17,6 +17,7 @@ import entity.npc.NPC_Red;
 import moves.Move;
 import moves.Move.MoveType;
 import moves.Moves;
+import pokemon.Pokedex;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Protection;
 import properties.Ability;
@@ -200,8 +201,11 @@ public class BattleManager extends Thread {
 			}
 		}
 		
-		running = false;		
+		if (!gp.player.personalDex.contains(fighter[1].getPokemon())) {
+			gp.player.personalDex.add(Pokedex.getByIndex(fighter[1].getIndex()));
+		}
 		
+		running = false;			
 		gp.ui.battleState = gp.ui.battle_Options;
 	}	
  	private void getFighterAbility() throws InterruptedException {
@@ -288,6 +292,10 @@ public class BattleManager extends Thread {
 			
 			newFighter[0] = null;
 			newFighter[1] = null;
+			
+			if (!gp.player.personalDex.contains(fighter[1].getPokemon())) {
+				gp.player.personalDex.add(Pokedex.getByIndex(fighter[1].getIndex()));
+			}
 			
 			running = false;								
 			gp.ui.battleState = gp.ui.battle_Options;														
