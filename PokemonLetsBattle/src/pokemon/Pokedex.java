@@ -190,7 +190,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(6, Moves.EMBER),
 					Map.entry(9, Moves.LEER),
-					Map.entry(14, Moves.ODERSLEUTH),
+					Map.entry(14, Moves.ODORSLEUTH),
 					//Map.entry(20, Moves.FLAMEWHEEL),
 					//Map.entry(25, Moves.REVERSAL),
 					Map.entry(28, Moves.FIREFANG),
@@ -430,29 +430,29 @@ public enum Pokedex {
 			)),
 	MEWTWO ("Mewtwo", 150, Type.PSYCHIC, Ability.PRESSURE, 106, 110, 90, 154, 90, 130, -1, 220, 5, 3, 3,
 			Map.ofEntries(
-					//Map.entry(8, Moves.BARRIER),
-					//Map.entry(15, Moves.SWIFT),
+					Map.entry(8, Moves.BARRIER),
+					Map.entry(15, Moves.SWIFT),
 					//Map.entry(22, Moves.FUTURESIGHT),
-					//Map.entry(29, Moves.PSYCHUP),
-					//Map.entry(36, Moves.MIRACLEEYE),
-					//Map.entry(43, Moves.MIST),
+					Map.entry(29, Moves.PSYCHUP),
+					Map.entry(36, Moves.MIRACLEEYE),
+					Map.entry(43, Moves.MIST),
 					Map.entry(50, Moves.PSYCHOCUT),
 					Map.entry(57, Moves.AMNESIA),
 					Map.entry(71, Moves.PSYCHIC),
-					Map.entry(86, Moves.RECOVER)
+					Map.entry(86, Moves.RECOVER),
 					//Map.entry(93, Moves.SAFEGUARD),
-					//Map.entry(100, Moves.AURASPHERE)
+					Map.entry(100, Moves.AURASPHERE)
 			)),
 	MEW ("Mew", 151, Type.PSYCHIC, Ability.SYNCHRONIZE, 100, 100, 100, 100, 100, 100, -1, 64, 3, 5, 45,
 			Map.ofEntries(
-					//Map.entry(10, Moves.MEGAPUNCH),
-					//Map.entry(20, Moves.METRONOME),
+					Map.entry(10, Moves.MEGAPUNCH),
+					Map.entry(20, Moves.METRONOME),
 					Map.entry(30, Moves.PSYCHIC),
-					//Map.entry(40, Moves.BARRIER),
+					Map.entry(40, Moves.BARRIER),
 					Map.entry(50, Moves.ANCIENTPOWER),
-					Map.entry(60, Moves.AMNESIA)
-					//Map.entry(90, Moves.NASTYPLOT),
-					//Map.entry(100, Moves.AURASPHERE)
+					Map.entry(60, Moves.AMNESIA),
+					Map.entry(90, Moves.NASTYPLOT),
+					Map.entry(100, Moves.AURASPHERE)
 			)),
 	KINGDRA ("Kingdra", 230, Arrays.asList(Type.WATER, Type.DRAGON), Ability.SNIPER, 75, 95, 95, 95, 95, 85, -1, 207, 0, 3, 45,
 			Map.ofEntries(
@@ -914,7 +914,7 @@ public enum Pokedex {
         		new Move(Moves.THUNDERFANG),
         		new Move(Moves.BITE),
         		//new Move(Moves.ROAR),
-        		new Move(Moves.ODERSLEUTH),
+        		new Move(Moves.ODORSLEUTH),
         		new Move(Moves.FIREFANG)        		
         ));
         moveMap.put(ABRA, Arrays.asList(
@@ -990,7 +990,7 @@ public enum Pokedex {
         		new Move(Moves.LEER)
         ));            
         moveMap.put(MAGIKARP, Arrays.asList(
-        		//new Move(Moves.SPLASH)
+        		new Move(Moves.SPLASH)
         ));
         moveMap.put(GYARADOS, Arrays.asList(
         		//new Move(Moves.THRASH)

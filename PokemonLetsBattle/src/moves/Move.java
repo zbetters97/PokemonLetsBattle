@@ -63,52 +63,48 @@ public class Move {
 	public int getTurnCount() {	return turnCount; }
 	public void setTurnCount(int turnCount) { this.turnCount = turnCount; }
 	
-	public int getTurns() {	
-		
-		if (move == Moves.OUTRAGE || move == Moves.PETALDANCE) {
-			return new Random().nextInt(3 - 2 + 1) + 2;		
-		}
-		else if (move == Moves.ROLLOUT || move == Moves.ROCKBLAST) {
-			return new Random().nextInt(5 - 2 + 1) + 2;
-		}
-		else {		
-			return move.getTurns(); 
+	public int getTurns() {			
+		switch (move) {
+			case OUTRAGE, PETALDANCE:
+				return new Random().nextInt(3 - 2 + 1) + 2;		
+			case ROLLOUT, ROCKBLAST:
+				return new Random().nextInt(5 - 2 + 1) + 2;
+			default:
+				return move.getTurns(); 
 		}
 	}	
 	
 	public boolean isReady() { 
-		
-		if (move == Moves.ROLLOUT || 
-				move == Moves.PETALDANCE || 
-				move == Moves.OUTRAGE || 
-				move == Moves.REFLECT || 
-				move == Moves.ROCKBLAST) {
-			return true;
-		}
-		else if (move.getRecharge()) {
-			if (turnCount == move.getTurns()) return true;				
-			else return false;			
-			
-		}
-		else {
-			return turnCount <= 0;
+		switch (move) {
+			case MIST, OUTRAGE, PETALDANCE, REFLECT, ROCKBLAST, ROLLOUT, SAFEGUARD:
+				return true;
+			default:
+				if (move.getRecharge()) {
+					if (turnCount == move.getTurns()) return true;				
+					else return false;			
+					
+				}
+				else {
+					return turnCount <= 0;
+				}
 		}
 	}
 	
 	public void resetMoveTurns() {	
 		
-		if (move == Moves.ROLLOUT || 
-				move == Moves.PETALDANCE || 
-				move == Moves.OUTRAGE || 
-				move == Moves.ROCKBLAST) {
-			if (turnCount > 0) turnCount--;			
-			else turnCount = getTurns();			
-		}
-		else if (move.getRecharge()) {
-			turnCount--;		
-		}
-		else {
-			turnCount = getTurns();		
+		switch (move) {
+			case MIST, OUTRAGE, PETALDANCE, ROCKBLAST, ROLLOUT, SAFEGUARD:
+				if (turnCount > 0) turnCount--;			
+				else turnCount = getTurns();
+				break;
+			default:
+				if (move.getRecharge()) {
+					turnCount--;		
+				}
+				else {
+					turnCount = getTurns();		
+				}
+				break;
 		}
 	}
 	

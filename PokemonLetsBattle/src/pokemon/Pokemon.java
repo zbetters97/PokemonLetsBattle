@@ -560,7 +560,7 @@ public class Pokemon {
 	public void setAccuracyStg(int accuracyStg) { this.accuracyStg = accuracyStg; }
 	public int getEvasionStg() { return evasionStg; }
 	public void setEvasionStg(int evasionStg) { this.evasionStg = evasionStg; }
-	
+		
 	public int getEXPYeild() { return pokemon.getEXPYeild(); }
 	public int getEV() { return pokemon.getEV(); }
 	
@@ -650,8 +650,6 @@ public class Pokemon {
 	public BufferedImage getMenuSprite() { return pokemon.getMenuSprite(); }	
 	/** END GETTERS **/
 		
-	
-	
 	public String changeStat(String stat, int level) {	
 		
 		String output = "";

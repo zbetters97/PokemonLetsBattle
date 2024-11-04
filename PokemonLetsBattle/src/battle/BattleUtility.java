@@ -312,7 +312,7 @@ public final class BattleUtility {
 				hit = true; 
 			}
 			else {				
-				if (target.hasActiveMove(Moves.ODERSLEUTH)) {
+				if (target.hasActiveMove(Moves.ODORSLEUTH) || target.hasActiveMove(Moves.MIRACLEEYE)) {
 					hit = true;
 				}
 				else {
@@ -591,8 +591,13 @@ public final class BattleUtility {
 		double effect = 1.0;
 		
 		if ((type == Type.NORMAL || type == Type.FIGHTING) &&
-				pokemon.checkType(Type.GHOST) &&
-				pokemon.hasActiveMove(Moves.ODERSLEUTH)) {
+				(pokemon.checkType(Type.GHOST) &&
+				pokemon.hasActiveMove(Moves.ODORSLEUTH))) {
+			return effect;
+		}
+		if (type == Type.PSYCHIC && 
+				(pokemon.checkType(Type.GHOST) && 
+				pokemon.hasActiveMove(Moves.MIRACLEEYE))) {
 			return effect;
 		}
 		

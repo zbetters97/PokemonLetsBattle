@@ -61,9 +61,9 @@ public class Player extends Entity {
 	
 	// DEFAULT VALUES
 	public void assignParty() {		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.MARSHTOMP, 16, new COL_Ball_Great(gp)));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36, new COL_Ball_Master(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.MEWTWO, 5, new COL_Ball_Poke(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.RAPIDASH, 16, new COL_Ball_Great(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.MEWTWO, 36, new COL_Ball_Master(gp)));
 	}
 	public void setDefaultValues() {
 					
@@ -480,7 +480,7 @@ public class Player extends Entity {
 				break;			
 		}
 		
-		if (inGrass) {
+		if (inGrass && !moving) {
 			BufferedImage grassImg = image.getSubimage(0, 0, 48, 36);
 			g2.drawImage(grassImg, tempScreenX, tempScreenY, null);
 		}

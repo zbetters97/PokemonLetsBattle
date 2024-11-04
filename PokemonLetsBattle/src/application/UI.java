@@ -1452,7 +1452,7 @@ public class UI {
 		
 		x = (int) (gp.tileSize * 0.5);
 		y = (int) (gp.tileSize * 2.8); 
-		width = (int) (gp.tileSize * 5.5);
+		width = (int) (gp.tileSize * 5.7);
 		height = (int) (gp.tileSize * 3.2);
 		fighter = gp.player.pokeParty.get(0);
 		
@@ -1463,11 +1463,11 @@ public class UI {
 		else if (fighterNum == 0) { drawSubWindow(x, y, width, height, 3, 5, boxColor, party_red); }		
 		else { drawSubWindow(x, y, width, height, 3, 3, boxColor, Color.BLACK); }
 		
-		party_Box(x, y, fighter, true);
+		party_Box((int) (x + gp.tileSize * 0.15), (int) (y - gp.tileSize * 0.15), fighter, true);
 		
 		x = (int) (gp.tileSize * 6.5);
 		y = (int) (gp.tileSize * 0.5); 
-		width = gp.tileSize * 9;
+		width = (int) (gp.tileSize * 9.2);
 		height = (int) (gp.tileSize * 1.7);
 	
 		for (int i = 1; i < 6; i++) {	
@@ -1502,7 +1502,7 @@ public class UI {
 		}
 		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));	
-		x += gp.tileSize * 2;
+		x += gp.tileSize * 2.1;
 		y += gp.tileSize;
 		String text = fighter.getName();
 		drawText(text, x, y, battle_white, Color.BLACK);

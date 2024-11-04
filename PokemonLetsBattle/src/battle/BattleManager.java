@@ -485,7 +485,7 @@ public class BattleManager extends Thread {
 	private void playerMove() throws InterruptedException {
 		
 		if (canMove(fighter[0], playerMove)) {
-			move(fighter[0], fighter[1], playerMove, cpuMove);	
+			move(fighter[0], fighter[1], playerMove);	
 		}	
 		else {
 			playerMove.resetMoveTurns();
@@ -494,7 +494,7 @@ public class BattleManager extends Thread {
 	private void cpuMove() throws InterruptedException {
 		
 		if (canMove(fighter[1], cpuMove)) {
-			move(fighter[1], fighter[0], cpuMove, playerMove);
+			move(fighter[1], fighter[0], cpuMove);
 		}		
 		else {
 			cpuMove.resetMoveTurns();
@@ -629,9 +629,8 @@ public class BattleManager extends Thread {
 	}
 		
 	// MOVE METHOD
-	private void move(Pokemon atk, Pokemon trg, Move atkMove, Move trgMove) throws InterruptedException {		
-						
-		checkSleepTalk(atk, atkMove);				
+	private void move(Pokemon atk, Pokemon trg, Move atkMove) throws InterruptedException {		
+
 		BattleUtility.getWeatherMoveDelay(weather, atkMove);
 						
 		if (atkMove.isReady()) {				
@@ -664,28 +663,7 @@ public class BattleManager extends Thread {
 			atkMove.setTurnCount(atkMove.getTurnCount() - 1);
 		}
 	}		
-	private void checkSleepTalk(Pokemon atk, Move move) throws InterruptedException {
-		
-		if (move.getMove() == Moves.SLEEPTALK) {
-			
-			typeDialogue(atk.getName() + " used\n" + move.toString() + "!"); 
-			
-			if (atk.hasStatus(Status.SLEEP)) {	
-				
-				Move randomMove = null; 
-				
-				do { randomMove = atk.getMoveSet().get(new Random().nextInt(atk.getMoveSet().size())); }
-				while (randomMove.getMove() == Moves.SLEEPTALK);
-				
-				move = randomMove;
-			}
-			else {				
-				typeDialogue("It had no effect!");
-				return;		
-			}
-		}
-	}
-	private boolean validMove(Pokemon atk, Pokemon trg, Move move) {
+ 	private boolean validMove(Pokemon atk, Pokemon trg, Move move) {
 		
 		if ((move.getMove() == Moves.SNORE && atk.hasStatus(Status.SLEEP)) ||
 			(move.getMove() == Moves.DREAMEATER && trg.hasStatus(Status.SLEEP)) ||
@@ -737,8 +715,14 @@ public class BattleManager extends Thread {
 	// STATUS MOVE
 	private void statusMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {		
 		
-		if (trg.getStatus() == null) {			
-			setStatus(atk, trg, move.getEffect());	
+		if (trg.getStatus() == null) {		
+			
+			if (trg.hasActiveMove(Moves.SAFEGUARD)) {
+				typeDialogue("It had no effect!");
+			}
+			else {
+				setStatus(atk, trg, move.getEffect());		
+			}			
 		}
 		else {				
 			typeDialogue(trg.getName() + " is\nalready " + 
@@ -803,11 +787,16 @@ public class BattleManager extends Thread {
 			}
 		}
 		// if move changes target attributes
-		else {
-			setAttribute(trg, move.getStats(), move.getLevel());
-			
-			if (move.getMove() == Moves.SWAGGER) {
-				setStatus(atk, trg, Status.CONFUSE);
+		else {			
+			if (trg.hasActiveMove(Moves.MIST)) {
+				typeDialogue("It had no effect!");
+			}
+			else {
+				setAttribute(trg, move.getStats(), move.getLevel());
+				
+				if (move.getMove() == Moves.SWAGGER) {
+					setStatus(atk, trg, Status.CONFUSE);
+				}	
 			}
 		}			
 	}
@@ -867,7 +856,26 @@ public class BattleManager extends Thread {
 					typeDialogue(atk.getName() + " planted\na seed on " + trg.getName() + "!");	
 				}
 				break;
-			case ODERSLEUTH:
+			case MIST:
+				if (trg.hasActiveMove(move.getMove())) {
+					typeDialogue("It had no effect!");
+				}
+				else {
+					trg.addActiveMove(move.getMove());
+					typeDialogue(atk.getName() + " surrounded\nitself with a mist!");	
+				}
+				break;
+			case METRONOME:				
+				do {					
+					int randomIndex = new Random().nextInt(Moves.values().length);
+					move = new Move(Moves.values()[randomIndex]);	
+				}
+				while (move.getMove() == Moves.METRONOME || move.getMove() == Moves.SLEEPTALK);
+								
+				move(atk, trg, move);
+				
+				break;
+			case ODORSLEUTH, MIRACLEEYE:
 				if (trg.hasActiveMove(move.getMove())) {
 					typeDialogue("It had no effect!");
 				}
@@ -902,7 +910,35 @@ public class BattleManager extends Thread {
 					atk.addActiveMove(move.getMove());
 					typeDialogue(atk.getName() + "'s " + move.toString() + "\nraised DEFENSE!");					
 				}			
-				break;			
+				break;		
+			case PSYCHUP:
+				atk.resetStats();
+				atk.resetStatStages();			
+				
+				atk.changeStat("defense", trg.getDefenseStg());		
+				atk.changeStat("sp. attack", trg.getSpAttackStg());		
+				atk.changeStat("sp. defense", trg.getSpDefenseStg());		
+				atk.changeStat("speed", trg.getSpeedStg());
+				atk.changeStat("evasion", trg.getAccuracyStg());
+				atk.changeStat("evasion", trg.getEvasionStg());
+				
+				typeDialogue(atk.getName() + " copied\n" + trg.getName() + "'s stats!");
+				break;
+			case SLEEPTALK:				
+				if (atk.hasStatus(Status.SLEEP)) {	
+										
+					do { move = atk.getMoveSet().get(new Random().nextInt(atk.getMoveSet().size())); }
+					while (move.getMove() == Moves.SLEEPTALK);	
+					
+					move(atk, trg, move);
+				}
+				else {				
+					typeDialogue("It had no effect!");
+				}
+				break;
+			case SPLASH:
+				typeDialogue("It had no effect!");
+				break;
 			case TELEPORT:
 				if (trainer == null) {
 					typeDialogue(atk.getName() + " teleported\naway!");	
@@ -914,7 +950,7 @@ public class BattleManager extends Thread {
 				break;
 			default:
 				break;		
-		}
+		}		
 	}
 	
 	// DAMAGE MOVE
@@ -1138,7 +1174,7 @@ public class BattleManager extends Thread {
 				case LEECHSEED:
 					leechSeed(fighter[trg], fighter[atk]);
 					break;
-				case REFLECT:
+				case MIST, REFLECT, SAFEGUARD:
 					move.setTurnCount(move.getTurnCount() - 1);
 					
 					if (move.getTurnCount() <= 0) {		
