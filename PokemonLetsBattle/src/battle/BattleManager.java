@@ -854,7 +854,16 @@ public class BattleManager extends Thread {
 	// OTHER MOVE
 	private void otherMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		
-		switch (move.getMove()) {		
+		switch (move.getMove()) {
+			case HAZE:
+				atk.resetStats();
+				atk.resetStatStages();		
+				
+				trg.resetStats();
+				trg.resetStatStages();		
+				
+				typeDialogue("All stat changes were\neliminated!");
+				break;
 			case LEECHSEED:
 				if (trg.hasActiveMove(move.getMove())) {
 					typeDialogue("It had no effect!");
@@ -870,7 +879,7 @@ public class BattleManager extends Thread {
 				}
 				else {
 					trg.addActiveMove(move.getMove());
-					typeDialogue(atk.getName() + " surrounded\nitself with a mist!");	
+					typeDialogue(atk.getName() + " became\nshrouded in MIST!");	
 				}
 				break;
 			case METRONOME:				
@@ -1113,25 +1122,29 @@ public class BattleManager extends Thread {
 	}
 	private void applyEffect(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 
-		if (move.getMove() == Moves.RAPIDSPIN) {
-			
-			if (trg.hasActiveMove(Moves.LEECHSEED)) {					
-				typeDialogue(trg.getName() + " broke free\nof LEECH SEED !");		
-				trg.removeActiveMove(Moves.LEECHSEED);
-			}
+		switch (move.getMove()) {
+			case OUTRAGE, PETALDANCE, THRASH:
+				if (!move.isWaiting()) {
+					setStatus(trg, atk, Status.CONFUSE);				
+				}
+				return;
+			case RAPIDSPIN:
+				if (trg.hasActiveMove(Moves.LEECHSEED)) {					
+					typeDialogue(trg.getName() + " broke free\nof LEECH SEED!");		
+					trg.removeActiveMove(Moves.LEECHSEED);
+				}
+				return;
+			case WAKEUPSLAP:
+				if (trg.hasStatus(Status.SLEEP)) {
+					removeStatus(trg);
+				}
+				return;
+			default:
+				break;
 		}
-		else if (move.getMove() == Moves.OUTRAGE || move.getMove() == Moves.PETALDANCE) {
-			if (!move.isWaiting()) {
-				setStatus(trg, atk, Status.CONFUSE);				
-			}
-		}
-		else if (move.getMove() == Moves.WAKEUPSLAP) {
-			if (trg.hasStatus(Status.SLEEP)) {
-				removeStatus(trg);
-			}
-		}
+		
 		// move causes attribute or status effect
-		else if (move.getProbability() != 0.0) {								
+		if (move.getProbability() != 0.0) {								
 										
 			// chance for effect to apply
 			if (new Random().nextDouble() <= move.getProbability()) {

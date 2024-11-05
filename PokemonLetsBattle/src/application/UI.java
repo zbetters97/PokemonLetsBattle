@@ -23,6 +23,7 @@ import moves.Move;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Protection;
+import properties.Type;
 
 public class UI {
 	
@@ -1872,8 +1873,7 @@ public class UI {
 		
 		for (Move m : fighter.getMoveSet()) {			
 				
-			drawSubWindow(x, y, width, height, 10, 3, m.getType().getColor(), Color.BLACK);		
-									
+			drawSubWindow(x, y, width, height, 10, 3, m.getType().getColor(), Color.BLACK);											
 			g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));			
 			text = m.getType().getName();
 			textX = getXForCenteredTextOnWidth(text, width, x + 5);
@@ -2607,6 +2607,8 @@ public class UI {
 		int y;
 		int width;
 		int height;
+		int textX;
+		int textY;
 		int slotX;
 		int slotY;
 		int slotWidth;
@@ -2614,25 +2616,75 @@ public class UI {
 		String text;
 		Pokedex p;
 		
-		x = gp.tileSize * 3;
-		y = gp.tileSize * 2;
-		width = (int) (gp.tileSize * 5.8);
-		height = gp.tileSize * 8;		
-		drawSubWindow(x, y, width, height, 15, 5, battle_white, Color.BLACK);
+		x = gp.tileSize;
+		y = (int) (gp.tileSize * 0.6); 
+		width = (int) (gp.tileSize * 7.3);
+		height = (int) (gp.tileSize * 1.1);
+		g2.setColor(battle_white);
+		g2.fillRoundRect(x, y, width, height, 15, 15);
+	
+		g2.setColor(Color.BLACK);
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 60f));
+		text = "POKeDEX";
+		x = getXForCenteredTextOnWidth(text, width, x);
+		y += gp.tileSize * 0.95;	
+		g2.drawString(text, x, y);
 		
-		x = gp.tileSize * 9;
-		y = gp.tileSize;
-		width = (int) (gp.tileSize * 6.8);
-		height = gp.tileSize * 10;		
+		x = gp.tileSize;
+		y = (int) (gp.tileSize * 2.4);		
+		height = (int) (gp.tileSize * 7.6);		
+		g2.setColor(battle_white);
+		g2.fillRoundRect(x, y, width, height, 15, 15);			
+		g2.setColor(Color.BLACK);
+		g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 15, 15);
+		
+		p = Pokedex.values()[bagNum];
+		if (gp.player.personalDex.contains(p)) {
+			
+			x = (int) (gp.tileSize * 2.3);
+			y = (int) (gp.tileSize * 3);	
+			width = gp.tileSize * 2;
+			height = gp.tileSize;
+			g2.drawImage(p.getFrontSprite(), x, y, null);	
+						
+			y = (int) (gp.tileSize * 8.5);
+			if (p.getTypes() == null) {
+				x = (int) (gp.tileSize * 3.8);	
+				drawSubWindow(x, y, width, height, 10, 3, p.getType().getColor(), Color.BLACK);											
+				g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));			
+				text = p.getType().getName();
+				textX = getXForCenteredTextOnWidth(text, width, x + 5);
+				textY = (int) (y + (gp.tileSize * 0.75));			
+				drawText(text, textX, textY, battle_white, Color.BLACK);
+			}
+			else {
+				x = (int) (gp.tileSize * 2.4);	
+				for (Type t : p.getTypes()) {					
+					drawSubWindow(x, y, width, height, 10, 3, t.getColor(), Color.BLACK);											
+					g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));			
+					text = t.getName();
+					textX = getXForCenteredTextOnWidth(text, width, x + 5);
+					textY = (int) (y + (gp.tileSize * 0.75));			
+					drawText(text, textX, textY, battle_white, Color.BLACK);
+					x += gp.tileSize * 2.7;
+				}
+			}
+				
+		}
+		
+		x = (int) (gp.tileSize * 8.5);
+		y = (int) (gp.tileSize * 0.6); 
+		width = (int) (gp.tileSize * 7.3);
+		height = (int) (gp.tileSize * 11);				
 		drawSubWindow(x, y, width, height, 15, 5, pause_orange, Color.BLACK);
-
-		x = (int) (gp.tileSize * 9.8);
-		y = (int) (gp.tileSize * 2.3);
-		slotX = (int) (gp.tileSize * 9.07);
+		
+		x = (int) (gp.tileSize * 9.5);
+		y = (int) (gp.tileSize * 1.9);
+		slotX = (int) (gp.tileSize * 8.57);
 		slotY = (int) (y - gp.tileSize * 0.8);
-		slotWidth = (int) (gp.tileSize * 6.7);
+		slotWidth = (int) (gp.tileSize * 7.2);
 		slotHeight = gp.tileSize;
-		for (int i = bagStart; i < bagStart + 10; i++) {
+		for (int i = bagStart; i < bagStart + 11; i++) {
 			
 			if (i < Pokedex.values().length) {
 				
@@ -2646,24 +2698,22 @@ public class UI {
 				
 				int index = p.getIndex();
 				if (gp.player.pokeParty.stream().filter(o -> o.getIndex() == index).findFirst().isPresent()) {
-					g2.drawImage(dex_ball, x - (int) (gp.tileSize * 0.7), y - (int) (gp.tileSize * 0.6), null);
+					g2.drawImage(dex_ball, x - (int) (gp.tileSize * 0.8), y - (int) (gp.tileSize * 0.6), null);
 				}
-				
+												
 				drawText("No", x, y, Color.BLACK, Color.LIGHT_GRAY);
 				
 				g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48f));
+				drawText(p.getIndex() + "", x + (int) (gp.tileSize * 0.6), y, Color.BLACK, Color.LIGHT_GRAY);					
 				if (gp.player.personalDex.contains(p)) {
-					text = p.getIndex() + " " + p.toString();			
-					drawText(text, x + (int) (gp.tileSize * 0.6), y, Color.BLACK, Color.LIGHT_GRAY);	
+					drawText(p.getName(), x + (int) (gp.tileSize * 2.2), y, Color.BLACK, Color.LIGHT_GRAY);	
 				}
-				else {
-					g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48f));
-					text = p.getIndex() + " ----------";			
-					drawText(text, x + (int) (gp.tileSize * 0.6), y, Color.BLACK, Color.LIGHT_GRAY);	
+				else {					
+					drawText("---------", x + (int) (gp.tileSize * 2.2), y, Color.BLACK, Color.LIGHT_GRAY);	
 				}
 				
-				y += gp.tileSize * 0.9;
-				slotY += gp.tileSize * 0.9;
+				y += gp.tileSize * 0.88;
+				slotY += gp.tileSize * 0.88;
 			}
 			else {
 				break;
@@ -2672,23 +2722,16 @@ public class UI {
 				
 		if (0 < bagStart) {
 			x = (int) (gp.tileSize * 12.5);
-			y = (int) (gp.tileSize * 1.9);
+			y = (int) (gp.tileSize * 1.6);
 			drawText("^", x, y, Color.BLACK, Color.LIGHT_GRAY);
 		}
 		
-		if (bagStart + 10 < Pokedex.values().length) {
+		if (bagStart + 11 < Pokedex.values().length) {
 			x = (int) (gp.tileSize * 12.5);
-			y = (int) (gp.tileSize * 10.9);
+			y = (int) (gp.tileSize * 11.4);
 			drawText("v", x, y, Color.BLACK, Color.LIGHT_GRAY);
 		}
-		
-		p = Pokedex.values()[bagNum];
-		if (gp.player.personalDex.contains(p)) {
-			x = (int) (gp.tileSize * 3.5);
-			y = (int) (gp.tileSize * 3.5);			
-			g2.drawImage(p.getFrontSprite(), x, y, null);	
-		}
-		
+						
 		if (gp.keyH.upPressed) {
 			gp.keyH.upPressed = false;
 			gp.keyH.playCursorSE();
@@ -2701,11 +2744,11 @@ public class UI {
 			gp.keyH.playCursorSE();
 			
 			if (bagNum < Pokedex.values().length - 1) bagNum++;
-			if (bagNum >= bagStart + 10) bagStart++;
-		}				
-		
-		if (gp.keyH.bPressed) {
+			if (bagNum >= bagStart + 11) bagStart++;
+		}					
+		if (gp.keyH.bPressed || gp.keyH.startPressed) {
 			gp.keyH.bPressed = false;
+			gp.keyH.startPressed = false;
 			gp.keyH.playCursorSE();		
 			
 			bagNum = 0;
@@ -3606,8 +3649,6 @@ public class UI {
 		gp.gameState = gp.battleState;	
 	}
 	/** END TRANSITION SCREEN **/
-	
-	
 	
 	// MISC
 	public void resetFighterPositions() {

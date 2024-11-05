@@ -416,12 +416,61 @@ public final class BattleUtility {
 				
 		double power = 1.0; 
 		
-		if (move.getMove() == Moves.WATERSPOUT) power = move_WaterSpout(attacker, move);
-		else if (move.getMove() == Moves.FLAIL) power = move_Flail(attacker);
-		else if (move.getMove() == Moves.MAGNITUDE) power = move_Magnitude();		
-		else if (move.getPower() == -1) power = attacker.getLevel();		
-		else if (move.getPower() == 1) power = target.getLevel();		
-		else power = move.getPower();		
+		switch (move.getMove()) {
+		case FLAIL, REVERSAL: 			
+			double remainHP = attacker.getHP() / attacker.getBHP();
+			
+			if (remainHP >= 0.672) power = 20;
+			else if (0.672 > remainHP && remainHP >= 0.344) power = 40;
+			else if (0.344 > remainHP && remainHP >= 0.203) power = 80;
+			else if (0.203 > remainHP && remainHP >= 0.094) power = 100;
+			else if (0.094 > remainHP && remainHP >= 0.031) power = 150;
+			else if (0.031 > remainHP) power = 200;		
+			
+			break;
+		case MAGNITUDE:
+			int strength = 4;
+			
+			// RANDOM NUM 0-100
+			int chance = new Random().nextInt(100);
+			int total = 0;
+					
+			// FOR EACH MAGNITUDE VALUE
+			for (Integer magnitude : magnitudeTable.keySet()) {
+				
+				// GET PROBABILITY OF MAGNITUDE
+				int rate = magnitudeTable.get(magnitude); 
+				total += rate;
+				
+				// MAGNITUDE RANDOMLY SELECTED, ASSIGN TO STRENGTH
+				if (chance <= total) {	
+					strength = magnitude;
+					break;
+				}	
+			}
+			
+			if (strength == 4) power = 10;
+			else if (strength == 5) power = 30;
+			else if (strength == 6) power = 50;
+			else if (strength == 7) power = 70;
+			else if (strength == 8) power = 90;
+			else if (strength == 9) power = 110;
+			else if (strength == 10) power = 150;
+			
+			break;
+		case ERUPTION:
+			power = (attacker.getHP() * 150.0) / attacker.getBHP();
+			break;
+		case WATERSPOUT:
+			power = Math.ceil((attacker.getHP() * move.getPower()) / attacker.getBHP());
+			break;
+		default:
+			if (move.getPower() == -1) power = attacker.getLevel();		
+			else if (move.getPower() == 1) power = target.getLevel();		
+			else power = move.getPower();	
+			
+			break;
+		}
 		
 		switch (weather) {	
 			case CLEAR:
@@ -473,63 +522,6 @@ public final class BattleUtility {
 		
 		return power;
 	}	
-	private static double move_WaterSpout(Pokemon attacker, Move move) {
-		
-		double power = 1.0;
-		
-		power = Math.ceil((attacker.getHP() * move.getPower()) / attacker.getBHP());
-		
-		return power;
-	}
-	private static double move_Flail(Pokemon attacker) {
-		
-		double power = 1.0;
-		
-		double remainHP = attacker.getHP() / attacker.getBHP();
-		
-		if (remainHP >= 0.672) power = 20.0;
-		else if (0.672 > remainHP && remainHP >= 0.344) power = 40;
-		else if (0.344 > remainHP && remainHP >= 0.203) power = 80;
-		else if (0.203 > remainHP && remainHP >= 0.094) power = 100;
-		else if (0.094 > remainHP && remainHP >= 0.031) power = 150;
-		else if (0.031 > remainHP) power = 200;	
-		
-		return power;
-	}
-	private static double move_Magnitude() {
- 		
- 		double power = 1.0;
- 		
- 		int strength = 4;
-		
-		// RANDOM NUM 0-100
-		int chance = new Random().nextInt(100);
-		int total = 0;
-				
-		// FOR EACH MAGNITUDE VALUE
-		for (Integer magnitude : magnitudeTable.keySet()) {
-			
-			// GET PROBABILITY OF MAGNITUDE
-			int rate = magnitudeTable.get(magnitude); 
-			total += rate;
-			
-			// MAGNITUDE RANDOMLY SELECTED, ASSIGN TO STRENGTH
-			if (chance <= total) {	
-				strength = magnitude;
-				break;
-			}	
-		}
-		
-		if (strength == 4) power = 10;
-		else if (strength == 5) power = 30;
-		else if (strength == 6) power = 50;
-		else if (strength == 7) power = 70;
-		else if (strength == 8) power = 90;
-		else if (strength == 9) power = 110;
-		else if (strength == 10) power = 150;
-		
-		return power;
- 	}
 	private static double getAttack(Pokemon pokemon, Move move, Weather weather) {
 		
 		double attack = 1.0;

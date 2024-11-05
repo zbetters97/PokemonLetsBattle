@@ -65,7 +65,7 @@ public class Move {
 	
 	public int getTurns() {			
 		switch (move) {
-			case OUTRAGE, PETALDANCE:
+			case OUTRAGE, PETALDANCE, THRASH:
 				return new Random().nextInt(3 - 2 + 1) + 2;		
 			case ROLLOUT, ROCKBLAST:
 				return new Random().nextInt(5 - 2 + 1) + 2;
@@ -76,7 +76,7 @@ public class Move {
 	
 	public boolean isReady() { 
 		switch (move) {
-			case MIST, OUTRAGE, PETALDANCE, REFLECT, ROCKBLAST, ROLLOUT, SAFEGUARD:
+			case MIST, OUTRAGE, PETALDANCE, REFLECT, ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH:
 				return true;
 			default:
 				if (move.getRecharge()) {
@@ -93,7 +93,7 @@ public class Move {
 	public void resetMoveTurns() {	
 		
 		switch (move) {
-			case MIST, OUTRAGE, PETALDANCE, ROCKBLAST, ROLLOUT, SAFEGUARD:
+			case MIST, OUTRAGE, PETALDANCE, ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH:
 				if (turnCount > 0) turnCount--;			
 				else turnCount = getTurns();
 				break;

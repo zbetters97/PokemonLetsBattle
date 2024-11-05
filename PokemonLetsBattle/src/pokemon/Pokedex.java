@@ -104,7 +104,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(4, Moves.TAILWHIP),
 					Map.entry(7, Moves.BUBBLE),
-					//Map.entry(10, Moves.WITHDRAW),
+					Map.entry(10, Moves.WITHDRAW),
 					Map.entry(13, Moves.WATERGUN),
 					Map.entry(16, Moves.BITE),
 					Map.entry(19, Moves.RAPIDSPIN),
@@ -119,7 +119,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(4, Moves.TAILWHIP),
 					Map.entry(7, Moves.BUBBLE),
-					//Map.entry(10, Moves.WITHDRAW),
+					Map.entry(10, Moves.WITHDRAW),
 					Map.entry(13, Moves.WATERGUN),
 					Map.entry(16, Moves.BITE),
 					Map.entry(20, Moves.RAPIDSPIN),
@@ -134,7 +134,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(4, Moves.TAILWHIP),
 					Map.entry(7, Moves.BUBBLE),
-					//Map.entry(10, Moves.WITHDRAW),
+					Map.entry(10, Moves.WITHDRAW),
 					Map.entry(13, Moves.WATERGUN),
 					Map.entry(16, Moves.BITE),
 					Map.entry(20, Moves.RAPIDSPIN),
@@ -165,10 +165,10 @@ public enum Pokedex {
 					Map.entry(13, Moves.BITE),
 					Map.entry(17, Moves.WINGATTACK),
 					Map.entry(21, Moves.CONFUSERAY),
-					//Map.entry(25, Moves.AIRCUTTER),
+					Map.entry(25, Moves.AIRCUTTER),
 					//Map.entry(29, Moves.MEANLOOK),
-					//Map.entry(33, Moves.POISONFANG),
-					//Map.entry(37, Moves.HAZE),
+					Map.entry(33, Moves.POISONFANG),
+					Map.entry(37, Moves.HAZE),
 					Map.entry(41, Moves.AIRSLASH)
 					
 			)),
@@ -179,10 +179,10 @@ public enum Pokedex {
 					Map.entry(13, Moves.BITE),
 					Map.entry(17, Moves.WINGATTACK),
 					Map.entry(21, Moves.CONFUSERAY),
-					//Map.entry(27, Moves.AIRCUTTER),
+					Map.entry(27, Moves.AIRCUTTER),
 					//Map.entry(33, Moves.MEANLOOK),
-					//Map.entry(39, Moves.POISONFANG),
-					//Map.entry(45, Moves.HAZE),
+					Map.entry(39, Moves.POISONFANG),
+					Map.entry(45, Moves.HAZE),
 					Map.entry(51, Moves.AIRSLASH)
 					
 			)),
@@ -191,8 +191,8 @@ public enum Pokedex {
 					Map.entry(6, Moves.EMBER),
 					Map.entry(9, Moves.LEER),
 					Map.entry(14, Moves.ODORSLEUTH),
-					//Map.entry(20, Moves.FLAMEWHEEL),
-					//Map.entry(25, Moves.REVERSAL),
+					Map.entry(20, Moves.FLAMEWHEEL),
+					Map.entry(25, Moves.REVERSAL),
 					Map.entry(28, Moves.FIREFANG),
 					Map.entry(31, Moves.TAKEDOWN),
 					Map.entry(34, Moves.FLAMETHROWER),
@@ -309,7 +309,7 @@ public enum Pokedex {
 					Map.entry(28, Moves.TAKEDOWN),
 					Map.entry(34, Moves.AGILITY),
 					Map.entry(38, Moves.FIREBLAST),
-					//Map.entry(44, Moves.BOUNCE),
+					Map.entry(44, Moves.BOUNCE),
 					Map.entry(48, Moves.FLAREBLITZ)
 			)),
 	RAPIDASH ("Rapidash", 78, Type.FIRE, Ability.FLASHFIRE, 65, 100, 70, 80, 80, 105, -1, 192, 0, 2, 60,
@@ -323,7 +323,7 @@ public enum Pokedex {
 					Map.entry(34, Moves.AGILITY),
 					Map.entry(38, Moves.FIREBLAST),
 					//Map.entry(40, Moves.FURYATTACK),
-					//Map.entry(49, Moves.BOUNCE),
+					Map.entry(49, Moves.BOUNCE),
 					Map.entry(58, Moves.FLAREBLITZ)
 			)),
 	GASTLY ("Gastly", 92, Arrays.asList(Type.GHOST, Type.POISON), Ability.LEVITATE, 30, 35, 30, 100, 35, 80, 25, 95, 3, 1, 190,
@@ -440,7 +440,7 @@ public enum Pokedex {
 					Map.entry(57, Moves.AMNESIA),
 					Map.entry(71, Moves.PSYCHIC),
 					Map.entry(86, Moves.RECOVER),
-					//Map.entry(93, Moves.SAFEGUARD),
+					Map.entry(93, Moves.SAFEGUARD),
 					Map.entry(100, Moves.AURASPHERE)
 			)),
 	MEW ("Mew", 151, Type.PSYCHIC, Ability.SYNCHRONIZE, 100, 100, 100, 100, 100, 100, -1, 64, 3, 5, 45,
@@ -747,9 +747,9 @@ public enum Pokedex {
 					Map.entry(45, Moves.FIREBLAST),
 					Map.entry(50, Moves.REST),
 					Map.entry(60, Moves.FISSURE),
-					Map.entry(65, Moves.SOLARBEAM)
-					//Map.entry(75, Moves.EARTHPOWER),
-					//Map.entry(80, Moves.ERUPTION)
+					Map.entry(65, Moves.SOLARBEAM),
+					Map.entry(75, Moves.EARTHPOWER),
+					Map.entry(80, Moves.ERUPTION)
 			)),
 	RAYQUAZA ("Rayquaza", 384, Arrays.asList(Type.DRAGON, Type.FLYING), Ability.AIRLOCK, 105, 150, 90, 150, 90, 95, -1, 220, 5, 3, 3,
 			Map.ofEntries(
@@ -959,8 +959,8 @@ public enum Pokedex {
         ));
         moveMap.put(RAPIDASH, Arrays.asList(
         		new Move(Moves.QUICKATTACK),
-        		//new Move(Moves.MEGAHORN),
-        		//new Move(Moves.POISONJAB),
+        		new Move(Moves.MEGAHORN),
+        		new Move(Moves.POISONJAB),
         		new Move(Moves.GROWL)
         ));
         moveMap.put(GASTLY, Arrays.asList(
@@ -993,7 +993,7 @@ public enum Pokedex {
         		new Move(Moves.SPLASH)
         ));
         moveMap.put(GYARADOS, Arrays.asList(
-        		//new Move(Moves.THRASH)
+        		new Move(Moves.THRASH)
         ));
         moveMap.put(LAPRAS, Arrays.asList(
         		new Move(Moves.WATERGUN), 
@@ -1129,8 +1129,8 @@ public enum Pokedex {
 	protected BufferedImage getMenuSprite() { return image1; }
 	public String getName() { return name; }
 	public int getIndex() {	return index; }	
-	protected Type getType() { return type; }
-	protected List<Type> getTypes() { return types; }	
+	public Type getType() { return type; }
+	public List<Type> getTypes() { return types; }	
 	protected Ability getAbility() { return ability; }
 	protected int getHP() { return hp; }
 	protected int getSpeed() { return speed; }
