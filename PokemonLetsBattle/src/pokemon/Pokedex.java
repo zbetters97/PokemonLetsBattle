@@ -778,8 +778,7 @@ public enum Pokedex {
 	private Map<Integer, Moves> moveLevels;
 	/** END INITIALIZE VALUES **/
 		
-	/** CONSTRUCTORS **/
-	
+	/** CONSTRUCTORS **/	
 	Pokedex(String name, int index, Type type, Ability ability, int hp, int attack, int defense, 
 			int spAttack, int spDefense, int speed, int evLevel, int ey, int growth, int ev, int catchRate, 
 			Map<Integer, Moves> moveLevels) {	
@@ -837,8 +836,6 @@ public enum Pokedex {
 	}
 	/** END CONSTRUCTORS **/
 	
-	// LIST TO HOLD ALL POKEMON ENUMS
-	private static List<Pokedex> PokemonList = Arrays.asList(Pokedex.values());
 	
 	/** POKEMON MOVES STATIC MAP **/
 	private static final Map<Pokedex, List<Move>> moveMap;
@@ -1145,7 +1142,6 @@ public enum Pokedex {
 	protected int getEV() { return ev; }		
 	protected int getCatchRate() { return catchRate; }		
 	
-	protected static List<Pokedex> getPokemonList() { return PokemonList; }
 	protected static Map<Pokedex, List<Move>> getMovemap() { return moveMap; }	
 	protected Map<Integer, Moves> getMoveLevelMap() { return moveLevels; }	
 	
@@ -1165,7 +1161,7 @@ public enum Pokedex {
 	/** END GETTERS **/
 	
 	// IMAGE MANAGERS
-	protected BufferedImage setup(String imagePath, int width, int height) {
+	private BufferedImage setup(String imagePath, int width, int height) {
 		
 		BufferedImage image = null;
 		

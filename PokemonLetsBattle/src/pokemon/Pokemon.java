@@ -354,13 +354,13 @@ public class Pokemon {
 		
 		return canEvolve;
 	}
-	public static Pokemon evolvePokemon(Pokemon oldPokemon) {
+	public static Pokemon evolve(Pokemon oldPokemon) {
 		
 		Pokemon evolvedForm = null;
 		
 		int nextIndex = oldPokemon.getIndex() + 1;
 		
-		for (Pokedex base : Pokedex.getPokemonList()) {
+		for (Pokedex base : Pokedex.values()) {
 			if (base.getIndex() == nextIndex) {
 				evolvedForm = new Pokemon(oldPokemon, base);				
 				break;
@@ -466,7 +466,6 @@ public class Pokemon {
 	public void clearActiveMoves() {
 		activeMoves.clear();		
 	}
-	
 	/** END ADD NEW MOVE METHOD **/
 	
 	/** GET POKEMON METHODS **/	
@@ -474,7 +473,7 @@ public class Pokemon {
 		
 		Pokemon pokemon = null;
 		
-		for (Pokedex p : Pokedex.getPokemonList()) {
+		for (Pokedex p : Pokedex.values()) {
 			if (p == poke) {
 				pokemon = new Pokemon(p, level, capturedBall);
 				break;
@@ -489,7 +488,7 @@ public class Pokemon {
 		
 		Pokemon pokemon = null;
 		
-		for (Pokedex p : Pokedex.getPokemonList()) {
+		for (Pokedex p : Pokedex.values()) {
 			if (p.getIndex() == index) {
 				pokemon = new Pokemon(p, level, capturedBall);
 				break;

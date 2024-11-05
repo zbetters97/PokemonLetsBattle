@@ -1911,7 +1911,7 @@ public class BattleManager extends Thread {
 			if (gp.player.pokeParty.get(i).canEvolve()) {
 				
 				Pokemon oldEvolve = gp.player.pokeParty.get(i);
-				Pokemon newEvolve = Pokemon.evolvePokemon(oldEvolve);
+				Pokemon newEvolve = Pokemon.evolve(oldEvolve);
 				
 				gp.ui.evolvePokemon = oldEvolve;
 				gp.ui.battleState = gp.ui.battle_Evolve;

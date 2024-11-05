@@ -133,6 +133,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public EnvironmentManager eManager = new EnvironmentManager(this);
 	public CollisionChecker cChecker = new CollisionChecker(this);	
 	public EventHandler eHandler = new EventHandler(this);	
+	public EntityGenerator eGenerator = new EntityGenerator(this);
 	public BattleManager btlManager = new BattleManager(this);
 	public PathFinder pFinder = new PathFinder(this);
 	

@@ -753,47 +753,59 @@ public class Entity {
 			
 			gp.ui.bagNum = 0;
 			gp.ui.partyDialogue = p.getName() + " was given a\n" + item.name + " to hold.";
-			gp.ui.partyState = gp.ui.party_Main_Dialogue;			
+			gp.ui.partyState = gp.ui.party_Main_Dialogue;					
 		}
 		else {
 			gp.keyH.playErrorSE();
 		}
 	}
+	public void addItem(Entity item, Entity person) {
+
+		Entity newItem = gp.eGenerator.getItem(item.name);
+		
+		ArrayList<Entity> inventory = null;
+		
+		if (item.collectableType == type_keyItem) inventory = person.inventory_keyItems;		
+		else if (item.collectableType == type_item) inventory = person.inventory_items;		
+		else if (item.collectableType == type_ball) inventory = person.inventory_pokeballs;		
+		else if (item.collectableType == type_move) inventory = person.inventory_moves;
+		else return;
+		
+		int index = searchInventory(newItem, inventory);
+		if (index != -1) inventory.get(index).amount++;
+		else inventory.add(newItem);		
+	}
 	public void removeItem(Entity item, Entity person) {	
 		
 		ArrayList<Entity> inventory = null;
 		
-		if (item.collectableType == type_keyItem) {			
-			inventory = person.inventory_keyItems;
-		}
-		else if (item.collectableType == type_item) {			
-			inventory = person.inventory_items;
-		}
-		else if (item.collectableType == type_ball) {			
-			inventory = person.inventory_pokeballs;
-		}
-		else if (item.collectableType == type_move) {			
-			inventory = person.inventory_moves;
-		}
-		else {
-			return;
-		}
+		if (item.collectableType == type_keyItem) inventory = person.inventory_keyItems;		
+		else if (item.collectableType == type_item) inventory = person.inventory_items;		
+		else if (item.collectableType == type_ball) inventory = person.inventory_pokeballs;		
+		else if (item.collectableType == type_move) inventory = person.inventory_moves;
+		else return;
 		
-		for (int i = 0; i < inventory.size(); i++) {
-			
-			if (inventory.get(i).equals(item)) {
-				
-				inventory.get(i).amount--;
-				if (inventory.get(i).amount <= 0) {
-					inventory.remove(i);	
-					if (gp.ui.bagNum > 0) {
-						gp.ui.bagNum--;
-					}
+		int index = searchInventory(item, inventory);
+		if (index != -1) {
+			inventory.get(index).amount--;
+			if (inventory.get(index).amount <= 0) {
+				inventory.remove(index);	
+				if (gp.ui.bagNum > 0) {
+					gp.ui.bagNum--;
 				}
-				
+			}
+		}
+	}
+	public int searchInventory(Entity item, ArrayList<Entity> inventory) {
+		
+		int itemIndex = -1;		
+		for (int i = 0; i < inventory.size(); i++) {
+			if (inventory.get(i).name.equals(item.name)) {
+				itemIndex = i;
 				break;
-			}								
+			}
 		}		
+		return itemIndex;
 	}
 	
 	protected void revive(Entity entity, Pokemon p) {
