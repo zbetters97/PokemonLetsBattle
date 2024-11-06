@@ -715,8 +715,17 @@ public class BattleManager extends Thread {
 				move.setPP(move.getPP() - 1);
 			}
 		}
-		else {
+		else {									
 			typeDialogue("The attack missed!");
+			
+			if (move.getMove() == Moves.JUMPKICK || move.getMove() == Moves.HIGHJUMPKICK) {
+				
+				int damage = (int) Math.floor(atk.getHP() * 0.125);
+				if (damage >= atk.getHP()) damage = atk.getHP();					
+										
+				decreaseHP(atk, damage);		
+				typeDialogue(atk.getName() + " hurt\n" + damage + " itself!");		
+			}
 		}			
 	}		
 	
@@ -919,7 +928,7 @@ public class BattleManager extends Thread {
 				atk.addActiveMove(Moves.PROTECT);
 				typeDialogue(atk.getName() + " protected\nitself!");
 				break;
-			case RECOVER:
+			case RECOVER, ROOST:
 				if (atk.getHP() < atk.getBHP()) {
 					
 					int gainedHP = atk.getBHP() - atk.getHP();
@@ -1137,15 +1146,21 @@ public class BattleManager extends Thread {
 	private void applyEffect(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 
 		switch (move.getMove()) {
+			case BRICKBREAK:
+				if (trg.hasActiveMove(Moves.REFLECT)) {
+					trg.removeActiveMove(Moves.REFLECT);
+					typeDialogue(atk.getName() + " broke\nthe foe's shield!");
+				}
+				break;
 			case OUTRAGE, PETALDANCE, THRASH:
 				if (!move.isWaiting()) {
 					setStatus(trg, atk, Status.CONFUSE);				
 				}
 				return;
 			case RAPIDSPIN:
-				if (trg.hasActiveMove(Moves.LEECHSEED)) {					
-					typeDialogue(trg.getName() + " broke free\nof LEECH SEED!");		
+				if (trg.hasActiveMove(Moves.LEECHSEED)) {									
 					trg.removeActiveMove(Moves.LEECHSEED);
+					typeDialogue(trg.getName() + " broke free\nof LEECH SEED!");	
 				}
 				return;
 			case WAKEUPSLAP:
