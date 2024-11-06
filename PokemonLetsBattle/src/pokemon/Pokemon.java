@@ -16,6 +16,9 @@ import properties.Ability;
 /*** MOVE CLASS ***/
 public class Pokemon {
 	
+	public enum Growth {
+		MEDIUMFAST, ERATIC, FLUCTUATING, MEDIUMSLOW, FAST, SLOW
+	}
 	public enum Protection {
 		NONE, BOUNCE, DIG, DIVE, FLY, PHANTOMFORCE, SHADOWFORCE, SKYDROP
 	}
@@ -227,7 +230,7 @@ public class Pokemon {
 		
 		double xp = 0;		
 		
-		int growth = pokemon.getGrowth();
+		Growth growth = pokemon.getGrowth();
 		
 		double n = level;
 		double n2 = Math.pow(level, 2);
@@ -235,13 +238,11 @@ public class Pokemon {
 		
 		switch (growth) {
 		
-			// MEDIUM FAST
-			case 0:
+			case MEDIUMFAST:
 				xp = n3;
 				break;
 				
-			// ERRATIC
-			case 1:				
+			case ERATIC:				
 				if (1 < level && level < 50) {
 					xp = Math.floor( (n3 * (100.0 - n)) / 50.0 );
 				}
@@ -256,8 +257,7 @@ public class Pokemon {
 				}
 				break;
 				
-			// FLUCTUATING
-			case 2:
+			case FLUCTUATING:
 				if (1 < level && level < 15) {
 					xp = Math.floor( (n3 * (Math.floor((n + 1.0) / 3.0 ) + 24.0)) / 50.0 );
 				}
@@ -269,18 +269,15 @@ public class Pokemon {
 				}				
 				break;
 				
-			// MEDIUM SLOW
-			case 3:				
+			case MEDIUMSLOW:				
 				xp = ((6.0 / 5.0) * n3) + (-15 * n2) + (100 * n) - 140;				
 				break;
 				
-			// FAST
-			case 4:
+			case FAST:
 				xp = Math.floor( (4.0 * n3) / 5.0 );
 				break;
 				
-			// SLOW
-			case 5:
+			case SLOW:
 				xp = Math.floor( (5.0 * n3) / 4.0 );
 				break;
 		}

@@ -743,22 +743,27 @@ public class BattleManager extends Thread {
 			
 			if (trg.getStatus() == null) {
 				
-				trg.setStatus(status);		
-				
-				gp.playSE(gp.battle_SE, status.getStatus());
-				typeDialogue(trg.getName() + status.printCondition());
-				
-				if (trg.getAbility() == Ability.QUICKFEET && !trg.getAbility().isActive()) {
-					trg.getAbility().setActive(true);
-					setAttribute(trg, Arrays.asList("speed"), 2);
+				if (trg.getAbility() == Ability.LIMBER && status == Status.PARALYZE) {
+					typeDialogue ("It had no effect!");
 				}
-				else if (trg.getAbility() == Ability.GUTS && !trg.getAbility().isActive()) {
-					trg.getAbility().setActive(true);
-					setAttribute(trg, Arrays.asList("attack"), 2);
-				}
-				else if ((trg.getAbility() == Ability.SYNCHRONIZE) && 
-						(status == Status.BURN || status == Status.PARALYZE || status == Status.POISON)) {						
-					setStatus(trg, atk, status);
+				else {
+					trg.setStatus(status);		
+					
+					gp.playSE(gp.battle_SE, status.getStatus());
+					typeDialogue(trg.getName() + status.printCondition());
+					
+					if (trg.getAbility() == Ability.QUICKFEET && !trg.getAbility().isActive()) {
+						trg.getAbility().setActive(true);
+						setAttribute(trg, Arrays.asList("speed"), 2);
+					}
+					else if (trg.getAbility() == Ability.GUTS && !trg.getAbility().isActive()) {
+						trg.getAbility().setActive(true);
+						setAttribute(trg, Arrays.asList("attack"), 2);
+					}
+					else if ((trg.getAbility() == Ability.SYNCHRONIZE) && 
+							(status == Status.BURN || status == Status.PARALYZE || status == Status.POISON)) {						
+						setStatus(trg, atk, status);
+					}	
 				}
 			}		
 		}
@@ -811,12 +816,21 @@ public class BattleManager extends Thread {
 	private void setAttribute(Pokemon pkm, List<String> stats, int level) throws InterruptedException {
 		
 		// loop through each specified attribute to be changed
-		for (String stat : stats) {				
-			
-			if (level > 0) gp.playSE(gp.battle_SE, "stat-up");
-			else gp.playSE(gp.battle_SE, "stat-down");			
-			
-			typeDialogue(pkm.changeStat(stat, level));	
+		for (String stat : stats) {	
+									
+			if (level > 0) {
+				gp.playSE(gp.battle_SE, "stat-up");
+				typeDialogue(pkm.changeStat(stat, level));	
+			}
+			else {				
+				if (pkm.getAbility() == Ability.KEENEYE && stat.equals("accuracy")) {
+					typeDialogue("It had no effect!");
+				}
+				else {
+					gp.playSE(gp.battle_SE, "stat-down");		
+					typeDialogue(pkm.changeStat(stat, level));	
+				}
+			}
 		}			
 	}
 	
@@ -1206,6 +1220,11 @@ public class BattleManager extends Thread {
 				default: 
 					break;
 			}
+		}
+		
+		if (fighter[trg].getStatus() != null && fighter[trg].getAbility() == Ability.SHEDSKIN &&
+				Math.random() > 0.66) {
+			removeStatus(fighter[trg]);			
 		}
 	}	
 	private void leechSeed(Pokemon trg, Pokemon atk) throws InterruptedException {
