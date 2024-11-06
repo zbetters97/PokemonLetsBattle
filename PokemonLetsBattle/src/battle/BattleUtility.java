@@ -15,21 +15,17 @@ import moves.Move;
 import moves.Moves;
 import moves.Move.MoveType;
 import pokemon.Pokemon;
-import pokemon.Pokemon.Protection;
 import properties.Type;
 
 public final class BattleUtility {
 	
-	private static final List<Moves> digMoves = Arrays.asList(
-			Moves.EARTHQUAKE, 
-			Moves.FISSURE, 
-			Moves.MAGNITUDE
-	);
 	private static List<Moves> soundMoves = Arrays.asList(
-			Moves.ASTONISH, 
 			Moves.GROWL, 
+			Moves.HOWL,
 			Moves.HYPERBEAM, 
+			Moves.HYPERVOICE,
 			Moves.SCREECH,
+			Moves.SNORE,
 			Moves.SUPERSONIC
 	);
 	private static final Map<Integer, Integer> magnitudeTable = Map.ofEntries(
@@ -130,7 +126,7 @@ public final class BattleUtility {
 				int damage = calculateDamage(attacker, target, move, weather);				
 				damageMoves.put(move, damage);	
 				
-				if (damage >= target.getHP() && move.getGoFirst()) {
+				if (damage >= target.getHP() && move.getPriority() > 0) {
 					int accuracy = (int) getAccuracy(move, weather);
 					koMoves.put(move, accuracy);
 				}
@@ -179,39 +175,25 @@ public final class BattleUtility {
 			first = 4;
 		}
 		else {				
-			
-			double speed1 = fighter1.getSpeed();
-			double speed2 = fighter2.getSpeed();
-			
-			// if both moves go first (EX: Quick Attack)
-			if (move1.getGoFirst() && move2.getGoFirst()) {			
-				
-				// if fighter_one is faster (fighter_one has advantage if equal)
-				if (speed1 >= speed2) { 
-					first = 1;
-				}
-				else { 
-					first = 2; 
-				}
-			}
-			// if only playerMove goes first (EX: Quick Attack)
-			else if (move1.getGoFirst()) {
+			// playerMove higher priority
+			if (move1.getPriority() > move2.getPriority()) {
 				first = 1;
 			}
-			// if only cpuMove goes first (EX: Quick Attack)
-			else if (move2.getGoFirst()) {
+			// cpuMove higher priority
+			else if (move1.getPriority() < move2.getPriority()) {
 				first = 2;
 			}
+			// if equal priority
 			else {
-				// if fighter 1 is faster
-				if (speed1 > speed2) {
+				// fighter 1 is faster
+				if (fighter1.getSpeed() > fighter2.getSpeed()) {
 					first = 1;
 				}
-				// if fighter 2 is faster
-				else if (speed1 < speed2) {
+				// fighter 2 is faster
+				else if (fighter1.getSpeed() < fighter2.getSpeed()) {
 					first = 2;
 				}
-				// if both fighters have equal speed, coin flip decides
+				// both fighters have equal speed, coin flip decides
 				else {
 					Random r = new Random();					
 					first = (r.nextFloat() <= ((float) 1 / 2)) ? 1 : 2;
@@ -297,33 +279,51 @@ public final class BattleUtility {
 		/** PROBABILITY FORMULA REFERENCE: https://monster-master.fandom.com/wiki/Evasion **/
 		/** PROTECTED MOVES REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Semi-invulnerable_turn **/
 		
-		boolean hit;
+		boolean hit = false;
 		
-		if (target.getProtectedState() == Protection.FLY) {
+		switch (target.getProtectedState()) {
+			case BOUNCE, FLY, SKYDROP:				
+				if (move.getMove() != Moves.GUST &&
+						move.getMove() != Moves.SKYUPPERCUT &&
+						move.getMove() != Moves.THUNDER &&
+						move.getMove() != Moves.TWISTER) {
+					return true;
+				}			
+			case DIG:
+				if (move.getMove() != Moves.EARTHQUAKE &&
+						move.getMove() != Moves.FISSURE &&		
+						move.getMove() != Moves.MAGNITUDE) {
+					return true;
+				}
+				break;
+			case DIVE:
+				if (move.getMove() != Moves.SURF) {
+					return true;
+				}
+				break;
+			default:			
+				break;
+		}
+		
+		if (target.hasActiveMove(Moves.PROTECT)) {
 			hit = false;
 		}
-		else if (target.getProtectedState() == Protection.DIG && 
-				!digMoves.contains(move.getMove())) {
-			hit = false;			
+		// if move never misses, return true
+		else if (move.getAccuracy() == -1) {
+			hit = true; 
 		}
-		else {
-			// if move never misses, return true
-			if (move.getAccuracy() == -1) {
-				hit = true; 
+		else {				
+			if (target.hasActiveMove(Moves.ODORSLEUTH) || target.hasActiveMove(Moves.MIRACLEEYE)) {
+				hit = true;
 			}
-			else {				
-				if (target.hasActiveMove(Moves.ODORSLEUTH) || target.hasActiveMove(Moves.MIRACLEEYE)) {
-					hit = true;
-				}
-				else {
-					double accuracy = getAccuracy(move, weather) * (attacker.getAccuracy() / target.getEvasion());
-									
-					Random r = new Random();
-					float chance = r.nextFloat();
-					
-					// chance of missing is accuracy / 100
-					hit = (chance <= ((float) accuracy / 100)) ? true : false;	
-				}
+			else {
+				double accuracy = getAccuracy(move, weather) * (attacker.getAccuracy() / target.getEvasion());
+								
+				Random r = new Random();
+				float chance = r.nextFloat();
+				
+				// chance of missing is accuracy / 100
+				hit = (chance <= ((float) accuracy / 100)) ? true : false;	
 			}
 		}
 		
@@ -337,8 +337,8 @@ public final class BattleUtility {
 		
 		double level = attacker.getLevel();		
 		double power = getPower(move, attacker, target, weather);
-		double A = getAttack(attacker, move, weather);
-		double D = getDefense(target, move, weather);
+		double A = getAttack(move, attacker, target, weather);
+		double D = getDefense(move, attacker, target, weather);
 		double STAB = attacker.checkType(move.getType()) ? 1.5 : 1.0;
 		double type = getEffectiveness(target, move.getType());
 								
@@ -522,15 +522,19 @@ public final class BattleUtility {
 		
 		return power;
 	}	
-	private static double getAttack(Pokemon pokemon, Move move, Weather weather) {
+	private static double getAttack(Move move, Pokemon attacker, Pokemon target, Weather weather) {
 		
 		double attack = 1.0;
 		
 		if (move.getMType().equals(MoveType.SPECIAL)) {
-			attack = pokemon.getSpAttack();
+			attack = attacker.getSpAttack();
+			
+			if (target.hasActiveMove(Moves.LIGHTSCREEN)) {
+				attack /= 2.0;
+			}
 		}
 		else if (move.getMType().equals(MoveType.PHYSICAL)) {
-			attack = pokemon.getAttack();
+			attack = attacker.getAttack();
 		}
 		
 		switch (weather) {
@@ -545,18 +549,18 @@ public final class BattleUtility {
 			case SANDSTORM:
 				break;
 		}				
-		
+						
 		return attack;
 	}
-	private static double getDefense(Pokemon pokemon, Move move, Weather weather) {
+	private static double getDefense(Move move, Pokemon attacker, Pokemon target, Weather weather) {
 		
 		double defense = 1.0;
 		
 		if (move.getMType().equals(MoveType.SPECIAL)) {
-			defense = pokemon.getSpDefense();
+			defense = target.getSpDefense();
 		}
 		else if (move.getMType().equals(MoveType.PHYSICAL)) {
-			defense = pokemon.getDefense();
+			defense = target.getDefense();
 		}
 		
 		switch (weather) {
@@ -569,8 +573,7 @@ public final class BattleUtility {
 			case HAIL:					
 				break;
 			case SANDSTORM:
-				if (pokemon.getType() == Type.ROCK &&
-						move.getMType().equals(MoveType.SPECIAL)) {
+				if (target.isType(Type.ROCK) && move.getMType().equals(MoveType.SPECIAL)) {
 					defense *= 1.5;
 				}
 				break;

@@ -507,6 +507,16 @@ public class Pokemon {
 		if (sex == '♂') return Color.BLUE;		
 		else return Color.RED;		
 	}
+	public boolean isType(Type type) {
+		if (pokemon.getTypes() == null) {
+			if (pokemon.getType() == type) return true;			
+			else return false;			
+		}
+		else {
+			if (pokemon.getTypes().contains(type)) return true;			
+			else return false;			
+		}
+	}
 	
 	public int getLevel() {	return level; }	
 	

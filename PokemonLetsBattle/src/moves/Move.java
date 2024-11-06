@@ -3,6 +3,7 @@ package moves;
 import java.util.List;
 import java.util.Random;
 
+import application.GamePanel.Weather;
 import pokemon.Pokemon.Protection;
 import properties.Status;
 import properties.Type;
@@ -76,7 +77,7 @@ public class Move {
 	
 	public boolean isReady() { 
 		switch (move) {
-			case MIST, OUTRAGE, PETALDANCE, REFLECT, ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH:
+			case MIST, LIGHTSCREEN, OUTRAGE, PETALDANCE, REFLECT, ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH:
 				return true;
 			default:
 				if (move.getRecharge()) {
@@ -93,7 +94,7 @@ public class Move {
 	public void resetMoveTurns() {	
 		
 		switch (move) {
-			case MIST, OUTRAGE, PETALDANCE, ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH:
+			case MIST, LIGHTSCREEN, OUTRAGE, PETALDANCE, REFLECT, ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH:
 				if (turnCount > 0) turnCount--;			
 				else turnCount = getTurns();
 				break;
@@ -131,10 +132,10 @@ public class Move {
 		else return move.getAccuracy(); 
 	}
 	public int getPower() {	return move.getPower(); }	
-	public boolean getGoFirst() { return move.getGoFirst(); }	
+	public int getPriority() { return move.getPriority(); }
 	public boolean getRecharge() { return move.getRecharge(); }
 	
-	public String getWeather() { return move.getWeather(); }
+	public Weather getWeather() { return move.getWeather(); }
 	public String getDelay(String name) { return move.getDelay(name); }	
 	public Protection getProtection() { return move.getProtection(); }
 	public String getInfo() {	return move.getInfo(); }	

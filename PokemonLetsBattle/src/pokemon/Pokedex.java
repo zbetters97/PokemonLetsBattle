@@ -22,8 +22,6 @@ public enum Pokedex {
 	/** XP GROWTH REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_experience_type **/	
 	/** CATCH RATE REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pokémon_by_catch_rate **/	
 	
-	/**  NAME ("Name", index, type, ability, hp, attack, defense, spAttack, spDefense, speed, 
-			evolve level, exp, ev, growth, catchRate, moves) **/
 	
 	BULBASAUR ("Bulbasaur", 1, Type.GRASS, Ability.OVERGROW, 45, 49, 49, 65, 65, 45, 16, 64, 1, Growth.MEDIUMSLOW, 45,
 			Map.ofEntries(
@@ -492,8 +490,8 @@ public enum Pokedex {
 					Map.entry(43, Moves.AGILITY),
 					Map.entry(50, Moves.DISCHARGE),
 					Map.entry(57, Moves.ROOST),
-//					Map.entry(64, Moves.LIGHTSCREEN),
-//					Map.entry(71, Moves.DRILLPECK),
+					Map.entry(64, Moves.LIGHTSCREEN),
+					Map.entry(71, Moves.DRILLPECK),
 					Map.entry(78, Moves.THUNDER),
 					Map.entry(85, Moves.RAINDANCE)
 			)),
@@ -509,7 +507,7 @@ public enum Pokedex {
 					Map.entry(57, Moves.ROOST),
 					Map.entry(64, Moves.HEATWAVE),
 					Map.entry(71, Moves.SOLARBEAM),
-//					Map.entry(78, Moves.SKYATTACK),
+					Map.entry(78, Moves.SKYATTACK),
 					Map.entry(85, Moves.SUNNYDAY)
 			)),
 	DRATINI ("Dratini", 147, Type.DRAGON, Ability.SHEDSKIN, 41, 64, 45, 50, 50, 50, 35, 67, 1, Growth.SLOW, 45,

@@ -673,6 +673,7 @@ public class UI {
 		}
 	}
 	
+	/** DEX MENU **/
 	private void pause_Dex() {
 		
 		g2.setColor(party_green);  

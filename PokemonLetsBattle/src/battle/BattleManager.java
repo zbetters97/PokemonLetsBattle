@@ -791,22 +791,13 @@ public class BattleManager extends Thread {
 		// if move changes self attributes
 		if (move.isToSelf()) {
 			
-			if (move.getMove() == Moves.REST) {
-				
-				int gainedHP = atk.getBHP() - atk.getHP();
-				increaseHP(atk, gainedHP);
-				
-				setStatus(trg, atk, Status.SLEEP);		
+			int level = move.getLevel();
+							
+			if (weather == Weather.SUNLIGHT && move.getMove() == Moves.GROWTH) {
+				level++;
 			}
-			else {				
-				int level = move.getLevel();
-								
-				if (weather == Weather.SUNLIGHT && move.getMove() == Moves.GROWTH) {
-					level++;
-				}
-				
-				setAttribute(atk, move.getStats(), level);		
-			}
+			
+			setAttribute(atk, move.getStats(), level);				
 		}
 		// if move changes target attributes
 		else {			
@@ -846,7 +837,7 @@ public class BattleManager extends Thread {
 	// WEATHER MOVE
 	private void weatherMove(Move move) throws InterruptedException {		
 		
-		weather = Weather.valueOf(move.getWeather());
+		weather = move.getWeather();
 		checkWeatherCondition();
 		weatherDays = move.getTurns();
 	}
@@ -924,7 +915,7 @@ public class BattleManager extends Thread {
 					typeDialogue(atk.getName() + " identified\n" + trg.getName() + "!");					
 				}	
 				break;			
-			case PROTECT:
+			case DETECT, PROTECT:
 				atk.addActiveMove(Moves.PROTECT);
 				typeDialogue(atk.getName() + " protected\nitself!");
 				break;
@@ -942,7 +933,13 @@ public class BattleManager extends Thread {
 					typeDialogue("It had no effect!");
 				}
 				break;
-			case REFLECT:
+			case REST:
+				int gainedHP = atk.getBHP() - atk.getHP();
+				increaseHP(atk, gainedHP);				
+				typeDialogue(atk.getName() + "\nregained health!");
+				setStatus(trg, atk, Status.SLEEP);		
+				break;
+			case LIGHTSCREEN, REFLECT:
 				if (atk.hasActiveMove(move.getMove())) {
 					typeDialogue("It had no effect!");
 				}
@@ -1040,7 +1037,7 @@ public class BattleManager extends Thread {
 		if (trg.hasActiveMove(Moves.REFLECT) && move.getMType() == MoveType.PHYSICAL) {
 			damage /= 2;			
 		}		
-		
+				
 		if (trg.getAbility() == Ability.FLASHFIRE && !trg.getAbility().isActive() && move.getType() == Type.FIRE) {
 			trg.getAbility().setActive(true);
 		}
@@ -1151,6 +1148,10 @@ public class BattleManager extends Thread {
 					trg.removeActiveMove(Moves.REFLECT);
 					typeDialogue(atk.getName() + " broke\nthe foe's shield!");
 				}
+				else if (trg.hasActiveMove(Moves.LIGHTSCREEN)) {
+					trg.removeActiveMove(Moves.LIGHTSCREEN);
+					typeDialogue(atk.getName() + " broke\nthe foe's shield!");
+				}				
 				break;
 			case OUTRAGE, PETALDANCE, THRASH:
 				if (!move.isWaiting()) {
@@ -1809,21 +1810,18 @@ public class BattleManager extends Thread {
 		// RESET NON-DELAYED MOVES
 		int delay = BattleUtility.getDelay(playerMove, cpuMove);	
 				
-		if (delay == 0) { 
-			
+		if (delay == 0) { 			
 			if (playerMove != null) playerMove.resetMoveTurns();
 			playerMove = null; 
 			
 			if (cpuMove != null) cpuMove.resetMoveTurns();			
 			cpuMove = null; 
 		}
-		else if (delay == 1) {
-			
+		else if (delay == 1) {			
 			if (cpuMove != null) cpuMove.resetMoveTurns();
 			cpuMove = null;	
 		}
-		else if (delay == 2) {
-			
+		else if (delay == 2) {			
 			if (playerMove != null) playerMove.resetMoveTurns();
 			playerMove = null;
 		}
