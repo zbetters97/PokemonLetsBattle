@@ -126,6 +126,8 @@ public enum Moves {
 			"The foe is attacked with\nsmall flames. The target may\nalso be left with a\nburn."),
 	ENDEAVOR ("Endeavor", MoveType.PHYSICAL, Type.NORMAL, 5, 1, 100, 0,
 			"An attack move that cuts\ndown the foe's HP to equal\nthe user's HP."),
+	ENDURE ("Endure", MoveType.OTHER, Type.NORMAL, 10, -1, -1, 3, 
+			"The user endures any attack\nwith at least 1 HP."),
 	ENERGYBALL ("Energy Ball", MoveType.SPECIAL, Type.GRASS, false, 0.10, 10, 90, 100, 0, -1, Arrays.asList("sp. defense"), 
 			"The user draws power from\nnature and fires it at the\ntarget. It may also lower\nthe target's Sp. Def."),
 	ERUPTION ("Eruption", MoveType.SPECIAL, Type.FIRE, 5, 150, 100, 0,

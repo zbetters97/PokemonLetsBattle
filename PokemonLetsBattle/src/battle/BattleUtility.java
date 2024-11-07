@@ -29,8 +29,7 @@ public final class BattleUtility {
 			Moves.SUPERSONIC
 	);
 	private static final Map<Integer, Integer> magnitudeTable = Map.ofEntries(
-			Map.entry(4, 5), 
-			Map.entry(5, 10), 
+			Map.entry(4, 5), Map.entry(5, 10), 
 			Map.entry(6, 20), 
 			Map.entry(7, 30), 
 			Map.entry(8, 20), 
@@ -40,44 +39,44 @@ public final class BattleUtility {
 	
 	private BattleUtility(GamePanel gp) { }
 	
-	public static Move chooseCPUMove(Entity trainer, Pokemon attacker, Pokemon target, Weather weather) {
+	public static Move chooseCPUMove(Entity trainer, Pokemon atk, Pokemon trg, Weather weather) {
 		/** SWITCH OUT LOGIC REFERENCE: https://www.youtube.com/watch?v=apuO7pvmGUo **/
 		
 		Move bestMove = null;
 		
 		if (trainer == null || trainer.skillLevel  == trainer.skill_rookie) {
-			bestMove = chooseCPUMove_Random(attacker);
+			bestMove = chooseCPUMove_Random(atk);
 		}
 		else if (trainer.skillLevel == trainer.skill_smart) {
-			bestMove = chooseCPUMove_Power(attacker, target, weather);
+			bestMove = chooseCPUMove_Power(atk, trg, weather);
 		}
 		else if (trainer.skillLevel == trainer.skill_elite) {
-			bestMove = chooseCPUMove_Best(attacker, target, weather);
+			bestMove = chooseCPUMove_Best(atk, trg, weather);
 		}		
 		
 		return bestMove;
 	}
- 	private static Move chooseCPUMove_Random(Pokemon attacker) {
+ 	private static Move chooseCPUMove_Random(Pokemon atk) {
 		
-		Move bestMove;
+		Move bestMove = null;
 		
-		int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
-		bestMove = attacker.getMoveSet().get(ranMove);
+		int ranMove = (int)(Math.random() * (atk.getMoveSet().size()));				
+		bestMove = atk.getMoveSet().get(ranMove);
 				
 		return bestMove;
 	}
-	private static Move chooseCPUMove_Power(Pokemon attacker, Pokemon target, Weather weather) {
+	private static Move chooseCPUMove_Power(Pokemon atk, Pokemon trg, Weather weather) {
 		
-		Move bestMove;
+		Move bestMove = null;
 		
 		Map<Move, Integer> damageMoves = new HashMap<>();
 		
-		for (Move move : attacker.getMoveSet()) {
+		for (Move move : atk.getMoveSet()) {
 			
 			if (move.getPower() > 0 && move.getPP() != 0) {
 				
-				double power = getPower(move, attacker, target, weather);				
-				double type = getEffectiveness(target, move.getType());				
+				double power = getPower(move, atk, trg, weather);				
+				double type = getEffectiveness(trg, move.getType());				
 				
 				// CALCULATE POWER OF EACH MOVE
 				int result = (int) (power * type);
@@ -88,7 +87,7 @@ public final class BattleUtility {
 				
 		if (damageMoves.isEmpty()) {		
 			
-			for (Move move : attacker.getMoveSet()) {
+			for (Move move : atk.getMoveSet()) {
 				
 				if (move.getMType() == MoveType.STATUS) {
 					bestMove = move;
@@ -96,8 +95,8 @@ public final class BattleUtility {
 				}		
 			}
 			
-			int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
-			bestMove = attacker.getMoveSet().get(ranMove);				
+			int ranMove = (int)(Math.random() * (atk.getMoveSet().size()));				
+			bestMove = atk.getMoveSet().get(ranMove);				
 		}
 		else {
 
@@ -105,28 +104,28 @@ public final class BattleUtility {
 
 			int val = 1 + (int)(Math.random() * 4);
 			if (val == 1) {				
-				int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
-				bestMove = attacker.getMoveSet().get(ranMove);
+				int ranMove = (int)(Math.random() * (atk.getMoveSet().size()));				
+				bestMove = atk.getMoveSet().get(ranMove);
 			}	
 		}
 		
 		return bestMove;
 	}
-	private static Move chooseCPUMove_Best(Pokemon attacker, Pokemon target, Weather weather) {
+	private static Move chooseCPUMove_Best(Pokemon atk, Pokemon trg, Weather weather) {
 		
-		Move bestMove;
+		Move bestMove = null;
 		
 		Map<Move, Integer> damageMoves = new HashMap<>();
 		Map<Move, Integer> koMoves = new HashMap<>();
 		
-		for (Move move : attacker.getMoveSet()) {
+		for (Move move : atk.getMoveSet()) {
 			
 			if (move.getPower() > 0 && move.getPP() != 0) {
 				
-				int damage = calculateDamage(attacker, target, move, weather);				
+				int damage = calculateDamage(atk, trg, move, weather);				
 				damageMoves.put(move, damage);	
 				
-				if (damage >= target.getHP() && move.getPriority() > 0) {
+				if (damage >= trg.getHP() && move.getPriority() > 0) {
 					int accuracy = (int) getAccuracy(move, weather);
 					koMoves.put(move, accuracy);
 				}
@@ -137,7 +136,7 @@ public final class BattleUtility {
 			
 			if (damageMoves.isEmpty()) {		
 				
-				for (Move move : attacker.getMoveSet()) {
+				for (Move move : atk.getMoveSet()) {
 					
 					if (move.getMType() == MoveType.STATUS) {
 						bestMove = move;
@@ -145,8 +144,8 @@ public final class BattleUtility {
 					}		
 				}
 				
-				int ranMove = (int)(Math.random() * (attacker.getMoveSet().size()));				
-				bestMove = attacker.getMoveSet().get(ranMove);				
+				int ranMove = (int)(Math.random() * (atk.getMoveSet().size()));				
+				bestMove = atk.getMoveSet().get(ranMove);				
 			}
 			else {						
 				bestMove = Collections.max(damageMoves.entrySet(), 
@@ -175,25 +174,19 @@ public final class BattleUtility {
 			first = 4;
 		}
 		else {				
-			// playerMove higher priority
 			if (move1.getPriority() > move2.getPriority()) {
 				first = 1;
 			}
-			// cpuMove higher priority
 			else if (move1.getPriority() < move2.getPriority()) {
 				first = 2;
 			}
-			// if equal priority
 			else {
-				// fighter 1 is faster
 				if (fighter1.getSpeed() > fighter2.getSpeed()) {
 					first = 1;
 				}
-				// fighter 2 is faster
 				else if (fighter1.getSpeed() < fighter2.getSpeed()) {
 					first = 2;
 				}
-				// both fighters have equal speed, coin flip decides
 				else {
 					Random r = new Random();					
 					first = (r.nextFloat() <= ((float) 1 / 2)) ? 1 : 2;
@@ -238,8 +231,7 @@ public final class BattleUtility {
 	
 	public static int getConfusionDamage(Pokemon pkm) {
  		/** CONFUSION DAMAGE FORMULA REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition)#Effect **/
-		
- 		
+		 		
  		int damage = 0;
 		
 		double level = pkm.getLevel();		
@@ -275,13 +267,13 @@ public final class BattleUtility {
 		}		
 	}
 	
-	public static boolean hit(Pokemon attacker, Pokemon target, Move move, Weather weather) {
+	public static boolean hit(Pokemon atk, Pokemon trg, Move move, Weather weather) {
 		/** PROBABILITY FORMULA REFERENCE: https://monster-master.fandom.com/wiki/Evasion **/
 		/** PROTECTED MOVES REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Semi-invulnerable_turn **/
 		
 		boolean hit = false;
 		
-		switch (target.getProtectedState()) {
+		switch (trg.getProtectedState()) {
 			case BOUNCE, FLY, SKYDROP:				
 				if (move.getMove() != Moves.GUST &&
 						move.getMove() != Moves.SKYUPPERCUT &&
@@ -305,7 +297,7 @@ public final class BattleUtility {
 				break;
 		}
 		
-		if (target.hasActiveMove(Moves.PROTECT)) {
+		if (trg.hasActiveMove(Moves.PROTECT)) {
 			hit = false;
 		}
 		// if move never misses, return true
@@ -313,17 +305,17 @@ public final class BattleUtility {
 			hit = true; 
 		}
 		else {				
-			if (target.hasActiveMove(Moves.MIRACLEEYE) || target.hasActiveMove(Moves.ODORSLEUTH)) {
+			if (trg.hasActiveMove(Moves.MIRACLEEYE) || trg.hasActiveMove(Moves.ODORSLEUTH)) {
 				hit = true;
 			}
 			else {
 				double accuracy = 0;
 				
-				if (target.hasActiveMove(Moves.FORESIGHT)) {
-					accuracy = getAccuracy(move, weather) * attacker.getAccuracy();
+				if (trg.hasActiveMove(Moves.FORESIGHT)) {
+					accuracy = getAccuracy(move, weather) * atk.getAccuracy();
 				}
 				else {
-					accuracy = getAccuracy(move, weather) * (attacker.getAccuracy() / target.getEvasion());	
+					accuracy = getAccuracy(move, weather) * (atk.getAccuracy() / trg.getEvasion());	
 				}				
 								
 				Random r = new Random();
@@ -337,17 +329,17 @@ public final class BattleUtility {
 		return hit;
 	}
 	
- 	public static int calculateDamage(Pokemon attacker, Pokemon target, Move move, Weather weather) {
-		// DAMAGE FORMULA REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Damage (GEN IV)
+ 	public static int calculateDamage(Pokemon atk, Pokemon trg, Move move, Weather weather) {
+		/** DAMAGE FORMULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Damage **/
 		
 		int damage = 0;
 		
-		double level = attacker.getLevel();		
-		double power = getPower(move, attacker, target, weather);
-		double A = getAttack(move, attacker, target, weather);
-		double D = getDefense(move, attacker, target, weather);
-		double STAB = attacker.checkType(move.getType()) ? 1.5 : 1.0;
-		double type = getEffectiveness(target, move.getType());
+		double level = atk.getLevel();		
+		double power = getPower(move, atk, trg, weather);
+		double A = getAttack(move, atk, trg, weather);
+		double D = getDefense(move, atk, trg, weather);
+		double STAB = atk.checkType(move.getType()) ? 1.5 : 1.0;
+		double type = getEffectiveness(trg, move.getType());
 								
 		Random r = new Random();
 		double random = (double) (r.nextInt(100 - 85 + 1) + 85) / 100.0;
@@ -357,20 +349,20 @@ public final class BattleUtility {
 										
 		switch (move.getMove()) {
 			case ENDEAVOR: 		
-				if (target.getHP() < attacker.getHP()) damage = 0;			
-				else damage = target.getHP() - attacker.getHP();	
+				if (trg.getHP() < atk.getHP()) damage = 0;			
+				else damage = trg.getHP() - atk.getHP();	
 				break;
 			case DRAGONRAGE:
 				damage = 40;
 				break;
 			case SEISMICTOSS:
-				damage = target.getLevel();
+				damage = trg.getLevel();
 				break;
 			default:
 				break;
 		}
 		
-		switch (target.getAbility()) {
+		switch (trg.getAbility()) {
 			case FLASHFIRE:
 				if (move.getType() == Type.FIRE) damage = 0;			
 				break;
@@ -418,14 +410,14 @@ public final class BattleUtility {
 		
 		return accuracy;
 	}
-	private static double getPower(Move move, Pokemon attacker, Pokemon target, Weather weather) {
+	private static double getPower(Move move, Pokemon atk, Pokemon trg, Weather weather) {
 		/** FLAIL POWER FORMULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Flail_(move) **/
 				
 		double power = 1.0; 
 		
 		switch (move.getMove()) {
 		case FLAIL, REVERSAL: 			
-			double remainHP = attacker.getHP() / attacker.getBHP();
+			double remainHP = atk.getHP() / atk.getBHP();
 			
 			if (remainHP >= 0.672) power = 20;
 			else if (0.672 > remainHP && remainHP >= 0.344) power = 40;
@@ -466,16 +458,15 @@ public final class BattleUtility {
 			
 			break;
 		case ERUPTION:
-			power = (attacker.getHP() * 150.0) / attacker.getBHP();
+			power = (atk.getHP() * 150.0) / atk.getBHP();
 			break;
 		case WATERSPOUT:
-			power = Math.ceil((attacker.getHP() * move.getPower()) / attacker.getBHP());
+			power = Math.ceil((atk.getHP() * move.getPower()) / atk.getBHP());
 			break;
 		default:
-			if (move.getPower() == -1) power = attacker.getLevel();		
-			else if (move.getPower() == 1) power = target.getLevel();		
-			else power = move.getPower();	
-			
+			if (move.getPower() == -1) power = atk.getLevel();		
+			else if (move.getPower() == 1) power = trg.getLevel();		
+			else power = move.getPower();				
 			break;
 		}
 		
@@ -484,15 +475,13 @@ public final class BattleUtility {
 				break;
 			case SUNLIGHT:
 				if (move.getType() == Type.FIRE) power *= 1.5;
-				else if (move.getType() == Type.WATER) power *= 0.5;
-				
+				else if (move.getType() == Type.WATER) power *= 0.5;				
 				break;
 			case RAIN:
 				if (move.getType() == Type.WATER) power *= 1.5;				
-				else if (move.getType() == Type.FIRE) power *= 0.5;
+				else if (move.getType() == Type.FIRE) power *= 0.5;		
 				
-				if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;
-				
+				if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;				
 				break;
 			case HAIL:
 				if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;
@@ -502,24 +491,24 @@ public final class BattleUtility {
 				break;
 		}		
 		
-		switch (attacker.getAbility()) {
+		switch (atk.getAbility()) {
 			case BLAZE:
-				if (move.getType() == Type.FIRE && ((double) attacker.getHP() / (double) attacker.getBHP() <= 0.33)) {
+				if (move.getType() == Type.FIRE && ((double) atk.getHP() / (double) atk.getBHP() <= 0.33)) {
 					power *= 1.5;				
 				}
 				break;
 			case FLASHFIRE:
-				if (attacker.getAbility().isActive()) {
+				if (atk.getAbility().isActive()) {
 					power *= 1.5;
 				}
 				break;
 			case OVERGROW:
-				if (move.getType() == Type.GRASS && ((double) attacker.getHP() / (double) attacker.getBHP() <= 0.33)) {
+				if (move.getType() == Type.GRASS && ((double) atk.getHP() / (double) atk.getBHP() <= 0.33)) {
 					power *= 1.5;				
 				}
 				break;
 			case TORRENT:
-				if (move.getType() == Type.WATER && ((double) attacker.getHP() / (double) attacker.getBHP() <= 0.33)) {
+				if (move.getType() == Type.WATER && ((double) atk.getHP() / (double) atk.getBHP() <= 0.33)) {
 					power *= 1.5;				
 				}
 				break;
@@ -529,19 +518,19 @@ public final class BattleUtility {
 		
 		return power;
 	}	
-	private static double getAttack(Move move, Pokemon attacker, Pokemon target, Weather weather) {
+	private static double getAttack(Move move, Pokemon atk, Pokemon trg, Weather weather) {
 		
 		double attack = 1.0;
 		
 		if (move.getMType().equals(MoveType.SPECIAL)) {
-			attack = attacker.getSpAttack();
+			attack = atk.getSpAttack();
 			
-			if (target.hasActiveMove(Moves.LIGHTSCREEN)) {
+			if (trg.hasActiveMove(Moves.LIGHTSCREEN)) {
 				attack /= 2.0;
 			}
 		}
 		else if (move.getMType().equals(MoveType.PHYSICAL)) {
-			attack = attacker.getAttack();
+			attack = atk.getAttack();
 		}
 		
 		switch (weather) {
@@ -559,15 +548,15 @@ public final class BattleUtility {
 						
 		return attack;
 	}
-	private static double getDefense(Move move, Pokemon attacker, Pokemon target, Weather weather) {
+	private static double getDefense(Move move, Pokemon atk, Pokemon trg, Weather weather) {
 		
 		double defense = 1.0;
 		
 		if (move.getMType().equals(MoveType.SPECIAL)) {
-			defense = target.getSpDefense();
+			defense = trg.getSpDefense();
 		}
 		else if (move.getMType().equals(MoveType.PHYSICAL)) {
-			defense = target.getDefense();
+			defense = trg.getDefense();
 		}
 		
 		switch (weather) {
@@ -580,7 +569,7 @@ public final class BattleUtility {
 			case HAIL:					
 				break;
 			case SANDSTORM:
-				if (target.isType(Type.ROCK) && move.getMType().equals(MoveType.SPECIAL)) {
+				if (trg.isType(Type.ROCK) && move.getMType().equals(MoveType.SPECIAL)) {
 					defense *= 1.5;
 				}
 				break;
@@ -588,64 +577,62 @@ public final class BattleUtility {
 		
 		return defense;
 	}
-	public static double getEffectiveness(Pokemon pokemon, Type type) {
+	public static double getEffectiveness(Pokemon pkm, Type type) {
 		
 		double effect = 1.0;
 		
 		if ((type == Type.NORMAL || type == Type.FIGHTING) && 
-				pokemon.checkType(Type.GHOST) &&
-				(pokemon.hasActiveMove(Moves.ODORSLEUTH) || 
-						pokemon.hasActiveMove(Moves.FORESIGHT))) {
+				pkm.checkType(Type.GHOST) &&
+				(pkm.hasActiveMove(Moves.ODORSLEUTH) || pkm.hasActiveMove(Moves.FORESIGHT))) {
 			return effect;							
 		}
-		else if (type == Type.PSYCHIC &&
-				pokemon.checkType(Type.DARK) && 				 
-				pokemon.hasActiveMove(Moves.MIRACLEEYE)) {
+		else if (type == Type.PSYCHIC && pkm.checkType(Type.DARK) && 				 
+				pkm.hasActiveMove(Moves.MIRACLEEYE)) {
 			return effect;							
 		}
 		
-		// if target is single type
-		if (pokemon.getTypes() == null) {
+		// if trg is single type
+		if (pkm.getTypes() == null) {
 			
 			// if vulnerable, retrieve and return vulnerable value		
-			for (Type vulnType : pokemon.getType().getVulnerability().keySet()) {		
+			for (Type vulnType : pkm.getType().getVulnerability().keySet()) {		
 				if (vulnType.getName().equals(type.getName())) {
-					effect = pokemon.getType().getVulnerability().get(vulnType);
+					effect = pkm.getType().getVulnerability().get(vulnType);
 					return effect;
 				}
 			}			
 			// if resistant, retrieve and return resistance value
-			for (Type resType : pokemon.getType().getResistance().keySet()) {			
+			for (Type resType : pkm.getType().getResistance().keySet()) {			
 				if (resType.getName().equals(type.getName())) {
-					effect = pokemon.getType().getResistance().get(resType);
+					effect = pkm.getType().getResistance().get(resType);
 					return effect;
 				}			
 			}		
 		}
-		// if target is multi type
+		// if pkm is multi type
 		else {
 			
-			// for each type in target
-			for (Type targetType : pokemon.getTypes()) {		
+			// for each type 
+			for (Type trgType : pkm.getTypes()) {		
 				
 				// for each vulnerability			
 				vulnerabilityLoop:
-				for (Type vulnType : targetType.getVulnerability().keySet()) {		
+				for (Type vulnType : trgType.getVulnerability().keySet()) {		
 					
 					// if found, multiply by effect and move to next loop
 					if (vulnType.getName().equals(type.getName())) {						
-						effect *= targetType.getVulnerability().get(vulnType);		
+						effect *= trgType.getVulnerability().get(vulnType);		
 						break vulnerabilityLoop;
 					}
 				}	
 				
 				// for each resistance
 				resistanceLoop:
-				for (Type resType : targetType.getResistance().keySet()) {		
+				for (Type resType : trgType.getResistance().keySet()) {		
 					
 					// if found, multiply by effect and move to next loop
 					if (resType.getName().equals(type.getName())) {
-						effect *= targetType.getResistance().get(resType);
+						effect *= trgType.getResistance().get(resType);
 						break resistanceLoop;
 					}
 				}
@@ -660,7 +647,7 @@ public final class BattleUtility {
 		return effect;
 	}
 	
-	public static Pokemon getCPUFighter(Entity trainer, Pokemon fighter, Pokemon target, Weather weather) {
+	public static Pokemon getCPUFighter(Entity trainer, Pokemon fighter, Pokemon trg, Weather weather) {
 		
 		Pokemon nextFighter = null;
 		
@@ -668,30 +655,34 @@ public final class BattleUtility {
 			nextFighter = getCPUFighter_Next(trainer, fighter);
 		}
 		else if (trainer.skillLevel == trainer.skill_smart) {
-			nextFighter = getCPUFighter_Power(trainer, target, weather);
+			nextFighter = getCPUFighter_Power(trainer, trg, weather);
 		}
 		else if (trainer.skillLevel == trainer.skill_elite) {
-			nextFighter = getCPUFighter_Best(trainer, target, weather);
+			nextFighter = getCPUFighter_Best(trainer, trg, weather);
 		}
 		
 		return nextFighter;		
 	}	
  	private static Pokemon getCPUFighter_Next(Entity trainer, Pokemon fighter) {
 		
+ 		Pokemon nextFighter = null;
+ 		
  		if (fighter == null) { 
- 			return trainer.pokeParty.get(0); 
+ 			nextFighter = trainer.pokeParty.get(0); 
  		}
  		else {
  			int index = trainer.pokeParty.indexOf(fighter);
  			if (index < 0 || index + 1 == trainer.pokeParty.size()) {
- 				return null;
+ 				nextFighter = null;
  			}
  			else {
- 				 return trainer.pokeParty.get(index + 1);
+ 				nextFighter = trainer.pokeParty.get(index + 1);
  			}	
  		}	
+ 		
+ 		return nextFighter;
 	}
- 	private static Pokemon getCPUFighter_Power(Entity trainer, Pokemon target, Weather weather) {
+ 	private static Pokemon getCPUFighter_Power(Entity trainer, Pokemon trg, Weather weather) {
  		
  		Pokemon bestFighter = null;
  		
@@ -706,8 +697,8 @@ public final class BattleUtility {
  					
  					if (m.getPower() > 0 && m.getPP() != 0) {
  						
- 						double power = getPower(m, p, target, weather);				
- 						double type = getEffectiveness(target, m.getType());				
+ 						double power = getPower(m, p, trg, weather);				
+ 						double type = getEffectiveness(trg, m.getType());				
  						
  						// CALCULATE POWER OF EACH MOVE
  						int result = (int) (power * type); 	 
@@ -746,7 +737,7 @@ public final class BattleUtility {
  		 		 		
  		return bestFighter; 		
  	}
- 	private static Pokemon getCPUFighter_Best(Entity trainer, Pokemon target, Weather weather) {
+ 	private static Pokemon getCPUFighter_Best(Entity trainer, Pokemon trg, Weather weather) {
 		
 		Pokemon bestFighter = null;
  		
@@ -761,7 +752,7 @@ public final class BattleUtility {
  					
  					if (m.getPower() > 0 && m.getPP() != 0) {
  						
- 						int damage = calculateDamage(p, target, m, weather);				
+ 						int damage = calculateDamage(p, trg, m, weather);				
  						damageMoves.put(m, damage);	
  					}		 					
  				} 	
@@ -832,30 +823,30 @@ public final class BattleUtility {
 			isCaptured = true;
 		}
 		
-		return isCaptured;
-		
+		return isCaptured;		
 	}
 	
-	public static int calculateEXPGain(Pokemon target, boolean trainerBattle) {
+	public static int calculateEXPGain(Pokemon pkm, boolean trainerBattle) {
 		// EXP FORMULA REFERENCE (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience		
 		
-		double b = target.getEXPYeild();
-		double L = target.getLevel();
+		int exp = 0;
+		
+		double b = pkm.getEXPYeild();
+		double L = pkm.getLevel();
 		double s = 1.0;
 		double e = 1.0;
 		double a = trainerBattle ? 1.5 : 1.0;
 		double t = 1.0;
 		
-		double exp = Math.floor( (b * L) / 7 ) * Math.floor(1 / s) * e * a * t;
+		exp = (int) (Math.floor( (b * L) / 7 ) * Math.floor(1 / s) * e * a * t);
 						
-		return (int) exp;
+		return exp;
 	}
 	
 	public static int calculateMoneyEarned(Entity trainer) {
 		// MONEY EARNED FORMULA REFERENCE (ALL GEN): https://bulbapedia.bulbagarden.net/wiki/Prize_money
-		
-		
-		int payout  = 0;
+				
+		int payout = 0;
 		
 		int level = trainer.pokeParty.get(trainer.pokeParty.size() - 1).getLevel();
 		int base = trainer.trainerClass;		

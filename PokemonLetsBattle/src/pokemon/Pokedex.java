@@ -372,7 +372,7 @@ public enum Pokedex {
 //					Map.entry(33, Moves.MINDREADER),
 					Map.entry(37, Moves.FORESIGHT),
 					Map.entry(41, Moves.BLAZEKICK),
-//					Map.entry(45, Moves.ENDURE),
+					Map.entry(45, Moves.ENDURE),
 					Map.entry(49, Moves.MEGAKICK),
 					Map.entry(53, Moves.CLOSECOMBAT),
 					Map.entry(57, Moves.REVERSAL)

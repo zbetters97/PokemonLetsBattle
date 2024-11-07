@@ -26,9 +26,6 @@ import properties.Type;
 
 public class BattleManager extends Thread {
 	
-	private static final List<Moves> absorbMoves = Arrays.asList(Moves.ABSORB, Moves.DREAMEATER, Moves.GIGADRAIN, 
-			Moves.LEECHLIFE, Moves.MEGADRAIN);
-	
 	private GamePanel gp;
 	public boolean set = true;
 	public boolean active = false;
@@ -881,6 +878,9 @@ public class BattleManager extends Thread {
 	private void otherMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		
 		switch (move.getMove()) {
+			case ENDURE:
+				typeDialogue(atk.getName() + " braced\nitself!");
+				break;
 			case FUTURESIGHT:
 				if (trg.hasActiveMove(move.getMove())) {
 					typeDialogue("It had no effect!");
@@ -1084,11 +1084,24 @@ public class BattleManager extends Thread {
 			String hitSE = getHitSE(BattleUtility.getEffectiveness(trg, move.getType()));		
 			if (hitSE.equals("hit-super")) typeDialogue("It's super effective!");			
 			else if (hitSE.equals("hit-weak")) typeDialogue("It's not very effective...");			
+									
+			typeDialogue(trg.getName() + " took\n" + damage + " damage!");	
 			
-			typeDialogue(trg.getName() + " took\n" + damage + " damage!");		
+			if (move.getMove() == Moves.FEINT) {
+				trg.removeActiveMove(Moves.DETECT);
+				trg.removeActiveMove(Moves.PROTECT);
+				typeDialogue(trg.getName() + " fell for\nthe feint!");
+			}
 		}
 		
-		absorbHP(atk, trg, move, damage);
+		switch (move.getMove()) {
+			case ABSORB, DREAMEATER, GIGADRAIN, LEECHLIFE, MEGADRAIN:
+				absorbHP(atk, damage);
+				break;
+			default: 
+				break;
+		}		
+		
 		getRecoil(atk, move, damage);		
 	}
 	private int dealDamage(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
@@ -1109,9 +1122,12 @@ public class BattleManager extends Thread {
 		}
 		
 		if (damage >= trg.getHP()) {					
+			
 			damage = trg.getHP();			
-			if (move.getMove() == Moves.FALSESWIPE) {
-				damage--;			
+			
+			Move otherMove = atk == fighter[1] ? playerMove : cpuMove;
+			if (move.getMove() == Moves.FALSESWIPE || otherMove.getMove() == Moves.ENDURE) {
+				damage--;				
 			}
 		}
 								
@@ -1152,29 +1168,21 @@ public class BattleManager extends Thread {
 		return (r.nextFloat() <= ((float) chance / 25)) ? damage : 1.0;					
 	}
 	
-	private void absorbHP(Pokemon atk, Pokemon trg, Move move, int damage) throws InterruptedException {
-		
-		if (absorbMoves.contains(move.getMove())) {
+	private void absorbHP(Pokemon pkm, int damage) throws InterruptedException {
 								
-			int gainedHP = (damage / 2);
+		int gainedHP = (damage / 2);
 			
-			// if attacker not at full health
-			if (atk.getHP() != atk.getBHP()) {
-				
-				// if gained hp is greater than total hp
-				if (gainedHP + atk.getHP() > atk.getBHP()) {
-					
-					// gained hp is set to amount need to hit hp limit									
-					gainedHP = atk.getBHP() - atk.getHP();					
-					
-					increaseHP(atk, gainedHP);					
-				}
-				else {		
-					increaseHP(atk, gainedHP);
-				}
-				
-				typeDialogue(atk.getName() + "\nabsorbed " + gainedHP + " HP!");
+		if (pkm.getHP() != pkm.getBHP()) {
+			
+			if (gainedHP + pkm.getHP() > pkm.getBHP()) {								
+				gainedHP = pkm.getBHP() - pkm.getHP();							
+				increaseHP(pkm, gainedHP);					
 			}
+			else {		
+				increaseHP(pkm, gainedHP);
+			}
+			
+			typeDialogue(pkm.getName() + "\nabsorbed " + gainedHP + " HP!");			
 		}
 	}
 	private void getRecoil(Pokemon pkm, Move move, int damage) throws InterruptedException {
