@@ -313,11 +313,18 @@ public final class BattleUtility {
 			hit = true; 
 		}
 		else {				
-			if (target.hasActiveMove(Moves.ODORSLEUTH) || target.hasActiveMove(Moves.MIRACLEEYE)) {
+			if (target.hasActiveMove(Moves.MIRACLEEYE) || target.hasActiveMove(Moves.ODORSLEUTH)) {
 				hit = true;
 			}
 			else {
-				double accuracy = getAccuracy(move, weather) * (attacker.getAccuracy() / target.getEvasion());
+				double accuracy = 0;
+				
+				if (target.hasActiveMove(Moves.FORESIGHT)) {
+					accuracy = getAccuracy(move, weather) * attacker.getAccuracy();
+				}
+				else {
+					accuracy = getAccuracy(move, weather) * (attacker.getAccuracy() / target.getEvasion());	
+				}				
 								
 				Random r = new Random();
 				float chance = r.nextFloat();
@@ -585,15 +592,16 @@ public final class BattleUtility {
 		
 		double effect = 1.0;
 		
-		if ((type == Type.NORMAL || type == Type.FIGHTING) &&
-				(pokemon.checkType(Type.GHOST) &&
-				pokemon.hasActiveMove(Moves.ODORSLEUTH))) {
-			return effect;
+		if ((type == Type.NORMAL || type == Type.FIGHTING) && 
+				pokemon.checkType(Type.GHOST) &&
+				(pokemon.hasActiveMove(Moves.ODORSLEUTH) || 
+						pokemon.hasActiveMove(Moves.FORESIGHT))) {
+			return effect;							
 		}
-		if (type == Type.PSYCHIC && 
-				(pokemon.checkType(Type.GHOST) && 
-				pokemon.hasActiveMove(Moves.MIRACLEEYE))) {
-			return effect;
+		else if (type == Type.PSYCHIC &&
+				pokemon.checkType(Type.DARK) && 				 
+				pokemon.hasActiveMove(Moves.MIRACLEEYE)) {
+			return effect;							
 		}
 		
 		// if target is single type

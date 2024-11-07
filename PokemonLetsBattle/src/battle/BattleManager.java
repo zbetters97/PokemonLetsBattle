@@ -407,8 +407,8 @@ public class BattleManager extends Thread {
 					break;			
 					
 				case queue_ActiveMoves: 
-					checkActiveMoves(0, 1);
-					checkActiveMoves(1, 0);
+					checkActiveMoves(fighter[0], fighter[1]);
+					checkActiveMoves(fighter[1], fighter[0]);
 					break;				
 					
 				case queue_StatusDamage:
@@ -640,8 +640,19 @@ public class BattleManager extends Thread {
 	private void move(Pokemon atk, Pokemon trg, Move atkMove) throws InterruptedException {		
 
 		BattleUtility.getWeatherMoveDelay(weather, atkMove);
-						
-		if (atkMove.isReady()) {				
+		
+		if (atk.hasActiveMove(Moves.WRAP)) {
+			
+			gp.playSE(gp.battle_SE, "hit-normal");
+			atk.setHit(true);
+			
+			int damage = (int) Math.ceil(atk.getHP() * 0.0625);
+			if (damage >= atk.getHP()) damage = atk.getHP();	
+			decreaseHP(atk, damage);		
+			
+			typeDialogue(atk.getName() + " is\nhurt by Wrap!");
+		}
+		else if (atkMove.isReady()) {				
 			
 			typeDialogue(atk.getName() + " used\n" + atkMove.toString() + "!", false); 
 			
@@ -675,7 +686,8 @@ public class BattleManager extends Thread {
 		
 		if ((move.getMove() == Moves.SNORE && atk.hasStatus(Status.SLEEP)) ||
 			(move.getMove() == Moves.DREAMEATER && trg.hasStatus(Status.SLEEP)) ||
-			(move.getMove() == Moves.SUCKERPUNCH && battleQueue.peek() == queue_ActiveMoves)) {
+			(move.getMove() == Moves.SUCKERPUNCH && battleQueue.peek() == queue_ActiveMoves) ||
+			(move.getMove() == Moves.FEINT && (!trg.hasActiveMove(Moves.PROTECT) && !trg.hasActiveMove(Moves.DETECT)))) {
 			return false;
 		}
 		else {
@@ -869,7 +881,16 @@ public class BattleManager extends Thread {
 	private void otherMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		
 		switch (move.getMove()) {
-			case HAZE:
+			case FUTURESIGHT:
+				if (trg.hasActiveMove(move.getMove())) {
+					typeDialogue("It had no effect!");
+				}
+				else {
+					trg.addActiveMove(move.getMove());
+					typeDialogue(trg.getName() + " has\nforeseen an attack!");	
+				}
+				break;
+			case HAZE:				
 				atk.resetStats();
 				atk.resetStatStages();		
 				
@@ -906,7 +927,7 @@ public class BattleManager extends Thread {
 				move(atk, trg, move);
 				
 				break;
-			case ODORSLEUTH, MIRACLEEYE:
+			case ODORSLEUTH, MIRACLEEYE, FORESIGHT:
 				if (trg.hasActiveMove(move.getMove())) {
 					typeDialogue("It had no effect!");
 				}
@@ -985,6 +1006,14 @@ public class BattleManager extends Thread {
 					typeDialogue("It had no effect!");
 				}		
 				break;
+			case WRAP:
+				if (trg.hasActiveMove(move.getMove())) {
+					typeDialogue("It had no effect!");
+				}
+				else {
+					trg.addActiveMove(move.getMove());
+					typeDialogue(trg.getName() + " was\nwrapped by " + atk.getName() + "!");					
+				}		
 			default:
 				break;		
 		}		
@@ -993,7 +1022,7 @@ public class BattleManager extends Thread {
 	// DAMAGE MOVE
 	private void damageMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		
-		setDamage(atk, trg, move);
+		getDamage(atk, trg, move);
 		
 		// BOTH POKEMON ALIVE
 		if (trg.getHP() > 0 && atk.getHP() > 0) {
@@ -1021,42 +1050,38 @@ public class BattleManager extends Thread {
 			battleQueue.remove(queue_PlayerMove);
 			battleQueue.remove(queue_CPUMove);
 		}	
-	}	
-	private void setDamage(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
-		
-		String hitSE = getHitSE(BattleUtility.getEffectiveness(trg, move.getType()));		
-		
-		gp.playSE(gp.battle_SE, hitSE);
-		trg.setHit(true);
-					
-		double crit = getCritical(atk, trg, move);		
-		int damage = (int) (BattleUtility.calculateDamage(atk, trg, move, weather) * crit);	
+	}		
+	private void getDamage(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 				
-		if (move.getMove() == Moves.PURSUIT) { }
+		double crit = getCritical(atk, trg, move);	
+		int damage = 0;
 		
-		if (trg.hasActiveMove(Moves.REFLECT) && move.getMType() == MoveType.PHYSICAL) {
-			damage /= 2;			
-		}		
+		switch (move.getMove()) {
+		
+			case COMETPUNCH, FURYATTACK, FURYSWIPES:
+				int turns = new Random().nextInt(5 - 2 + 1) + 2;	
+				int i = 1;
+				while (i <= turns) {				
+					damage += (int) (dealDamage(atk, trg, move) * crit);				
+					pause(800);				
+					if (trg.getHP() <= 0) break;
+					else i++;
+				}				
+				typeDialogue("Hit " + i + " times!");
+				break;
 				
-		if (trg.getAbility() == Ability.FLASHFIRE && !trg.getAbility().isActive() && move.getType() == Type.FIRE) {
-			trg.getAbility().setActive(true);
+			default:
+				damage = (int) (dealDamage(atk, trg, move) * crit);
+				break;		
 		}
 		
 		if (damage <= 0) {
 			typeDialogue("It had no effect!");
 		}
-		else {							
-			if (damage >= trg.getHP()) {					
-				damage = trg.getHP();			
-				if (move.getMove() == Moves.FALSESWIPE) {
-					damage--;			
-				}
-			}
-									
-			decreaseHP(trg, damage);		
-			
+		else {			
 			if (crit >= 1.5) typeDialogue("A critical hit!");
 			
+			String hitSE = getHitSE(BattleUtility.getEffectiveness(trg, move.getType()));		
 			if (hitSE.equals("hit-super")) typeDialogue("It's super effective!");			
 			else if (hitSE.equals("hit-weak")) typeDialogue("It's not very effective...");			
 			
@@ -1065,6 +1090,34 @@ public class BattleManager extends Thread {
 		
 		absorbHP(atk, trg, move, damage);
 		getRecoil(atk, move, damage);		
+	}
+	private int dealDamage(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
+		
+		String hitSE = getHitSE(BattleUtility.getEffectiveness(trg, move.getType()));		
+		gp.playSE(gp.battle_SE, hitSE);
+		trg.setHit(true);
+					
+		int damage = BattleUtility.calculateDamage(atk, trg, move, weather);	
+		
+		if (trg.hasActiveMove(Moves.REFLECT) && move.getMType() == MoveType.PHYSICAL) {
+			damage /= 2;			
+		}		
+				
+		if (trg.getAbility() == Ability.FLASHFIRE && move.getType() == Type.FIRE &&
+				!trg.getAbility().isActive()) {
+			trg.getAbility().setActive(true);
+		}
+		
+		if (damage >= trg.getHP()) {					
+			damage = trg.getHP();			
+			if (move.getMove() == Moves.FALSESWIPE) {
+				damage--;			
+			}
+		}
+								
+		decreaseHP(trg, damage);	
+		
+		return damage;
 	}
 	
 	private String getHitSE(double effectiveness) throws InterruptedException {
@@ -1087,6 +1140,7 @@ public class BattleManager extends Thread {
 		
 		int chance = 2;
 		double damage  = 1.5;
+		
 		if (atk.getAbility() == Ability.SNIPER) damage = 3.0;
 		if (trg.getAbility() == Ability.SHELLARMOR) damage = 1.0;
 		
@@ -1214,23 +1268,29 @@ public class BattleManager extends Thread {
 		return flinched;
 	}
 	
-	private void checkActiveMoves(int trg, int atk) throws InterruptedException {
+	private void checkActiveMoves(Pokemon trg, Pokemon atk) throws InterruptedException {
 			
-		Iterator<Move> iterator = fighter[trg].getActiveMoves().iterator();
+		Iterator<Move> iterator = trg.getActiveMoves().iterator();
 		while (iterator.hasNext()) {
 			
 			Move move = iterator.next();
 			
-			switch (move.getMove()) {
-				case LEECHSEED:
-					leechSeed(fighter[trg], fighter[atk]);
-					break;
-				case MIST, REFLECT, SAFEGUARD:
-					move.setTurnCount(move.getTurnCount() - 1);
-					
+			switch (move.getMove()) {				
+				case FUTURESIGHT:					
+					move.setTurnCount(move.getTurnCount() - 1);					
 					if (move.getTurnCount() <= 0) {		
-						iterator.remove();						
-						typeDialogue(move.getDelay(move.getName()));
+						iterator.remove();		
+						futureSight(trg, atk);
+					}
+					break;
+				case LEECHSEED:
+					leechSeed(trg, atk);
+					break;
+				case MIST, REFLECT, SAFEGUARD, WRAP:
+					move.setTurnCount(move.getTurnCount() - 1);					
+					if (move.getTurnCount() <= 0) {		
+						iterator.remove();
+						typeDialogue(move.getDelay(move.getName()));												
 					}
 					break;
 				default: 
@@ -1238,10 +1298,23 @@ public class BattleManager extends Thread {
 			}
 		}
 		
-		if (fighter[trg].getStatus() != null && fighter[trg].getAbility() == Ability.SHEDSKIN &&
+		if (trg.getStatus() != null && trg.getAbility() == Ability.SHEDSKIN &&
 				Math.random() > 0.66) {
-			removeStatus(fighter[trg]);			
+			removeStatus(trg);			
 		}
+	}	
+	private void futureSight(Pokemon trg, Pokemon atk) throws InterruptedException {
+		
+		Move move = new Move(Moves.FUTURESIGHT);
+		
+		int damage = dealDamage(atk, trg, move);
+			
+		String hitSE = getHitSE(BattleUtility.getEffectiveness(trg, move.getType()));	
+		
+		if (hitSE.equals("hit-super")) typeDialogue("It's super effective!");			
+		else if (hitSE.equals("hit-weak")) typeDialogue("It's not very effective...");			
+			
+		typeDialogue(trg.getName() + " took\n" + damage + " by Future Sight!");		
 	}	
 	private void leechSeed(Pokemon trg, Pokemon atk) throws InterruptedException {
 		
@@ -1269,6 +1342,7 @@ public class BattleManager extends Thread {
 			typeDialogue(atk.getName() + "\nabsorbed " + stolenHP + " HP!");
 		}
 	}
+	
 	
 	// STATUS METHODS
 	private void checkStatusDamage() throws InterruptedException {					
@@ -2061,6 +2135,8 @@ public class BattleManager extends Thread {
 		}		
 		
 		pause(1000);
+		
+		gp.ui.battleDialogue = "";
 	}
 	public void typeDialogue(String dialogue, boolean canSkip) throws InterruptedException {
 		

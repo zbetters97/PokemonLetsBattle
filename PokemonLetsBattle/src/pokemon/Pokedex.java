@@ -168,7 +168,7 @@ public enum Pokedex {
 					Map.entry(17, Moves.WINGATTACK),
 					Map.entry(21, Moves.CONFUSERAY),
 					Map.entry(25, Moves.AIRCUTTER),
-					//Map.entry(29, Moves.MEANLOOK),
+//					Map.entry(29, Moves.MEANLOOK),
 					Map.entry(33, Moves.POISONFANG),
 					Map.entry(37, Moves.HAZE),
 					Map.entry(41, Moves.AIRSLASH)
@@ -182,7 +182,7 @@ public enum Pokedex {
 					Map.entry(17, Moves.WINGATTACK),
 					Map.entry(21, Moves.CONFUSERAY),
 					Map.entry(27, Moves.AIRCUTTER),
-					//Map.entry(33, Moves.MEANLOOK),
+//					Map.entry(33, Moves.MEANLOOK),
 					Map.entry(39, Moves.POISONFANG),
 					Map.entry(45, Moves.HAZE),
 					Map.entry(51, Moves.AIRSLASH)
@@ -230,7 +230,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(10, Moves.KARATECHOP),
 					Map.entry(19, Moves.SEISMICTOSS),
-					//Map.entry(22, Moves.REVENGE),
+//					Map.entry(22, Moves.REVENGE),
 					Map.entry(25, Moves.VITALTHROW),
 					Map.entry(31, Moves.SUBMISSION),
 					Map.entry(34, Moves.WAKEUPSLAP),
@@ -242,7 +242,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(10, Moves.KARATECHOP),
 					Map.entry(19, Moves.SEISMICTOSS),
-					//Map.entry(22, Moves.REVENGE),
+//					Map.entry(22, Moves.REVENGE),
 					Map.entry(25, Moves.VITALTHROW),
 					Map.entry(32, Moves.SUBMISSION),
 					Map.entry(36, Moves.WAKEUPSLAP),
@@ -254,7 +254,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(10, Moves.KARATECHOP),
 					Map.entry(19, Moves.SEISMICTOSS),
-					//Map.entry(22, Moves.REVENGE),
+//					Map.entry(22, Moves.REVENGE),
 					Map.entry(25, Moves.VITALTHROW),
 					Map.entry(32, Moves.SUBMISSION),
 					Map.entry(36, Moves.WAKEUPSLAP),
@@ -324,7 +324,7 @@ public enum Pokedex {
 					Map.entry(28, Moves.TAKEDOWN),
 					Map.entry(34, Moves.AGILITY),
 					Map.entry(38, Moves.FIREBLAST),
-					//Map.entry(40, Moves.FURYATTACK),
+					Map.entry(40, Moves.FURYATTACK),
 					Map.entry(49, Moves.BOUNCE),
 					Map.entry(58, Moves.FLAREBLITZ)
 			)),
@@ -367,10 +367,10 @@ public enum Pokedex {
 					Map.entry(13, Moves.JUMPKICK),
 					Map.entry(17, Moves.BRICKBREAK),
 //					Map.entry(21, Moves.FOCUSENERGY),
-//					Map.entry(25, Moves.FEINT),
+					Map.entry(25, Moves.FEINT),
 					Map.entry(29, Moves.HIGHJUMPKICK),
 //					Map.entry(33, Moves.MINDREADER),
-//					Map.entry(37, Moves.FORESIGHT),
+					Map.entry(37, Moves.FORESIGHT),
 					Map.entry(41, Moves.BLAZEKICK),
 //					Map.entry(45, Moves.ENDURE),
 					Map.entry(49, Moves.MEGAKICK),
@@ -383,14 +383,14 @@ public enum Pokedex {
 					Map.entry(11, Moves.PURSUIT),
 					Map.entry(16, Moves.MACHPUNCH),
 					Map.entry(17, Moves.BULLETPUNCH),
-//					Map.entry(21, Moves.FEINT),
+					Map.entry(21, Moves.FEINT),
 					Map.entry(26, Moves.VACUUMWAVE),
 					Map.entry(32, Moves.THUNDERPUNCH),
 					Map.entry(33, Moves.ICEPUNCH),
 					Map.entry(34, Moves.FIREPUNCH),
 					Map.entry(36, Moves.SKYUPPERCUT),
 					Map.entry(41, Moves.MEGAPUNCH),
-//					Map.entry(46, Moves.DETECT),
+					Map.entry(46, Moves.DETECT),
 //					Map.entry(51, Moves.COUNTER),
 					Map.entry(56, Moves.CLOSECOMBAT)
 					
@@ -483,7 +483,7 @@ public enum Pokedex {
 	ZAPDOS ("Zapdos", 145, Arrays.asList(Type.FLYING, Type.ELECTRIC), Ability.PRESSURE, 90, 90, 85, 125, 90, 100, -1, 216, 3, Growth.SLOW, 3,
 			Map.ofEntries(
 					Map.entry(8, Moves.THUNDERWAVE),
-//					Map.entry(15, Moves.DETECT),
+					Map.entry(15, Moves.DETECT),
 					Map.entry(22, Moves.PLUCK),
 					Map.entry(29, Moves.ANCIENTPOWER),
 //					Map.entry(36, Moves.CHARGE),
@@ -557,7 +557,7 @@ public enum Pokedex {
 			Map.ofEntries(
 					Map.entry(8, Moves.BARRIER),
 					Map.entry(15, Moves.SWIFT),
-					//Map.entry(22, Moves.FUTURESIGHT),
+					Map.entry(22, Moves.FUTURESIGHT),
 					Map.entry(29, Moves.PSYCHUP),
 					Map.entry(36, Moves.MIRACLEEYE),
 					Map.entry(43, Moves.MIST),
@@ -743,7 +743,7 @@ public enum Pokedex {
 					Map.entry(9, Moves.SANDATTACK),
 					Map.entry(13, Moves.BITE),
 					Map.entry(25, Moves.SWAGGER),
-					//Map.entry(29, Moves.ASSURANCE),
+//					Map.entry(29, Moves.ASSURANCE),
 					Map.entry(33, Moves.SCARYFACE),
 					Map.entry(45, Moves.TAKEDOWN),
 					Map.entry(49, Moves.SUCKERPUNCH),
@@ -755,7 +755,7 @@ public enum Pokedex {
 					Map.entry(9, Moves.SANDATTACK),
 					Map.entry(13, Moves.BITE),
 					Map.entry(27, Moves.SWAGGER),
-					//Map.entry(32, Moves.ASSURANCE),
+//					Map.entry(32, Moves.ASSURANCE),
 					Map.entry(37, Moves.SCARYFACE),
 					Map.entry(52, Moves.TAKEDOWN),
 					Map.entry(62, Moves.SUCKERPUNCH)
@@ -767,7 +767,7 @@ public enum Pokedex {
 					Map.entry(13, Moves.SANDATTACK),
 					Map.entry(33, Moves.FLAIL),
 					Map.entry(37, Moves.REST)
-					//Map.entry(45, Moves.FLING)
+//					Map.entry(45, Moves.FLING)
 			)),	
 	LINOONE ("Linoone", 265, Type.NORMAL, Ability.QUICKFEET, 78, 70, 61, 50, 61, 100, -1, 128, 2, Growth.MEDIUMFAST, 264, 
 			Map.ofEntries(	
@@ -776,7 +776,7 @@ public enum Pokedex {
 					Map.entry(13, Moves.SANDATTACK),
 					Map.entry(41, Moves.SLASH),
 					Map.entry(47, Moves.REST)
-					//Map.entry(59, Moves.FLING)
+//					Map.entry(59, Moves.FLING)
 			)),	
 	WHISMUR ("Whismur", 293, Type.NORMAL, Ability.SOUNDPROOF, 64, 51, 23, 51, 23, 28, 20, 68, 1, Growth.MEDIUMSLOW, 190,
 			Map.ofEntries(
@@ -1031,12 +1031,12 @@ public enum Pokedex {
         ));
         moveMap.put(GROWLITHE, Arrays.asList(
         		new Move(Moves.BITE)
-        		//new Move(Moves.ROAR)
+//        		new Move(Moves.ROAR)
         ));
         moveMap.put(ARCANINE, Arrays.asList(
         		new Move(Moves.THUNDERFANG),
         		new Move(Moves.BITE),
-        		//new Move(Moves.ROAR),
+//       		new Move(Moves.ROAR),
         		new Move(Moves.ODORSLEUTH),
         		new Move(Moves.FIREFANG)        		
         ));
@@ -1104,7 +1104,7 @@ public enum Pokedex {
         )); 
         moveMap.put(HITMONLEE, Arrays.asList(
 //       		new Move(Moves.REVENGE),
-//        		new Move(Moves.COMETPUNCH)
+        		new Move(Moves.COMETPUNCH)
         ));         
         moveMap.put(HORSEA, Arrays.asList(
         		new Move(Moves.BUBBLE)
@@ -1134,8 +1134,8 @@ public enum Pokedex {
         		new Move(Moves.TACKLE)
         ));
         moveMap.put(ARTICUNO, Arrays.asList(
-        		new Move(Moves.GUST)
-//        		new Move(Moves.POWDERSNOW)
+        		new Move(Moves.GUST),
+        		new Move(Moves.POWDERSNOW)
         ));
         moveMap.put(ZAPDOS, Arrays.asList(
         		new Move(Moves.PECK),
@@ -1146,11 +1146,11 @@ public enum Pokedex {
         		new Move(Moves.EMBER)
         ));
         moveMap.put(DRATINI, Arrays.asList(
-//        		new Move(Moves.WRAP),
+        		new Move(Moves.WRAP),
         		new Move(Moves.LEER)
         ));
         moveMap.put(DRAGONAIR, Arrays.asList(
-//        		new Move(Moves.WRAP),
+        		new Move(Moves.WRAP),
         		new Move(Moves.LEER),
         		new Move(Moves.THUNDERWAVE),
         		new Move(Moves.TWISTER)
@@ -1158,7 +1158,7 @@ public enum Pokedex {
         moveMap.put(DRAGONITE, Arrays.asList(
         		new Move(Moves.FIREPUNCH),
         		new Move(Moves.THUNDERPUNCH),
-//        		new Move(Moves.ROOST),
+        		new Move(Moves.ROOST),
         		new Move(Moves.TWISTER)
         ));
         moveMap.put(RAIKOU, Arrays.asList(
