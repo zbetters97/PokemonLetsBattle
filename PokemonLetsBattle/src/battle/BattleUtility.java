@@ -569,7 +569,7 @@ public final class BattleUtility {
 			case HAIL:					
 				break;
 			case SANDSTORM:
-				if (trg.isType(Type.ROCK) && move.getMType().equals(MoveType.SPECIAL)) {
+				if (trg.checkType(Type.ROCK) && move.getMType().equals(MoveType.SPECIAL)) {
 					defense *= 1.5;
 				}
 				break;

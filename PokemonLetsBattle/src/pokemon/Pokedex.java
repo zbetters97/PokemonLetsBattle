@@ -629,6 +629,53 @@ public enum Pokedex {
 					Map.entry(71, Moves.HYDROPUMP),
 					Map.entry(78, Moves.CALMMIND)
 			)),
+	LUGIA ("Lugia", 249, Type.FIRE, Ability.PRESSURE, 106, 90, 130, 90, 154, 110, -1, 220, 3, Growth.SLOW, 3,
+			Map.ofEntries(
+					Map.entry(9, Moves.SAFEGUARD),
+					Map.entry(15, Moves.GUST),
+					Map.entry(23, Moves.RECOVER),
+					Map.entry(29, Moves.HYDROPUMP),
+					Map.entry(37, Moves.RAINDANCE),
+					Map.entry(43, Moves.SWIFT),
+//					Map.entry(51, Moves.NAUTRALGIFT),
+					Map.entry(57, Moves.ANCIENTPOWER),
+					Map.entry(65, Moves.EXTRASENSORY),
+//					Map.entry(71, Moves.PUNISHMENT),
+					Map.entry(79, Moves.FUTURESIGHT),
+//					Map.entry(85, Moves.AEROBLAST),
+					Map.entry(93, Moves.CALMMIND),
+					Map.entry(99, Moves.SKYATTACK)
+			)),
+	HOOH ("Ho-Oh", 250, Type.FIRE, Ability.PRESSURE, 106, 130, 90, 110, 154, 90, -1, 220, 3, Growth.SLOW, 3,
+			Map.ofEntries(
+					Map.entry(9, Moves.SAFEGUARD),
+					Map.entry(15, Moves.GUST),
+					Map.entry(23, Moves.RECOVER),
+					Map.entry(29, Moves.FIREBLAST),
+					Map.entry(37, Moves.SUNNYDAY),
+					Map.entry(43, Moves.SWIFT),
+//					Map.entry(51, Moves.NAUTRALGIFT),
+					Map.entry(57, Moves.ANCIENTPOWER),
+					Map.entry(65, Moves.EXTRASENSORY),
+//					Map.entry(71, Moves.PUNISHMENT),
+					Map.entry(79, Moves.FUTURESIGHT),
+//					Map.entry(85, Moves.SACREDFIRE),
+					Map.entry(93, Moves.CALMMIND),
+					Map.entry(99, Moves.SKYATTACK)
+			)),
+	CELEBI ("Celebi", 251, Type.FIRE, Ability.NATURALCURE, 100, 100, 100, 100, 100, 100, -1, 64, 3, Growth.MEDIUMSLOW, 45,
+			Map.ofEntries(
+					Map.entry(10, Moves.SAFEGUARD),
+//					Map.entry(19, Moves.MAGICALLEAF),
+					Map.entry(28, Moves.ANCIENTPOWER),
+//					Map.entry(37, Moves.BATONPASS),
+//					Map.entry(46, Moves.NATURALGIFT),
+//					Map.entry(55, Moves.HEALBLOCK),
+					Map.entry(64, Moves.FUTURESIGHT),
+//					Map.entry(73, Moves.HEALINGWISH),
+					Map.entry(82, Moves.LEAFSTORM)
+//					Map.entry(91, Moves.PERSISHSONG)
+			)),
 	TREECKO ("Treecko", 252, Type.GRASS, Ability.OVERGROW, 40, 45, 35, 65, 55, 70, 16, 65, 1, Growth.MEDIUMSLOW, 45, 
 			Map.ofEntries(
 					Map.entry(6, Moves.ABSORB),
@@ -889,6 +936,37 @@ public enum Pokedex {
 					Map.entry(65, Moves.HYPERBEAM),
 					Map.entry(75, Moves.DRAGONPULSE),
 					Map.entry(80, Moves.OUTRAGE)
+			)),
+	JIRACHI ("Jirachi", 385, Arrays.asList(Type.STEEL, Type.PSYCHIC), Ability.SERENEGRACE, 100, 100, 100, 100, 100, 100, -1, 215, 3, Growth.SLOW, 3,
+			Map.ofEntries(
+					Map.entry(5, Moves.REST),
+					Map.entry(10, Moves.SWIFT),
+					Map.entry(20, Moves.PSYCHIC),
+//					Map.entry(25, Moves.REFRESH),
+					Map.entry(30, Moves.REST),
+//					Map.entry(35, Moves.ZENHEADBUTT),
+					Map.entry(40, Moves.DOUBLEEDGE),
+//					Map.entry(45, Moves.GRAVITY),
+//					Map.entry(50, Moves.HEALINGWISH),
+					Map.entry(55, Moves.FUTURESIGHT)
+//					Map.entry(60, Moves.COSMICPOWER),
+//					Map.entry(65, Moves.LASTRESORT),
+//					Map.entry(70, Moves.DOOMDESIRE)
+			)),
+	DEOXYS ("Deoxys", 386, Type.PSYCHIC, Ability.PRESSURE, 50, 150, 50, 150,50, 150, -1, 215, 3, Growth.SLOW, 3,
+			Map.ofEntries(
+					Map.entry(9, Moves.NIGHTSHADE),
+					Map.entry(17, Moves.TELEPORT),
+					Map.entry(25, Moves.KNOCKOFF),
+					Map.entry(33, Moves.PURSUIT),
+					Map.entry(41, Moves.PSYCHIC),
+//					Map.entry(49, Moves.SNATCH),
+//					Map.entry(57, Moves.PSYCHOSHIFT),
+//					Map.entry(65, Moves.ZENHEADBUTT),
+//					Map.entry(73, Moves.COSMICPOWER),
+					Map.entry(81, Moves.RECOVER),
+//					Map.entry(89, Moves.PSYCHOBOOST),
+					Map.entry(97, Moves.HYPERBEAM)
 			));
 	/** END INITIALIZE ENUMS **/
 				
@@ -1169,7 +1247,19 @@ public enum Pokedex {
         ));
         moveMap.put(SUICUNE, Arrays.asList(
         		new Move(Moves.LEER)
-        ));    
+        ));   
+        moveMap.put(LUGIA, Arrays.asList(
+//       		new Move(Moves.WHIRLWIND)
+        ));   
+        moveMap.put(HOOH, Arrays.asList(
+//        		new Move(Moves.WHIRLWIND)
+        ));   
+        moveMap.put(CELEBI, Arrays.asList(
+        		new Move(Moves.LEECHSEED),
+        		new Move(Moves.CONFUSION),
+        		new Move(Moves.RECOVER)
+//        		new Move(Moves.HEALBELL)
+        ));   
         moveMap.put(MEWTWO, Arrays.asList(
         		new Move(Moves.CONFUSION)
         ));
@@ -1275,6 +1365,14 @@ public enum Pokedex {
         ));
         moveMap.put(RAYQUAZA, Arrays.asList(
         		new Move(Moves.TWISTER)
+        ));
+        moveMap.put(JIRACHI, Arrays.asList(
+//       		new Move(Moves.WISH),
+        		new Move(Moves.CONFUSION)
+        ));
+        moveMap.put(DEOXYS, Arrays.asList(
+        		new Move(Moves.LEER),
+        		new Move(Moves.WRAP)
         ));
 	}
 	/** END POKEMON MOVES STATIC MAP **/

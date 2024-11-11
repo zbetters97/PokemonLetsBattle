@@ -66,15 +66,11 @@ public class Pokemon {
 		hp = (int)(Math.floor(((2 * pokemon.getHP() + hpIV + Math.floor(0.25 * pokemon.getEV())) * level) / 100) + level + 10);
 		bhp = hp;
 		
-		Calculate getStat = (base, IV, EV, lev) -> {
-			return (int)(Math.floor(0.01 * (2 * base + IV + Math.floor(0.25 * EV)) * lev)) + 5;
-		};		
-		
-		attackBase = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
-		defenseBase = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
-		spAttackBase = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
-		spDefenseBase = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
-		speedBase = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
+		attackBase = getStat(attack, attackIV); 
+		defenseBase = getStat(defense, defenseIV);		
+		spAttackBase = getStat(spAttack, spAttackIV); 
+		spDefenseBase = getStat(spDefense, spDefenseIV);
+		speedBase = getStat(speed, speedIV);
 		accuracyBase = 1;
 		evasionBase = 1;
 		
@@ -120,15 +116,11 @@ public class Pokemon {
 		hp = (int)(Math.floor(((2 * pokemon.getHP() + hpIV + Math.floor(0.25 * pokemon.getEV())) * level) / 100) + level + 10);
 		bhp = hp;
 		
-		Calculate getStat = (base, IV, EV, lev) -> {
-			return (int)(Math.floor(0.01 * (2 * base + IV + Math.floor(0.25 * EV)) * lev)) + 5;
-		};		
-		
-		attackBase = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
-		defenseBase = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
-		spAttackBase = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
-		spDefenseBase = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
-		speedBase = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
+		attackBase = getStat(attack, attackIV); 
+		defenseBase = getStat(defense, defenseIV);		
+		spAttackBase = getStat(spAttack, spAttackIV); 
+		spDefenseBase = getStat(spDefense, spDefenseIV);
+		speedBase = getStat(speed, speedIV);
 		accuracyBase = 1;	
 		evasionBase = 1;
 		
@@ -195,7 +187,7 @@ public class Pokemon {
 		activeMoves = new ArrayList<>();
 		
 		protectedState = Protection.NONE;
-	}	
+	}		
 	/** END CONSTRUCTORS **/
 			
 	/** NATURE METHODS **/
@@ -310,15 +302,11 @@ public class Pokemon {
 		hp += Math.ceil((bhp - oldBHP));
 		if (hp > bhp) hp = bhp;
 		
-		Calculate getStat = (stat, IV, EV, lev) -> {
-			return (int)(Math.floor(0.01 * (2 * stat + IV + Math.floor(EV / 4)) * lev)) + 5;
-		};		
-		
-		attack = getStat.compute(pokemon.getAttack(), attackIV, pokemon.getEV(), level); 
-		defense = getStat.compute(pokemon.getDefense(), defenseIV, pokemon.getEV(), level);		
-		spAttack = getStat.compute(pokemon.getSpAttack(), spAttackIV, pokemon.getEV(), level); 
-		spDefense = getStat.compute(pokemon.getSpDefense(), spDefenseIV, pokemon.getEV(), level);
-		speed = getStat.compute(pokemon.getSpeed(), speedIV, pokemon.getEV(), level);
+		attack = getStat(pokemon.getAttack(), attackIV); 
+		defense = getStat(pokemon.getDefense(), defenseIV);		
+		spAttack = getStat(pokemon.getSpAttack(), spAttackIV); 
+		spDefense = getStat(pokemon.getSpDefense(), spDefenseIV);
+		speed = getStat(pokemon.getSpeed(), speedIV);
 		
 		setNature();	
 		
@@ -507,17 +495,7 @@ public class Pokemon {
 		if (sex == '♂') return Color.BLUE;		
 		else return Color.RED;		
 	}
-	public boolean isType(Type type) {
-		if (pokemon.getTypes() == null) {
-			if (pokemon.getType() == type) return true;			
-			else return false;			
-		}
-		else {
-			if (pokemon.getTypes().contains(type)) return true;			
-			else return false;			
-		}
-	}
-	
+		
 	public int getLevel() {	return level; }	
 	
 	public int getBXP() { return bxp; }
@@ -584,14 +562,17 @@ public class Pokemon {
 	public void setStatusCounter(int statusCounter) { this.statusCounter = statusCounter; }	
 	public int getStatusLimit() { return statusLimit; }
 	public void setStatusLimit(int statusLimit) { this.statusLimit = statusLimit; }
+	public void removeStatus() {
+		status = null; 
+		statusLimit = 0;
+		statusCounter = 0;
+	}
 	
 	public boolean isAlive() { return isAlive; }
 	public void setAlive(boolean isAlive) {	
 		this.isAlive = isAlive; 
 		hp = 0;		
-		status = null; 
-		statusLimit = 0;
-		statusCounter = 0;
+		removeStatus();
 		getAbility().setActive(false);
 		resetMoves();
 		resetStats();
@@ -658,6 +639,9 @@ public class Pokemon {
 	public BufferedImage getMenuSprite() { return pokemon.getMenuSprite(); }	
 	/** END GETTERS **/
 		
+	private int getStat(double base, int IV) {
+		return (int)(Math.floor(0.01 * (2 * base + IV + Math.floor(0.25 * pokemon.getEV())) * level)) + 5;
+	};	
 	public String changeStat(String stat, int level) {	
 		
 		String output = "";
@@ -914,8 +898,3 @@ public class Pokemon {
 	}
 }
 /*** END MOVE CLASS ***/
-
-@FunctionalInterface
-interface Calculate {
-	public int compute(int j, int k, int l, int m);
-}

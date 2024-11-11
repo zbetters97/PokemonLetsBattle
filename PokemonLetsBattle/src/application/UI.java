@@ -744,8 +744,7 @@ public class UI {
 					drawText(text, textX, textY, battle_white, Color.BLACK);
 					x += gp.tileSize * 2.7;
 				}
-			}
-				
+			}				
 		}
 		
 		x = (int) (gp.tileSize * 8.5);
@@ -822,9 +821,8 @@ public class UI {
 			if (bagNum < Pokedex.values().length - 1) bagNum++;
 			if (bagNum >= bagStart + 11) bagStart++;
 		}					
-		if (gp.keyH.bPressed || gp.keyH.startPressed) {
+		if (gp.keyH.bPressed) {
 			gp.keyH.bPressed = false;
-			gp.keyH.startPressed = false;
 			gp.keyH.playCursorSE();		
 			
 			bagNum = 0;

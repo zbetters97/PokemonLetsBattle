@@ -326,6 +326,10 @@ public class BattleManager extends Thread {
 			if (!otherFighters.contains(fighter[0])) {
 				otherFighters.add(fighter[0]);	
 			}
+			
+			if (fighter[0].getAbility() == Ability.NATURALCURE) {
+				fighter[0].removeStatus();
+			}
 
 			fighter[0] = newFighter[0];		
 			
@@ -788,9 +792,7 @@ public class BattleManager extends Thread {
 	}
 	private void removeStatus(Pokemon pkm) throws InterruptedException {
 		Status status = pkm.getStatus();
-		pkm.setStatus(null);
-		pkm.setStatusCounter(0); 
-		pkm.setStatusLimit(0);			
+		pkm.removeStatus();	
 		typeDialogue(pkm.getName() + status.printRecover());	
 	}
 
@@ -1236,8 +1238,13 @@ public class BattleManager extends Thread {
 		}
 		
 		// move causes attribute or status effect
-		if (move.getProbability() != 0.0) {								
-										
+		double probability = move.getProbability();
+		if (probability != 0.0) {			
+			
+			if (atk.getAbility() == Ability.SERENEGRACE) {
+				probability *= 2.0;
+			}
+			
 			// chance for effect to apply
 			if (new Random().nextDouble() <= move.getProbability()) {
 				
