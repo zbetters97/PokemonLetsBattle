@@ -640,9 +640,9 @@ public enum Pokedex {
 //					Map.entry(51, Moves.NAUTRALGIFT),
 					Map.entry(57, Moves.ANCIENTPOWER),
 					Map.entry(65, Moves.EXTRASENSORY),
-//					Map.entry(71, Moves.PUNISHMENT),
+					Map.entry(71, Moves.PUNISHMENT),
 					Map.entry(79, Moves.FUTURESIGHT),
-//					Map.entry(85, Moves.AEROBLAST),
+					Map.entry(85, Moves.AEROBLAST),
 					Map.entry(93, Moves.CALMMIND),
 					Map.entry(99, Moves.SKYATTACK)
 			)),
@@ -657,24 +657,24 @@ public enum Pokedex {
 //					Map.entry(51, Moves.NAUTRALGIFT),
 					Map.entry(57, Moves.ANCIENTPOWER),
 					Map.entry(65, Moves.EXTRASENSORY),
-//					Map.entry(71, Moves.PUNISHMENT),
+					Map.entry(71, Moves.PUNISHMENT),
 					Map.entry(79, Moves.FUTURESIGHT),
-//					Map.entry(85, Moves.SACREDFIRE),
+					Map.entry(85, Moves.SACREDFIRE),
 					Map.entry(93, Moves.CALMMIND),
 					Map.entry(99, Moves.SKYATTACK)
 			)),
 	CELEBI ("Celebi", 251, Type.FIRE, Ability.NATURALCURE, 100, 100, 100, 100, 100, 100, -1, 64, 3, Growth.MEDIUMSLOW, 45,
 			Map.ofEntries(
 					Map.entry(10, Moves.SAFEGUARD),
-//					Map.entry(19, Moves.MAGICALLEAF),
+					Map.entry(19, Moves.MAGICALLEAF),
 					Map.entry(28, Moves.ANCIENTPOWER),
 //					Map.entry(37, Moves.BATONPASS),
 //					Map.entry(46, Moves.NATURALGIFT),
 //					Map.entry(55, Moves.HEALBLOCK),
 					Map.entry(64, Moves.FUTURESIGHT),
 //					Map.entry(73, Moves.HEALINGWISH),
-					Map.entry(82, Moves.LEAFSTORM)
-//					Map.entry(91, Moves.PERSISHSONG)
+					Map.entry(82, Moves.LEAFSTORM),
+					Map.entry(91, Moves.PERISHSONG)
 			)),
 	TREECKO ("Treecko", 252, Type.GRASS, Ability.OVERGROW, 40, 45, 35, 65, 55, 70, 16, 65, 1, Growth.MEDIUMSLOW, 45, 
 			Map.ofEntries(
@@ -942,14 +942,14 @@ public enum Pokedex {
 					Map.entry(5, Moves.REST),
 					Map.entry(10, Moves.SWIFT),
 					Map.entry(20, Moves.PSYCHIC),
-//					Map.entry(25, Moves.REFRESH),
+					Map.entry(25, Moves.REFRESH),
 					Map.entry(30, Moves.REST),
-//					Map.entry(35, Moves.ZENHEADBUTT),
+					Map.entry(35, Moves.ZENHEADBUTT),
 					Map.entry(40, Moves.DOUBLEEDGE),
 //					Map.entry(45, Moves.GRAVITY),
 //					Map.entry(50, Moves.HEALINGWISH),
-					Map.entry(55, Moves.FUTURESIGHT)
-//					Map.entry(60, Moves.COSMICPOWER),
+					Map.entry(55, Moves.FUTURESIGHT),
+					Map.entry(60, Moves.COSMICPOWER)
 //					Map.entry(65, Moves.LASTRESORT),
 //					Map.entry(70, Moves.DOOMDESIRE)
 			)),
@@ -961,11 +961,11 @@ public enum Pokedex {
 					Map.entry(33, Moves.PURSUIT),
 					Map.entry(41, Moves.PSYCHIC),
 //					Map.entry(49, Moves.SNATCH),
-//					Map.entry(57, Moves.PSYCHOSHIFT),
-//					Map.entry(65, Moves.ZENHEADBUTT),
-//					Map.entry(73, Moves.COSMICPOWER),
+					Map.entry(57, Moves.PSYCHOSHIFT),
+					Map.entry(65, Moves.ZENHEADBUTT),
+					Map.entry(73, Moves.COSMICPOWER),
 					Map.entry(81, Moves.RECOVER),
-//					Map.entry(89, Moves.PSYCHOBOOST),
+					Map.entry(89, Moves.PSYCHOBOOST),
 					Map.entry(97, Moves.HYPERBEAM)
 			));
 	/** END INITIALIZE ENUMS **/
@@ -1257,8 +1257,8 @@ public enum Pokedex {
         moveMap.put(CELEBI, Arrays.asList(
         		new Move(Moves.LEECHSEED),
         		new Move(Moves.CONFUSION),
-        		new Move(Moves.RECOVER)
-//        		new Move(Moves.HEALBELL)
+        		new Move(Moves.RECOVER),
+        		new Move(Moves.HEALBELL)
         ));   
         moveMap.put(MEWTWO, Arrays.asList(
         		new Move(Moves.CONFUSION)
@@ -1432,7 +1432,7 @@ public enum Pokedex {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return image;
 	}
 }

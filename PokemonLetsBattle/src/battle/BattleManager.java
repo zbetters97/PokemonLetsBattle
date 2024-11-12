@@ -26,12 +26,14 @@ import properties.Type;
 
 public class BattleManager extends Thread {
 	
+	// GENERAL VALUES	
 	private GamePanel gp;
 	public boolean set = true;
 	public boolean active = false;
 	public boolean running = false;
+	private int textSpeed = 30;
 	
-	// GENERAL VALUES				
+	// BATTLE INFORMATION			
 	public Entity trainer;
 	
 	public Pokemon[] fighter = new Pokemon[2];
@@ -83,6 +85,10 @@ public class BattleManager extends Thread {
 		this.gp = gp;
 	}
 	public void setup(int currentBattle, Entity trainer, Pokemon pokemon, String condition) {
+		
+		if (gp.ui.textSpeed == 2) textSpeed = 30;
+		else if (gp.ui.textSpeed == 3) textSpeed = 40;
+		else if (gp.ui.textSpeed == 4) textSpeed = 50;
 		
 		battleMode = currentBattle;
 		
@@ -880,6 +886,10 @@ public class BattleManager extends Thread {
 	private void otherMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		
 		switch (move.getMove()) {
+			case DETECT, PROTECT:
+				atk.addActiveMove(Moves.PROTECT);
+				typeDialogue(atk.getName() + " protected\nitself!");
+				break;
 			case ENDURE:
 				typeDialogue(atk.getName() + " braced\nitself!");
 				break;
@@ -901,7 +911,23 @@ public class BattleManager extends Thread {
 				
 				typeDialogue("All stat changes were\neliminated!");
 				break;
-			case LEECHSEED:
+			case HEALBELL:				
+				atk.removeStatus();
+				
+				if (atk == fighter[0]) {
+					for (Pokemon p : gp.player.pokeParty) {
+						p.removeStatus();
+					}
+				}
+				else if (atk == fighter[1] && trainer != null) {
+					for (Pokemon p : trainer.pokeParty) {
+						p.removeStatus();
+					}	
+				}
+				
+				typeDialogue("A bell chimed!");
+				break;
+			case LEECHSEED:				
 				if (trg.hasActiveMove(move.getMove())) {
 					typeDialogue("It had no effect!");
 				}
@@ -937,10 +963,25 @@ public class BattleManager extends Thread {
 					trg.addActiveMove(move.getMove());
 					typeDialogue(atk.getName() + " identified\n" + trg.getName() + "!");					
 				}	
-				break;			
-			case DETECT, PROTECT:
-				atk.addActiveMove(Moves.PROTECT);
-				typeDialogue(atk.getName() + " protected\nitself!");
+				break;					
+			case PERISHSONG:
+				
+				if (trg.hasActiveMove(move.getMove()) && atk.hasActiveMove(move.getMove())) {
+					typeDialogue("It had no effect!");
+				}
+				else if (trg.getAbility() == Ability.SOUNDPROOF && atk.getAbility() == Ability.SOUNDPROOF) {
+					typeDialogue("It had no effect!");
+				}
+				else {
+					if (!trg.hasActiveMove(move.getMove()) && trg.getAbility() != Ability.SOUNDPROOF) {
+						trg.addActiveMove(move.getMove());
+					}
+					if (!atk.hasActiveMove(move.getMove()) && atk.getAbility() != Ability.SOUNDPROOF) {
+						atk.addActiveMove(move.getMove());
+					}	
+					
+					typeDialogue("All Pokémon hearing the song\nwill faint in three turns!");					
+				}	
 				break;
 			case RECOVER, ROOST:
 				if (atk.getHP() < atk.getBHP()) {
@@ -971,6 +1012,16 @@ public class BattleManager extends Thread {
 					typeDialogue(atk.getName() + "'s " + move.toString() + "\nraised DEFENSE!");					
 				}			
 				break;		
+			case PSYCHOSHIFT:				
+				if (atk.getStatus() != null) {
+					setStatus(atk, trg, atk.getStatus());
+					atk.removeStatus();
+				}
+				else {
+					typeDialogue("It had no effect!");
+				}
+				
+				break;
 			case PSYCHUP:
 				atk.resetStats();
 				atk.resetStatStages();			
@@ -983,6 +1034,16 @@ public class BattleManager extends Thread {
 				atk.changeStat("evasion", trg.getEvasionStg());
 				
 				typeDialogue(atk.getName() + " copied\n" + trg.getName() + "'s stats!");
+				break;
+			case REFRESH:
+				
+				if (atk.hasStatus(Status.BURN) || atk.hasStatus(Status.PARALYZE) || atk.hasStatus(Status.POISON)) {
+					typeDialogue(atk.getName() + " status\nreturned to normal!");
+				}
+				else {
+					typeDialogue("It had no effect!");
+				}
+				
 				break;
 			case SLEEPTALK:				
 				if (atk.hasStatus(Status.SLEEP)) {	
@@ -1307,6 +1368,13 @@ public class BattleManager extends Thread {
 						iterator.remove();
 						typeDialogue(move.getDelay(move.getName()));												
 					}
+					break;
+				case PERISHSONG:
+					move.setTurnCount(move.getTurnCount() - 1);					
+					if (move.getTurnCount() <= 0) {		
+						iterator.remove();
+						trg.setHP(0);							
+					}					
 					break;
 				default: 
 					break;
@@ -2146,7 +2214,7 @@ public class BattleManager extends Thread {
 		
 		for (char letter : dialogue.toCharArray()) {
 			gp.ui.battleDialogue += letter;
-			pause(35);
+			pause(textSpeed);
 		}		
 		
 		pause(1000);
@@ -2159,7 +2227,7 @@ public class BattleManager extends Thread {
 		
 		for (char letter : dialogue.toCharArray()) {
 			gp.ui.battleDialogue += letter;
-			pause(35);
+			pause(textSpeed);
 		}		
 		
 		if (canSkip) {

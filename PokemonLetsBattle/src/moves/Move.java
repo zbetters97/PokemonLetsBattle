@@ -77,7 +77,8 @@ public class Move {
 	
 	public boolean isReady() { 
 		switch (move) {
-			case FUTURESIGHT, LIGHTSCREEN, MIST, OUTRAGE, PETALDANCE, REFLECT, ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH, WRAP:
+			case FUTURESIGHT, LIGHTSCREEN, MIST, OUTRAGE, PERISHSONG, PETALDANCE, REFLECT, 
+					ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH, WRAP:
 				return true;
 			default:
 				if (move.getRecharge()) {
@@ -94,7 +95,8 @@ public class Move {
 	public void resetMoveTurns() {	
 		
 		switch (move) {
-			case FUTURESIGHT, LIGHTSCREEN, MIST, OUTRAGE, PETALDANCE, REFLECT, ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH, WRAP:
+		case FUTURESIGHT, LIGHTSCREEN, MIST, OUTRAGE, PERISHSONG, PETALDANCE, REFLECT, 
+					ROCKBLAST, ROLLOUT, SAFEGUARD, THRASH, WRAP:
 				if (turnCount > 0) turnCount--;			
 				else turnCount = getTurns();
 				break;

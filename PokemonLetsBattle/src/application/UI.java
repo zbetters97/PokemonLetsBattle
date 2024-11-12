@@ -59,7 +59,6 @@ public class UI {
 	public int dialogueCounter = 0;	
 	public int charIndex = 0;	
 	public int textSpeed = 2;
-	public int battleTextSpeed = 1;
 	public boolean canSkip = false;
 	private BufferedImage dialogue_next;
 	public BufferedImage battleIcon;

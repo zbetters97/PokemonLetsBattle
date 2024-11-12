@@ -24,6 +24,7 @@ public final class BattleUtility {
 			Moves.HOWL,
 			Moves.HYPERBEAM, 
 			Moves.HYPERVOICE,
+			Moves.PERISHSONG,
 			Moves.SCREECH,
 			Moves.SNORE,
 			Moves.SUPERSONIC
@@ -416,58 +417,74 @@ public final class BattleUtility {
 		double power = 1.0; 
 		
 		switch (move.getMove()) {
-		case FLAIL, REVERSAL: 			
-			double remainHP = atk.getHP() / atk.getBHP();
-			
-			if (remainHP >= 0.672) power = 20;
-			else if (0.672 > remainHP && remainHP >= 0.344) power = 40;
-			else if (0.344 > remainHP && remainHP >= 0.203) power = 80;
-			else if (0.203 > remainHP && remainHP >= 0.094) power = 100;
-			else if (0.094 > remainHP && remainHP >= 0.031) power = 150;
-			else if (0.031 > remainHP) power = 200;		
-			
-			break;
-		case MAGNITUDE:
-			int strength = 4;
-			
-			// RANDOM NUM 0-100
-			int chance = new Random().nextInt(100);
-			int total = 0;
+			case ERUPTION:
+				power = (atk.getHP() * 150.0) / atk.getBHP();
+				break;
+			case FLAIL, REVERSAL: 			
+				double remainHP = atk.getHP() / atk.getBHP();
+				
+				if (remainHP >= 0.672) power = 20;
+				else if (0.672 > remainHP && remainHP >= 0.344) power = 40;
+				else if (0.344 > remainHP && remainHP >= 0.203) power = 80;
+				else if (0.203 > remainHP && remainHP >= 0.094) power = 100;
+				else if (0.094 > remainHP && remainHP >= 0.031) power = 150;
+				else if (0.031 > remainHP) power = 200;		
+				
+				break;
+			case MAGNITUDE:
+				int strength = 4;
+				
+				// RANDOM NUM 0-100
+				int chance = new Random().nextInt(100);
+				int total = 0;
+						
+				// FOR EACH MAGNITUDE VALUE
+				for (Integer magnitude : magnitudeTable.keySet()) {
 					
-			// FOR EACH MAGNITUDE VALUE
-			for (Integer magnitude : magnitudeTable.keySet()) {
+					// GET PROBABILITY OF MAGNITUDE
+					int rate = magnitudeTable.get(magnitude); 
+					total += rate;
+					
+					// MAGNITUDE RANDOMLY SELECTED, ASSIGN TO STRENGTH
+					if (chance <= total) {	
+						strength = magnitude;
+						break;
+					}	
+				}
 				
-				// GET PROBABILITY OF MAGNITUDE
-				int rate = magnitudeTable.get(magnitude); 
-				total += rate;
+				if (strength == 4) power = 10;
+				else if (strength == 5) power = 30;
+				else if (strength == 6) power = 50;
+				else if (strength == 7) power = 70;
+				else if (strength == 8) power = 90;
+				else if (strength == 9) power = 110;
+				else if (strength == 10) power = 150;
 				
-				// MAGNITUDE RANDOMLY SELECTED, ASSIGN TO STRENGTH
-				if (chance <= total) {	
-					strength = magnitude;
-					break;
-				}	
-			}
-			
-			if (strength == 4) power = 10;
-			else if (strength == 5) power = 30;
-			else if (strength == 6) power = 50;
-			else if (strength == 7) power = 70;
-			else if (strength == 8) power = 90;
-			else if (strength == 9) power = 110;
-			else if (strength == 10) power = 150;
-			
-			break;
-		case ERUPTION:
-			power = (atk.getHP() * 150.0) / atk.getBHP();
-			break;
-		case WATERSPOUT:
-			power = Math.ceil((atk.getHP() * move.getPower()) / atk.getBHP());
-			break;
-		default:
-			if (move.getPower() == -1) power = atk.getLevel();		
-			else if (move.getPower() == 1) power = trg.getLevel();		
-			else power = move.getPower();				
-			break;
+				break;
+			case PUNISHMENT: 
+				
+				power = 60.0;
+								
+				if (trg.getAttackStg() > 0) power += 20.0 * trg.getAttackStg();
+				if (trg.getDefenseStg() > 0) power += 20.0 * trg.getDefenseStg();
+				if (trg.getSpAttackStg() > 0) power += 20.0 * trg.getSpAttackStg();
+				if (trg.getSpDefenseStg() > 0) power += 20.0 * trg.getSpDefenseStg();
+				if (trg.getAccuracyStg() > 0) power += 20.0 * trg.getAccuracyStg();
+				if (trg.getEvasionStg() > 0) power += 20.0 * trg.getEvasionStg();
+				if (trg.getSpeedStg() > 0) power += 20.0 * trg.getSpeedStg();
+				
+				if (power > 200.0) power = 200.0;				
+				
+				break;
+				
+			case WATERSPOUT:
+				power = Math.ceil((atk.getHP() * move.getPower()) / atk.getBHP());
+				break;
+			default:
+				if (move.getPower() == -1) power = atk.getLevel();		
+				else if (move.getPower() == 1) power = trg.getLevel();		
+				else power = move.getPower();				
+				break;
 		}
 		
 		switch (weather) {	
