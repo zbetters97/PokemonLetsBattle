@@ -64,9 +64,11 @@ public class EventHandler {
 		if (canTouchEvent) {
 			
 			// TELEPORT SPOTS
-			if (hit(0, 30, 25, Arrays.asList("up"))) teleport(1, 22, 32, gp.shop, "up", false, false); // POKEMART ENTRANCE
-			else if (hit(1, 21, 32, "right", 2, Arrays.asList("down"))) teleport(0, 30, 25, gp.town, "down", true, true); // POKEMART EXIT
+			if (hit(0, 30, 25, Arrays.asList("up"))) teleport(1, 22, 32, gp.shop, "up", false, false); // POKECENTER ENTRANCE
+			else if (hit(1, 21, 32, "right", 2, Arrays.asList("down"))) teleport(0, 30, 25, gp.town, "down", true, true); // POKECETER EXIT
 			else if (hit(1, 22, 28, Arrays.asList("up"))) speak(gp.npc[1][0]); // NURSE JOY TALK
+			else if (hit(0, 35, 21, Arrays.asList("up"))) teleport(2, 19, 31, gp.shop, "up", false, false); // POKEMART ENTRANCE
+			else if (hit(2, 18, 31, "right", 2, Arrays.asList("down"))) teleport(0, 35, 21, gp.town, "down", true, true); // POKEMART EXIT
 		}
 	}
 	private boolean hit(int map, int col, int row, List<String> reqDirection) {

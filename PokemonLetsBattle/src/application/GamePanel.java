@@ -86,7 +86,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public int worldWidth;
 	public int worldHeight;
 	
-	public String[] mapFiles = { "petalburg.txt", "pokemoncenter.txt"};
+	public String[] mapFiles = { "petalburg.txt", "pokemoncenter.txt", "pokemart.txt"};
 	public final int maxMap = mapFiles.length;
 	public int currentMap = 0;
 	
@@ -118,7 +118,7 @@ public class GamePanel extends JPanel implements Runnable {
 	// LOCATION STATES
 	public final int petalburg = 0;		
 	public final int pokecenter = 1;
-	
+	public final int pokemart = 2;
 
 	// SOUND LIBRARIES
 	public final int menu_SE = 2;
@@ -196,7 +196,8 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	public void setupMusic() {					
 		if (currentMap == petalburg) startMusic(0, "littleroot");
-		else if (currentMap == pokecenter) startMusic(0, "pokecenter");			
+		else if (currentMap == pokecenter) startMusic(0, "pokecenter");		
+		else if (currentMap == pokemart) startMusic(0, "pokemart");		
 	}
 
 	public void startMusic(int category, int record) {		
