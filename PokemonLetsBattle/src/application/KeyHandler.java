@@ -42,8 +42,11 @@ public class KeyHandler implements KeyListener {
 		else if (gp.gameState == gp.battleState) {
 			battleState(code);
 		}
+		else if (gp.gameState == gp.pcState) {
+			pcState(code);
+		}
 	}
-			
+					
 	// PLAY
 	private void playState(int code) { 	
 
@@ -120,6 +123,26 @@ public class KeyHandler implements KeyListener {
 
 		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
 		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
+	}
+	
+	// PC
+	private void pcState(int code) { 	
+
+		if (code == gp.btn_UP) upPressed = true;
+		if (code == gp.btn_DOWN) downPressed = true;
+		if (code == gp.btn_LEFT) leftPressed = true;
+		if (code == gp.btn_RIGHT) rightPressed = true;		
+						
+		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
+		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
+		if (code == gp.btn_X && lock) { xPressed = true; lock = false; }
+		if (code == gp.btn_Y && lock) { yPressed = true; lock = false; }
+		
+		if (code == gp.btn_L && lock) { lPressed = true; lock = false; }
+		if (code == gp.btn_R && lock) { rPressed = true; lock = false; }
+		if (code == gp.btn_Z) { zPressed = true; }
+		
+		if (code == gp.btn_START && lock) { startPressed = true; lock = false; }		
 	}
 		
 	// KEY RELEASED

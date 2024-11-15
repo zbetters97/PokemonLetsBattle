@@ -1,15 +1,17 @@
-package battle;
+package application;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
-import application.GamePanel;
 import application.GamePanel.Weather;
 import entity.Entity;
 import entity.collectables.items.ITM_EXP_Share;
@@ -26,6 +28,25 @@ import properties.Type;
 
 public class BattleManager extends Thread {
 	
+	private static List<Moves> soundMoves = Arrays.asList(
+			Moves.GROWL, 
+			Moves.HOWL,
+			Moves.HYPERBEAM, 
+			Moves.HYPERVOICE,
+			Moves.PERISHSONG,
+			Moves.SCREECH,
+			Moves.SNORE,
+			Moves.SUPERSONIC
+	);
+	private static final Map<Integer, Integer> magnitudeTable = Map.ofEntries(
+			Map.entry(4, 5), Map.entry(5, 10), 
+			Map.entry(6, 20), 
+			Map.entry(7, 30), 
+			Map.entry(8, 20), 
+			Map.entry(9, 10), 
+			Map.entry(10, 5)
+	);
+	
 	// GENERAL VALUES	
 	private GamePanel gp;
 	public boolean set = true;
@@ -34,20 +55,16 @@ public class BattleManager extends Thread {
 	private int textSpeed = 30;
 	
 	// BATTLE INFORMATION			
-	public Entity trainer;
-	
+	public Entity trainer;	
 	public Pokemon[] fighter = new Pokemon[2];
 	private Pokemon[] newFighter = new Pokemon[2];
-	private ArrayList<Pokemon> otherFighters = new ArrayList<>();
-	
+	private ArrayList<Pokemon> otherFighters = new ArrayList<>();	
 	private Move playerMove, cpuMove;
-	public Move newMove = null, oldMove = null;
-	
+	public Move newMove = null, oldMove = null;	
 	private Weather weather = Weather.CLEAR;
 	private int weatherDays = -1;
 	private int winner = -1, loser = -1;	
-	private int escapeAttempts = 0;
-		
+	private int escapeAttempts = 0;		
 	public Entity ballUsed;
 						
 	// BATTLE QUEUE
@@ -80,10 +97,12 @@ public class BattleManager extends Thread {
 	public final int fight_Run = 5;
 	public final int fight_Evolve = 6;
 	
-	// CONSTRUCTOR
+	/** CONSTRUCTOR **/
 	public BattleManager(GamePanel gp) {
 		this.gp = gp;
 	}
+	
+	/** SETUP METHOD **/
 	public void setup(int currentBattle, Entity trainer, Pokemon pokemon, String condition) {
 		
 		if (gp.ui.textSpeed == 2) textSpeed = 30;
@@ -145,7 +164,7 @@ public class BattleManager extends Thread {
 		}		
 	}
 		
-	// SETUP BATTLE METHOD
+	/** SETUP BATTLE METHODS **/
  	private void setBattle() throws InterruptedException {		
 		gp.stopMusic();	
 				
@@ -249,8 +268,7 @@ public class BattleManager extends Thread {
 				weather = fighter[1].getAbility().getWeather();
 			}	
 		}
- 	}
- 	
+ 	} 	
 	private void getOtherFighters() {
 		
 		for (Pokemon p : gp.player.pokeParty) {
@@ -261,8 +279,9 @@ public class BattleManager extends Thread {
 			}
 		}
 	}
+	/** END SETUP BATTLE METHODS **/
 	
-	// SWAP POKEMON METHODS
+	/** SWAP FIGHTERS **/
 	private void swapFighters() throws InterruptedException {
 			
 		if (!fighter[0].isAlive()) fighter[0] = null;
@@ -351,8 +370,6 @@ public class BattleManager extends Thread {
 		
 		getFighterAbility();
 	}
-	
-	// SWAP FIGHTER METHODS
 	public boolean swapPokemon(int partySlot) {
 		
 		if (fighter[0] == gp.player.pokeParty.get(partySlot)) {
@@ -379,7 +396,7 @@ public class BattleManager extends Thread {
 		}		
 	}
 						
-	// RUN BATTLE METHOD
+	/** RUN BATTLE METHOD **/
 	private void runBattle() throws InterruptedException {
 					
 		battleQueue.addAll(Arrays.asList(
@@ -439,7 +456,7 @@ public class BattleManager extends Thread {
 		}
 	}
 	
-	// GET MOVES METHOD
+	/** GET MOVE METHODS **/
 	public Move getPlayerMove(int selection) {
 		
 		playerMove = fighter[0].getMoveSet().get(selection);
@@ -461,14 +478,166 @@ public class BattleManager extends Thread {
 	private void getCPUMove() throws InterruptedException {
 		
 		// GET CPU MOVE IF NO CPU DELAY
-		int delay = BattleUtility.getDelay(playerMove, cpuMove);
+		int delay = getDelay();
 		
 		if (delay == 0 || delay == 1) {						
-			cpuMove = BattleUtility.chooseCPUMove(trainer, fighter[1], fighter[0], weather);		
+			cpuMove = chooseCPUMove();		
 		}
 	}
+	private int getDelay() {		
+		
+		int delay = 0;
+		
+		// BOTH MOVES ARE ACTIVE
+		if (playerMove != null && cpuMove != null) {
+			
+			// both fighters are waiting
+			if (playerMove.isWaiting() && cpuMove.isWaiting()) {
+				delay = 3;	
+			}
+			// fighter 2 is waiting;
+			else if (cpuMove.isWaiting()) {
+				delay = 2;	
+			}
+			// fighter 1 is waiting
+			else if (playerMove.isWaiting()) {
+				delay = 1;
+			}	
+		}
+		// CPU MOVE IS ACTIVE AND WAITING
+		else if (cpuMove != null && cpuMove.isWaiting()) {
+			delay = 2;
+		}
+		// PLAYER MOVE IS ACTIVE AND WAITING
+		else if (playerMove != null && playerMove.isWaiting()) {
+			delay = 1;
+		}
+				
+		return delay;
+	}	
+	public Move chooseCPUMove() {
+		/** SWITCH OUT LOGIC REFERENCE: https://www.youtube.com/watch?v=apuO7pvmGUo **/
+		
+		Move bestMove = null;
+		
+		if (trainer == null || trainer.skillLevel  == trainer.skill_rookie) {
+			bestMove = chooseCPUMove_Random();
+		}
+		else if (trainer.skillLevel == trainer.skill_smart) {
+			bestMove = chooseCPUMove_Power();
+		}
+		else if (trainer.skillLevel == trainer.skill_elite) {
+			bestMove = chooseCPUMove_Best();
+		}		
+		
+		return bestMove;
+	}
+ 	private Move chooseCPUMove_Random() {
+		
+		Move bestMove = null;
+		
+		int ranMove = (int)(Math.random() * (fighter[1].getMoveSet().size()));				
+		bestMove = fighter[1].getMoveSet().get(ranMove);
+				
+		return bestMove;
+	}
+	private Move chooseCPUMove_Power() {
+		
+		Move bestMove = null;
+		
+		Map<Move, Integer> damageMoves = new HashMap<>();
+		
+		for (Move move : fighter[1].getMoveSet()) {
+			
+			if (move.getPower() > 0 && move.getPP() != 0) {
+				
+				double power = getPower(move, fighter[1], fighter[0]);				
+				double type = getEffectiveness(fighter[0], move.getType());				
+				
+				// CALCULATE POWER OF EACH MOVE
+				int result = (int) (power * type);
+				
+				damageMoves.put(move, result);	
+			}		
+		}
+				
+		if (damageMoves.isEmpty()) {		
+			
+			for (Move move : fighter[1].getMoveSet()) {
+				
+				if (move.getMType() == MoveType.STATUS) {
+					bestMove = move;
+					return bestMove;
+				}		
+			}
+			
+			int ranMove = (int)(Math.random() * (fighter[1].getMoveSet().size()));				
+			bestMove = fighter[1].getMoveSet().get(ranMove);				
+		}
+		else {
+
+			bestMove = Collections.max(damageMoves.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey(); 
+
+			int val = 1 + (int)(Math.random() * 4);
+			if (val == 1) {				
+				int ranMove = (int)(Math.random() * (fighter[1].getMoveSet().size()));				
+				bestMove = fighter[1].getMoveSet().get(ranMove);
+			}	
+		}
+		
+		return bestMove;
+	}
+	private Move chooseCPUMove_Best() {
+		
+		Move bestMove = null;
+		
+		Map<Move, Integer> damageMoves = new HashMap<>();
+		Map<Move, Integer> koMoves = new HashMap<>();
+		
+		for (Move move : fighter[1].getMoveSet()) {
+			
+			if (move.getPower() > 0 && move.getPP() != 0) {
+				
+				int damage = calculateDamage(fighter[1], fighter[0], move);				
+				damageMoves.put(move, damage);	
+				
+				if (damage >= fighter[0].getHP() && move.getPriority() > 0) {
+					int accuracy = (int) getAccuracy(fighter[1], move);
+					koMoves.put(move, accuracy);
+				}
+			}		
+		}
+		
+		if (koMoves.isEmpty()) {
+			
+			if (damageMoves.isEmpty()) {		
+				
+				for (Move move : fighter[1].getMoveSet()) {
+					
+					if (move.getMType() == MoveType.STATUS) {
+						bestMove = move;
+						return bestMove;
+					}		
+				}
+				
+				int ranMove = (int)(Math.random() * (fighter[1].getMoveSet().size()));				
+				bestMove = fighter[1].getMoveSet().get(ranMove);				
+			}
+			else {						
+				bestMove = Collections.max(damageMoves.entrySet(), 
+						Comparator.comparingInt(Map.Entry::getValue)).getKey();			
+			}
+		}
+		else {
+			bestMove = Collections.max(koMoves.entrySet(), 
+					Comparator.comparingInt(Map.Entry::getValue)).getKey();	
+		}
+		
+		return bestMove;
+	}
+	/** END GET MOVE METHODS **/
 	
-	// SET ROTATION METHODS
+	/** SET ROTATION **/
 	private void setRotation() {		
 		// 0 if neither	goes first
 		// 1 if player moves first
@@ -478,7 +647,7 @@ public class BattleManager extends Thread {
 		
 		if (fighter[0].isAlive() && fighter[1].isAlive()) {
 							
-			int firstTurn = BattleUtility.getFirstTurn(fighter[0], fighter[1], playerMove, cpuMove);	
+			int firstTurn = getFirstTurn();	
 			
 			if (firstTurn == 1) { 				
 				battleQueue.addFirst(queue_CPUMove);
@@ -496,7 +665,44 @@ public class BattleManager extends Thread {
 			}
 		}
 	}
+	private int getFirstTurn() {
 		
+		int first = 1;
+		
+		if (playerMove == null && cpuMove == null) {
+			first = 0;
+		}
+		else if (playerMove == null) {
+			first = 3;
+		}
+		else if (cpuMove == null) {
+			first = 4;
+		}
+		else {				
+			if (playerMove.getPriority() > cpuMove.getPriority()) {
+				first = 1;
+			}
+			else if (playerMove.getPriority() < cpuMove.getPriority()) {
+				first = 2;
+			}
+			else {
+				if (fighter[0].getSpeed() > fighter[1].getSpeed()) {
+					first = 1;
+				}
+				else if (fighter[0].getSpeed() < fighter[1].getSpeed()) {
+					first = 2;
+				}
+				else {
+					Random r = new Random();					
+					first = (r.nextFloat() <= ((float) 1 / 2)) ? 1 : 2;
+				}
+			}
+		}
+		
+		return first;
+	}
+		
+	/** PLAYER MOVE **/
 	private void playerMove() throws InterruptedException {
 		
 		if (canMove(fighter[0], playerMove)) {
@@ -505,7 +711,9 @@ public class BattleManager extends Thread {
 		else {
 			playerMove.resetMoveTurns();
 		}
-	}	
+	}		
+	
+	/** CPU MOVE **/
 	private void cpuMove() throws InterruptedException {
 		
 		if (canMove(fighter[1], cpuMove)) {
@@ -514,9 +722,9 @@ public class BattleManager extends Thread {
 		else {
 			cpuMove.resetMoveTurns();
 		}
-	}
+	}	
 	
-	// STATUS CONDITION METHODS
+	/** CAN MOVE METHODS **/
  	private boolean canMove(Pokemon pkm, Move move) throws InterruptedException {
 		
 		boolean canMove = true;
@@ -610,7 +818,7 @@ public class BattleManager extends Thread {
 				
 		if (val == 1) {					
 			
-			int damage = BattleUtility.getConfusionDamage(pkm);		
+			int damage = getConfusionDamage(pkm);		
 			if (damage > pkm.getHP()) damage = pkm.getHP();
 			
 			pkm.setHit(true);
@@ -625,6 +833,24 @@ public class BattleManager extends Thread {
 			return false;
 		}
 	}
+	private int getConfusionDamage(Pokemon pkm) {
+ 		/** CONFUSION DAMAGE FORMULA REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition)#Effect **/
+		 		
+ 		int damage = 0;
+		
+		double level = pkm.getLevel();		
+		double power = 40.0;
+		double A = pkm.getAttack();
+		double D = pkm.getDefense();
+								
+		Random r = new Random();
+		double random = (double) (r.nextInt(100 - 85 + 1) + 85) / 100.0;
+		
+		damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
+			power * (A / D)) / 50)) + 2) * random);
+						
+		return damage;
+ 	}
 	private boolean recoverStatus(Pokemon pkm) throws InterruptedException {
 		
 		// if first move under status, set number of moves until free (1-5)
@@ -642,11 +868,12 @@ public class BattleManager extends Thread {
 			return false;
 		}
 	}
+	/** END CAN MOVE METHODS **/
 		
-	// MOVE METHOD
+	/** MOVE METHODS **/
 	private void move(Pokemon atk, Pokemon trg, Move atkMove) throws InterruptedException {		
 
-		BattleUtility.getWeatherMoveDelay(weather, atkMove);
+		getWeatherMoveDelay(atkMove);
 		
 		if (atk.hasActiveMove(Moves.WRAP)) {
 			
@@ -689,6 +916,24 @@ public class BattleManager extends Thread {
 			atkMove.setTurnCount(atkMove.getTurnCount() - 1);
 		}
 	}		
+	private void getWeatherMoveDelay(Move move) {
+		
+		switch (weather) {		
+			case SUNLIGHT:
+				if (move.getMove() == Moves.SOLARBEAM) {
+					move.setTurnCount(1);
+				}
+				break;
+			case RAIN:
+				break;
+			case HAIL:
+				break;
+			case SANDSTORM:
+				break;
+			case CLEAR:
+				break;
+		}		
+	}
  	private boolean validMove(Pokemon atk, Pokemon trg, Move move) {
 		
 		if ((move.getMove() == Moves.SNORE && atk.hasStatus(Status.SLEEP)) ||
@@ -701,11 +946,12 @@ public class BattleManager extends Thread {
 			return true;
 		}
 	}
-	
-	// ATTACK METHOD
+	/** END MOVE METHODS **/
+ 	
+ 	/** ATTACK METHOD **/
 	public void attack(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 			
-		if (BattleUtility.hit(atk, trg, move, weather)) {
+		if (hit(atk, trg, move)) {
 			
 			switch (move.getMType()) {
 			
@@ -747,8 +993,102 @@ public class BattleManager extends Thread {
 			}
 		}			
 	}		
+	private boolean hit(Pokemon atk, Pokemon trg, Move move) {
+		/** PROBABILITY FORMULA REFERENCE: https://monster-master.fandom.com/wiki/Evasion **/
+		/** PROTECTED MOVES REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Semi-invulnerable_turn **/
+		
+		boolean hit = false;
+		
+		switch (trg.getProtectedState()) {
+			case BOUNCE, FLY, SKYDROP:				
+				if (move.getMove() != Moves.GUST &&
+						move.getMove() != Moves.SKYUPPERCUT &&
+						move.getMove() != Moves.THUNDER &&
+						move.getMove() != Moves.TWISTER) {
+					return true;
+				}			
+			case DIG:
+				if (move.getMove() != Moves.EARTHQUAKE &&
+						move.getMove() != Moves.FISSURE &&		
+						move.getMove() != Moves.MAGNITUDE) {
+					return true;
+				}
+				break;
+			case DIVE:
+				if (move.getMove() != Moves.SURF) {
+					return true;
+				}
+				break;
+			default:			
+				break;
+		}
+		
+		if (trg.hasActiveMove(Moves.PROTECT)) {
+			hit = false;
+		}
+		// if move never misses, return true
+		else if (move.getAccuracy() == -1) {
+			hit = true; 
+		}
+		else {				
+			if (trg.hasActiveMove(Moves.MIRACLEEYE) || trg.hasActiveMove(Moves.ODORSLEUTH)) {
+				hit = true;
+			}
+			else {
+				double accuracy = 0;
+				
+				if (trg.hasActiveMove(Moves.FORESIGHT)) {
+					accuracy = getAccuracy(atk, move) * atk.getAccuracy();
+				}
+				else {
+					accuracy = getAccuracy(atk, move) * (atk.getAccuracy() / trg.getEvasion());	
+				}				
+								
+				Random r = new Random();
+				float chance = r.nextFloat();
+				
+				// chance of missing is accuracy / 100
+				hit = (chance <= ((float) accuracy / 100)) ? true : false;	
+			}
+		}
+		
+		return hit;
+	}
+	private double getAccuracy(Pokemon pkm, Move move) {
+		
+		double accuracy = move.getAccuracy();
+		
+		switch (weather) {
+			case CLEAR:
+				break;
+			case SUNLIGHT:
+				if (move.getMove() == Moves.THUNDER) {
+					accuracy *= 0.5;
+				}
+				break;
+			case RAIN:
+				break;
+			case HAIL:
+				if (move.getMove() == Moves.BLIZZARD) {
+					accuracy = 100;
+				}
+				break;
+			case SANDSTORM:
+				if (move.getMove() == Moves.THUNDER) {
+					accuracy *= 0.5;
+				}
+				break;
+		}
+		
+		if (pkm.getAbility() == Ability.COMPOUNDEYES) {
+			accuracy *= 1.3;
+		}
+		
+		return accuracy;
+	}
+	/** END ATTACK METHODS **/
 	
-	// STATUS MOVE
+	/** STATUS MOVE METHODS **/	
 	private void statusMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {		
 		
 		if (trg.getStatus() == null) {		
@@ -801,8 +1141,9 @@ public class BattleManager extends Thread {
 		pkm.removeStatus();	
 		typeDialogue(pkm.getName() + status.printRecover());	
 	}
+	/** END STATUS MOVE METHODS **/
 
-	// ATTRIBUTE MOVE
+	/** ATTRIBUTE MOVE METHODS **/
 	private void attributeMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		
 		// if move changes self attributes
@@ -818,7 +1159,7 @@ public class BattleManager extends Thread {
 		}
 		// if move changes target attributes
 		else {			
-			if (trg.hasActiveMove(Moves.MIST)) {
+			if (trg.hasActiveMove(Moves.MIST) || trg.getAbility() == Ability.CLEARBODY) {
 				typeDialogue("It had no effect!");
 			}
 			else {
@@ -850,10 +1191,10 @@ public class BattleManager extends Thread {
 			}
 		}			
 	}
+	/** END ATTRIBUTE MOVE METHODS **/
 	
-	// WEATHER MOVE
-	private void weatherMove(Move move) throws InterruptedException {		
-		
+	/** WEATHER MOVE METHODS **/
+	private void weatherMove(Move move) throws InterruptedException {			
 		weather = move.getWeather();
 		checkWeatherCondition();
 		weatherDays = move.getTurns();
@@ -881,8 +1222,9 @@ public class BattleManager extends Thread {
 				break;
 		}		
 	}
+	/** END WEATHER MOVE METHODS **/
 	
-	// OTHER MOVE
+	/** OTHER MOVE METHODS **/
 	private void otherMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		
 		switch (move.getMove()) {
@@ -1081,8 +1423,9 @@ public class BattleManager extends Thread {
 				break;		
 		}		
 	}
+	/** END OTHER MOVE METHODS **/
 	
-	// DAMAGE MOVE
+	/** DAMAGE MOVE METHODS **/
 	private void damageMove(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		
 		getDamage(atk, trg, move);
@@ -1144,7 +1487,7 @@ public class BattleManager extends Thread {
 		else {			
 			if (crit >= 1.5) typeDialogue("A critical hit!");
 			
-			String hitSE = getHitSE(BattleUtility.getEffectiveness(trg, move.getType()));		
+			String hitSE = getHitSE(getEffectiveness(trg, move.getType()));		
 			if (hitSE.equals("hit-super")) typeDialogue("It's super effective!");			
 			else if (hitSE.equals("hit-weak")) typeDialogue("It's not very effective...");			
 									
@@ -1169,11 +1512,12 @@ public class BattleManager extends Thread {
 	}
 	private int dealDamage(Pokemon atk, Pokemon trg, Move move) throws InterruptedException {
 		
-		String hitSE = getHitSE(BattleUtility.getEffectiveness(trg, move.getType()));		
+		double effectiveness = getEffectiveness(trg, move.getType());
+		String hitSE = getHitSE(effectiveness);		
 		gp.playSE(gp.battle_SE, hitSE);
 		trg.setHit(true);
 					
-		int damage = BattleUtility.calculateDamage(atk, trg, move, weather);	
+		int damage = calculateDamage(atk, trg, move);	
 		
 		if (trg.hasActiveMove(Moves.REFLECT) && move.getMType() == MoveType.PHYSICAL) {
 			damage /= 2;			
@@ -1182,6 +1526,9 @@ public class BattleManager extends Thread {
 		if (trg.getAbility() == Ability.FLASHFIRE && move.getType() == Type.FIRE &&
 				!trg.getAbility().isActive()) {
 			trg.getAbility().setActive(true);
+		}
+		else if (trg.getAbility() == Ability.WONDERGUARD && effectiveness <= 1.0) {
+			damage = 0;
 		}
 		
 		if (damage >= trg.getHP()) {					
@@ -1197,8 +1544,311 @@ public class BattleManager extends Thread {
 		decreaseHP(trg, damage);	
 		
 		return damage;
+	}	
+	private int calculateDamage(Pokemon atk, Pokemon trg, Move move) {
+		/** DAMAGE FORMULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Damage **/
+		
+		int damage = 0;
+		
+		double level = atk.getLevel();		
+		double power = getPower(move, atk, trg);
+		double A = getAttack(move, atk, trg);
+		double D = getDefense(move, atk, trg);
+		double STAB = atk.checkType(move.getType()) ? 1.5 : 1.0;
+		double type = getEffectiveness(trg, move.getType());
+								
+		Random r = new Random();
+		double random = (double) (r.nextInt(100 - 85 + 1) + 85) / 100.0;
+				
+		damage = (int)((Math.floor(((((Math.floor((2 * level) / 5)) + 2) * 
+			power * (A / D)) / 50)) + 2) * STAB * type * random);
+										
+		switch (move.getMove()) {
+			case ENDEAVOR: 		
+				if (trg.getHP() < atk.getHP()) damage = 0;			
+				else damage = trg.getHP() - atk.getHP();	
+				break;
+			case DRAGONRAGE:
+				damage = 40;
+				break;
+			case SEISMICTOSS:
+				damage = trg.getLevel();
+				break;
+			default:
+				break;
+		}
+		
+		switch (trg.getAbility()) {
+			case FLASHFIRE:
+				if (move.getType() == Type.FIRE) damage = 0;			
+				break;
+			case LEVITATE:
+				if (move.getType() == Type.GROUND) damage = 0; 				
+				break;
+			case SOUNDPROOF:
+				if (soundMoves.contains(move.getMove())) damage = 0;				
+				break;
+			case THICKFAT:
+				if (move.getType() == Type.FIRE || move.getType() == Type.ICE) damage *= 0.5;				
+				break;
+			default:
+				break;
+		}
+		
+		return damage;
 	}
-	
+	private double getPower(Move move, Pokemon atk, Pokemon trg) {
+		/** FLAIL POWER FORMULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Flail_(move) **/
+				
+		double power = 1.0; 
+		
+		switch (move.getMove()) {
+			case ERUPTION:
+				power = (atk.getHP() * 150.0) / atk.getBHP();
+				break;
+			case FLAIL, REVERSAL: 			
+				double remainHP = atk.getHP() / atk.getBHP();
+				
+				if (remainHP >= 0.672) power = 20;
+				else if (0.672 > remainHP && remainHP >= 0.344) power = 40;
+				else if (0.344 > remainHP && remainHP >= 0.203) power = 80;
+				else if (0.203 > remainHP && remainHP >= 0.094) power = 100;
+				else if (0.094 > remainHP && remainHP >= 0.031) power = 150;
+				else if (0.031 > remainHP) power = 200;		
+				
+				break;
+			case MAGNITUDE:
+				int strength = 4;
+				
+				// RANDOM NUM 0-100
+				int chance = new Random().nextInt(100);
+				int total = 0;
+						
+				// FOR EACH MAGNITUDE VALUE
+				for (Integer magnitude : magnitudeTable.keySet()) {
+					
+					// GET PROBABILITY OF MAGNITUDE
+					int rate = magnitudeTable.get(magnitude); 
+					total += rate;
+					
+					// MAGNITUDE RANDOMLY SELECTED, ASSIGN TO STRENGTH
+					if (chance <= total) {	
+						strength = magnitude;
+						break;
+					}	
+				}
+				
+				if (strength == 4) power = 10;
+				else if (strength == 5) power = 30;
+				else if (strength == 6) power = 50;
+				else if (strength == 7) power = 70;
+				else if (strength == 8) power = 90;
+				else if (strength == 9) power = 110;
+				else if (strength == 10) power = 150;
+				
+				break;
+			case PUNISHMENT: 
+				
+				power = 60.0;
+								
+				if (trg.getAttackStg() > 0) power += 20.0 * trg.getAttackStg();
+				if (trg.getDefenseStg() > 0) power += 20.0 * trg.getDefenseStg();
+				if (trg.getSpAttackStg() > 0) power += 20.0 * trg.getSpAttackStg();
+				if (trg.getSpDefenseStg() > 0) power += 20.0 * trg.getSpDefenseStg();
+				if (trg.getAccuracyStg() > 0) power += 20.0 * trg.getAccuracyStg();
+				if (trg.getEvasionStg() > 0) power += 20.0 * trg.getEvasionStg();
+				if (trg.getSpeedStg() > 0) power += 20.0 * trg.getSpeedStg();
+				
+				if (power > 200.0) power = 200.0;				
+				
+				break;
+				
+			case WATERSPOUT:
+				power = Math.ceil((atk.getHP() * move.getPower()) / atk.getBHP());
+				break;
+			default:
+				if (move.getPower() == -1) power = atk.getLevel();		
+				else if (move.getPower() == 1) power = trg.getLevel();		
+				else power = move.getPower();				
+				break;
+		}
+		
+		switch (weather) {	
+			case CLEAR:
+				break;
+			case SUNLIGHT:
+				if (move.getType() == Type.FIRE) power *= 1.5;
+				else if (move.getType() == Type.WATER) power *= 0.5;				
+				break;
+			case RAIN:
+				if (move.getType() == Type.WATER) power *= 1.5;				
+				else if (move.getType() == Type.FIRE) power *= 0.5;		
+				
+				if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;				
+				break;
+			case HAIL:
+				if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;
+				break;
+			case SANDSTORM:
+				if (move.getMove() == Moves.SOLARBEAM) power *= 0.5;
+				break;
+		}		
+		
+		switch (atk.getAbility()) {
+			case BLAZE:
+				if (move.getType() == Type.FIRE && ((double) atk.getHP() / (double) atk.getBHP() <= 0.33)) {
+					power *= 1.5;				
+				}
+				break;
+			case FLASHFIRE:
+				if (atk.getAbility().isActive()) {
+					power *= 1.5;
+				}
+				break;
+			case OVERGROW:
+				if (move.getType() == Type.GRASS && ((double) atk.getHP() / (double) atk.getBHP() <= 0.33)) {
+					power *= 1.5;				
+				}
+				break;
+			case TORRENT:
+				if (move.getType() == Type.WATER && ((double) atk.getHP() / (double) atk.getBHP() <= 0.33)) {
+					power *= 1.5;				
+				}
+				break;
+			default:
+				break;
+		}
+		
+		return power;
+	}	
+	private double getAttack(Move move, Pokemon atk, Pokemon trg) {
+		
+		double attack = 1.0;
+		
+		if (move.getMType().equals(MoveType.SPECIAL)) {
+			attack = atk.getSpAttack();
+			
+			if (trg.hasActiveMove(Moves.LIGHTSCREEN)) {
+				attack /= 2.0;
+			}
+		}
+		else if (move.getMType().equals(MoveType.PHYSICAL)) {
+			attack = atk.getAttack();
+		}
+		
+		switch (weather) {
+			case CLEAR:
+				break;
+			case SUNLIGHT:					
+				break;
+			case RAIN:					
+				break;
+			case HAIL:					
+				break;
+			case SANDSTORM:
+				break;
+		}				
+						
+		return attack;
+	}
+	private double getDefense(Move move, Pokemon atk, Pokemon trg) {
+		
+		double defense = 1.0;
+		
+		if (move.getMType().equals(MoveType.SPECIAL)) {
+			defense = trg.getSpDefense();
+		}
+		else if (move.getMType().equals(MoveType.PHYSICAL)) {
+			defense = trg.getDefense();
+		}
+		
+		switch (weather) {
+			case CLEAR:
+				break;
+			case SUNLIGHT:					
+				break;
+			case RAIN:					
+				break;
+			case HAIL:					
+				break;
+			case SANDSTORM:
+				if (trg.checkType(Type.ROCK) && move.getMType().equals(MoveType.SPECIAL)) {
+					defense *= 1.5;
+				}
+				break;
+		}			
+		
+		return defense;
+	}
+	public double getEffectiveness(Pokemon pkm, Type type) {
+		
+		double effect = 1.0;
+		
+		if ((type == Type.NORMAL || type == Type.FIGHTING) && 
+				pkm.checkType(Type.GHOST) &&
+				(pkm.hasActiveMove(Moves.ODORSLEUTH) || pkm.hasActiveMove(Moves.FORESIGHT))) {
+			return effect;							
+		}
+		else if (type == Type.PSYCHIC && pkm.checkType(Type.DARK) && 				 
+				pkm.hasActiveMove(Moves.MIRACLEEYE)) {
+			return effect;							
+		}
+		
+		// if trg is single type
+		if (pkm.getTypes() == null) {
+			
+			// if vulnerable, retrieve and return vulnerable value		
+			for (Type vulnType : pkm.getType().getVulnerability().keySet()) {		
+				if (vulnType.getName().equals(type.getName())) {
+					effect = pkm.getType().getVulnerability().get(vulnType);
+					return effect;
+				}
+			}			
+			// if resistant, retrieve and return resistance value
+			for (Type resType : pkm.getType().getResistance().keySet()) {			
+				if (resType.getName().equals(type.getName())) {
+					effect = pkm.getType().getResistance().get(resType);
+					return effect;
+				}			
+			}		
+		}
+		// if pkm is multi type
+		else {
+			
+			// for each type 
+			for (Type trgType : pkm.getTypes()) {		
+				
+				// for each vulnerability			
+				vulnerabilityLoop:
+				for (Type vulnType : trgType.getVulnerability().keySet()) {		
+					
+					// if found, multiply by effect and move to next loop
+					if (vulnType.getName().equals(type.getName())) {						
+						effect *= trgType.getVulnerability().get(vulnType);		
+						break vulnerabilityLoop;
+					}
+				}	
+				
+				// for each resistance
+				resistanceLoop:
+				for (Type resType : trgType.getResistance().keySet()) {		
+					
+					// if found, multiply by effect and move to next loop
+					if (resType.getName().equals(type.getName())) {
+						effect *= trgType.getResistance().get(resType);
+						break resistanceLoop;
+					}
+				}
+			}			
+			
+			// vulnerable and resistant cancel out
+			if (effect == 0.75)	{
+				effect = 1.0;
+			}
+		}			
+						
+		return effect;
+	}	
 	private String getHitSE(double effectiveness) throws InterruptedException {
 		
 		String hit = "";
@@ -1230,7 +1880,9 @@ public class BattleManager extends Thread {
 		Random r = new Random();		
 		return (r.nextFloat() <= ((float) chance / 25)) ? damage : 1.0;					
 	}
+	/** END DAMAGE MOVE METHODS **/
 	
+	/** POST MOVE METHODS **/
 	private void absorbHP(Pokemon pkm, int damage) throws InterruptedException {
 								
 		int gainedHP = (damage / 2);
@@ -1343,7 +1995,9 @@ public class BattleManager extends Thread {
 		
 		return flinched;
 	}
+	/** END POST MOVE METHODS **/
 	
+	/** ACTIVE MOVE METHODS **/
 	private void checkActiveMoves(Pokemon trg, Pokemon atk) throws InterruptedException {
 			
 		Iterator<Move> iterator = trg.getActiveMoves().iterator();
@@ -1385,6 +2039,10 @@ public class BattleManager extends Thread {
 				Math.random() > 0.66) {
 			removeStatus(trg);			
 		}
+		
+		if (trg.getAbility() == Ability.SPEEDBOOST) {
+			setAttribute(trg, Arrays.asList("speed"), 1);
+		}
 	}	
 	private void futureSight(Pokemon trg, Pokemon atk) throws InterruptedException {
 		
@@ -1392,7 +2050,7 @@ public class BattleManager extends Thread {
 		
 		int damage = dealDamage(atk, trg, move);
 			
-		String hitSE = getHitSE(BattleUtility.getEffectiveness(trg, move.getType()));	
+		String hitSE = getHitSE(getEffectiveness(trg, move.getType()));	
 		
 		if (hitSE.equals("hit-super")) typeDialogue("It's super effective!");			
 		else if (hitSE.equals("hit-weak")) typeDialogue("It's not very effective...");			
@@ -1425,9 +2083,9 @@ public class BattleManager extends Thread {
 			typeDialogue(atk.getName() + "\nabsorbed " + stolenHP + " HP!");
 		}
 	}
-	
-	
-	// STATUS METHODS
+	/** END ACTIVE MOVE METHODS **/
+		
+	/** STATUS DAMAGE METHODS **/
 	private void checkStatusDamage() throws InterruptedException {					
 		if (fighter[0].isAlive()) {
 			setStatusDamage(fighter[0]);
@@ -1457,8 +2115,9 @@ public class BattleManager extends Thread {
 			}		
 		}	
 	}
+	/** END STATUS MOVE METHODS **/
 	
-	// WEATHER METHODS
+	/** WEATHER DAMAGE METHODS **/
 	private void checkWeatherDamage() throws InterruptedException {
 					
 		if (weatherDays != -1) {
@@ -1544,8 +2203,41 @@ public class BattleManager extends Thread {
 		
 		typeDialogue(pkm.getName() + " was hurt\nby the " + weather.toString().toLowerCase() + "!");
 	}
+	/** END WEATHER DAMAGE METHODS **/
 	
-	// GET WINNING POKEMON METHODS
+	/** DELAYED TURN **/	
+	private void getDelayedTurn() {
+		
+		// RESET NON-DELAYED MOVES
+		int delay = getDelay();	
+				
+		if (delay == 0) { 			
+			if (playerMove != null) playerMove.resetMoveTurns();
+			playerMove = null; 
+			
+			if (cpuMove != null) cpuMove.resetMoveTurns();			
+			cpuMove = null; 
+		}
+		else if (delay == 1) {			
+			if (cpuMove != null) cpuMove.resetMoveTurns();
+			cpuMove = null;	
+		}
+		else if (delay == 2) {			
+			if (playerMove != null) playerMove.resetMoveTurns();
+			playerMove = null;
+		}
+		
+		if (delay == 1 || delay == 3) {		
+			fightStage = fight_Start;
+		}
+		else {				
+			running = false;
+			fightStage = fight_Start;
+			gp.ui.battleState = gp.ui.battle_Options;
+		}
+	}
+
+	/** CHECK WINNER METHODS **/
 	private boolean hasWinningPokemon() {
 		
 		boolean hasWinningPokemon = false;
@@ -1593,7 +2285,7 @@ public class BattleManager extends Thread {
 			gp.playSE(gp.faint_SE, fighter[1].toString());
 			typeDialogue(fighter[1].getName() + " fainted!");	
 			
-			gainXP();
+			gainEXP();
 		}
 		// TRAINER 2 WINNER
 		else if (winner == 1) {		
@@ -1618,9 +2310,11 @@ public class BattleManager extends Thread {
 			typeDialogue(fighter[1].getName() + " fainted!");
 		}
 	}		
-	private void gainXP() throws InterruptedException {
+	
+	/** EXP METHODS **/
+	private void gainEXP() throws InterruptedException {
 		
-		int gainedXP = BattleUtility.calculateEXPGain(fighter[loser], battleMode == trainerBattle);
+		int gainedXP = calculateEXPGain();
 				
 		if (otherFighters.size() > 0) {
 			
@@ -1629,14 +2323,14 @@ public class BattleManager extends Thread {
 			int expTimer = (int) Math.ceil(2800.0 / (double) gainedXP);
 			
 			typeDialogue(fighter[0].getName() + " gained\n" + gainedXP + " Exp. Points!", false);	
-			increaseXP(fighter[0], xp, expTimer);	
+			increaseEXP(fighter[0], xp, expTimer);	
 			
 			for (Pokemon p : otherFighters) {
 								
 				typeDialogue(p.getName() + " gained\n" + gainedXP + " Exp. Points!");
 				
 				xp = p.getXP() + gainedXP;				
-				increaseXP(p, xp, 0);
+				increaseEXP(p, xp, 0);
 			}
 			
 			otherFighters.clear();
@@ -1647,13 +2341,29 @@ public class BattleManager extends Thread {
 			int expTimer = (int) Math.ceil(2500.0 / (double) gainedXP);
 
 			typeDialogue(fighter[0].getName() + " gained\n" + gainedXP + " Exp. Points!", false);	
-			increaseXP(fighter[0], xp, expTimer);	
+			increaseEXP(fighter[0], xp, expTimer);	
 		}
 		
 		getOtherFighters();	
 		pause(500);
 	}
-	private void increaseXP(Pokemon p, int xp, int timer) throws InterruptedException {
+	private int calculateEXPGain() {
+		// EXP FORMULA REFERENCE (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience		
+		
+		int exp = 0;
+		
+		double b = fighter[loser].getEXPYeild();
+		double L = fighter[loser].getLevel();
+		double s = 1.0;
+		double e = 1.0;
+		double a = battleMode == trainerBattle ? 1.5 : 1.0;
+		double t = 1.0;
+		
+		exp = (int) (Math.floor( (b * L) / 7 ) * Math.floor(1 / s) * e * a * t);
+						
+		return exp;
+	}
+	private void increaseEXP(Pokemon p, int xp, int timer) throws InterruptedException {
 		
 		while (p.getXP() < xp) {
 			
@@ -1785,8 +2495,9 @@ public class BattleManager extends Thread {
 			gp.ui.commandNum = 0;	
 		}
 	}
-	
-	// GET WINNING TRAINER METHODS
+	/** END GAIN EXP METHODS **/
+
+	/** GET WINNING TRAINER **/
 	private void getWinningTrainer() throws InterruptedException {
 		
 		// WILD BATTLE		
@@ -1830,7 +2541,7 @@ public class BattleManager extends Thread {
 					
 					winner = -1;					
 
-					newFighter[1] = BattleUtility.getCPUFighter(trainer, fighter[1], fighter[0], weather);	
+					newFighter[1] = getCPUFighter();	
 					
 					if (gp.player.getAvailablePokemon() > 1 && set) {
 						
@@ -1877,7 +2588,7 @@ public class BattleManager extends Thread {
 				// TRAINER 1 AND 2 HAVE MORE POKEMON
 				if (gp.player.hasPokemon() && trainer.hasPokemon()) {
 					
-					newFighter[1] = BattleUtility.getCPUFighter(trainer, fighter[1], fighter[0], weather);					
+					newFighter[1] = getCPUFighter();					
 					
 					winner = -1;							
 					running = false;
@@ -1905,6 +2616,150 @@ public class BattleManager extends Thread {
 			}
 		}
 	}
+	
+	/** GET NEXT CPU FIGHTER METHODS **/
+	private Pokemon getCPUFighter() {
+		
+		Pokemon nextFighter = null;
+		
+		if (trainer == null || trainer.skillLevel == trainer.skill_rookie) {
+			nextFighter = getCPUFighter_Next();
+		}
+		else if (trainer.skillLevel == trainer.skill_smart) {
+			nextFighter = getCPUFighter_Power();
+		}
+		else if (trainer.skillLevel == trainer.skill_elite) {
+			nextFighter = getCPUFighter_Best();
+		}
+		
+		return nextFighter;		
+	}	
+ 	private Pokemon getCPUFighter_Next() {
+		
+ 		Pokemon nextFighter = null;
+ 		
+ 		if (fighter == null) { 
+ 			nextFighter = trainer.pokeParty.get(0); 
+ 		}
+ 		else {
+ 			int index = trainer.pokeParty.indexOf(fighter[1]);
+ 			if (index < 0 || index + 1 == trainer.pokeParty.size()) {
+ 				nextFighter = null;
+ 			}
+ 			else {
+ 				nextFighter = trainer.pokeParty.get(index + 1);
+ 			}	
+ 		}	
+ 		
+ 		return nextFighter;
+	}
+ 	private Pokemon getCPUFighter_Power() {
+ 		
+ 		Pokemon bestFighter = null;
+ 		
+ 		Map<Pokemon, Integer> fighters = new HashMap<>();
+ 		Map<Move, Integer> powerMoves = new HashMap<>();
+ 		
+ 		for (Pokemon p : trainer.pokeParty) {
+ 			
+ 			if (p.isAlive()) {
+ 				
+ 				for (Move m : p.getMoveSet()) {
+ 					
+ 					if (m.getPower() > 0 && m.getPP() != 0) {
+ 						
+ 						double power = getPower(m, p, fighter[0]);				
+ 						double type = getEffectiveness(fighter[0], m.getType());				
+ 						
+ 						// CALCULATE POWER OF EACH MOVE
+ 						int result = (int) (power * type); 	 
+ 						
+ 						powerMoves.put(m, result);
+ 					}		 					
+ 				} 	
+ 				
+ 				if (!powerMoves.isEmpty()) {
+ 					
+ 					int power = Collections.max(powerMoves.entrySet(), 
+ 							Comparator.comparingInt(Map.Entry::getValue)).getValue(); 
+ 					
+ 					fighters.put(p, power);
+ 				} 			
+ 				
+ 				powerMoves.clear();
+ 			} 			
+ 		}
+ 		
+ 		if (fighters.isEmpty()) {
+ 			
+ 			// loop through party and find highest level pokemon
+			for (Pokemon p : trainer.pokeParty) {
+				fighters.put(p, p.getLevel());
+			}
+			
+			bestFighter = Collections.max(fighters.entrySet(), 
+					Comparator.comparingInt(Map.Entry::getValue)).getKey();
+		
+ 		}
+ 		else {
+ 			bestFighter = Collections.max(fighters.entrySet(), 
+					Comparator.comparingInt(Map.Entry::getValue)).getKey(); 
+ 		}
+ 		 		 		
+ 		return bestFighter; 		
+ 	}
+ 	private Pokemon getCPUFighter_Best() {
+		
+		Pokemon bestFighter = null;
+ 		
+ 		Map<Pokemon, Integer> fighters = new HashMap<>();
+ 		Map<Move, Integer> damageMoves = new HashMap<>();
+ 		
+ 		for (Pokemon p : trainer.pokeParty) {
+ 			
+ 			if (p.isAlive()) {
+ 				
+ 				for (Move m : p.getMoveSet()) {
+ 					
+ 					if (m.getPower() > 0 && m.getPP() != 0) {
+ 						
+ 						int damage = calculateDamage(p, fighter[0], m);				
+ 						damageMoves.put(m, damage);	
+ 					}		 					
+ 				} 	
+ 				
+ 				if (!damageMoves.isEmpty()) {
+ 					
+ 					int damage = Collections.max(damageMoves.entrySet(), 
+ 							Comparator.comparingInt(Map.Entry::getValue)).getValue(); 
+ 					
+ 					fighters.put(p, damage);
+ 				} 			
+ 				
+ 				damageMoves.clear();
+ 			} 			
+ 		}
+ 		
+ 		if (fighters.isEmpty()) {
+ 			
+ 			// loop through party and find highest level pokemon
+			for (Pokemon p : trainer.pokeParty) {
+				fighters.put(p, p.getLevel());
+			}
+			
+			bestFighter = Collections.max(fighters.entrySet(), 
+					Comparator.comparingInt(Map.Entry::getValue)).getKey();
+		
+ 		}
+ 		else {
+ 			bestFighter = Collections.max(fighters.entrySet(), 
+					Comparator.comparingInt(Map.Entry::getValue)).getKey(); 
+ 		}
+ 		 		 		
+ 		return bestFighter; 		
+	}
+ 	/** END GET NEXT CPU FIGHTER METHODS **/
+ 	
 	private void getSwapAnswer() {
 		
 		if (gp.keyH.aPressed) {
@@ -1926,6 +2781,8 @@ public class BattleManager extends Thread {
 			gp.ui.commandNum = 0;
 		}			
 	}
+	
+	/** ANNOUNCE WINNER **/
 	private void announceWinner() throws InterruptedException {
 		
 		// TRAINER 1 VICTORY
@@ -1946,7 +2803,7 @@ public class BattleManager extends Thread {
 			int dialogueSet = trainer.dialogueSet + 1;
 			typeDialogue(trainer.dialogues[dialogueSet][0], true);
 			
-			int moneyEarned = BattleUtility.calculateMoneyEarned(trainer);
+			int moneyEarned = calculateMoneyEarned();
 			gp.player.money += moneyEarned;
 			typeDialogue(gp.player.name + " got $" + moneyEarned + "\nfor winning!", true);	
 			
@@ -1960,40 +2817,21 @@ public class BattleManager extends Thread {
 			endBattle();
 		}		
 	}	
-		
-	// DELAYED TURN USED
-	private void getDelayedTurn() {
-		
-		// RESET NON-DELAYED MOVES
-		int delay = BattleUtility.getDelay(playerMove, cpuMove);	
+	
+	/** CALCULATE MONEY **/
+	private int calculateMoneyEarned() {
+		/** MONEY EARNED FORMULA REFERENCE (ALL GEN): https://bulbapedia.bulbagarden.net/wiki/Prize_money **/
 				
-		if (delay == 0) { 			
-			if (playerMove != null) playerMove.resetMoveTurns();
-			playerMove = null; 
-			
-			if (cpuMove != null) cpuMove.resetMoveTurns();			
-			cpuMove = null; 
-		}
-		else if (delay == 1) {			
-			if (cpuMove != null) cpuMove.resetMoveTurns();
-			cpuMove = null;	
-		}
-		else if (delay == 2) {			
-			if (playerMove != null) playerMove.resetMoveTurns();
-			playerMove = null;
-		}
+		int payout = 0;
 		
-		if (delay == 1 || delay == 3) {		
-			fightStage = fight_Start;
-		}
-		else {				
-			running = false;
-			fightStage = fight_Start;
-			gp.ui.battleState = gp.ui.battle_Options;
-		}
+		int level = trainer.pokeParty.get(trainer.pokeParty.size() - 1).getLevel();
+		int base = trainer.trainerClass;		
+		payout = base * level;
+		
+		return payout;
 	}
 	
-	// CAPTURE POKEMON METHODS
+	/** CAPTURE METHODS **/
 	private void throwPokeball() throws InterruptedException {
 		
 		if (trainer == null) {			
@@ -2009,7 +2847,7 @@ public class BattleManager extends Thread {
 				Thread.sleep(800);	
 			}	
 			
-			if (BattleUtility.isCaptured(fighter[1], ballUsed)) {				
+			if (isCaptured()) {				
 				capturePokemon();
 			}
 			else {
@@ -2028,6 +2866,43 @@ public class BattleManager extends Thread {
 		
 		ballUsed = null;
 	}
+	private boolean isCaptured() {
+		/** CATCH RATE FOMRULA REFERENCE (GEN IV): https://bulbapedia.bulbagarden.net/wiki/Catch_rate#Capture_method_(Generation_III-IV) **/
+			
+		boolean isCaptured = false;
+		
+		double catchOdds;
+		double maxHP = 1.0;
+		double hp = 1.0;
+		double catchRate = 1.0;
+		double statusBonus = 1.0;
+		
+		maxHP = fighter[1].getBHP(); if (maxHP == 0.0) maxHP = 1.0; 		
+		hp = fighter[1].getHP(); if (hp == 0.0) hp = 1.0;
+		catchRate = fighter[1].getCatchRate();
+		
+		if (fighter[1].getStatus() != null) {			
+			switch(fighter[1].getStatus().getAbreviation()) {			
+				case "PAR": statusBonus = 1.5; break;
+				case "PSN": statusBonus = 1.5; break;
+				case "CNF": statusBonus = 1.0; break;
+				case "BRN": statusBonus = 1.5; break;
+				case "FRZ": statusBonus = 2.0; break;
+				case "SLP": statusBonus = 2.0; break;
+			}			
+		}
+		
+		catchOdds = ( (((3 * maxHP) - (2 * hp)) / (3 * maxHP) ) * catchRate * statusBonus);
+		
+		Random r = new Random();
+		int roll = (int) (r.nextInt(ballUsed.catchProbability - 0 + 1) + 0);
+		
+		if (roll <= catchOdds) {
+			isCaptured = true;
+		}
+		
+		return isCaptured;		
+	}
 	private void capturePokemon() throws InterruptedException {
 		
 		gp.stopMusic();
@@ -2040,14 +2915,22 @@ public class BattleManager extends Thread {
 			gp.player.pokeParty.add(fighter[1]);
 			typeDialogue(fighter[1].getName() + " was added\nto your party!", true);
 		}
-		else {
+		else {			
+			for (int i = 0; i < gp.player.pcParty.size(); i++) {
+				if (gp.player.pcParty.get(i).size() < 30) {
+					gp.player.pcParty.get(i).add(fighter[1]);
+					break;
+				}
+			}
 			
+			typeDialogue(fighter[1].getName() + " was sent\nto your PC!", true);
 		}
 		
 		endBattle();
 	}
+	/** END CAPTURE METHODS **/
 	
-	// RUN AWAY METHOD
+	/** ESCAPE BATTLE **/
 	public void escapeBattle() throws InterruptedException {
 		/** ESCAPE FORMULA REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Escape **/
 		
@@ -2091,7 +2974,7 @@ public class BattleManager extends Thread {
 		}
 	}
 	
-	// EVOLVE METHODS
+	/** EVOLVE METHODS **/
 	private void checkEvolve() throws InterruptedException {
 		
 		gp.stopMusic();
@@ -2150,12 +3033,17 @@ public class BattleManager extends Thread {
 		typeDialogue("Congratulations! Your " +  oldEvolve.getName() + 
 				"\nevolved into " + newEvolve.getName() + "!", true);
 		
+		if (!gp.player.personalDex.contains(newEvolve.getPokemon())) {
+			gp.player.personalDex.add(Pokedex.getByIndex(newEvolve.getIndex()));
+		}
+				
 		checkNewMove(newEvolve);
 		
 		return;
 	}
+	/** END EVOLVE METHODS **/
 		
-	// BATTLE END METHODS
+	/** END BATTLE METHODS **/
  	public void endBattle() {
 		gp.stopMusic();
 		gp.setupMusic();
@@ -2206,8 +3094,9 @@ public class BattleManager extends Thread {
 		
 		escapeAttempts = 0;
  	}
+ 	/** END END BATTLE METHODS **/
 	
-	// MISC METHODS	
+ 	/** MISC METHODS **/
  	public void typeDialogue(String dialogue) throws InterruptedException {
 		
 		gp.ui.battleDialogue = "";
@@ -2287,4 +3176,5 @@ public class BattleManager extends Thread {
 		
 		Thread.sleep((int) soundDuration);
 	}
+	/** END MISC METHODS **/
 }

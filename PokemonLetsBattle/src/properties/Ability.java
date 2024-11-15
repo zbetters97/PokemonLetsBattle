@@ -8,6 +8,8 @@ public enum Ability {
 	
 	AIRLOCK ("Airlock", Weather.CLEAR, "All weather effects are\nnegated while the Pokémon\nis on the field."),
 	BLAZE ("Blaze", "When HP is below 1/3rd,\nFire’s power increases to\n1.5 times"),
+	CLEARBODY ("Clear Body", "Opponents’ moves which lower\nthis Pokémon’s ability\nvalues have no effect."),
+	COMPOUNDEYES ("Comound Eyes", "Raises the Pokémon’s\naccuracy by 30%."),
 	DRIZZLE ("Drizzle", Weather.RAIN, "Weather changes to Heavy\nRain when the Pokémon enters\nthe battle."),
 	DROUGHT ("Drought", Weather.SUNLIGHT, "Weather changes to Clear\nSkies when the Pokémon enters\nthe battle."),
 	FLASHFIRE ("Flash Fire", "Activates when user is hit\nby a damaging Fire-type\nmove. Once activated, user’s\nFire-type moves deal 1.5\ntimes damage."),
@@ -27,11 +29,13 @@ public enum Ability {
 	SHELLARMOR ("Shell Armor", "Opponent’s moves cannot\nCritical Hit."),
 	SNIPER ("Sniper", "Power of critical-hit moves\nis tripled."),
 	SOUNDPROOF ("Sound Proof", "Unaffected by sound moves."),
+	SPEEDBOOST ("Speed Boost", "Speed increases by one stage\neach turn except the turn\nthat the Pokémon is switched\ninto battle."),
 	STATIC ("Static", "The opponent has a 30%\nchance of being induced with\nPARALYZE when using a\nphysical attack."),
 	SWIFTSWIM ("Swift Swim", "When rainy, The Pokémon’s\nSpeed doubles. However,\nSpeed will not double on the\nturn weather becomes Heavy\nRain."),
 	SYNCHRONIZE ("Synchronize", "When this Pokémon becomes\nPOISON, PARALYZE, or BURN,\nso does the opponent."),
 	THICKFAT ("Thick Fat", "Fire and Ice-type moves\ndeal 50% damage."),
-	TORRENT ("Torrent", "When HP is below 1/3rd,\nWater's power increases to\n1.5 times");
+	TORRENT ("Torrent", "When HP is below 1/3rd,\nWater's power increases to\n1.5 times"),
+	WONDERGUARD ("Wonder Guard", "The Pokémon is only harmed\nby Super Effective damage,\nweather effects and\ncondition effects.");
 			
     private String name, description;
     private Weather weather;

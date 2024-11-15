@@ -17,7 +17,6 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 import ai.PathFinder;
-import battle.BattleManager;
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
@@ -106,6 +105,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int hmState = 5;
 	public final int transitionState = 6;	
 	public final int battleState = 7;
+	public final int pcState = 8;
 	
 	// AREA STATES
 	public int currentArea;
@@ -359,6 +359,11 @@ public class GamePanel extends JPanel implements Runnable {
 		// BATTLE STATE
 		else if (gameState == battleState) {
 							
+			// DRAW UI
+			ui.draw(g2);
+		}
+		// PC STATE
+		else if (gameState == pcState) {
 			// DRAW UI
 			ui.draw(g2);
 		}

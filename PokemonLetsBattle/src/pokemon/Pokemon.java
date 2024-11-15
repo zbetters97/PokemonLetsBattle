@@ -38,16 +38,16 @@ public class Pokemon {
 	private int statusCounter, statusLimit;
 	private List<Move> moveSet, activeMoves;
 	private Protection protectedState;
-	private Entity item, capturedBall;	
+	private Entity item, ball;	
 	/** END INITIALIZE VALUES **/
 	
 	/** CONSTRUCTORS **/
-	public Pokemon(Pokedex p, int lvl, Entity capturedBall) {	
+	public Pokemon(Pokedex p, int lvl, Entity ball) {	
 		// STAT FORMULA REFERENCE: https://pokemon.fandom.com/wiki/Statistics
 		
 		pokemon = p;
 		level = lvl;	
-		this.capturedBall = capturedBall;
+		this.ball = ball;
 		
 		bxp = getXP(level);
 		xp = bxp;
@@ -99,7 +99,7 @@ public class Pokemon {
 		
 		pokemon = p;
 		level = old.level;	
-		capturedBall = old.capturedBall;
+		ball = old.ball;
 		
 		bxp = old.bxp;
 		xp = bxp;
@@ -142,13 +142,13 @@ public class Pokemon {
 		
 		protectedState = Protection.NONE;
 	}		
-	public Pokemon(Pokedex p, Entity capturedBall, char sex, int level, int bxp, int xp, int nxp,
+	public Pokemon(Pokedex p, Entity ball, char sex, int level, int bxp, int xp, int nxp,
 			int hpIV, int attackIV, int defenseIV, int spAttackIV, int spDefenseIV, int speedIV,
 			int hp, int bhp, int attack, int defense, int spAttack, int spDefense, int speed, 
 			Nature nature, Status status, boolean isAlive, ArrayList<Move> moveSet) {	
 		
 		pokemon = p;
-		this.capturedBall = capturedBall;
+		this.ball = ball;
 		this.sex = sex;		
 		this.level = level;			
 		this.bxp = xp;
@@ -283,15 +283,8 @@ public class Pokemon {
 		if (nextXP < 0) nextXP = 0;
 		return nextXP;		
 	}
-	public boolean checkLevelUp(int gainedXP) {
-		
-		boolean leveledUp = false;
-				
-		if (getNextXP() <= xp + gainedXP) {			
-			leveledUp = true;
-		}
-		
-		return leveledUp;		
+	public boolean checkLevelUp(int gainedXP) {		
+		return getNextXP() <= xp + gainedXP;		
 	}
 	public void levelUp() { 	
 		
@@ -327,26 +320,14 @@ public class Pokemon {
 		return newMove;
 	}
 	public boolean canEvolve() {
-		
-		boolean canEvolve = false;
-		
-		if (pokemon.canEvolve() && pokemon.getEvLevel() <= level) {
-			canEvolve = true;
-		}
-		else {
-			canEvolve = false;
-		}
-		
-		return canEvolve;
+		return pokemon.canEvolve() && pokemon.getEvolveLevel() <= level; 
 	}
 	public static Pokemon evolve(Pokemon oldPokemon) {
 		
 		Pokemon evolvedForm = null;
 		
-		int nextIndex = oldPokemon.getIndex() + 1;
-		
 		for (Pokedex base : Pokedex.values()) {
-			if (base.getIndex() == nextIndex) {
+			if (base.getIndex() == oldPokemon.getEvolveIndex()) {
 				evolvedForm = new Pokemon(oldPokemon, base);				
 				break;
 			}
@@ -363,9 +344,11 @@ public class Pokemon {
         if (p.getMoveSet().isEmpty()) {
         	
         	// add each move to passed in pokemon object
-            for (int i = 0; i < Pokedex.getMovemap().get(p.pokemon).size(); i++) {        	
-            	p.learnMove(Pokedex.getMovemap().get(p.pokemon).get(i));
-            } 	
+        	if (Pokedex.getMovemap().get(p.pokemon).size() > 0) {
+        		for (int i = 0; i < Pokedex.getMovemap().get(p.pokemon).size(); i++) {        	
+                	p.learnMove(Pokedex.getMovemap().get(p.pokemon).get(i));
+                } 	
+        	}            	
         }
 	}
 	public void addMove(Moves move) {
@@ -545,6 +528,8 @@ public class Pokemon {
 	public int getEvasionStg() { return evasionStg; }
 	public void setEvasionStg(int evasionStg) { this.evasionStg = evasionStg; }
 		
+	public int getEvolveLevel() { return pokemon.getEvolveLevel(); }
+	public int getEvolveIndex() { return pokemon.getEvolveIndex(); }
 	public int getEXPYeild() { return pokemon.getEXPYeild(); }
 	public int getEV() { return pokemon.getEV(); }
 	
@@ -599,8 +584,8 @@ public class Pokemon {
 	public void setProtectedState(Protection state) { this.protectedState = state; }
 	public void clearProtection() { protectedState = Protection.NONE; }
 		
-	public Entity getBall() { return capturedBall; }
-	public void setBall(Entity capturedBall) { this.capturedBall = capturedBall; }
+	public Entity getBall() { return ball; }
+	public void setBall(Entity ball) { this.ball = ball; }
 	
 	public Pokedex getPokemon() { return pokemon; }
 	/** END GETTERS AND SETTERS **/

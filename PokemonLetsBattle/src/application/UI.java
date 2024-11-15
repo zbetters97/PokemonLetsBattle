@@ -50,6 +50,8 @@ public class UI {
 	private Color battle_red = new Color(165,71,74);	
 	private Color battle_yellow = new Color(250,254,219);
 	private Color battle_blue = new Color(62,211,255);
+	private Color pc_green = new Color(159,232,143);
+	private Color pc_blue = new Color(128,168,176);
 		
 	// DIALOGUE HANDLER	
 	public Entity npc;
@@ -70,6 +72,15 @@ public class UI {
 	public boolean tMoving = false;
 	private int tCounter = 0;
 	public String tDirection = "";
+	
+	// PC VALUES 
+	private BufferedImage pc_cursor, pc_cursor_up, pc_bkg, pc_data, pc_party, pc_box_1;
+	private int boxNum = 0; 
+	
+	private int pcState = 0;
+	private final int pcBox = 1;
+	private final int pcSelect = 2;
+	private final int pcParty = 3;
 	
 	// PARTY VALUES
 	public String partyDialogue = "";
@@ -186,6 +197,13 @@ public class UI {
 		
 		dex_ball = setup("/collectables/battle/ball_poke", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));	
 		
+		pc_cursor = setup("/ui/pc/cursor", (int) (gp.tileSize), (int) (gp.tileSize));
+		pc_cursor_up = setup("/ui/pc/cursor_up", (int) (gp.tileSize), (int) (gp.tileSize));
+		pc_bkg = setup("/ui/pc/bkg", gp.screenWidth, gp.screenHeight);
+		pc_data = setup("/ui/pc/box-data", (int) (gp.tileSize * 5.5), (int) (gp.tileSize * 11.5));
+		pc_party = setup("/ui/pc/box-party", (int) (gp.tileSize * 5.5), (int) (gp.tileSize * 11.2));
+		pc_box_1 = setup("/ui/pc/box-01", (int) (gp.tileSize * 10.37), (int) (gp.tileSize * 10.5));
+		
 		fighter_one_startX = gp.tileSize * 14;
 		fighter_two_startX = 0 - gp.tileSize * 3;
 		fighter_one_startY = (int) (gp.tileSize * 3.8);
@@ -245,6 +263,253 @@ public class UI {
 		else if (gp.gameState == gp.transitionState) {
 			drawTransitionScreen();
 		}
+		else if (gp.gameState == gp.pcState) {
+			drawPCScreen();
+		}
+	}
+	
+	// PC	
+	private void drawPCScreen() {		
+		
+		switch (pcState) {
+			case pcBox:
+				break;
+			case pcSelect:
+				break;
+			case pcParty:
+				break;
+		}
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		int textX;
+		int textY;
+		int slotX;
+		int slotY;
+		String text;
+		
+		g2.drawImage(pc_bkg, 0, 0, null);	
+		
+		x = (int) (gp.tileSize * 5.65);
+		y = (int) (gp.tileSize * 1.2);
+		g2.drawImage(pc_box_1, x, y, null);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 65f));
+		text = "BOX " + (boxNum + 1);
+		textX = getXForCenteredTextOnWidth(text, (int) (gp.tileSize * 10.5), x);
+		textY = (int) (gp.tileSize * 2.4);
+		drawText(text, textX, textY, battle_white, Color.BLACK);	
+		
+		if (commandNum == 2) {
+			slotX = (int) (x + gp.tileSize * 4.8);
+			slotY = y + (int) (gp.tileSize * 1.3);		
+			g2.drawImage(pc_cursor_up, slotX, slotY, null);
+			
+			if (gp.keyH.upPressed) {
+				gp.keyH.upPressed = false;
+				commandNum = 0;
+			}
+			if (gp.keyH.downPressed) {
+				gp.keyH.downPressed = false;
+				commandNum = 3;
+				fighterNum = 0;
+			}
+			if (gp.keyH.rightPressed) {
+				gp.keyH.rightPressed = false;
+				boxNum++;
+				if (boxNum > 9) boxNum = 9;
+			}
+			if (gp.keyH.leftPressed) {
+				gp.keyH.leftPressed = false;
+				boxNum--;
+				if (boxNum < 0) boxNum = 0;
+			}
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = true;				
+			}
+		}
+		
+		x = (int) (gp.tileSize * 5.75);
+		y = 1;
+		width = (int) (gp.tileSize * 4.7);
+		height = (int) (gp.tileSize * 1);
+		drawSubWindow(x, y, width, height, 5, 10, pc_green, pc_blue);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 45f));
+		text = "PARTY";
+		textX = getXForCenteredTextOnWidth(text, width, x);
+		textY = (int) (gp.tileSize * 0.85);
+		drawText(text, textX, textY, battle_white, Color.GRAY);		
+		if (commandNum == 0) {
+			
+			slotX = x + gp.tileSize * 2;
+			slotY = y + (int) (gp.tileSize * 0.8);		
+			g2.drawImage(pc_cursor_up, slotX, slotY, null);
+			
+			if (gp.keyH.downPressed) {
+				gp.keyH.downPressed = false;	
+				commandNum = 2;
+			}
+			if (gp.keyH.rightPressed) {
+				gp.keyH.rightPressed = false;	
+				commandNum++;
+			}			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = true;				
+			}
+		}
+		
+		x += (int) (gp.tileSize * 5.5);
+		drawSubWindow(x, y, width, height, 5, 10, pc_green, pc_blue);
+		
+		text = "CLOSE";
+		textX = getXForCenteredTextOnWidth(text, width, x);
+		textY = (int) (gp.tileSize * 0.85);
+		drawText(text, textX, textY, battle_white, Color.GRAY);		
+		if (commandNum == 1) {
+			slotX = x + gp.tileSize * 2;
+			slotY = y + (int) (gp.tileSize * 0.8);		
+			g2.drawImage(pc_cursor_up, slotX, slotY, null);
+			
+			if (gp.keyH.downPressed) {
+				gp.keyH.downPressed = false;	
+				commandNum = 2;
+			}
+			if (gp.keyH.leftPressed) {
+				gp.keyH.leftPressed = false;	
+				commandNum--;
+			}	
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = true;				
+			}
+		}
+		
+		drawPCPokemon();
+		drawPCData();
+	}	
+	private void drawPCPokemon() {
+		
+		int x;
+		int y;
+		int slotX;
+		int slotY;
+		Pokemon fighter = null;
+		
+		x = (int) (gp.tileSize * 5.6); 
+		y = (int) (gp.tileSize * 2.9);					
+		for (int i = 0; i < 30; i++) {	
+			
+			if (gp.player.pcParty.get(boxNum).size() > i) {
+				fighter = gp.player.pcParty.get(boxNum).get(i);	
+				g2.drawImage(fighter.getMenuSprite(), x, y, null);		
+			}	
+			
+			if (fighterNum == i && commandNum > 2) {
+				slotX = x + (int) (gp.tileSize * 0.5);
+				slotY = y - (int) (gp.tileSize * 0.7);		
+				g2.drawImage(pc_cursor, slotX, slotY, null);
+			}
+			
+			x += gp.tileSize * 1.7;
+			
+			if (i == 5 || i == 11 || i == 17 || i == 23) {
+				x = (int) (gp.tileSize * 5.6); 
+				y += gp.tileSize * 1.7;
+			}
+		}				
+		
+		if (commandNum == 3) {
+			if (gp.keyH.upPressed) {
+				gp.keyH.upPressed = false;
+				if (fighterNum - 6 >= 0) {
+					fighterNum -= 6;
+				}
+				else {
+					fighterNum = 0;
+					commandNum = 2;
+				}
+			}
+			if (gp.keyH.downPressed) {
+				gp.keyH.downPressed = false;
+				if (fighterNum + 6 < 30) {
+					fighterNum += 6;
+				}
+			}
+			if (gp.keyH.leftPressed) {
+				gp.keyH.leftPressed = false;
+				fighterNum--;
+				if (fighterNum < 0) {
+					fighterNum = 0;
+				}
+			}
+			if (gp.keyH.rightPressed) {
+				gp.keyH.rightPressed = false;
+				fighterNum++;
+				if (fighterNum == 30) {
+					fighterNum = 29;
+				}
+			}
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = true;
+			}				
+		}
+	}
+	private void drawPCData() {
+		
+		int x;
+		int y;
+		String text;
+		Pokemon fighter;
+		
+		g2.drawImage(pc_data, 0, (int) (gp.tileSize * 0.25), null);	
+		
+		x = (int) (gp.tileSize * 0.75); 
+		y = (int) (gp.tileSize * 1.6);		
+		
+		if (gp.player.pcParty.get(boxNum).size() > 0) {
+			
+			fighter = gp.player.pcParty.get(boxNum).get(fighterNum);
+			g2.drawImage(fighter.getFrontSprite(), x, y, gp.tileSize * 4, gp.tileSize * 4, null);
+			
+			y += gp.tileSize * 6.2;
+			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 65f));
+			text = fighter.getName();
+			drawText(text, x, y, battle_white, Color.BLACK);
+			
+			y += gp.tileSize;
+			g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55f));
+			text = "Lv" + fighter.getLevel();
+			drawText(text, x, y, battle_white, Color.BLACK);
+			
+			int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();		
+			x += length + 3;
+			g2.setColor(fighter.getSexColor());	
+			g2.drawString("" + fighter.getSex(), x, y);				
+		}
+	}		
+	private void pc_Party() {
+		
+		int x;
+		int y;
+		
+		g2.drawImage(pc_party, 0, 0, null);		
+		
+		x = (int) (gp.tileSize * 0.4); 
+		y = (int) (gp.tileSize * 3.65);		
+		g2.drawImage(gp.player.pokeParty.get(0).getMenuSprite(), x, y, null);
+		
+		if (gp.player.pokeParty.size() > 1) {
+			
+			x = (int) (gp.tileSize * 3.13); 
+			y = (int) (gp.tileSize * 0.38);	
+			for (int i = 1; i < gp.player.pokeParty.size(); i++) {
+				g2.drawImage(gp.player.pokeParty.get(i).getMenuSprite(), x, y, null);
+				y += gp.tileSize * 1.7;
+			}	
+		}		
 	}
 	
 	// HUD	
