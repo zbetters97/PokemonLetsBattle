@@ -1577,7 +1577,7 @@ public enum Pokedex {
 //        		new Move(Moves.METALCLAW),
         		new Move(Moves.CONFUSION)
         ));  
-        moveMap.put(METANG, Arrays.asList(
+        moveMap.put(METAGROSS, Arrays.asList(
  //       		new Move(Moves.MAGNETRISE),
         		new Move(Moves.TAKEDOWN),
 //        		new Move(Moves.METALCLAW),

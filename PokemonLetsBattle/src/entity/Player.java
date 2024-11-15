@@ -28,7 +28,7 @@ public class Player extends Entity {
 	public int defaultWorldY;
 	
 	public ArrayList<Pokedex> personalDex = new ArrayList<>();
-	public ArrayList<ArrayList<Pokemon>> pcParty = new ArrayList<ArrayList<Pokemon>>(10);
+	public Pokemon[][] pcParty = new Pokemon[10][30];
 	public ArrayList<Pokemon> pcBox_1 = new ArrayList<Pokemon>(30);
 	
 	public boolean repelActive = false;
@@ -65,22 +65,18 @@ public class Player extends Entity {
 	
 	// DEFAULT VALUES
 	public void assignParty() {		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.BLAZIKEN, 13, new COL_Ball_Poke(gp)));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MARSHTOMP, 16, new COL_Ball_Great(gp)));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36, new COL_Ball_Master(gp)));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.MEWTWO, 36, new COL_Ball_Master(gp)));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.DEOXYS, 36, new COL_Ball_Master(gp)));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.RAYQUAZA, 36, new COL_Ball_Master(gp)));
 	}
 	public void setDefaultValues() {
 		
-		for (int i = 0; i < 10; i++) pcParty.add(new ArrayList<Pokemon>(30));	
-		
-		for (int i = 0; i < 30; i++) {			
-			pcParty.get(0).add(Pokemon.getPokemon(Pokedex.values()[i], 36, new COL_Ball_Master(gp)));
-		}
-		for (int i = 0; i < 30; i++) {			
-			pcParty.get(1).add(Pokemon.getPokemon(Pokedex.values()[i+30], 36, new COL_Ball_Master(gp)));
+		int c = 0;
+		int x = 0;
+		for (int i = 0; i < Pokedex.values().length; i++) {
+			pcParty[c][x] = Pokemon.getPokemon(Pokedex.values()[i], 36, new COL_Ball_Master(gp));
+			x++;
+			if (i == 29 || i == 59 || i == 92) { c++; x = 0; } 			
 		}
 		
 		speed = 4; defaultSpeed = speed;

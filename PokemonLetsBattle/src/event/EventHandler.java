@@ -69,6 +69,12 @@ public class EventHandler {
 			else if (hit(1, 22, 28, Arrays.asList("up"))) speak(gp.npc[1][0]); // NURSE JOY TALK
 			else if (hit(0, 35, 21, Arrays.asList("up"))) teleport(2, 19, 31, gp.shop, "up", false, false); // POKEMART ENTRANCE
 			else if (hit(2, 18, 31, "right", 2, Arrays.asList("down"))) teleport(0, 35, 21, gp.town, "down", true, true); // POKEMART EXIT
+			else if (hit(1, 25, 26, Arrays.asList("up"))) {				
+				if (gp.keyH.aPressed) {
+					gp.keyH.aPressed = false;
+					gp.gameState = gp.pcState;
+				}
+			}
 		}
 	}
 	private boolean hit(int map, int col, int row, List<String> reqDirection) {

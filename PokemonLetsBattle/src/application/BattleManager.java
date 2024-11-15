@@ -2916,14 +2916,23 @@ public class BattleManager extends Thread {
 			typeDialogue(fighter[1].getName() + " was added\nto your party!", true);
 		}
 		else {			
-			for (int i = 0; i < gp.player.pcParty.size(); i++) {
-				if (gp.player.pcParty.get(i).size() < 30) {
-					gp.player.pcParty.get(i).add(fighter[1]);
-					break;
+			boolean found = false;
+			for (int i = 0; i < 10; i++) {
+				for (int c = 0; c < 30; c++) {
+					if (gp.player.pcParty[i][c] == null) {
+						gp.player.pcParty[i][c] = fighter[1];
+						found = true;
+						break;
+					}
 				}
 			}
 			
-			typeDialogue(fighter[1].getName() + " was sent\nto your PC!", true);
+			if (found) {
+				typeDialogue(fighter[1].getName() + " was sent\nto your PC!", true);
+			}
+			else {
+				typeDialogue("There is no more room in your PC!\n" + fighter[1].getName() + " was released!", true);
+			}
 		}
 		
 		endBattle();
