@@ -76,7 +76,7 @@ public class Player extends Entity {
 		for (int i = 0; i < Pokedex.values().length; i++) {
 			pcParty[c][x] = Pokemon.getPokemon(Pokedex.values()[i], 36, new COL_Ball_Master(gp));
 			x++;
-			if (i == 29 || i == 59 || i == 92) { c++; x = 0; } 			
+			if (i == 29 || i == 59 || i == 92) { c++; x = 0; } 	
 		}
 		
 		speed = 4; defaultSpeed = speed;

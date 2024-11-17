@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -117,7 +118,7 @@ public class Entity {
 	public ArrayList<Entity> inventory_moves = new ArrayList<>();
 	
 	// POKEMON PARTY
-	public ArrayList<Pokemon> pokeParty = new ArrayList<>();
+	public List<Pokemon> pokeParty = new ArrayList<>(6);
 	public final int maxPartySize = 6;
 	
 	// OBJECT ATTRIBUTES
