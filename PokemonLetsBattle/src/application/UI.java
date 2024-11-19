@@ -426,6 +426,7 @@ public class UI {
 					commandNum = 0;
 					fighterNum = 0;
 					boxNum = 3;
+					boxTab = 0;
 					pcState = 0;
 					gp.gameState = gp.playState;
 					gp.playSE(gp.world_SE, "pc-exit");
@@ -445,6 +446,7 @@ public class UI {
 					fighterNum = 0;
 					boxNum = 3;
 					pcState = 0;
+					boxTab = 0;
 					gp.gameState = gp.playState;
 					gp.playSE(gp.world_SE, "pc-exit");
 				}

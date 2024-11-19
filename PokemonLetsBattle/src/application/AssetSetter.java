@@ -35,12 +35,16 @@ public class AssetSetter {
 		int i = 0;	
 		
 		gp.obj[mapNum][i] = new OBJ_Tree(gp, 22, 23); i++;	
-		gp.obj[mapNum][i] = new OBJ_Rock(gp, 22, 22); i++;	
+		gp.obj[mapNum][i] = new OBJ_Rock(gp, 22, 22); i++;
 	}	
 	protected void setInteractiveObjects() {
 		
 		int mapNum = 0;
 		int i = 0;
+		
+		gp.obj_i[mapNum][i] = new OBJ_Ledge(gp, 16, 21, "down", 0); i++;
+		gp.obj_i[mapNum][i] = new OBJ_Ledge(gp, 17, 21, "down", 1); i++;
+		gp.obj_i[mapNum][i] = new OBJ_Ledge(gp, 18, 21, "down", 2); i++;
 				
 		gp.obj_i[mapNum][i] = new OBJ_Door(gp, 30, 25, 0); i++;	
 		gp.obj_i[mapNum][i] = new OBJ_Door(gp, 35, 21, 0); i++;	

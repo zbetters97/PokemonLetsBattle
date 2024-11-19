@@ -284,6 +284,7 @@ public class CollisionChecker {
 				gp.obj_i[gp.currentMap][i].hitbox.y = gp.obj_i[gp.currentMap][i].hitboxDefaultY;
 			}
 		}		
+		
 		return index;
 	}
 	

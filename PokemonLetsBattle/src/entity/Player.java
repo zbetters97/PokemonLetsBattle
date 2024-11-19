@@ -32,6 +32,8 @@ public class Player extends Entity {
 	public Pokemon[][] pcParty = new Pokemon[10][30];
 	public ArrayList<Pokemon> pcBox_1 = new ArrayList<Pokemon>(30);
 	
+	public boolean jumping = false;
+	private int jumpCounter = 0;
 	public boolean repelActive = false;
 	private int repelSteps = 0;
 	private int repelStepsMax = 0;
@@ -150,7 +152,9 @@ public class Player extends Entity {
 		canMove = true;
 		running = false;
 		moving = false;
+		jumping = false;
 		pixelCounter = 0;
+		jumpCounter = 0;
 	}
 	
 	// DIALOGUE
@@ -197,7 +201,12 @@ public class Player extends Entity {
 /** UPDATER **/
 	public void update() {
 		
-		if (!moving && canMove) {			
+		if (jumping) {
+			speed = 3;
+			animationSpeed = 6;
+			moving = true;
+		}		
+		else if (!moving && canMove) {			
 			
 			if (gp.keyH.startPressed) {
 				
@@ -260,8 +269,7 @@ public class Player extends Entity {
 		}
 	}
 	
-	public void move() {
-		
+	public void move() {		
 		if (gp.keyH.bPressed) {
 			running = true;	
 			speed = 6;
@@ -281,7 +289,7 @@ public class Player extends Entity {
 		else {			
 			running = false;
 			spriteNum = 1;
-		}		
+		}			
 	}
 	public void getDirection() {
 		
@@ -310,6 +318,7 @@ public class Player extends Entity {
 		
 		pixelCounter += speed;		
 		if (pixelCounter >= gp.tileSize) {
+									
 			moving = false;
 			pixelCounter = 0;
 			
@@ -320,6 +329,17 @@ public class Player extends Entity {
 			}
 			
 			gp.eHandler.checkEvent();	
+			
+			if (jumping) {
+				jumpCounter++;
+				if (jumpCounter != 2) {
+					moving = true;
+				}
+				else {
+					jumpCounter = 0;
+					jumping = false;
+				}
+			}
 		}
 	}
 	public void cycleSprites() {
@@ -364,10 +384,10 @@ public class Player extends Entity {
 			}
 		}	
 		else if (gp.obj_i[gp.currentMap][i].type == type_obstacle_i) {				
-			gp.obj_i[gp.currentMap][i].interact();			
+			gp.obj_i[gp.currentMap][i].interact();	
 		}	
 	}	
-
+	
 	public void setRepel(int steps) {
 		repelActive = true;
 		repelSteps = 0;
@@ -456,6 +476,10 @@ public class Player extends Entity {
 					if (spriteNum == 1) image = up1;
 					else if (spriteNum == 2) image = up2;	
 					else if (spriteNum == 3) image = up3;	
+					
+					if (jumping) {
+						tempScreenY -= 15;
+					}
 				}				
 				break;
 			case "down":				
@@ -465,9 +489,14 @@ public class Player extends Entity {
 					else if (spriteNum == 3) image = runDown3;	
 				}
 				else {
+					
 					if (spriteNum == 1) image = down1;
 					else if (spriteNum == 2) image = down2;	
 					else if (spriteNum == 3) image = down3;	
+					
+					if (jumping) {
+						tempScreenY -= 15;
+					}
 				}		
 				break;
 			case "left":					
@@ -480,6 +509,10 @@ public class Player extends Entity {
 					if (spriteNum == 1) image = left1;
 					else if (spriteNum == 2) image = left2;	
 					else if (spriteNum == 3) image = left3;	
+					
+					if (jumping) {
+						tempScreenY -= 15;
+					}
 				}		
 				break;
 			case "right":					
@@ -492,7 +525,11 @@ public class Player extends Entity {
 					if (spriteNum == 1) image = right1;
 					else if (spriteNum == 2) image = right2;	
 					else if (spriteNum == 3) image = right3;	
-				}		
+					
+					if (jumping) {
+						tempScreenY -= 15;
+					}
+				}					
 				break;			
 		}
 		

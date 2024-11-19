@@ -127,6 +127,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public final int moves_SE = 5;
 	public final int battle_SE = 6;
 	public final int world_SE = 7;
+	public final int entity_SE = 8;
 	
 	public TileManager tileM = new TileManager(this);
 	public AssetSetter aSetter = new AssetSetter(this);
@@ -378,9 +379,9 @@ public class GamePanel extends JPanel implements Runnable {
 			
 			// DRAW UI
 			ui.draw(g2);	
-						
-			// ALWAYS DRAW DIVING PLAYER FIRST
-			entities.add(player);						
+												
+			// DON'T DRAW JUMPING PLAYER FIRST
+			if (!player.jumping) { entities.add(player); }
 			
 			// POPULATE ENTITY LIST
 			for (Entity n : npc[currentMap]) { if (n != null) entities.add(n); }			
@@ -398,7 +399,10 @@ public class GamePanel extends JPanel implements Runnable {
 			
 			// DRAW ENTITIES
 			for (Entity e : entities) { e.draw(g2); }
-									
+							
+			// DRAW JUMPING PLAYER OVER ENTITIES
+			if (player.jumping) { player.draw(g2); }
+			
 			// EMPTY ENTITY LIST
 			entities.clear();			
 			
