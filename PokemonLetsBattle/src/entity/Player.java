@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import application.GamePanel;
 import entity.collectables.balls.*;
 import entity.collectables.items.*;
+import moves.Moves;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
 
@@ -70,7 +71,7 @@ public class Player extends Entity {
 		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36, new COL_Ball_Master(gp)));
 	}
 	public void setDefaultValues() {
-		
+				
 		int c = 0;
 		int x = 0;
 		for (int i = 0; i < Pokedex.values().length; i++) {
@@ -129,8 +130,8 @@ public class Player extends Entity {
 		inventory_pokeballs.add(new COL_Ball_Master(gp));
 	}
 	public void setDefaultPosition() {	
-		worldX = gp.tileSize * 15;
-		worldY = gp.tileSize * 18;		
+		worldX = gp.tileSize * 17;
+		worldY = gp.tileSize * 19;		
 		defaultWorldX = worldX;
 		defaultWorldY = worldY;
 		safeWorldX = defaultWorldX;

@@ -181,7 +181,7 @@ public class KeyHandler implements KeyListener {
 	public void playMenuOpenSE() {
 		gp.playSE(gp.menu_SE, "menu-open");
 	}
-	public void playMenuCloseSE() {
+	public void playCloseSE() {
 		gp.playSE(gp.menu_SE, "back");
 	}
 }

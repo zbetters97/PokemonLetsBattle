@@ -836,7 +836,7 @@ public enum Pokedex {
 					Map.entry(28, Moves.PSYCHIC),
 //					Map.entry(32, Moves.IMPRISON),
 					Map.entry(34, Moves.FUTURESIGHT),
-//					Map.entry(39, Moves.CHARM),
+					Map.entry(39, Moves.CHARM),
 					Map.entry(43, Moves.HYPNOSIS),
 					Map.entry(45, Moves.DREAMEATER)
 			)),
@@ -851,7 +851,7 @@ public enum Pokedex {
 					Map.entry(31, Moves.PSYCHIC),
 //					Map.entry(36, Moves.IMPRISON),
 					Map.entry(39, Moves.FUTURESIGHT),
-//					Map.entry(45, Moves.CHARM),
+					Map.entry(45, Moves.CHARM),
 					Map.entry(50, Moves.HYPNOSIS),
 					Map.entry(53, Moves.DREAMEATER)
 			)),
@@ -866,7 +866,7 @@ public enum Pokedex {
 					Map.entry(33, Moves.PSYCHIC),
 //					Map.entry(40, Moves.IMPRISON),
 					Map.entry(45, Moves.FUTURESIGHT),
-//					Map.entry(53, Moves.CAPTIVATE),
+					Map.entry(53, Moves.CAPTIVATE),
 					Map.entry(60, Moves.HYPNOSIS),
 					Map.entry(65, Moves.DREAMEATER)
 			)),
@@ -878,7 +878,7 @@ public enum Pokedex {
 //					Map.entry(19, Moves.MINDREADER),
 					Map.entry(25, Moves.FALSESWIPE),
 					Map.entry(31, Moves.MUDSLAP),
-//					Map.entry(38, Moves.METALCLAW),
+					Map.entry(38, Moves.METALCLAW),
 					Map.entry(45, Moves.DIG)
 			)),
 	NINJASK ("Ninjask", 291, Arrays.asList(Type.BUG, Type.FLYING), Ability.SPEEDBOOST, 61, 90, 45, 50, 50, 160, 35, 292, 155, 2, Growth.ERATIC, 120,
@@ -890,7 +890,7 @@ public enum Pokedex {
 					Map.entry(20, Moves.DOUBLETEAM),
 					Map.entry(21, Moves.FURYCUTTER),
 					Map.entry(22, Moves.SCREECH),
-//					Map.entry(25, Moves.SWORDSDANCE),
+					Map.entry(25, Moves.SWORDSDANCE),
 					Map.entry(31, Moves.SLASH),
 					Map.entry(38, Moves.AGILITY),
 //					Map.entry(45, Moves.BATONPASS),
@@ -902,9 +902,9 @@ public enum Pokedex {
 					Map.entry(9, Moves.SANDATTACK),
 					Map.entry(14, Moves.FURYSWIPES),
 //					Map.entry(19, Moves.MINDREADER),
-//					Map.entry(25, Moves.SPITE),
+					Map.entry(25, Moves.SPITE),
 					Map.entry(31, Moves.CONFUSERAY),
-//					Map.entry(38, Moves.SHADOWSNEAK),
+					Map.entry(38, Moves.SHADOWSNEAK),
 //					Map.entry(45, Moves.GRUDGE),
 //					Map.entry(52, Moves.HEALBLOCK),
 					Map.entry(59, Moves.SHADOWBALL)
@@ -1027,30 +1027,30 @@ public enum Pokedex {
 	BELDUM("Beldum", 374, Arrays.asList(Type.STEEL, Type.PSYCHIC), Ability.CLEARBODY, 40, 55, 80, 35, 60, 30, 25, 375, 103, 1, Growth.SLOW, 3, null),
 	METANG("Metang", 375, Arrays.asList(Type.STEEL, Type.PSYCHIC), Ability.CLEARBODY, 60, 75, 100, 55, 80, 50, 45, 376, 153, 2, Growth.SLOW, 3, 
 			Map.ofEntries(
-//					Map.entry(20, Moves.METALCLAW),
+					Map.entry(20, Moves.METALCLAW),
 					Map.entry(21, Moves.CONFUSION),
 					Map.entry(24, Moves.SCARYFACE),
 					Map.entry(28, Moves.PURSUIT),
 					Map.entry(32, Moves.BULLETPUNCH),
 					Map.entry(36, Moves.PSYCHIC),
-//					Map.entry(40, Moves.IRONDEFENSE),
+					Map.entry(40, Moves.IRONDEFENSE),
 					Map.entry(44, Moves.AGILITY),
-//					Map.entry(48, Moves.METEORMASH),
+					Map.entry(48, Moves.METEORMASH),
 					Map.entry(52, Moves.ZENHEADBUTT),
 					Map.entry(56, Moves.HYPERBEAM)
 			)),
 	METAGROSS("Metagross", 376, Arrays.asList(Type.STEEL, Type.PSYCHIC), Ability.CLEARBODY, 80, 135, 130, 95, 90, 70, -1, -1, 210, 3, Growth.SLOW, 3, 
 			Map.ofEntries(
-//					Map.entry(20, Moves.METALCLAW),
+					Map.entry(20, Moves.METALCLAW),
 					Map.entry(21, Moves.CONFUSION),
 					Map.entry(24, Moves.SCARYFACE),
 					Map.entry(28, Moves.PURSUIT),
 					Map.entry(32, Moves.BULLETPUNCH),
 					Map.entry(36, Moves.PSYCHIC),
-//					Map.entry(40, Moves.IRONDEFENSE),
+					Map.entry(40, Moves.IRONDEFENSE),
 					Map.entry(44, Moves.AGILITY),
 					Map.entry(45, Moves.HAMMERARM),
-//					Map.entry(53, Moves.METEORMASH),
+					Map.entry(53, Moves.METEORMASH),
 					Map.entry(62, Moves.ZENHEADBUTT),
 					Map.entry(71, Moves.HYPERBEAM)
 			)),
@@ -1510,16 +1510,16 @@ public enum Pokedex {
         		new Move(Moves.TELEPORT)
         ));
         moveMap.put(NINCADA, Arrays.asList(
-        		new Move(Moves.SCRATCH)	
-//        		new Move(Moves.HARDEN)
+        		new Move(Moves.SCRATCH),	
+        		new Move(Moves.HARDEN)
         ));
         moveMap.put(NINJASK, Arrays.asList(
-        		new Move(Moves.SCRATCH)
-//        		new Move(Moves.HARDEN),
+        		new Move(Moves.SCRATCH),
+        		new Move(Moves.HARDEN)
         ));
         moveMap.put(SHEDINJA, Arrays.asList(
         		new Move(Moves.SCRATCH),
-//        		new Move(Moves.HARDEN),
+        		new Move(Moves.HARDEN),
         		new Move(Moves.LEECHLIFE),
         		new Move(Moves.SANDATTACK)
         ));
@@ -1554,16 +1554,16 @@ public enum Pokedex {
         		new Move(Moves.GROWL)
         ));  
         moveMap.put(BAGON, Arrays.asList(
-//        		new Move(Moves.RAGE)
+        		new Move(Moves.RAGE)
         ));  
         moveMap.put(SHELGON, Arrays.asList(
-//        		new Move(Moves.RAGE),
+        		new Move(Moves.RAGE),
         		new Move(Moves.BITE),
         		new Move(Moves.LEER),
         		new Move(Moves.HEADBUTT)
         ));  
         moveMap.put(SALAMENCE, Arrays.asList(
-//        		new Move(Moves.RAGE),
+        		new Move(Moves.RAGE),
         		new Move(Moves.BITE),
         		new Move(Moves.LEER),
         		new Move(Moves.HEADBUTT)
@@ -1574,13 +1574,13 @@ public enum Pokedex {
         moveMap.put(METANG, Arrays.asList(
  //       		new Move(Moves.MAGNETRISE),
         		new Move(Moves.TAKEDOWN),
-//        		new Move(Moves.METALCLAW),
+        		new Move(Moves.METALCLAW),
         		new Move(Moves.CONFUSION)
         ));  
         moveMap.put(METAGROSS, Arrays.asList(
  //       		new Move(Moves.MAGNETRISE),
         		new Move(Moves.TAKEDOWN),
-//        		new Move(Moves.METALCLAW),
+        		new Move(Moves.METALCLAW),
         		new Move(Moves.CONFUSION)
         ));  
         moveMap.put(KYOGRE, Arrays.asList(
@@ -1593,7 +1593,7 @@ public enum Pokedex {
         		new Move(Moves.TWISTER)
         ));
         moveMap.put(JIRACHI, Arrays.asList(
-//       		new Move(Moves.WISH),
+        		new Move(Moves.WISH),
         		new Move(Moves.CONFUSION)
         ));
         moveMap.put(DEOXYS, Arrays.asList(

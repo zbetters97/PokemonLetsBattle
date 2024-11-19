@@ -75,9 +75,8 @@ public class UI {
 	
 	// PC VALUES 
 	private BufferedImage pc_cursor, pc_cursor_up, pc_bkg, pc_data, pc_party, pc_box_1;
-	private int boxNum = 0, boxTab = 0; 
-	private Pokemon selectedFighter = null;
-	
+	private int boxNum = 3, boxTab = 0; 
+	private Pokemon selectedFighter = null;	
 	private int pcState = 0;
 	private final int pcBox = 0;
 	private final int pcSelect = 1;
@@ -288,105 +287,6 @@ public class UI {
 				break;
 		}
 	}	
-	private void pc_Select() {
-		
-		int x;
-		int y;
-		int width;
-		int height;
-		String text;
-		
-		x = (int) (gp.tileSize * 12);
-		y = (int) (gp.tileSize * 6.45);
-		width = (int) (gp.tileSize * 3.9);
-		height = (int) (gp.tileSize * 5.2);
-		
-		drawSubWindow(x, y, width, height, 5, 5, battle_white, Color.BLACK);
-		
-		x += gp.tileSize * 0.3;
-		y += gp.tileSize * 1.2;
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60f));		
-		text = "MOVE";
-		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
-		
-		y += gp.tileSize * 1.25;
-		text = "SUMMARY";
-		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
-		
-		y += gp.tileSize * 1.25;
-		text = "RELEASE";
-		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
-		
-		y += gp.tileSize * 1.25;
-		text = "CANCEL";		
-		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
-		
-		g2.setColor(battle_red);
-		x -= gp.tileSize * 0.28;
-		y -= gp.tileSize * 4.7;
-		height = (int) (gp.tileSize * 1.1);			
-		if (commandNum == 0) {
-		
-			g2.drawRoundRect(x, y, width, height, 4, 4);
-			
-			if (gp.keyH.aPressed) {
-				gp.keyH.aPressed = false;
-								
-				selectedFighter = gp.player.pcParty[boxTab][fighterNum];
-				gp.player.pcParty[boxTab][fighterNum] = null;
-				
-				pcState = pcBox;
-				commandNum = 0;
-			}
-		}
-		y += gp.tileSize * 1.25;
-		if (commandNum == 1) {
-			
-			g2.drawRoundRect(x, y, width, height, 4, 4);
-			
-			if (gp.keyH.aPressed) {
-				gp.keyH.aPressed = false;
-				commandNum = 0;
-			}
-		}
-		y += gp.tileSize * 1.25;
-		if (commandNum == 2) {
-			
-			g2.drawRoundRect(x, y, width, height, 4, 4);
-			
-			if (gp.keyH.aPressed) {
-				gp.keyH.aPressed = false;
-				commandNum = 0;
-			}
-		}
-		y += gp.tileSize * 1.25;
-		if (commandNum == 3) {
-			
-			g2.drawRoundRect(x, y, width, height, 4, 4);
-						
-			if (gp.keyH.aPressed) {
-				gp.keyH.aPressed = false;
-				pcState = pcBox;
-				commandNum = 0;
-			}
-		}
-		
-		if (gp.keyH.downPressed) {
-			gp.keyH.downPressed = false;
-			commandNum++;
-			if (commandNum > 3) commandNum = 3;
-		}
-		if (gp.keyH.upPressed) {
-			gp.keyH.upPressed = false;
-			commandNum--;
-			if (commandNum < 0) commandNum = 0;
-		}
-		if (gp.keyH.bPressed) {
-			gp.keyH.bPressed = false;
-			pcState = pcBox;
-			commandNum = 0;
-		}
-	}
 	private void pc_Box() {
 		
 		int x;
@@ -426,22 +326,26 @@ public class UI {
 				gp.keyH.downPressed = false;
 				boxNum++;
 				fighterNum = 0;
+				gp.keyH.playCursorSE();
 			}
 			if (gp.keyH.upPressed) {
 				gp.keyH.upPressed = false;
 				boxNum = 0;
+				gp.keyH.playCursorSE();
 			}
 			
 			if (gp.keyH.leftPressed) {
 				gp.keyH.leftPressed = false;			
 				boxTab--;
 				if (boxTab < 0) boxTab = 9;	
+				gp.keyH.playCursorSE();
 			}
 			
 			if (gp.keyH.rightPressed) {
 				gp.keyH.rightPressed = false;				
 				boxTab++;
-				if (boxTab > 9) boxTab = 0;					
+				if (boxTab > 9) boxTab = 0;		
+				gp.keyH.playCursorSE();
 			}
 		}
 		
@@ -469,11 +373,13 @@ public class UI {
 			if (gp.keyH.downPressed) {
 				gp.keyH.downPressed = false;
 				boxNum = 2;
+				gp.keyH.playCursorSE();
 			}
 			
 			if (gp.keyH.rightPressed) {
 				gp.keyH.rightPressed = false;
 				boxNum = 1;
+				gp.keyH.playCursorSE();
 			}
 			
 			if (gp.keyH.aPressed) {
@@ -481,6 +387,7 @@ public class UI {
 				pcState = pcParty;
 				commandNum = 0;
 				fighterNum = 0;
+				gp.keyH.playCursorSE();
 			}
 		}
 		
@@ -503,11 +410,13 @@ public class UI {
 			if (gp.keyH.downPressed) {
 				gp.keyH.downPressed = false;
 				boxNum = 2;
+				gp.keyH.playCursorSE();
 			}
 			
 			if (gp.keyH.leftPressed) {
 				gp.keyH.leftPressed = false;	
 				boxNum = 0;
+				gp.keyH.playCursorSE();
 			}
 			
 			if (gp.keyH.aPressed) {
@@ -516,9 +425,28 @@ public class UI {
 				if (selectedFighter == null) {
 					commandNum = 0;
 					fighterNum = 0;
-					boxNum = 0;
+					boxNum = 3;
 					pcState = 0;
 					gp.gameState = gp.playState;
+					gp.playSE(gp.world_SE, "pc-exit");
+				}
+				else {
+					gp.keyH.playErrorSE();
+				}
+			}
+		}
+		
+		if (pcState == pcBox) {
+			if (gp.keyH.bPressed) {
+				gp.keyH.bPressed = false;
+				
+				if (selectedFighter == null) {
+					commandNum = 0;
+					fighterNum = 0;
+					boxNum = 3;
+					pcState = 0;
+					gp.gameState = gp.playState;
+					gp.playSE(gp.world_SE, "pc-exit");
 				}
 				else {
 					gp.keyH.playErrorSE();
@@ -571,26 +499,29 @@ public class UI {
 					fighterNum = 0;
 					boxNum = 2;
 				}
+				gp.keyH.playCursorSE();
 			}
 			if (gp.keyH.downPressed) {
 				gp.keyH.downPressed = false;
 				if (fighterNum + 6 < 30) {
 					fighterNum += 6;
+					gp.keyH.playCursorSE();
 				}
 			}
 			if (gp.keyH.leftPressed) {
 				gp.keyH.leftPressed = false;
-				fighterNum--;
-				if (fighterNum < 0) {
-					fighterNum = 0;
-				}
+				if (fighterNum > 0) {
+					fighterNum--;
+					gp.keyH.playCursorSE();
+				}				
 			}
 			if (gp.keyH.rightPressed) {
 				gp.keyH.rightPressed = false;
-				fighterNum++;
-				if (fighterNum == 30) {
-					fighterNum = 29;
+				if (fighterNum < 29) {
+					fighterNum++;
+					gp.keyH.playCursorSE();
 				}
+				
 			}
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
@@ -601,7 +532,11 @@ public class UI {
 					if (fighter != null) {
 						pcState = pcSelect;
 						commandNum = 0;
+						gp.keyH.playCursorSE();
 					}	
+					else {
+						gp.keyH.playErrorSE();
+					}
 				}
 				else {
 					if (fighter == null) {
@@ -610,10 +545,10 @@ public class UI {
 					}	
 					else {				
 						gp.player.pcParty[boxTab][fighterNum] = selectedFighter;		
-						selectedFighter = fighter;					
+						selectedFighter = fighter;	
 					}
 				}
-			}							
+			}		
 		}		
 	}
 	private void pc_Data() {
@@ -656,6 +591,114 @@ public class UI {
 			g2.drawString("" + fighter.getSex(), x, y);				
 		}
 	}		
+	private void pc_Select() {
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		String text;
+		
+		x = (int) (gp.tileSize * 12);
+		y = (int) (gp.tileSize * 6.45);
+		width = (int) (gp.tileSize * 3.9);
+		height = (int) (gp.tileSize * 5.2);
+		
+		drawSubWindow(x, y, width, height, 5, 5, battle_white, Color.BLACK);
+		
+		x += gp.tileSize * 0.3;
+		y += gp.tileSize * 1.2;
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60f));		
+		text = "MOVE";
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		
+		y += gp.tileSize * 1.25;
+		text = "SUMMARY";
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		
+		y += gp.tileSize * 1.25;
+		text = "RELEASE";
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		
+		y += gp.tileSize * 1.25;
+		text = "CANCEL";		
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		
+		g2.setColor(battle_red);
+		x -= gp.tileSize * 0.28;
+		y -= gp.tileSize * 4.7;
+		height = (int) (gp.tileSize * 1.1);			
+		if (commandNum == 0) {
+		
+			g2.drawRoundRect(x, y, width, height, 4, 4);
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+								
+				selectedFighter = gp.player.pcParty[boxTab][fighterNum];
+				gp.player.pcParty[boxTab][fighterNum] = null;
+				
+				pcState = pcBox;
+				commandNum = 0;
+				gp.keyH.playCursorSE();
+			}
+		}
+		y += gp.tileSize * 1.25;
+		if (commandNum == 1) {
+			
+			g2.drawRoundRect(x, y, width, height, 4, 4);
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+				commandNum = 0;
+				gp.keyH.playCursorSE();
+			}
+		}
+		y += gp.tileSize * 1.25;
+		if (commandNum == 2) {
+			
+			g2.drawRoundRect(x, y, width, height, 4, 4);
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+				commandNum = 0;
+				gp.keyH.playCursorSE();
+			}
+		}
+		y += gp.tileSize * 1.25;
+		if (commandNum == 3) {
+			
+			g2.drawRoundRect(x, y, width, height, 4, 4);
+						
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+				pcState = pcBox;
+				commandNum = 0;
+				gp.keyH.playCloseSE();
+			}
+		}
+		
+		if (gp.keyH.downPressed) {
+			gp.keyH.downPressed = false;
+			if (commandNum < 3) {
+				commandNum++;
+				gp.keyH.playCursorSE();
+			}
+		}
+		if (gp.keyH.upPressed) {
+			gp.keyH.upPressed = false;
+			if (commandNum > 0) {
+				commandNum--;
+				gp.keyH.playCursorSE();
+			}
+		}
+		if (gp.keyH.bPressed) {
+			gp.keyH.bPressed = false;
+			pcState = pcBox;
+			commandNum = 0;
+			gp.keyH.playCloseSE();
+		}
+	}
 	private void pc_Party() {
 		
 		int x;
@@ -711,23 +754,29 @@ public class UI {
 				gp.keyH.upPressed = false;
 				gp.keyH.downPressed = false;
 				gp.keyH.rightPressed = false;
-				fighterNum = 1;				
+				fighterNum = 1;			
+				gp.keyH.playCursorSE();
 			}
 		}
 		else {
 			if (gp.keyH.downPressed) {
 				gp.keyH.downPressed = false;
-				fighterNum++;
-				if (fighterNum > 6) fighterNum = 6;
+				if (fighterNum < 6) {
+					fighterNum++;
+					gp.keyH.playCursorSE();
+				}
 			}
 			if (gp.keyH.upPressed) {
 				gp.keyH.upPressed = false;
-				fighterNum--;
-				if (fighterNum < 0) fighterNum = 0;
+				if (fighterNum > 0) {
+					fighterNum--;
+					gp.keyH.playCursorSE();
+				}
 			}
 			if (gp.keyH.leftPressed) {
 				gp.keyH.leftPressed = false;
-				fighterNum = 0;				
+				fighterNum = 0;		
+				gp.keyH.playCursorSE();
 			}
 		}
 			
@@ -737,7 +786,8 @@ public class UI {
 			if (fighterNum == 6) {
 				pcState = pcBox;
 				commandNum = 0;
-				fighterNum = 0;					
+				fighterNum = 0;		
+				gp.keyH.playCloseSE();
 			}
 			else {	
 				if (gp.player.pokeParty.size() > fighterNum) {						
@@ -754,6 +804,9 @@ public class UI {
 							gp.keyH.playErrorSE();
 						}						
 					}	
+					else {
+						gp.keyH.playErrorSE();
+					}
 				}
 				else {
 					if (fighter == null) {
@@ -778,6 +831,7 @@ public class UI {
 			pcState = pcBox;
 			commandNum = 0;
 			fighterNum = 0;	
+			gp.keyH.playCloseSE();
 		}
 	}
 	
@@ -1193,14 +1247,14 @@ public class UI {
 		
 		if (gp.keyH.startPressed) {
 			gp.keyH.startPressed = false;
-			gp.keyH.playMenuCloseSE();
+			gp.keyH.playCloseSE();
 			commandNum = 0;
 			gp.gameState = gp.playState;			
 		}
 		
 		if (gp.keyH.bPressed) {
 			gp.keyH.bPressed = false;
-			gp.keyH.playMenuCloseSE();
+			gp.keyH.playCloseSE();
 			commandNum = 0;
 			gp.gameState = gp.playState;
 		}

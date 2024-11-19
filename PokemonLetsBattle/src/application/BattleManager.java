@@ -1162,12 +1162,17 @@ public class BattleManager extends Thread {
 			if (trg.hasActiveMove(Moves.MIST) || trg.getAbility() == Ability.CLEARBODY) {
 				typeDialogue("It had no effect!");
 			}
-			else {
-				setAttribute(trg, move.getStats(), move.getLevel());
-				
-				if (move.getMove() == Moves.SWAGGER) {
-					setStatus(atk, trg, Status.CONFUSE);
-				}	
+			else {				
+				if (move.getMove() == Moves.CAPTIVATE && trg.getSex() == atk.getSex()) {
+					typeDialogue("It had no effect!");					
+				}
+				else {
+					setAttribute(trg, move.getStats(), move.getLevel());
+					
+					if (move.getMove() == Moves.SWAGGER) {
+						setStatus(atk, trg, Status.CONFUSE);
+					}		
+				}
 			}
 		}			
 	}
@@ -1278,6 +1283,15 @@ public class BattleManager extends Thread {
 					typeDialogue(atk.getName() + " planted\na seed on " + trg.getName() + "!");	
 				}
 				break;
+			case LIGHTSCREEN, REFLECT:
+				if (atk.hasActiveMove(move.getMove())) {
+					typeDialogue("It had no effect!");
+				}
+				else {
+					atk.addActiveMove(move.getMove());
+					typeDialogue(atk.getName() + "'s " + move.toString() + "\nraised DEFENSE!");					
+				}			
+				break;	
 			case MIST:
 				if (trg.hasActiveMove(move.getMove())) {
 					typeDialogue("It had no effect!");
@@ -1306,8 +1320,7 @@ public class BattleManager extends Thread {
 					typeDialogue(atk.getName() + " identified\n" + trg.getName() + "!");					
 				}	
 				break;					
-			case PERISHSONG:
-				
+			case PERISHSONG:				
 				if (trg.hasActiveMove(move.getMove()) && atk.hasActiveMove(move.getMove())) {
 					typeDialogue("It had no effect!");
 				}
@@ -1325,35 +1338,6 @@ public class BattleManager extends Thread {
 					typeDialogue("All Pokémon hearing the song\nwill faint in three turns!");					
 				}	
 				break;
-			case RECOVER, ROOST:
-				if (atk.getHP() < atk.getBHP()) {
-					
-					int gainedHP = atk.getBHP() - atk.getHP();
-					int halfHP = (int) Math.floor(atk.getBHP() / 2.0);
-					if (gainedHP > halfHP) gainedHP = halfHP;
-					
-					increaseHP(atk, gainedHP);				
-					typeDialogue(atk.getName() + "\nregained health!");
-				}
-				else {
-					typeDialogue("It had no effect!");
-				}
-				break;
-			case REST:
-				int gainedHP = atk.getBHP() - atk.getHP();
-				increaseHP(atk, gainedHP);				
-				typeDialogue(atk.getName() + "\nregained health!");
-				setStatus(trg, atk, Status.SLEEP);		
-				break;
-			case LIGHTSCREEN, REFLECT:
-				if (atk.hasActiveMove(move.getMove())) {
-					typeDialogue("It had no effect!");
-				}
-				else {
-					atk.addActiveMove(move.getMove());
-					typeDialogue(atk.getName() + "'s " + move.toString() + "\nraised DEFENSE!");					
-				}			
-				break;		
 			case PSYCHOSHIFT:				
 				if (atk.getStatus() != null) {
 					setStatus(atk, trg, atk.getStatus());
@@ -1377,6 +1361,20 @@ public class BattleManager extends Thread {
 				
 				typeDialogue(atk.getName() + " copied\n" + trg.getName() + "'s stats!");
 				break;
+			case RECOVER, ROOST:
+				if (atk.getHP() < atk.getBHP()) {
+					
+					int gainedHP = atk.getBHP() - atk.getHP();
+					int halfHP = (int) Math.floor(atk.getBHP() / 2.0);
+					if (gainedHP > halfHP) gainedHP = halfHP;
+					
+					increaseHP(atk, gainedHP);				
+					typeDialogue(atk.getName() + "\nregained health!");
+				}
+				else {
+					typeDialogue("It had no effect!");
+				}
+				break;
 			case REFRESH:
 				
 				if (atk.hasStatus(Status.BURN) || atk.hasStatus(Status.PARALYZE) || atk.hasStatus(Status.POISON)) {
@@ -1387,6 +1385,12 @@ public class BattleManager extends Thread {
 				}
 				
 				break;
+			case REST:
+				int gainedHP = atk.getBHP() - atk.getHP();
+				increaseHP(atk, gainedHP);				
+				typeDialogue(atk.getName() + "\nregained health!");
+				setStatus(trg, atk, Status.SLEEP);		
+				break;	
 			case SLEEPTALK:				
 				if (atk.hasStatus(Status.SLEEP)) {	
 										
@@ -1399,6 +1403,23 @@ public class BattleManager extends Thread {
 					typeDialogue("It had no effect!");
 				}
 				break;
+			case SPITE:
+				Move trgMove = move == playerMove ? cpuMove : playerMove;
+				
+				if (trgMove.getPP() < 1) {
+					typeDialogue("It had no effect!");
+				}
+				else {					
+					int PP = 4;
+					if (trgMove.getPP() < PP) {
+						PP = trgMove.getPP();					
+					}
+					trgMove.setPP(trgMove.getPP() - PP);					
+					typeDialogue("It reduced the PP of\n" + trg.getName() + "'s " + 
+							trgMove.getName() + " by " + PP + "!");
+				}				
+				
+				break;
 			case SPLASH:
 				typeDialogue("It had no effect!");
 				break;
@@ -1410,6 +1431,15 @@ public class BattleManager extends Thread {
 				else {
 					typeDialogue("It had no effect!");
 				}		
+				break;
+			case WISH:
+				if (atk.hasActiveMove(move.getMove())) {
+					typeDialogue("It had no effect!");
+				}
+				else {
+					atk.addActiveMove(move.getMove());
+					typeDialogue(atk.getName() + " made\na wish!");					
+				}	
 				break;
 			case WRAP:
 				if (trg.hasActiveMove(move.getMove())) {
@@ -2030,6 +2060,24 @@ public class BattleManager extends Thread {
 						trg.setHP(0);							
 					}					
 					break;
+				case WISH:
+					move.setTurnCount(move.getTurnCount() - 1);					
+					if (move.getTurnCount() <= 0) {		
+						iterator.remove();
+						typeDialogue(trg.getName() + "'s wish\ncame true!");
+						
+						if (trg.getHP() == trg.getBHP()) {
+							typeDialogue("It had no effect!");
+						}
+						else {							
+							int gainedHP = trg.getBHP() - trg.getHP();
+							int halfHP = (int) Math.floor(trg.getBHP() / 2.0);
+							if (gainedHP > halfHP) gainedHP = halfHP;
+							
+							increaseHP(trg, gainedHP);				
+							typeDialogue(trg.getName() + "\nregained health!");	
+						}										
+					}		
 				default: 
 					break;
 			}

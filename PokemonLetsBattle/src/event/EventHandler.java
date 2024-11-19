@@ -73,6 +73,7 @@ public class EventHandler {
 				if (gp.keyH.aPressed) {
 					gp.keyH.aPressed = false;
 					gp.gameState = gp.pcState;
+					gp.playSE(gp.world_SE, "pc-open");
 				}
 			}
 		}
