@@ -1,5 +1,9 @@
 package entity.object;
 
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+
 import application.GamePanel;
 import entity.Entity;
 
@@ -14,14 +18,11 @@ public class OBJ_Ledge extends Entity {
 		worldX = x * gp.tileSize;
 		worldY = y * gp.tileSize;	
 		
-		name = objName;
-		direction = "down";
+		name = objName;		
 		hasShadow = false;
-		
-		down1 = setup("/objects/ledge_down_1"); 
-	}
-	
-	public OBJ_Ledge(GamePanel gp, int x, int y, String direction, int tile) {		
+		direction = "down";
+	}	
+	public OBJ_Ledge(GamePanel gp, int x, int y, String direction, int tiles) {		
 		super(gp);
 		
 		type = type_obstacle_i;
@@ -29,31 +30,65 @@ public class OBJ_Ledge extends Entity {
 		worldY = y * gp.tileSize;	
 		
 		name = objName;
-		this.direction = direction;
 		hasShadow = false;
-		
+		this.direction = direction;		
+		if (tiles < 2) tiles = 2;
+							
 		switch (direction) {
-			case "up": 
-				if (tile == 0) up1 = setup("/objects_interactive/ledge_up_1"); 
-				else if (tile == 1) up1 = setup("/objects_interactive/ledge_up_2");
-				else if (tile == 2) up1 = setup("/objects_interactive/ledge_up_3");
-				break;
-			case "down":
-				if (tile == 0) down1 = setup("/objects_interactive/ledge_down_1"); 
-				else if (tile == 1) down1 = setup("/objects_interactive/ledge_down_2");
-				else if (tile == 2) down1 = setup("/objects_interactive/ledge_down_3");
-				break;
-			case "left":
-				if (tile == 0) left1 = setup("/objects_interactive/ledge_left_1"); 
-				else if (tile == 1) left1 = setup("/objects_interactive/ledge_left_2");
-				else if (tile == 2) left1 = setup("/objects_interactive/ledge_left_3");
-				break;
-			case "right":
-				if (tile == 0) right1 = setup("/objects_interactive/ledge_right_1"); 
-				else if (tile == 1) right1 = setup("/objects_interactive/ledge_right_2");
-				else if (tile == 2) right1 = setup("/objects_interactive/ledge_right_3");
-				break;
+			case "up": up1 = getImageHor(tiles, up1, up2, up3); break;
+			case "down": down1 = getImageHor(tiles, down1, down2, down3); break;
+			case "left": left1 = getImageVer(tiles, left1, left2, left3); break;
+			case "right": right1 = getImageVer(tiles, right1, right2, right3); break;
 		}
+	}	
+	public void getImage() {		
+		up1 = setup("/objects_interactive/ledge_up_1"); 
+		up2 = setup("/objects_interactive/ledge_up_2");
+		up3 = setup("/objects_interactive/ledge_up_3");	
+		
+		down1 = setup("/objects_interactive/ledge_down_1"); 
+		down2 = setup("/objects_interactive/ledge_down_2");
+		down3 = setup("/objects_interactive/ledge_down_3");	
+		
+		left1 = setup("/objects_interactive/ledge_left_1"); 
+		left2 = setup("/objects_interactive/ledge_left_2");
+		left3 = setup("/objects_interactive/ledge_left_3");	
+		
+		right1 = setup("/objects_interactive/ledge_right_1"); 
+		right2 = setup("/objects_interactive/ledge_right_2");
+		right3 = setup("/objects_interactive/ledge_right_3");	
+	}	
+	public BufferedImage getImageHor(int tiles, BufferedImage left, BufferedImage middle, BufferedImage right) {
+		
+		hitbox = new Rectangle(0, 0, gp.tileSize * tiles, gp.tileSize);
+		
+		BufferedImage combinedImg = new BufferedImage(gp.tileSize * tiles, gp.tileSize, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g1 = combinedImg.createGraphics();
+
+		g1.drawImage(left, 0, 0, null);
+		for (int i = 1; i < (tiles - 1); i++) {
+			g1.drawImage(middle, gp.tileSize * i, 0, null);
+		}
+		g1.drawImage(right, gp.tileSize * (tiles - 1), 0, null);			
+		g1.dispose();
+				
+		return GamePanel.utility.scaleImage(combinedImg, gp.tileSize * tiles, gp.tileSize);
+	}
+	public BufferedImage getImageVer(int tiles, BufferedImage top, BufferedImage middle, BufferedImage bottom) {
+		
+		hitbox = new Rectangle(0, 0, gp.tileSize, gp.tileSize * tiles);
+		
+		BufferedImage combinedImg = new BufferedImage(gp.tileSize, gp.tileSize * tiles, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g1 = combinedImg.createGraphics();
+		
+		g1.drawImage(top, 0, 0, null);
+		for (int i = 1; i < (tiles - 1); i++) {
+			g1.drawImage(middle, 0, gp.tileSize * i, null);					
+		}
+		g1.drawImage(bottom, 0, gp.tileSize * (tiles - 1), null);			
+		g1.dispose();
+				
+		return GamePanel.utility.scaleImage(combinedImg, gp.tileSize, gp.tileSize * tiles);
 	}
 	
 	public void interact() {	
@@ -64,6 +99,7 @@ public class OBJ_Ledge extends Entity {
 			gp.player.jumping = true;
 		}
 		else {
+			
 		}
 	}
 }

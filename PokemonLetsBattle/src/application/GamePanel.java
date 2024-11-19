@@ -85,7 +85,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public int worldWidth;
 	public int worldHeight;
 	
-	public String[] mapFiles = { "petalburg.txt", "pokemoncenter.txt", "pokemart.txt"};
+	public String[] mapFiles = { "petalburg.txt", "pokecenter.txt", "pokemart.txt"};
 	public final int maxMap = mapFiles.length;
 	public int currentMap = 0;
 	

@@ -28,6 +28,7 @@ public class AssetSetter {
 		mapNum = 1;
 		i = 0;
 		gp.npc[mapNum][i] = new NPC_Nurse(gp, 22, 26); i++;	
+		gp.npc[mapNum][i] = new NPC_Computer(gp, 25, 25); i++;	
 	}	
 	protected void setObject() {		
 		
@@ -42,9 +43,7 @@ public class AssetSetter {
 		int mapNum = 0;
 		int i = 0;
 		
-		gp.obj_i[mapNum][i] = new OBJ_Ledge(gp, 16, 21, "down", 0); i++;
-		gp.obj_i[mapNum][i] = new OBJ_Ledge(gp, 17, 21, "down", 1); i++;
-		gp.obj_i[mapNum][i] = new OBJ_Ledge(gp, 18, 21, "down", 2); i++;
+		gp.obj_i[mapNum][i] = new OBJ_Ledge(gp, 16, 21, "down", 4); i++;
 				
 		gp.obj_i[mapNum][i] = new OBJ_Door(gp, 30, 25, 0); i++;	
 		gp.obj_i[mapNum][i] = new OBJ_Door(gp, 35, 21, 0); i++;	

@@ -132,8 +132,8 @@ public class Player extends Entity {
 		inventory_pokeballs.add(new COL_Ball_Master(gp));
 	}
 	public void setDefaultPosition() {	
-		worldX = gp.tileSize * 17;
-		worldY = gp.tileSize * 19;		
+		worldX = gp.tileSize * 30;
+		worldY = gp.tileSize * 26;		
 		defaultWorldX = worldX;
 		defaultWorldY = worldY;
 		safeWorldX = defaultWorldX;

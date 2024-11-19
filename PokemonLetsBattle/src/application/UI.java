@@ -557,6 +557,10 @@ public class UI {
 		
 		int x;
 		int y;
+		int width;
+		int height;
+		int textX;
+		int textY;
 		String text;
 		Pokemon fighter = null;
 		
@@ -590,7 +594,31 @@ public class UI {
 			int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();		
 			x += length + 3;
 			g2.setColor(fighter.getSexColor());	
-			g2.drawString("" + fighter.getSex(), x, y);				
+			g2.drawString("" + fighter.getSex(), x, y);	
+			
+			x = (int) (gp.tileSize * 0.3); 
+			y += (int) (gp.tileSize * 0.7);
+			width = (int) (gp.tileSize * 2);
+			height = (int) (gp.tileSize * 0.9);
+			if (fighter.getTypes() == null) {				
+				drawSubWindow(x, y, width, height, 10, 3, fighter.getType().getColor(), Color.BLACK);											
+				g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));			
+				text = fighter.getType().getName();
+				textX = getXForCenteredTextOnWidth(text, width, x + 5);
+				textY = (int) (y + (gp.tileSize * 0.70));			
+				drawText(text, textX, textY, battle_white, Color.BLACK);
+			}
+			else {
+				for (Type t : fighter.getTypes()) {					
+					drawSubWindow(x, y, width, height, 10, 3, t.getColor(), Color.BLACK);											
+					g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));			
+					text = t.getName();
+					textX = getXForCenteredTextOnWidth(text, width, x + 5);
+					textY = (int) (y + (gp.tileSize * 0.70));			
+					drawText(text, textX, textY, battle_white, Color.BLACK);
+					x += gp.tileSize * 2.7;
+				}
+			}				
 		}
 	}		
 	private void pc_Select() {
