@@ -128,7 +128,6 @@ public class BattleManager extends Thread {
 	public void run() {		
 		
 		while (running) {
-			
 			switch (fightStage) {	
 			
 				case fight_Encounter:
@@ -416,33 +415,26 @@ public class BattleManager extends Thread {
 			
 				case queue_GetCPUMove: 
 					getCPUMove();
-					break;			
-					
+					break;								
 				case queue_Rotation: 
 					setRotation();	
-					break;		
-					
+					break;							
 				case queue_PlayerMove: 
 					playerMove(); 
-					break;			
-					
+					break;							
 				case queue_CPUMove: 
 					cpuMove(); 
-					break;			
-					
+					break;							
 				case queue_ActiveMoves: 
 					checkActiveMoves(fighter[0], fighter[1]);
 					checkActiveMoves(fighter[1], fighter[0]);
-					break;				
-					
+					break;							
 				case queue_StatusDamage:
 					checkStatusDamage();
-					break;			
-					
+					break;							
 				case queue_WeatherDamage:
 					checkWeatherDamage();	
-					break;		
-					
+					break;							
 				case queue_TurnReset:
 					getDelayedTurn();
 					break;

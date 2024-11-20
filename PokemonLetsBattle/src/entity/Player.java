@@ -32,11 +32,13 @@ public class Player extends Entity {
 	public Pokemon[][] pcParty = new Pokemon[10][30];
 	public ArrayList<Pokemon> pcBox_1 = new ArrayList<Pokemon>(30);
 	
-	public boolean jumping = false;
 	private int jumpCounter = 0;
+	private int surfCounter = 0;
 	public boolean repelActive = false;
 	private int repelSteps = 0;
 	private int repelStepsMax = 0;
+		
+	public BufferedImage surfUp1, surfDown1, surfLeft1, surfRight1;
 		
 /** END PLAYER VARIABLES **/		
 	
@@ -90,6 +92,7 @@ public class Player extends Entity {
 		setDialogue();
 		
 		getRunImage();
+		getSurfImage();
 		
 		personalDex.add(pokeParty.get(0).getPokemon());
 		personalDex.add(pokeParty.get(1).getPokemon());
@@ -146,15 +149,15 @@ public class Player extends Entity {
 		speed = defaultSpeed;		
 		resetValues();
 	}	
-	public void resetValues() {			
+	public void resetValues() {		
+		action = Action.IDLE;
 		gp.keyH.aPressed = false;
 		gp.keyH.bPressed = false;
 		canMove = true;
-		running = false;
 		moving = false;
-		jumping = false;
 		pixelCounter = 0;
 		jumpCounter = 0;
+		surfCounter = 0;
 	}
 	
 	// DIALOGUE
@@ -194,17 +197,23 @@ public class Player extends Entity {
 		runRight2 = setup("/player/boy_run_right_2");
 		runRight3 = setup("/player/boy_run_right_3");
 	}	
+	public void getSurfImage() {		
+		surfUp1 = setup("/player/boy_surf_up_1", (int) (gp.tileSize * 1.3), (int) (gp.tileSize * 1.3)); 		
+		surfDown1 = setup("/player/boy_surf_down_1", (int) (gp.tileSize * 1.3), (int) (gp.tileSize * 1.3)); 		
+		surfLeft1 = setup("/player/boy_surf_left_1", (int) (gp.tileSize * 1.3), (int) (gp.tileSize * 1.3)); 		
+		surfRight1 = setup("/player/boy_surf_right_1", (int) (gp.tileSize * 1.3), (int) (gp.tileSize * 1.3)); 		
+	}	
 
 /** END DEFAULT HANDLERS **/
 	
 	
 /** UPDATER **/
 	public void update() {
-		
 		if (jumping) {
 			speed = 3;
 			animationSpeed = 6;
 			moving = true;
+			running = false;
 		}		
 		else if (!moving && canMove) {			
 			
@@ -251,11 +260,35 @@ public class Player extends Entity {
 /** PLAYER METHODS **/
 	
 	public void action() {
+		
 		int npcIndex = gp.cChecker.checkNPC();
 		int objIndex = gp.cChecker.checkObject(this, true);
 		
 		if (npcIndex != -1) interactNPC(npcIndex);
 		else if (objIndex != -1) interactObject(objIndex);
+		
+		if (action != Action.SURFING && gp.cChecker.checkWater(this)) {
+			
+			action = Action.SURFING;
+			
+			switch (direction) {
+				case "up":
+					worldY -= gp.tileSize;
+					break;
+				case "down":
+					worldY += gp.tileSize;
+					break;
+				case "left":
+					worldX -= gp.tileSize;
+					break;
+				case "right":
+					worldX += gp.tileSize;
+					break;
+			}
+			
+			gp.stopMusic();
+			gp.startMusic(0, "surfing");
+		}
 	}	
 	public void interactNPC(int i) {		
 		if (i != -1 && !gp.npc[gp.currentMap][i].moving) {		
@@ -270,8 +303,8 @@ public class Player extends Entity {
 	}
 	
 	public void move() {		
-		if (gp.keyH.bPressed) {
-			running = true;	
+		if (gp.keyH.bPressed && action == Action.IDLE) {
+			running = true;
 			speed = 6;
 			animationSpeed = 6;			
 		}
@@ -284,7 +317,7 @@ public class Player extends Entity {
 		
 		checkCollision();
 		if (!collisionOn) { 	
-			moving = true;	
+			moving = true;				
 		}
 		else {			
 			running = false;
@@ -312,13 +345,21 @@ public class Player extends Entity {
 				case "left": worldX -= speed; break;
 				case "right": worldX += speed; break;
 			}
-
+			
 			cycleSprites();	
+			
+			if (action == Action.SURFING && gp.cChecker.checkGround(this)) {					
+				action = Action.IDLE;	
+				surfCounter = 0;
+				
+				gp.stopMusic();
+				gp.setupMusic();
+			}
 		}
 		
 		pixelCounter += speed;		
 		if (pixelCounter >= gp.tileSize) {
-									
+															
 			moving = false;
 			pixelCounter = 0;
 			
@@ -339,7 +380,7 @@ public class Player extends Entity {
 					jumpCounter = 0;
 					jumping = false;
 				}
-			}
+			}			
 		}
 	}
 	public void cycleSprites() {
@@ -417,13 +458,19 @@ public class Player extends Entity {
 	public void stopMoving() {		
 		if (!moving) {
 			canMove = false;
-			running = false;
+			action = Action.IDLE;
 			spriteNum = 1;	
 		}		
 	}
 	
 	public void manageValues() {
-	}
+		if (action == Action.SURFING) {
+			surfCounter++;					
+			if (surfCounter > 70) {
+				surfCounter = 0;	
+			}
+		}
+	}	
 
 	public void changeAlpha(Graphics2D g2, float alphaValue) {
 		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alphaValue));
@@ -460,76 +507,115 @@ public class Player extends Entity {
 		
 		offCenter();
 		
-		if (!inGrass) {
+		if (!inGrass && action != Action.SURFING) {
 			g2.setColor(new Color(0,0,0,100));
 			g2.fillOval(tempScreenX + 9, tempScreenY + 40, 30, 10);
 		}
 									
 		switch (direction) {
 			case "up":
-				if (running) {
-					if (spriteNum == 1) image = runUp1;
-					else if (spriteNum == 2) image = runUp2;	
-					else if (spriteNum == 3) image = runUp3;	
-				}
-				else {
-					if (spriteNum == 1) image = up1;
-					else if (spriteNum == 2) image = up2;	
-					else if (spriteNum == 3) image = up3;	
-					
-					if (jumping) {
-						tempScreenY -= 15;
-					}
-				}				
+				switch (action) {
+					case SURFING:
+						image = surfUp1;	
+						tempScreenX -= 7;
+						tempScreenY -= 7;
+						if (surfCounter > 35) tempScreenY -= 5;							
+						break;
+					default:
+						if (running) {
+							if (spriteNum == 1) image = runUp1;
+							else if (spriteNum == 2) image = runUp2;	
+							else if (spriteNum == 3) image = runUp3;	
+						}
+						else {
+							if (spriteNum == 1) image = up1;
+							else if (spriteNum == 2) image = up2;	
+							else if (spriteNum == 3) image = up3;	
+							
+							if (jumping) {
+								tempScreenY -= 15;
+							}
+						}
+						break;
+					}		
 				break;
-			case "down":				
-				if (running) {
-					if (spriteNum == 1) image = runDown1;
-					else if (spriteNum == 2) image = runDown2;	
-					else if (spriteNum == 3) image = runDown3;	
-				}
-				else {
-					
-					if (spriteNum == 1) image = down1;
-					else if (spriteNum == 2) image = down2;	
-					else if (spriteNum == 3) image = down3;	
-					
-					if (jumping) {
-						tempScreenY -= 15;
-					}
+			case "down":	
+				switch (action) {
+					case SURFING:
+						image = surfDown1;
+						tempScreenX -= 7;
+						tempScreenY -= 7;
+						if (surfCounter > 35) tempScreenY -= 5;		
+						break;
+					default:
+						if (running) {
+							if (spriteNum == 1) image = runDown1;
+							else if (spriteNum == 2) image = runDown2;	
+							else if (spriteNum == 3) image = runDown3;	
+						}
+						else {
+							if (spriteNum == 1) image = down1;
+							else if (spriteNum == 2) image = down2;	
+							else if (spriteNum == 3) image = down3;	
+							
+							if (jumping) {
+								tempScreenY -= 15;
+							}
+						}
+						break;
 				}		
 				break;
-			case "left":					
-				if (running) {
-					if (spriteNum == 1) image = runLeft1;
-					else if (spriteNum == 2) image = runLeft2;	
-					else if (spriteNum == 3) image = runLeft3;	
+			case "left":	
+				switch (action) {
+					case SURFING:
+						image = surfLeft1;
+						tempScreenX -= 7;
+						tempScreenY -= 7;
+						if (surfCounter > 35) tempScreenY -= 5;			
+						break;
+					default:
+						if (running) {
+							if (spriteNum == 1) image = runLeft1;
+							else if (spriteNum == 2) image = runLeft2;	
+							else if (spriteNum == 3) image = runLeft3;	
+						}
+						else {
+							if (spriteNum == 1) image = left1;
+							else if (spriteNum == 2) image = left2;	
+							else if (spriteNum == 3) image = left3;	
+							
+							if (jumping) {
+								tempScreenY -= 15;
+							}
+						}
+						break;
 				}
-				else {
-					if (spriteNum == 1) image = left1;
-					else if (spriteNum == 2) image = left2;	
-					else if (spriteNum == 3) image = left3;	
-					
-					if (jumping) {
-						tempScreenY -= 15;
-					}
-				}		
 				break;
-			case "right":					
-				if (running) {
-					if (spriteNum == 1) image = runRight1;
-					else if (spriteNum == 2) image = runRight2;	
-					else if (spriteNum == 3) image = runRight3;	
-				}
-				else {
-					if (spriteNum == 1) image = right1;
-					else if (spriteNum == 2) image = right2;	
-					else if (spriteNum == 3) image = right3;	
-					
-					if (jumping) {
-						tempScreenY -= 15;
-					}
-				}					
+			case "right":
+				switch (action) {
+					case SURFING:
+						image = surfRight1;
+						tempScreenX -= 7;
+						tempScreenY -= 7;
+						if (surfCounter > 35) tempScreenY -= 5;		
+						break;
+					default:
+						if (running) {
+							if (spriteNum == 1) image = runRight1;
+							else if (spriteNum == 2) image = runRight2;	
+							else if (spriteNum == 3) image = runRight3;	
+						}
+						else {
+							if (spriteNum == 1) image = right1;
+							else if (spriteNum == 2) image = right2;	
+							else if (spriteNum == 3) image = right3;	
+							
+							if (jumping) {
+								tempScreenY -= 15;
+							}
+						}
+						break;
+				}			
 				break;			
 		}
 		

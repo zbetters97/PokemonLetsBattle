@@ -13,12 +13,17 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import application.GamePanel;
+import entity.Entity.Action;
 import moves.Move;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
 import properties.Status;
 
 public class Entity {
+	
+	public enum Action {
+		IDLE, SURFING;
+	}
 	
 	public enum EncounterType {
 		COMMON, UNCOMMON, RARE, VERY_RARE,EXTREMELY_RARE,LEGENDARY,SHINY,ELITE
@@ -27,6 +32,9 @@ public class Entity {
 	protected GamePanel gp;
 	
 	// GENERAL ATTRIBUTES
+	public Action action = Action.IDLE;
+	public boolean running = false;
+	public boolean jumping = false;
 	public int worldX, worldY;	
 	public int safeWorldX = 0, safeWorldY = 0;
 	protected int worldXStart;
@@ -73,7 +81,6 @@ public class Entity {
 	public boolean moving = false;
 	public int pixelCounter = 0;
 	public boolean inGrass = false;
-	protected boolean running = false;	
 	public boolean onPath = false;
 	public boolean pathCompleted = false;
 	protected int steps = 0;

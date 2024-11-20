@@ -59,10 +59,13 @@ public class CollisionChecker {
 				entity.collisionOn = false; 
 				return;
 		}		
+		
 		// WATER
-		if (gp.tileM.tile[tile].water) {			
-			entity.collisionOn = true;				
-		}
+		if (gp.tileM.tile[tile].water) {	
+			if (entity.action != Entity.Action.SURFING) {
+				entity.collisionOn = true;				
+			}				
+		}		
 		
 		// NORMAL COLLISION
 		else if (gp.tileM.tile[tile].collision) {	
@@ -93,6 +96,48 @@ public class CollisionChecker {
 		else {
 			entity.inGrass = false;
 		}
+	}
+	
+	public boolean checkWater(Entity entity) {
+		
+		boolean foundWater = false;
+		
+		// X,Y OF CURRENT TILE
+		int x = entity.worldX / gp.tileSize;
+		int y = entity.worldY / gp.tileSize;
+		
+		switch (entity.direction) {
+			case "up": y--; break;
+			case "down": y++; break;
+			case "left": x--; break;
+			case "right": x++; break;
+		}
+		
+		// detect the tile player is interacting with
+		int tile = gp.tileM.mapTileNum[gp.currentMap][x][y];
+		
+		if (gp.tileM.tile[tile].water) {			
+			foundWater = true;
+		}
+		
+		return foundWater;
+	}	
+	public boolean checkGround(Entity entity) {
+		
+		boolean foundGround = false;
+		
+		// X,Y OF CURRENT TILE
+		int x = entity.worldX / gp.tileSize;
+		int y = entity.worldY / gp.tileSize;
+		
+		// detect the tile player is interacting with
+		int tile = gp.tileM.mapTileNum[gp.currentMap][x][y];
+		
+		if (!gp.tileM.tile[tile].water && !gp.tileM.tile[tile].collision) {			
+			foundGround = true;
+		}
+		
+		return foundGround;
 	}
 			
 	// ENTITY COLLISION
@@ -168,8 +213,7 @@ public class CollisionChecker {
 					default: return index;
 				}
 				
-				if (gp.player.hitbox.intersects(gp.npc[gp.currentMap][i].hitbox)) {	
-					
+				if (gp.player.hitbox.intersects(gp.npc[gp.currentMap][i].hitbox)) {						
 					if (gp.npc[gp.currentMap][i] != gp.player) {		
 						index = i;	
 					}
