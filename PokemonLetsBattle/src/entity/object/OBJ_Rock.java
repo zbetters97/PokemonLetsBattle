@@ -15,7 +15,7 @@ public class OBJ_Rock extends Entity {
 		type = type_obstacle_i;
 		name = objName;
 		collision = true;
-		hmType = "ROCK SMASH";
+		hmType = hmRockSmash;
 		
 		dialogues[0][0] = "This rock looks like it could be\nsmashed by a Pokemon.";
 	}	
@@ -40,7 +40,12 @@ public class OBJ_Rock extends Entity {
 		}
 	}
 	
+	public void useHM() {
+		opening = true;
+	}
+	
 	public void open() {
+		
 		spriteCounter++;
 		if (spriteCounter < 5) { spriteNum = 2; }
 		else if (5 <= spriteCounter && spriteCounter < 10) { spriteNum = 3; }

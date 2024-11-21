@@ -126,9 +126,20 @@ public class CollisionChecker {
 		
 		boolean foundGround = false;
 		
+		int worldX = entity.worldX;
+		int worldY = entity.worldY;
+		
+		// SHIFT COORD TO CONSIDER HITBOX POSITIONING
+		switch (entity.direction) {
+			case "up":  break;
+			case "down": worldY += entity.hitbox.height; break;
+			case "left":  break;
+			case "right": worldX += entity.hitbox.width; break;
+		}
+		
 		// X,Y OF CURRENT TILE
-		int x = entity.worldX / gp.tileSize;
-		int y = entity.worldY / gp.tileSize;
+		int x = worldX / gp.tileSize;
+		int y = worldY / gp.tileSize;
 		
 		// detect the tile player is interacting with
 		int tile = gp.tileM.mapTileNum[gp.currentMap][x][y];

@@ -15,9 +15,8 @@ public class OBJ_Tree extends Entity {
 		type = type_obstacle_i;
 		name = objName;
 		collision = true;
-		hasShadow = false;
-		
-		hmType = "CUT";
+		hasShadow = false;		
+		hmType = hmCut;
 		
 		dialogues[0][0] = "This tree looks like it could be\ncut by a Pokemon.";
 	}	
@@ -35,11 +34,15 @@ public class OBJ_Tree extends Entity {
 		
 		startDialogue(this, dialogueSet);
 	}
-	
+			
 	public void update() {
 		if (opening) {
 			open();
 		}
+	}
+	
+	public void useHM() {
+		opening = true;
 	}
 	
 	public void open() {

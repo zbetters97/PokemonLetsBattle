@@ -13,7 +13,6 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 import application.GamePanel;
-import entity.Entity.Action;
 import moves.Move;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
@@ -132,6 +131,11 @@ public class Entity {
 	public boolean alive = true;
 	public boolean opening;
 	public String hmType;
+	public final String hmCut = "Cut";
+	public final String hmRockSmash = "Rock Smash";
+	public final String hmStrenght = "Strength";
+	public final String hmSurf = "Surf";
+	public final String hmFly = "Fly";
 	
 	// CHARACTER TYPES
 	public final int type_player = 0;
@@ -158,6 +162,7 @@ public class Entity {
 	public void interact() { }
 	public void speak() { }		
 	public void use() { }
+	public void useHM() { }
 	public void apply() { }
 	public void apply(Entity entity, Pokemon p) { }
 	public void resetValues() { }	
@@ -701,42 +706,18 @@ public class Entity {
 		}		
 	}	
 	
-	public Pokemon pokemonHasHM(String objectType) {
+	public Pokemon pokemonHasHM(String hmType) {
 		
 		Pokemon hmPokemon = null;
 		
-		switch (objectType) {
-			case "CUT":				
-				for (Pokemon p : gp.player.pokeParty) {
-					for (Move m : p.getMoveSet()) {
-						if (m.getName().equals("Cut")) {
-							hmPokemon = p;
-							break;	
-						}
-					}
-				}				
-				break;
-			case "ROCK SMASH":
-				for (Pokemon p : gp.player.pokeParty) {
-					for (Move m : p.getMoveSet()) {
-						if (m.getName().equals("Rock Smash")) {
-							hmPokemon = p;
-							break;	
-						}
-					}
-				}		
-				break;
-			case "SURF":
-				for (Pokemon p : gp.player.pokeParty) {					
-					for (Move m : p.getMoveSet()) {
-						if (m.getName().equals("Surf")) {
-							hmPokemon = p;
-							break;	
-						}
-					}
-				}		
-				break;
-		}
+		for (Pokemon p : gp.player.pokeParty) {
+			for (Move m : p.getMoveSet()) {
+				if (m.getName().equals(hmType)) {
+					hmPokemon = p;
+					break;	
+				}
+			}
+		}		
 		
 		return hmPokemon;		
 	}

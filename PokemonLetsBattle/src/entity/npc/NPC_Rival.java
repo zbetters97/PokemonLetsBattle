@@ -68,8 +68,7 @@ public class NPC_Rival extends Entity {
 		dialogues[2][0] = "You're suspsiciously tough for\nyour age!";
 	}
 	
-	public void speak() {	
-		
+	public void speak() {			
 		if (hasBattle) {
 			gp.stopMusic();
 			gp.startMusic(0, gp.se.getFile(0, name));	
@@ -83,8 +82,7 @@ public class NPC_Rival extends Entity {
 		startDialogue(this, dialogueSet);
 	}
 	
-	public void setAction() {
-		
+	public void setAction() {		
 		if (hasBattle) {			
 			if (!moving && !lookForBattle(5)) {
 				getDirection(45);	

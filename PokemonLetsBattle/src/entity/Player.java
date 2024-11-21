@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import application.GamePanel;
 import entity.collectables.balls.*;
 import entity.collectables.items.*;
+import entity.object.OBJ_Water;
 import moves.Moves;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
@@ -73,6 +74,8 @@ public class Player extends Entity {
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MARSHTOMP, 16, new COL_Ball_Great(gp)));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36, new COL_Ball_Master(gp)));
+		
+		pokeParty.get(2).addMove(Moves.SURF);
 	}
 	public void setDefaultValues() {
 				
@@ -155,6 +158,8 @@ public class Player extends Entity {
 		gp.keyH.bPressed = false;
 		canMove = true;
 		moving = false;
+		running = false;
+		jumping = false;
 		pixelCounter = 0;
 		jumpCounter = 0;
 		surfCounter = 0;
@@ -209,6 +214,7 @@ public class Player extends Entity {
 	
 /** UPDATER **/
 	public void update() {
+		
 		if (jumping) {
 			speed = 3;
 			animationSpeed = 6;
@@ -267,27 +273,9 @@ public class Player extends Entity {
 		if (npcIndex != -1) interactNPC(npcIndex);
 		else if (objIndex != -1) interactObject(objIndex);
 		
-		if (action != Action.SURFING && gp.cChecker.checkWater(this)) {
-			
-			action = Action.SURFING;
-			
-			switch (direction) {
-				case "up":
-					worldY -= gp.tileSize;
-					break;
-				case "down":
-					worldY += gp.tileSize;
-					break;
-				case "left":
-					worldX -= gp.tileSize;
-					break;
-				case "right":
-					worldX += gp.tileSize;
-					break;
-			}
-			
-			gp.stopMusic();
-			gp.startMusic(0, "surfing");
+		if (action != Action.SURFING && gp.cChecker.checkWater(this)) {			
+			Entity water = new OBJ_Water(gp);
+			water.interact();
 		}
 	}	
 	public void interactNPC(int i) {		
@@ -302,7 +290,8 @@ public class Player extends Entity {
 		}
 	}
 	
-	public void move() {		
+	public void move() {	
+		
 		if (gp.keyH.bPressed && action == Action.IDLE) {
 			running = true;
 			speed = 6;
@@ -338,7 +327,7 @@ public class Player extends Entity {
 			
 	public void walking() {
 		
-		if (canMove) {
+		if (canMove) {			
 			switch (direction) {
 				case "up": worldY -= speed; break;				
 				case "down": worldY += speed; break;				
@@ -458,6 +447,7 @@ public class Player extends Entity {
 	public void stopMoving() {		
 		if (!moving) {
 			canMove = false;
+			running = false;
 			action = Action.IDLE;
 			spriteNum = 1;	
 		}		

@@ -979,14 +979,10 @@ public class UI {
 			}
 			else if (npc.type == npc.type_obstacle_i) {
 				
-				Pokemon p = gp.player.pokemonHasHM(npc.hmType);
+				Pokemon p = gp.player.pokemonHasHM(npc.hmType);		
 				
-				if (p != null) {
-					gp.gameState = gp.hmState;	
-				}
-				else {
-					gp.gameState = gp.playState;
-				}				
+				if (p != null) gp.gameState = gp.hmState;	
+				else gp.gameState = gp.playState;							
 			}
 			else if (npc.name.equals(NPC_Nurse.npcName) && npc.dialogueSet == 0){			
 				gp.gameState = gp.healState;
@@ -1100,7 +1096,7 @@ public class UI {
 		int y = gp.tileSize * 9;
 		int width =(int) (gp.tileSize * 12);
 		int height = (int) (gp.tileSize * 2.5);
-		drawSubWindow(x, y, width, height, 25, 10, battle_white, party_green);		
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);		
 		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
 		x += gp.tileSize * 0.6;
@@ -1112,7 +1108,7 @@ public class UI {
 		y = (int) (gp.tileSize * 6.3);
 		width = (int) (gp.tileSize * 2.3);
 		height = (int) (gp.tileSize * 2.5);
-		drawSubWindow(x, y, width, height, 25, 10, battle_white, party_green);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
 				
 		x += gp.tileSize * 0.8;						
 		y += gp.tileSize + 5;
@@ -1123,7 +1119,7 @@ public class UI {
 				gp.keyH.aPressed = false;
 				commandNum = 0;
 				
-				npc.opening = true;
+				npc.useHM();
 				gp.gameState = gp.playState;
 			}
 		}		
