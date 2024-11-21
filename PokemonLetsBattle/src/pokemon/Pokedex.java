@@ -579,6 +579,152 @@ public enum Pokedex {
 					Map.entry(90, Moves.NASTYPLOT),
 					Map.entry(100, Moves.AURASPHERE)
 			)),
+	CHIKORITA ("Chikorita", 152, Type.GRASS, Ability.OVERGROW, 45, 49, 65, 49, 65, 45, 16, 153, 64, 1, Growth.MEDIUMSLOW, 45,
+			Map.ofEntries(
+					Map.entry(6, Moves.RAZORLEAF),
+					Map.entry(9, Moves.POISONPOWDER),
+//					Map.entry(12, Moves.SYNTHESIS),
+					Map.entry(17, Moves.REFLECT),
+					Map.entry(20, Moves.MAGICALLEAF),
+//					Map.entry(23, Moves.NATURALGIFT),
+					Map.entry(28, Moves.SWEETSCENT),
+					Map.entry(31, Moves.LIGHTSCREEN),
+					Map.entry(34, Moves.BODYSLAM),
+					Map.entry(39, Moves.SAFEGUARD),
+//					Map.entry(42, Moves.AROMATHERAPY),
+					Map.entry(45, Moves.SOLARBEAM)					
+			)),
+	BAYLEEF ("Bayleef", 153, Type.GRASS, Ability.OVERGROW, 60, 62, 80, 63, 80, 60, 16, 154, 141, 2, Growth.MEDIUMSLOW, 45,
+			Map.ofEntries(
+					Map.entry(6, Moves.RAZORLEAF),
+					Map.entry(9, Moves.POISONPOWDER),
+//					Map.entry(12, Moves.SYNTHESIS),
+					Map.entry(18, Moves.REFLECT),
+					Map.entry(22, Moves.MAGICALLEAF),
+//					Map.entry(26, Moves.NATURALGIFT),
+					Map.entry(32, Moves.SWEETSCENT),
+					Map.entry(36, Moves.LIGHTSCREEN),
+					Map.entry(40, Moves.BODYSLAM),
+					Map.entry(46, Moves.SAFEGUARD),
+//					Map.entry(50, Moves.AROMATHERAPY),
+					Map.entry(54, Moves.SOLARBEAM)					
+			)),
+	MEGANIUM ("Meganium", 154, Type.GRASS, Ability.OVERGROW, 80, 82, 100, 83, 100, 80, -1, -1, 208, 3, Growth.MEDIUMSLOW, 45,
+			Map.ofEntries(
+					Map.entry(6, Moves.RAZORLEAF),
+					Map.entry(9, Moves.POISONPOWDER),
+//					Map.entry(12, Moves.SYNTHESIS),
+					Map.entry(18, Moves.REFLECT),
+					Map.entry(22, Moves.MAGICALLEAF),
+//					Map.entry(26, Moves.NATURALGIFT),
+					Map.entry(34, Moves.SWEETSCENT),
+					Map.entry(40, Moves.LIGHTSCREEN),
+					Map.entry(46, Moves.BODYSLAM),
+					Map.entry(54, Moves.SAFEGUARD),
+//					Map.entry(60, Moves.AROMATHERAPY),
+					Map.entry(66, Moves.SOLARBEAM)					
+			)),
+	CYNDAQUIL ("Cyndaquil", 155, Type.FIRE, Ability.BLAZE, 39, 52, 43, 60, 50, 65, 14, 156, 65, 1, Growth.MEDIUMSLOW, 45, 
+			Map.ofEntries(
+					Map.entry(4, Moves.SMOKESCREEN),
+					Map.entry(10, Moves.EMBER),
+					Map.entry(13, Moves.QUICKATTACK),
+					Map.entry(19, Moves.FLAMEWHEEL),
+					Map.entry(22, Moves.DEFENSECURL),
+					Map.entry(28, Moves.SWIFT),
+					Map.entry(31, Moves.LAVAPLUME),
+					Map.entry(37, Moves.FLAMETHROWER),
+					Map.entry(40, Moves.ROLLOUT),
+					Map.entry(46, Moves.DOUBLEEDGE),
+					Map.entry(49, Moves.ERUPTION)			
+			)),
+	QUILAVA ("Quilava", 156, Type.FIRE, Ability.BLAZE, 58, 64, 58, 80, 65, 80, 36, 157, 142, 2, Growth.MEDIUMSLOW, 45, 
+			Map.ofEntries(
+					Map.entry(4, Moves.SMOKESCREEN),
+					Map.entry(10, Moves.EMBER),
+					Map.entry(13, Moves.QUICKATTACK),
+					Map.entry(20, Moves.FLAMEWHEEL),
+					Map.entry(24, Moves.DEFENSECURL),
+					Map.entry(31, Moves.SWIFT),
+					Map.entry(35, Moves.LAVAPLUME),
+					Map.entry(42, Moves.FLAMETHROWER),
+					Map.entry(46, Moves.ROLLOUT),
+					Map.entry(53, Moves.DOUBLEEDGE),
+					Map.entry(57, Moves.ERUPTION)			
+			)),
+	TYPHLOSION ("Typhlosion", 157, Type.FIRE, Ability.BLAZE, 78, 84, 78, 109, 85, 100, -1, -1, 209, 3, Growth.MEDIUMSLOW, 45, 
+			Map.ofEntries(
+					Map.entry(4, Moves.SMOKESCREEN),
+					Map.entry(10, Moves.EMBER),
+					Map.entry(13, Moves.QUICKATTACK),
+					Map.entry(20, Moves.FLAMEWHEEL),
+					Map.entry(24, Moves.DEFENSECURL),
+					Map.entry(31, Moves.SWIFT),
+					Map.entry(35, Moves.LAVAPLUME),
+					Map.entry(42, Moves.FLAMETHROWER),
+					Map.entry(46, Moves.ROLLOUT),
+					Map.entry(53, Moves.DOUBLEEDGE),
+					Map.entry(57, Moves.ERUPTION)			
+			)),
+	TOTODILE ("Totodile", 158, Type.WATER, Ability.TORRENT, 50, 65, 64, 44, 48, 43, 18, 159, 66, 1, Growth.MEDIUMSLOW, 45,
+			Map.ofEntries(
+					Map.entry(6, Moves.WATERGUN),
+					Map.entry(8, Moves.RAGE),
+					Map.entry(13, Moves.BITE),
+					Map.entry(15, Moves.SCARYFACE),
+					Map.entry(20, Moves.ICEFANG),
+					Map.entry(22, Moves.THRASH),
+					Map.entry(27, Moves.CRUNCH),
+					Map.entry(29, Moves.SLASH),
+					Map.entry(34, Moves.SCREECH),
+					Map.entry(36, Moves.AQUATAIL),
+//					Map.entry(41, Moves.SUPERPOWER),
+					Map.entry(43, Moves.HYDROPUMP)
+			)),
+	CROCONAW ("Croconaw", 159, Type.WATER, Ability.TORRENT, 65, 80, 80, 59, 63, 58, 35, 159, 143, 2, Growth.MEDIUMSLOW, 45,
+			Map.ofEntries(
+					Map.entry(6, Moves.WATERGUN),
+					Map.entry(8, Moves.RAGE),
+					Map.entry(13, Moves.BITE),
+					Map.entry(15, Moves.SCARYFACE),
+					Map.entry(21, Moves.ICEFANG),
+					Map.entry(24, Moves.THRASH),
+					Map.entry(30, Moves.CRUNCH),
+					Map.entry(33, Moves.SLASH),
+					Map.entry(39, Moves.SCREECH),
+					Map.entry(42, Moves.AQUATAIL),
+//					Map.entry(48, Moves.SUPERPOWER),
+					Map.entry(51, Moves.HYDROPUMP)
+			)),
+	FERALIGATR ("Feraligatr", 160, Type.WATER, Ability.TORRENT, 85, 105, 100, 79, 83, 78, -1, -1, 210, 3, Growth.MEDIUMSLOW, 45,
+			Map.ofEntries(
+					Map.entry(6, Moves.WATERGUN),
+					Map.entry(8, Moves.RAGE),
+					Map.entry(13, Moves.BITE),
+					Map.entry(15, Moves.SCARYFACE),
+					Map.entry(21, Moves.ICEFANG),
+					Map.entry(24, Moves.THRASH),
+					Map.entry(30, Moves.AGILITY),
+					Map.entry(32, Moves.CRUNCH),
+					Map.entry(37, Moves.SLASH),
+					Map.entry(45, Moves.SCREECH),
+					Map.entry(50, Moves.AQUATAIL),
+//					Map.entry(58, Moves.SUPERPOWER),
+					Map.entry(63, Moves.HYDROPUMP)
+			)),
+	CROBAT ("Crobat", 169, Arrays.asList(Type.POISON, Type.FLYING), Ability.INNERFOCUS, 85, 90, 80, 70, 80, 130, -1, -1, 204, 3, Growth.MEDIUMFAST, 90,
+			Map.ofEntries(
+					Map.entry(5, Moves.SUPERSONIC),
+					Map.entry(9, Moves.ASTONISH),
+					Map.entry(13, Moves.BITE),
+					Map.entry(17, Moves.WINGATTACK),
+					Map.entry(21, Moves.CONFUSERAY),
+					Map.entry(27, Moves.AIRCUTTER),
+//					Map.entry(33, Moves.MEANLOOK),
+					Map.entry(39, Moves.POISONFANG),
+					Map.entry(45, Moves.HAZE),
+					Map.entry(51, Moves.AIRSLASH)
+			)),
 	KINGDRA ("Kingdra", 230, Arrays.asList(Type.WATER, Type.DRAGON), Ability.SNIPER, 75, 95, 95, 95, 95, 85, -1, -1, 207, 3, Growth.MEDIUMFAST, 45,
 			Map.ofEntries(
 					Map.entry(4, Moves.SMOKESCREEN),
@@ -1358,13 +1504,7 @@ public enum Pokedex {
         		new Move(Moves.WATERGUN), 
         		new Move(Moves.BUBBLE), 
         		new Move(Moves.LEER)
-        ));       
-        moveMap.put(KINGDRA, Arrays.asList(
-        		new Move(Moves.WATERGUN), 
-        		new Move(Moves.BUBBLE), 
-        		new Move(Moves.YAWN),
-        		new Move(Moves.LEER)
-        ));            
+        ));                  
         moveMap.put(MAGIKARP, Arrays.asList(
         		new Move(Moves.SPLASH)
         ));
@@ -1406,6 +1546,70 @@ public enum Pokedex {
         		new Move(Moves.ROOST),
         		new Move(Moves.TWISTER)
         ));
+        moveMap.put(MEWTWO, Arrays.asList(
+        		new Move(Moves.CONFUSION)
+        ));
+        moveMap.put(MEW, Arrays.asList(
+        		new Move(Moves.POUND)
+        ));
+        moveMap.put(CHIKORITA, Arrays.asList(
+        		new Move(Moves.TACKLE), 
+        		new Move(Moves.GROWL)
+        )); 
+        moveMap.put(BAYLEEF, Arrays.asList(
+        		new Move(Moves.TACKLE), 
+        		new Move(Moves.GROWL),
+        		new Move(Moves.RAZORLEAF),
+        		new Move(Moves.POISONPOWDER)
+        )); 
+        moveMap.put(MEGANIUM, Arrays.asList(
+        		new Move(Moves.TACKLE), 
+        		new Move(Moves.GROWL),
+        		new Move(Moves.RAZORLEAF),
+        		new Move(Moves.POISONPOWDER)
+        )); 
+        moveMap.put(CYNDAQUIL, Arrays.asList(
+        		new Move(Moves.TACKLE), 
+        		new Move(Moves.LEER)
+        )); 
+        moveMap.put(QUILAVA, Arrays.asList(
+        		new Move(Moves.TACKLE), 
+        		new Move(Moves.LEER),
+        		new Move(Moves.SMOKESCREEN)
+        )); 
+        moveMap.put(TYPHLOSION, Arrays.asList(
+        		new Move(Moves.TACKLE), 
+        		new Move(Moves.LEER),
+        		new Move(Moves.SMOKESCREEN),
+        		new Move(Moves.EMBER)
+        )); 
+        moveMap.put(TOTODILE, Arrays.asList(
+        		new Move(Moves.SCRATCH), 
+        		new Move(Moves.LEER)
+        )); 
+        moveMap.put(CROCONAW, Arrays.asList(
+        		new Move(Moves.SCRATCH), 
+        		new Move(Moves.LEER),
+        		new Move(Moves.WATERGUN)
+        )); 
+        moveMap.put(FERALIGATR, Arrays.asList(
+        		new Move(Moves.SCRATCH), 
+        		new Move(Moves.LEER),
+        		new Move(Moves.WATERGUN),
+        		new Move(Moves.RAGE)
+        )); 
+        moveMap.put(CROBAT, Arrays.asList(
+        		new Move(Moves.SCREECH), 
+        		new Move(Moves.LEECHLIFE), 
+        		new Move(Moves.SUPERSONIC),
+        		new Move(Moves.ASTONISH)
+        )); 
+        moveMap.put(KINGDRA, Arrays.asList(
+        		new Move(Moves.WATERGUN), 
+        		new Move(Moves.BUBBLE), 
+        		new Move(Moves.YAWN),
+        		new Move(Moves.LEER)
+        )); 
         moveMap.put(RAIKOU, Arrays.asList(
         		new Move(Moves.LEER)
         ));
@@ -1427,12 +1631,6 @@ public enum Pokedex {
         		new Move(Moves.RECOVER),
         		new Move(Moves.HEALBELL)
         ));   
-        moveMap.put(MEWTWO, Arrays.asList(
-        		new Move(Moves.CONFUSION)
-        ));
-        moveMap.put(MEW, Arrays.asList(
-        		new Move(Moves.POUND)
-        ));
         moveMap.put(TREECKO, Arrays.asList(
         		new Move(Moves.POUND), 
         		new Move(Moves.LEER)

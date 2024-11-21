@@ -7,7 +7,7 @@ import entity.Entity;
 
 public class NPC_Nurse extends Entity {
 	
-	public static final String npcName = "May";
+	public static final String npcName = "Nurse Joy";
 	
 	public NPC_Nurse(GamePanel gp, int worldX, int worldY) {		
 		super(gp);	

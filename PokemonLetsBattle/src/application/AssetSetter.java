@@ -28,7 +28,11 @@ public class AssetSetter {
 		mapNum = 1;
 		i = 0;
 		gp.npc[mapNum][i] = new NPC_Nurse(gp, 22, 26); i++;	
-		gp.npc[mapNum][i] = new NPC_Computer(gp, 25, 25); i++;	
+		gp.npc[mapNum][i] = new NPC_Computer(gp, 25, 25); i++;
+		
+		mapNum = 2;
+		i = 0;
+		gp.npc[mapNum][i] = new NPC_Clerk(gp, 16, 27); i++;	
 	}	
 	protected void setObject() {		
 		
