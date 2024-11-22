@@ -25,6 +25,6 @@ public class OBJ_Water extends Entity {
 	
 	public void useHM() {		
 		gp.player.action = Action.HM;
-		gp.player.nextAction = Action.SURFING; 
+		gp.player.activeItem = this;
 	}
 }

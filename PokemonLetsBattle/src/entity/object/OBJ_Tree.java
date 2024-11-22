@@ -42,10 +42,12 @@ public class OBJ_Tree extends Entity {
 	}
 	
 	public void useHM() {
-		opening = true;
+		gp.player.action = Action.HM;
+		gp.player.activeItem = this;
 	}
 	
 	public void open() {
+		
 		spriteCounter++;
 		if (spriteCounter < 5) { spriteNum = 2; }
 		else if (5 <= spriteCounter && spriteCounter < 10) { spriteNum = 3; }

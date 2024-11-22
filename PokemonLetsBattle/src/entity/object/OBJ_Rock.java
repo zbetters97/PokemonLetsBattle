@@ -41,7 +41,8 @@ public class OBJ_Rock extends Entity {
 	}
 	
 	public void useHM() {
-		opening = true;
+		gp.player.action = Action.HM;
+		gp.player.activeItem = this;
 	}
 	
 	public void open() {

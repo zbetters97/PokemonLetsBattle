@@ -13,6 +13,8 @@ import java.util.Random;
 import application.GamePanel;
 import entity.collectables.balls.*;
 import entity.collectables.items.*;
+import entity.object.OBJ_Rock;
+import entity.object.OBJ_Tree;
 import entity.object.OBJ_Water;
 import moves.Moves;
 import pokemon.Pokedex;
@@ -88,6 +90,8 @@ public class Player extends Entity {
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MARSHTOMP, 16, new COL_Ball_Great(gp)));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36, new COL_Ball_Master(gp)));
+		pokeParty.get(0).addMove(Moves.CUT);
+		pokeParty.get(1).addMove(Moves.ROCKSMASH);
 		pokeParty.get(2).addMove(Moves.SURF);
 	}
 	public void setDefaultValues() {
@@ -156,8 +160,8 @@ public class Player extends Entity {
 		inventory_pokeballs.add(new COL_Ball_Master(gp));
 	}
 	public void setDefaultPosition() {	
-		worldX = gp.tileSize * 25;
-		worldY = gp.tileSize * 22;		
+		worldX = gp.tileSize * 31;
+		worldY = gp.tileSize * 11;		
 		defaultWorldX = worldX;
 		defaultWorldY = worldY;
 		safeWorldX = defaultWorldX;
@@ -238,14 +242,14 @@ public class Player extends Entity {
 		surfRight1 = setup("/player/boy_surf_right_1", (int) (gp.tileSize * 1.3), (int) (gp.tileSize * 1.3)); 		
 	}	
 	public void getFishImage() {			
-		fishUp1 = setup("/player/boy_fish_up_1", gp.tileSize, gp.tileSize * 2); 
-		fishUp2 = setup("/player/boy_fish_up_2", gp.tileSize, gp.tileSize * 2); 
-		fishUp3 = setup("/player/boy_fish_up_3", gp.tileSize, gp.tileSize * 2); 
-		fishUp4 = setup("/player/boy_fish_up_4", gp.tileSize, gp.tileSize * 2); 
-		fishDown1 = setup("/player/boy_fish_down_1", gp.tileSize, gp.tileSize * 2); 
-		fishDown2 = setup("/player/boy_fish_down_2", gp.tileSize, gp.tileSize * 2);
-		fishDown3 = setup("/player/boy_fish_down_3", gp.tileSize, gp.tileSize * 2);
-		fishDown4 = setup("/player/boy_fish_down_4", gp.tileSize, gp.tileSize * 2);
+		fishUp1 = setup("/player/boy_fish_up_1", gp.tileSize, (gp.tileSize * 2) - 2); 
+		fishUp2 = setup("/player/boy_fish_up_2", gp.tileSize, (gp.tileSize * 2) - 2); 
+		fishUp3 = setup("/player/boy_fish_up_3", gp.tileSize, (gp.tileSize * 2) - 2); 
+		fishUp4 = setup("/player/boy_fish_up_4", gp.tileSize, (gp.tileSize * 2) - 2); 
+		fishDown1 = setup("/player/boy_fish_down_1", gp.tileSize + 1, gp.tileSize * 2); 
+		fishDown2 = setup("/player/boy_fish_down_2", gp.tileSize + 1, gp.tileSize * 2);
+		fishDown3 = setup("/player/boy_fish_down_3", gp.tileSize + 1, gp.tileSize * 2);
+		fishDown4 = setup("/player/boy_fish_down_4", gp.tileSize + 1, gp.tileSize * 2);
 		fishLeft1 = setup("/player/boy_fish_left_1", gp.tileSize * 2, gp.tileSize * 2); 
 		fishLeft2 = setup("/player/boy_fish_left_2", gp.tileSize * 2, gp.tileSize * 2);
 		fishLeft3 = setup("/player/boy_fish_left_3", gp.tileSize * 2, gp.tileSize * 2);
@@ -480,18 +484,29 @@ public class Player extends Entity {
 			
 			hmNum = 1;
 			hmCounter = 0;
-			action = nextAction;
-			nextAction = Action.IDLE;
 			
-			switch (action) {
-				case SURFING:
+			action = Action.IDLE;
+			
+			switch (activeItem.name) {
+				case OBJ_Water.objName:
 					moving = true;
+					action = Action.SURFING;
 					gp.stopMusic();
 					gp.startMusic(0, "surfing");
 					break;
-				default: 
+				case OBJ_Rock.objName:
+					activeItem.opening = true;
+					gp.playSE(gp.moves_SE, "Rock Smash");
+					break;
+				case OBJ_Tree.objName:
+					activeItem.opening = true;
+					gp.playSE(gp.moves_SE, "Cut");
+					break;
+				default:
 					break;
 			}
+			
+			activeItem = null;
 		}		
 	}
 	private void fishing() {		
@@ -768,8 +783,7 @@ public class Player extends Entity {
 						else if (hmNum == 5) image = hm5;
 						break;
 					case FISHING:
-						
-						tempScreenY -= 12;
+						tempScreenY -= 17;
 						if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX - 1, tempScreenY - gp.tileSize, null);	
 						
 						if (fishNum == 1) image = fishUp1;
@@ -812,8 +826,9 @@ public class Player extends Entity {
 						break;
 					case FISHING:
 						
-						if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX + 3, tempScreenY - gp.tileSize, null);	
-						tempScreenY -= 24;											
+						if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX + 3, tempScreenY - gp.tileSize, null);
+						tempScreenX -= 3;
+						tempScreenY -= 24;
 						
 						if (fishNum == 1) image = fishDown1;
 						else if (fishNum == 2) image = fishDown2;
@@ -901,7 +916,7 @@ public class Player extends Entity {
 						
 						tempScreenY -= gp.tileSize;	
 						if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX, tempScreenY, null);						
-						tempScreenX -= 12;
+						tempScreenX -= 9;
 											
 						if (fishNum == 1) image = fishRight1;
 						else if (fishNum == 2) image = fishRight2;

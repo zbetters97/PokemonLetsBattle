@@ -389,6 +389,8 @@ public enum Moves {
 			"The user hurls hard rocks\nat the foe. Two to five\nrocks are launched in\nquick succession."),
 	ROCKPOLISH ("Rock Polish", MoveType.ATTRIBUTE, Type.ROCK, true, 20, -1, -1, 0, 2, Arrays.asList("speed"), 
 			"The user polishes its body\nto reduce drag. It can\nsharply raise the Speed\nstat."),	
+	ROCKSMASH ("Rock Smash", MoveType.PHYSICAL, Type.FIGHTING, false, 0.50, 15, 40, 100, 0, 1, Arrays.asList("defense"),
+			"The user hits with a punch\nthat may lower the target's\nDefense. It can also smash\ncracked boulders."),
 	ROCKTHROW ("Rock Throw", MoveType.PHYSICAL, Type.ROCK, 15, 75, 90, 0,
 			"The user picks up and\nthrows a small rock at the\nfoe to attack."),
 	ROLLINGKICK ("Rolling Kick", MoveType.PHYSICAL, Type.FIGHTING, 15, 60, 85, 0, 1, 
