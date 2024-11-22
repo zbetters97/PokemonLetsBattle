@@ -24,10 +24,7 @@ public class OBJ_Water extends Entity {
 	}
 	
 	public void useHM() {		
-		gp.player.action = Action.SURFING;
-		gp.player.moving = true;
-		
-		gp.stopMusic();
-		gp.startMusic(0, "surfing");
+		gp.player.action = Action.HM;
+		gp.player.nextAction = Action.SURFING; 
 	}
 }

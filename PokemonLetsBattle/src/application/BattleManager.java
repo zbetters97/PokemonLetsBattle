@@ -203,7 +203,10 @@ public class BattleManager extends Thread {
 				break;			
 		}
 		
-		fighter[0] = gp.player.pokeParty.get(0);
+		for (Pokemon p : gp.player.pokeParty) {
+			if (p.isAlive()) { fighter[0] = p; break; }
+		}
+		
 		getOtherFighters();
 		
 		gp.playSE(gp.cry_SE, fighter[0].toString());	

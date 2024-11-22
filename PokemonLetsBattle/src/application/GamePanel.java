@@ -145,8 +145,10 @@ public class GamePanel extends JPanel implements Runnable {
 	public Entity obj_i[][] = new Entity[maxMap][20];
 	public InteractiveTile iTile[][] = new InteractiveTile[maxMap][100];
 	public ArrayList<Entity> particleList = new ArrayList<>();
-	public Map<Integer, Map<Pokedex, Integer>> wildEncounters = new HashMap<>();
-	public Map<Integer, Integer> wildLevels = new HashMap<>();
+	
+	public Map<Integer, Map<Pokedex, Integer>> wildEncounters_Grass = new HashMap<>();
+	public Map<Integer, Integer> wildLevels_Grass = new HashMap<>();	
+	public Map<Integer, Map<Integer, Map<Pokedex, Integer>>> wildEncounters_Fishing = new HashMap<>();
 	
 /** CONSTRUCTOR **/	
 	public GamePanel() {
@@ -185,14 +187,35 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	private void setupWildPokemon() {
-		wildEncounters.put( 
+		
+		wildEncounters_Grass.put( 
 				petalburg, Map.ofEntries(
 						Map.entry(Pokedex.ZIGZAGOON, 65), 
 						Map.entry(Pokedex.POOCHYENA, 30),
 						Map.entry(Pokedex.PIKACHU, 5)
 				)
 		);
-		wildLevels.put(petalburg, 4);
+		wildLevels_Grass.put(petalburg, 4);
+		
+		wildEncounters_Fishing.put( 
+				petalburg, Map.ofEntries(
+						Map.entry(0, Map.ofEntries(
+										Map.entry(Pokedex.MAGIKARP, 100)
+						)),
+						Map.entry(1, Map.ofEntries(
+										Map.entry(Pokedex.HORSEA, 60),
+										Map.entry(Pokedex.MAGIKARP, 25), 										
+										Map.entry(Pokedex.SPHEAL, 15)
+						)),
+						Map.entry(2, Map.ofEntries(										
+										Map.entry(Pokedex.SEADRA, 50),
+										Map.entry(Pokedex.HORSEA, 30),										
+										Map.entry(Pokedex.SPHEAL, 12),
+										Map.entry(Pokedex.GYARADOS, 7), 
+										Map.entry(Pokedex.KYOGRE, 1)
+						))
+				)
+		);
 	}
 	
 	public void setupMusic() {					

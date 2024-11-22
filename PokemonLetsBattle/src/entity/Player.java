@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Random;
 
 import application.GamePanel;
 import entity.collectables.balls.*;
@@ -29,23 +31,36 @@ public class Player extends Entity {
 	public int defaultWorldX;
 	public int defaultWorldY;
 	
+	public BufferedImage hm1, hm2, hm3, hm4, hm5, 
+			surfUp1, surfDown1, surfLeft1, surfRight1,
+			fishUp1, fishUp2, fishUp3, fishUp4,
+			fishDown1, fishDown2, fishDown3, fishDown4,
+			fishLeft1, fishLeft2, fishLeft3, fishLeft4,
+			fishRight1, fishRight2, fishRight3, fishRight4;	
+	
 	public ArrayList<Pokedex> personalDex = new ArrayList<>();
 	public Pokemon[][] pcParty = new Pokemon[10][30];
 	public ArrayList<Pokemon> pcBox_1 = new ArrayList<Pokemon>(30);
 	
+	public Action nextAction = Action.IDLE;
+	public Entity activeItem = null;
+	
 	private int jumpCounter = 0;
-	private int surfCounter = 0;
+	private int hmCounter = 0;
+	private int hmNum = 1;
+	private int surfCounter = 0;	
+	private int fishCounter = 0;
+	private int fishNum = 1;
+	private int fishCatch = 0;
+	
+	private boolean alert = false;
 	public boolean repelActive = false;
 	private int repelSteps = 0;
-	private int repelStepsMax = 0;
-		
-	public BufferedImage surfUp1, surfDown1, surfLeft1, surfRight1;
-		
+	private int repelStepsMax = 0;		
 /** END PLAYER VARIABLES **/		
 	
 		
-/** PLAYER CONSTRUCTOR **/
-	
+/** PLAYER CONSTRUCTOR **/	
 	public Player(GamePanel gp) {
 		super(gp);		
 						
@@ -63,7 +78,6 @@ public class Player extends Entity {
 		name = "ASH";
 		trainerClass = 5;
 	}
-
 /** END PLAYER CONSTRUCTOR **/
 		
 	
@@ -74,7 +88,6 @@ public class Player extends Entity {
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MARSHTOMP, 16, new COL_Ball_Great(gp)));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36, new COL_Ball_Master(gp)));
-		
 		pokeParty.get(2).addMove(Moves.SURF);
 	}
 	public void setDefaultValues() {
@@ -95,13 +108,18 @@ public class Player extends Entity {
 		setDialogue();
 		
 		getRunImage();
+		getHMImage();
 		getSurfImage();
+		getFishImage();
 		
 		personalDex.add(pokeParty.get(0).getPokemon());
 		personalDex.add(pokeParty.get(1).getPokemon());
 		personalDex.add(pokeParty.get(2).getPokemon());
 		
 		inventory_keyItems.add(new ITM_EXP_Share(gp));
+		inventory_keyItems.add(new ITM_Rod_Old(gp));
+		inventory_keyItems.add(new ITM_Rod_Good(gp));
+		inventory_keyItems.add(new ITM_Rod_Super(gp));
 		
 		inventory_items.add(new ITM_Potion(gp));
 		inventory_items.get(0).amount = 10;
@@ -138,8 +156,8 @@ public class Player extends Entity {
 		inventory_pokeballs.add(new COL_Ball_Master(gp));
 	}
 	public void setDefaultPosition() {	
-		worldX = gp.tileSize * 30;
-		worldY = gp.tileSize * 26;		
+		worldX = gp.tileSize * 25;
+		worldY = gp.tileSize * 22;		
 		defaultWorldX = worldX;
 		defaultWorldY = worldY;
 		safeWorldX = defaultWorldX;
@@ -153,19 +171,23 @@ public class Player extends Entity {
 		resetValues();
 	}	
 	public void resetValues() {		
-		action = Action.IDLE;
 		gp.keyH.aPressed = false;
-		gp.keyH.bPressed = false;
+		gp.keyH.bPressed = false;		
+		action = Action.IDLE;
+		nextAction = Action.IDLE;
+		activeItem = null;		
 		canMove = true;
 		moving = false;
 		running = false;
 		jumping = false;
+		alert = false;
 		pixelCounter = 0;
 		jumpCounter = 0;
-		surfCounter = 0;
+		fishCounter = 0;
+		surfCounter = 0;		
+		hmNum = 1;
+		fishNum = 1;
 	}
-	
-	// DIALOGUE
 	public void setDialogue() {
 		dialogues[0][0] = "Repel affect has worn off.";		
 	}
@@ -202,13 +224,37 @@ public class Player extends Entity {
 		runRight2 = setup("/player/boy_run_right_2");
 		runRight3 = setup("/player/boy_run_right_3");
 	}	
+	public void getHMImage() {			
+		hm1 = setup("/player/boy_hm_1"); 
+		hm2 = setup("/player/boy_hm_2"); 
+		hm3 = setup("/player/boy_hm_3"); 
+		hm4 = setup("/player/boy_hm_4"); 
+		hm5 = setup("/player/boy_hm_5"); 
+	}	
 	public void getSurfImage() {		
 		surfUp1 = setup("/player/boy_surf_up_1", (int) (gp.tileSize * 1.3), (int) (gp.tileSize * 1.3)); 		
 		surfDown1 = setup("/player/boy_surf_down_1", (int) (gp.tileSize * 1.3), (int) (gp.tileSize * 1.3)); 		
 		surfLeft1 = setup("/player/boy_surf_left_1", (int) (gp.tileSize * 1.3), (int) (gp.tileSize * 1.3)); 		
 		surfRight1 = setup("/player/boy_surf_right_1", (int) (gp.tileSize * 1.3), (int) (gp.tileSize * 1.3)); 		
 	}	
-
+	public void getFishImage() {			
+		fishUp1 = setup("/player/boy_fish_up_1", gp.tileSize, gp.tileSize * 2); 
+		fishUp2 = setup("/player/boy_fish_up_2", gp.tileSize, gp.tileSize * 2); 
+		fishUp3 = setup("/player/boy_fish_up_3", gp.tileSize, gp.tileSize * 2); 
+		fishUp4 = setup("/player/boy_fish_up_4", gp.tileSize, gp.tileSize * 2); 
+		fishDown1 = setup("/player/boy_fish_down_1", gp.tileSize, gp.tileSize * 2); 
+		fishDown2 = setup("/player/boy_fish_down_2", gp.tileSize, gp.tileSize * 2);
+		fishDown3 = setup("/player/boy_fish_down_3", gp.tileSize, gp.tileSize * 2);
+		fishDown4 = setup("/player/boy_fish_down_4", gp.tileSize, gp.tileSize * 2);
+		fishLeft1 = setup("/player/boy_fish_left_1", gp.tileSize * 2, gp.tileSize * 2); 
+		fishLeft2 = setup("/player/boy_fish_left_2", gp.tileSize * 2, gp.tileSize * 2);
+		fishLeft3 = setup("/player/boy_fish_left_3", gp.tileSize * 2, gp.tileSize * 2);
+		fishLeft4 = setup("/player/boy_fish_left_4", gp.tileSize * 2, gp.tileSize * 2);
+		fishRight1 = setup("/player/boy_fish_right_1", gp.tileSize * 2, gp.tileSize * 2); 
+		fishRight2 = setup("/player/boy_fish_right_2", gp.tileSize * 2, gp.tileSize * 2);
+		fishRight3 = setup("/player/boy_fish_right_3", gp.tileSize * 2, gp.tileSize * 2);
+		fishRight4 = setup("/player/boy_fish_right_4", gp.tileSize * 2, gp.tileSize * 2);
+	}	
 /** END DEFAULT HANDLERS **/
 	
 	
@@ -221,6 +267,12 @@ public class Player extends Entity {
 			moving = true;
 			running = false;
 		}		
+		else if (action == Action.HM) {
+			hm();
+		}
+		else if (action == Action.FISHING) {
+			fishing();
+		}
 		else if (!moving && canMove) {			
 			
 			if (gp.keyH.startPressed) {
@@ -259,12 +311,10 @@ public class Player extends Entity {
 				
 		manageValues();	
 	}
-
 /** END UPDATER **/
 	
 	
-/** PLAYER METHODS **/
-	
+/** PLAYER METHODS **/	
 	public void action() {
 		
 		int npcIndex = gp.cChecker.checkNPC();
@@ -355,7 +405,7 @@ public class Player extends Entity {
 			gp.cChecker.checkGrass(this);
 			
 			if (!hasRepel() && inGrass) {
-				checkWildEncounter();					
+				checkWildEncounter_Grass();					
 			}
 			
 			gp.eHandler.checkEvent();	
@@ -418,6 +468,207 @@ public class Player extends Entity {
 		}	
 	}	
 	
+	private void hm() {
+		
+		hmCounter++;
+		if (5 > hmCounter) hmNum = 1;
+		else if (10 > hmCounter && hmCounter > 5) hmNum = 2;		
+		else if (15 > hmCounter && hmCounter > 10) hmNum = 3;
+		else if (20 > hmCounter && hmCounter > 15) hmNum = 4;		
+		else if (25 > hmCounter && hmCounter > 20) hmNum = 5;		
+		else if (hmCounter > 60) {
+			
+			hmNum = 1;
+			hmCounter = 0;
+			action = nextAction;
+			nextAction = Action.IDLE;
+			
+			switch (action) {
+				case SURFING:
+					moving = true;
+					gp.stopMusic();
+					gp.startMusic(0, "surfing");
+					break;
+				default: 
+					break;
+			}
+		}		
+	}
+	private void fishing() {		
+		
+		fishCounter++;
+		if (25 > fishCounter) fishNum = 1;
+		else if (30 > fishCounter && fishCounter > 25) fishNum = 2;		
+		else if (35 > fishCounter && fishCounter > 30) fishNum = 3;
+		else if (40 > fishCounter && fishCounter > 35) fishNum = 4;		
+		else if (fishCounter > 40) {				
+			catchFish();
+		}		
+	}
+	private void catchFish() {
+		
+		int length = 30;
+		
+		if (activeItem.power == 0) length = 60;
+		else if (activeItem.power == 1) length = 40;
+		else if (activeItem.power == 2) length = 20;
+		
+		if (fishCounter == 41) {		
+			
+			int min = 0;
+			int max = 0;
+			
+			if (activeItem.power == 0) { min = 80; max = 150; }
+			else if (activeItem.power == 1) { min = 100; max = 250; }
+			else if (activeItem.power == 2) { min = 100; max = 350; }
+			
+			fishCatch = new Random().nextInt(max - min + 1) + min;
+		}
+		
+		if (fishCounter == fishCatch - 5) {
+			gp.playSE(gp.entity_SE, "alert");
+		}
+		
+		if (fishCatch + length > fishCounter && fishCounter > fishCatch) {		
+		
+			alert = true;
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+				
+				Pokemon wildPokemon = getWildPokemon_Water();
+				
+				if (wildPokemon != null) {
+					
+					gp.btlManager.fighter[1] = wildPokemon;
+					gp.btlManager.setup(gp.btlManager.wildBattle, null, wildPokemon, null);
+									
+					alert = false;
+					action = Action.IDLE;
+					fishNum = 1;
+					fishCounter = 0;
+					fishCatch = 0;
+					
+					gp.gameState = gp.transitionState;	
+				}
+			}
+		}
+		else if (fishCounter == (fishCatch + length + 15) || gp.keyH.aPressed || gp.keyH.bPressed) {
+			gp.keyH.aPressed = false;
+			gp.keyH.bPressed = false;
+			alert = false;
+			action = Action.IDLE;
+			fishNum = 1;
+			fishCounter = 0;
+			fishCatch = 0;				
+		}		
+	}
+	
+	/** WILD ENCOUNTER **/
+	private void checkWildEncounter_Grass() {
+		// random encounter formula reference: https://bulbapedia.bulbagarden.net/wiki/Wild_Pok%C3%A9mon
+						
+		int r = new Random().nextInt(255);		
+		if (r < 15) {
+						
+			Pokemon wildPokemon = getWildPokemon(gp.wildEncounters_Grass, gp.wildLevels_Grass);
+			
+			if (wildPokemon != null) {
+				
+				gp.btlManager.fighter[1] = wildPokemon;
+				gp.btlManager.setup(gp.btlManager.wildBattle, null, wildPokemon, null);
+								
+				gp.gameState = gp.transitionState;	
+			}
+		}
+	}
+	private Pokemon getWildPokemon(Map<Integer, Map<Pokedex, Integer>> wildEncounters, 
+			Map<Integer, Integer> wildLevels) {
+		
+		Pokemon wildPokemon = null;	
+		Pokedex randomPokemon = null;
+		
+		int minLevel = 1;
+		int maxLevel = 1;
+		int level = 1;
+		
+		int chance = 1;
+		int total = 0;
+		
+		// LEVEL RANGE BASED ON LOCATION
+		minLevel = wildLevels.get(gp.currentMap);
+		maxLevel = minLevel + 3;
+		level = new Random().nextInt(maxLevel - minLevel + 1) + minLevel;
+		
+		// RANDOM NUM 0-100
+		chance = new Random().nextInt(100);
+		
+		// FOR EACH LIST OF POKEMON FROM LOCATION
+		for (Pokedex p : wildEncounters.get(gp.currentMap).keySet()) {
+			
+			// GET PROBABILITY OF POKEMON ENCOUNTER
+			int rate = wildEncounters.get(gp.currentMap).get(p); 
+			total += rate;
+			
+			// POKEMON RANDOMLY SELECTED, ASSIGN NAME AND STOP
+			if (chance <= total) {	
+				randomPokemon = p;
+				break;
+			}	
+		}
+		
+		// GENERATE NEW POKEMON
+		if (randomPokemon != null) {
+			wildPokemon = Pokemon.getPokemon(randomPokemon, level, null);	
+		}		
+		
+		return wildPokemon;
+	}
+	private Pokemon getWildPokemon_Water() {
+		
+		Pokemon wildPokemon = null;	
+		Pokedex randomPokemon = null;
+		
+		int rod = activeItem.power;
+		int minLevel = 1;
+		int maxLevel = 1;
+		int level = 1;
+		
+		int chance = 1;
+		int total = 0;
+		
+		// SET MIN MAX LEVEL BASED ON ROD USED
+		if (rod == 0) { minLevel = 5; maxLevel = 5; }
+		else if (rod == 1) { minLevel = 5; maxLevel = 15; }
+		else if (rod == 2) { minLevel = 15;	maxLevel = 35; }		
+		level = new Random().nextInt(maxLevel - minLevel + 1) + minLevel;
+					
+		// RANDOM NUM 0-100
+		chance = new Random().nextInt(100);
+		
+		// FOR EACH LIST OF POKEMON FROM LOCATION BY ROD
+		for (Pokedex p : gp.wildEncounters_Fishing.get(gp.currentMap).get(rod).keySet()) {
+			
+			// GET PROBABILITY OF POKEMON ENCOUNTER
+			int rate = gp.wildEncounters_Fishing.get(gp.currentMap).get(rod).get(p); 
+			total += rate;
+			
+			// POKEMON RANDOMLY SELECTED, ASSIGN NAME AND BREAK
+			if (chance <= total) {	
+				randomPokemon = p;
+				break;
+			}	
+		}
+		
+		// GENERATE NEW POKEMON
+		if (randomPokemon != null) {
+			wildPokemon = Pokemon.getPokemon(randomPokemon, level, null);
+		}		
+		
+		return wildPokemon;
+	}
+	/** END WILD ENCOUNTER **/
+	
 	public void setRepel(int steps) {
 		repelActive = true;
 		repelSteps = 0;
@@ -453,12 +704,16 @@ public class Player extends Entity {
 		}		
 	}
 	
-	public void manageValues() {
-		if (action == Action.SURFING) {
-			surfCounter++;					
-			if (surfCounter > 70) {
-				surfCounter = 0;	
-			}
+	public void manageValues() {		
+		switch (action) {
+			case SURFING:
+				surfCounter++;					
+				if (surfCounter > 60) {
+					surfCounter = 0;	
+				}
+				break;
+			default:
+				break;
 		}
 	}	
 
@@ -505,11 +760,28 @@ public class Player extends Entity {
 		switch (direction) {
 			case "up":
 				switch (action) {
+					case HM:
+						if (hmNum == 1) image = hm1;
+						else if (hmNum == 2) image = hm2;
+						else if (hmNum == 3) image = hm3;
+						else if (hmNum == 4) image = hm4;
+						else if (hmNum == 5) image = hm5;
+						break;
+					case FISHING:
+						
+						tempScreenY -= 12;
+						if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX - 1, tempScreenY - gp.tileSize, null);	
+						
+						if (fishNum == 1) image = fishUp1;
+						else if (fishNum == 2) image = fishUp2;
+						else if (fishNum == 3) image = fishUp3;
+						else if (fishNum == 4) image = fishUp4;						
+						break;
 					case SURFING:
 						image = surfUp1;	
 						tempScreenX -= 7;
 						tempScreenY -= 7;
-						if (surfCounter > 35) tempScreenY -= 5;							
+						if (surfCounter > 30) tempScreenY -= 5;							
 						break;
 					default:
 						if (running) {
@@ -531,11 +803,28 @@ public class Player extends Entity {
 				break;
 			case "down":	
 				switch (action) {
+					case HM:
+						if (hmNum == 1) image = hm1;
+						else if (hmNum == 2) image = hm2;
+						else if (hmNum == 3) image = hm3;
+						else if (hmNum == 4) image = hm4;
+						else if (hmNum == 5) image = hm5;
+						break;
+					case FISHING:
+						
+						if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX + 3, tempScreenY - gp.tileSize, null);	
+						tempScreenY -= 24;											
+						
+						if (fishNum == 1) image = fishDown1;
+						else if (fishNum == 2) image = fishDown2;
+						else if (fishNum == 3) image = fishDown3;
+						else if (fishNum == 4) image = fishDown4;
+						break;
 					case SURFING:
 						image = surfDown1;
 						tempScreenX -= 7;
 						tempScreenY -= 7;
-						if (surfCounter > 35) tempScreenY -= 5;		
+						if (surfCounter > 30) tempScreenY -= 5;		
 						break;
 					default:
 						if (running) {
@@ -557,11 +846,29 @@ public class Player extends Entity {
 				break;
 			case "left":	
 				switch (action) {
+					case HM:
+						if (hmNum == 1) image = hm1;
+						else if (hmNum == 2) image = hm2;
+						else if (hmNum == 3) image = hm3;
+						else if (hmNum == 4) image = hm4;
+						else if (hmNum == 5) image = hm5;
+						break;
+					case FISHING:						
+						
+						tempScreenY -= gp.tileSize;							
+						if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX, tempScreenY, null);							
+						tempScreenX -= 36;						
+						
+						if (fishNum == 1) image = fishLeft1;
+						else if (fishNum == 2) image = fishLeft2;
+						else if (fishNum == 3) image = fishLeft3;
+						else if (fishNum == 4) image = fishLeft4;												
+						break;
 					case SURFING:
 						image = surfLeft1;
 						tempScreenX -= 7;
 						tempScreenY -= 7;
-						if (surfCounter > 35) tempScreenY -= 5;			
+						if (surfCounter > 30) tempScreenY -= 5;			
 						break;
 					default:
 						if (running) {
@@ -583,11 +890,29 @@ public class Player extends Entity {
 				break;
 			case "right":
 				switch (action) {
+					case HM:
+						if (hmNum == 1) image = hm1;
+						else if (hmNum == 2) image = hm2;
+						else if (hmNum == 3) image = hm3;
+						else if (hmNum == 4) image = hm4;
+						else if (hmNum == 5) image = hm5;
+						break;
+					case FISHING:
+						
+						tempScreenY -= gp.tileSize;	
+						if (alert) g2.drawImage(gp.ui.battleIcon, tempScreenX, tempScreenY, null);						
+						tempScreenX -= 12;
+											
+						if (fishNum == 1) image = fishRight1;
+						else if (fishNum == 2) image = fishRight2;
+						else if (fishNum == 3) image = fishRight3;
+						else if (fishNum == 4) image = fishRight4;
+						break;
 					case SURFING:
 						image = surfRight1;
 						tempScreenX -= 7;
 						tempScreenY -= 7;
-						if (surfCounter > 35) tempScreenY -= 5;		
+						if (surfCounter > 30) tempScreenY -= 5;		
 						break;
 					default:
 						if (running) {

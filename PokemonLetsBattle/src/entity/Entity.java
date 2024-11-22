@@ -8,20 +8,18 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 
 import application.GamePanel;
 import moves.Move;
-import pokemon.Pokedex;
 import pokemon.Pokemon;
 import properties.Status;
 
 public class Entity {
 	
 	public enum Action {
-		IDLE, SURFING;
+		IDLE, HM, FISHING, SURFING;
 	}
 	
 	public enum EncounterType {
@@ -107,6 +105,7 @@ public class Entity {
 	public String description;
 	public int amount = 1;
 	public int value = 0;
+	public int power = 0;
 	public int catchProbability;
 	public Status status;
 	
@@ -637,58 +636,6 @@ public class Entity {
 		return availablePokemon;
 	}
 	
-	/** WILD ENCOUNTER **/
-	protected void checkWildEncounter() {
-		// random encounter formula reference: https://bulbapedia.bulbagarden.net/wiki/Wild_Pok%C3%A9mon
-						
-		int r = new Random().nextInt(255);		
-		if (r < 15) {
-						
-			Pokemon wildPokemon = getWildPokemon();
-			
-			if (wildPokemon != null) {
-				
-				gp.btlManager.fighter[1] = wildPokemon;
-				gp.btlManager.setup(gp.btlManager.wildBattle, null, wildPokemon, null);
-								
-				gp.gameState = gp.transitionState;	
-			}
-		}
-	}
-	private Pokemon getWildPokemon() {
-		
-		Pokedex randomPokemon = null;
-		Pokemon wildPokemon = null;	
-		
-		// RANDOM NUM 0-100
-		int chance = new Random().nextInt(100);
-		int total = 0;
-		
-		// FOR EACH LIST OF POKEMON FROM LOCATION
-		for (Pokedex p : gp.wildEncounters.get(gp.currentMap).keySet()) {
-			
-			// GET PROBABILITY OF POKEMON ENCOUNTER
-			int rate = gp.wildEncounters.get(gp.currentMap).get(p); 
-			total += rate;
-			
-			// POKEMON RANDOMLY SELECTED, ASSIGN NAME AND STOP
-			if (chance <= total) {	
-				randomPokemon = p;
-				break;
-			}	
-		}
-		
-		// LEVEL RANGE BASED ON LOCATION
-		int minLevel = gp.wildLevels.get(gp.currentMap);
-		int maxLevel = minLevel + 3;
-		int level = new Random().nextInt(maxLevel - minLevel + 1) + minLevel;
-		
-		wildPokemon = Pokemon.getPokemon(randomPokemon, level, null);
-		
-		return wildPokemon;
-	}
-	/** END WILD ENCOUNTER **/
-	
 	public boolean healPokemonParty() {
 		
 		if (pokeParty.size() > 0) {
@@ -854,8 +801,7 @@ public class Entity {
 	
 	protected void throwBall() {
 		
-		if (gp.btlManager.active && 
-				gp.btlManager.battleMode == gp.btlManager.wildBattle) {					
+		if (gp.btlManager.active && gp.btlManager.battleMode == gp.btlManager.wildBattle) {					
 				
 			gp.player.removeItem(this, gp.player);				
 									
