@@ -696,7 +696,7 @@ public class UI {
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
 				gp.keyH.playCursorSE();
-				commandNum = 0;
+				commandNum = 0;				
 				partyState = party_Skills;		
 				pcState = pc_Summary;						
 			}
@@ -1339,7 +1339,7 @@ public class UI {
 		g2.drawString(text, x, y);
 		
 		x = gp.tileSize;
-		y = (int) (gp.tileSize * 2.4);		
+		y = (int) (gp.tileSize * 4);		
 		height = (int) (gp.tileSize * 7.6);		
 		g2.setColor(battle_white);
 		g2.fillRoundRect(x, y, width, height, 15, 15);			
@@ -1350,12 +1350,12 @@ public class UI {
 		if (gp.player.personalDex.contains(p)) {
 			
 			x = (int) (gp.tileSize * 2.3);
-			y = (int) (gp.tileSize * 3);	
+			y = (int) (gp.tileSize * 4.8);	
 			width = gp.tileSize * 2;
 			height = gp.tileSize;
 			g2.drawImage(p.getFrontSprite(), x, y, null);	
 						
-			y = (int) (gp.tileSize * 8.5);
+			y = (int) (gp.tileSize * 10.2);
 			if (p.getTypes() == null) {
 				x = (int) (gp.tileSize * 3.8);	
 				drawSubWindow(x, y, width, height, 10, 3, p.getType().getColor(), Color.BLACK);											
@@ -1461,6 +1461,13 @@ public class UI {
 			bagStart = 0;
 			commandNum = 0;
 			pauseState = pause_Main;			
+		}
+		
+		if (gp.keyH.xPressed) {
+			gp.keyH.xPressed = false;
+			if (gp.player.personalDex.contains(p)) {
+				gp.playSE(gp.cry_SE, p.toString());				
+			}			
 		}
 	}
 	
@@ -2071,7 +2078,9 @@ public class UI {
 					gp.btlManager.running = true;
 					new Thread(gp.btlManager).start();	
 					gp.gameState = gp.battleState;		
-				}						
+				}					
+				
+				pauseState = pause_Main;
 			}
 			else {
 				gp.keyH.playCursorSE();
@@ -2140,8 +2149,8 @@ public class UI {
 			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;					
-				partyState = party_Skills;	
-				gp.playSE(gp.cry_SE, gp.player.pokeParty.get(fighterNum).toString());  
+				gp.keyH.playCursorSE();
+				partyState = party_Skills;				
 				commandNum = 0;			
 			}
 		}
@@ -3017,9 +3026,10 @@ public class UI {
 		x = (int) (gp.tileSize * 1.3);
 		y = (int) (gp.tileSize * 4.2);
 		g2.drawImage(fighter.getFrontSprite(), x, y, null);
-						
-		if (!partyMove) {	
-			
+		
+		if (gp.keyH.xPressed) {
+			gp.keyH.xPressed = false;
+			gp.playSE(gp.cry_SE, fighter.toString());
 		}
 	}
 	private void party_Header(int subState) {
@@ -3071,9 +3081,9 @@ public class UI {
 				
 				if (gp.keyH.lPressed && !partyMove) {				
 					gp.keyH.lPressed = false;
+					gp.keyH.playCursorSE();
 					fighterNum--;
-					commandNum = 0;
-					gp.playSE(gp.cry_SE, fighter.toString());  		
+					commandNum = 0;				 		
 				}
 			}	
 			
@@ -3086,9 +3096,9 @@ public class UI {
 				
 				if (gp.keyH.rPressed && !partyMove) {				
 					gp.keyH.rPressed = false;
+					gp.keyH.playCursorSE();
 					fighterNum++;
 					commandNum = 0;
-					gp.playSE(gp.cry_SE, fighter.toString());  		
 				}				
 			}
 		}
@@ -3102,9 +3112,9 @@ public class UI {
 				
 				if (gp.keyH.lPressed && !partyMove) {				
 					gp.keyH.lPressed = false;
+					gp.keyH.playCursorSE();
 					fighterNum--;
-					commandNum = 0;
-					gp.playSE(gp.cry_SE, fighter.toString());  		
+					commandNum = 0;	
 				}
 			}		
 			
@@ -3117,13 +3127,12 @@ public class UI {
 				
 				if (gp.keyH.rPressed && !partyMove) {				
 					gp.keyH.rPressed = false;
+					gp.keyH.playCursorSE();
 					fighterNum++;
-					commandNum = 0;
-					gp.playSE(gp.cry_SE, fighter.toString());  		
+					commandNum = 0;	
 				}		
 			}
-		}	
-			
+		}						
 	}
 	
 	private void party_MoveSwap() {
