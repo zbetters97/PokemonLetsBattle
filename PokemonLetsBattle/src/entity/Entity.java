@@ -711,6 +711,23 @@ public class Entity {
 		if (index != -1) inventory.get(index).amount++;
 		else inventory.add(newItem);		
 	}
+	public void addItem(Entity item, Entity person, int quantity) {
+
+		Entity newItem = gp.eGenerator.getItem(item.name);
+		newItem.amount = quantity;
+		
+		ArrayList<Entity> inventory = null;
+		
+		if (item.collectableType == type_keyItem) inventory = person.inventory_keyItems;		
+		else if (item.collectableType == type_item) inventory = person.inventory_items;		
+		else if (item.collectableType == type_ball) inventory = person.inventory_pokeballs;		
+		else if (item.collectableType == type_move) inventory = person.inventory_moves;
+		else return;
+		
+		int index = searchInventory(newItem, inventory);
+		if (index != -1) inventory.get(index).amount += quantity;
+		else inventory.add(newItem);			
+	}
 	public void removeItem(Entity item, Entity person) {	
 		
 		ArrayList<Entity> inventory = null;
@@ -731,6 +748,21 @@ public class Entity {
 				}
 			}
 		}
+	}
+	public Entity getItem(Entity item, Entity person) {
+		
+		ArrayList<Entity> inventory = null;
+		
+		if (item.collectableType == type_keyItem) inventory = person.inventory_keyItems;		
+		else if (item.collectableType == type_item) inventory = person.inventory_items;		
+		else if (item.collectableType == type_ball) inventory = person.inventory_pokeballs;		
+		else if (item.collectableType == type_move) inventory = person.inventory_moves;
+		else return null;
+		
+		int index = searchInventory(item, inventory);
+		
+		if (index != -1) return inventory.get(index);
+		else return null;		
 	}
 	public int searchInventory(Entity item, ArrayList<Entity> inventory) {
 		

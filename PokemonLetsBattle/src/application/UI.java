@@ -89,6 +89,10 @@ public class UI {
 	private boolean partyItemGive = false;
 	private BufferedImage dex_ball;
 	
+	// TRADE VALUES 
+	private Entity selectedItem = null;
+	private int selectedAmount = 1;
+	
 	// BAG VALUES
 	private String bag_Subtitle = "";
 	private int bagStart = 0;
@@ -294,9 +298,9 @@ public class UI {
 		npc.dialogueSet = 0;
 		drawDialogueScreen(false);
 		
-		x = (int) (gp.tileSize * 11.2);
+		x = (int) (gp.tileSize * 11.1);
 		y = (int) (gp.tileSize * 5.4);
-		width = (int) (gp.tileSize * 2.8);
+		width = (int) (gp.tileSize * 2.9);
 		height = (int) (gp.tileSize * 3.4);
 		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
 				
@@ -389,6 +393,26 @@ public class UI {
 		y += gp.tileSize * 1.4;		
 		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 		
+		// QUANTITY WINDOW
+		if (selectedItem != null) {		
+			
+			x = (int) (gp.tileSize * 2.7);
+			y = (int) (gp.tileSize * 5.4);
+			width = gp.tileSize * 7;
+			height = gp.tileSize * 2;
+			drawSubWindow(x, y, width, height, 10, 10, battle_white, dialogue_blue);
+			
+			text = "x" + selectedAmount;
+			x += gp.tileSize * 0.4;
+			y += gp.tileSize * 1.4;
+			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+			
+			text = "$" + (selectedAmount * selectedItem.value);
+			x += gp.tileSize * 5.5;
+			x = getXforRightAlignText(text, x);	
+			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		}
+		
 		// DESCRIPTION WINDOW
 		x = 5;
 		y = (int) (gp.tileSize * 7.7);
@@ -405,7 +429,7 @@ public class UI {
 			drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
 			y += gp.tileSize;
 		} 
-		
+						
 		// SHOP ITEMS WINDOW
 		x = (int) (gp.tileSize * 9);
 		y = 5;
@@ -427,45 +451,105 @@ public class UI {
 		for (int i = 0; i < npc.inventory_items.size(); i++) {
 			
 			text = npc.inventory_items.get(i).name;
-			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);		
+			
+			if (selectedItem == npc.inventory_items.get(i)) {
+				drawText(text, x, y, hp_red, Color.LIGHT_GRAY);			
+			}
+			else {
+				drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);		
+				
+				if (commandNum == i) {
+					g2.setColor(battle_red);
+					g2.setStroke(new BasicStroke(3));				
+					g2.drawRoundRect(slotX, slotY, width, height, 4, 4);
+				}
+			}
 			
 			text = "$" + npc.inventory_items.get(i).value;
 			textX += gp.tileSize * 6.3;
 			textX = getXforRightAlignText(text, textX);
 			drawText(text, textX, y, Color.BLACK, Color.LIGHT_GRAY);	
-			
-			if (commandNum == i) {
-				g2.setColor(battle_red);
-				g2.setStroke(new BasicStroke(3));				
-				g2.drawRoundRect(slotX, slotY, width, height, 4, 4);
-			}
-			
+									
 			textX = x;
 			y += gp.tileSize * 0.9;		
 			slotY += gp.tileSize * 0.9;
 		}
-		
-		if (gp.keyH.upPressed) {
-			gp.keyH.upPressed = false;
-			if (commandNum > 0) {
+						
+		if (selectedItem == null) {
+			if (gp.keyH.upPressed) {
+				gp.keyH.upPressed = false;
+				if (commandNum > 0) {
+					gp.keyH.playCursorSE();
+					commandNum--;
+				}
+			}
+			if (gp.keyH.downPressed) {
+				gp.keyH.downPressed = false;
+				if (commandNum < npc.inventory_items.size() - 1) {
+					gp.keyH.playCursorSE();
+					commandNum++;
+				}
+			}
+			if (gp.keyH.bPressed) {
+				gp.keyH.bPressed = false;
+				gp.keyH.playCursorSE();	
+				subState = 0;
+				commandNum = 0;
+				canSkip = false;
+				charIndex = 0;
+				combinedText = "";
+			}		
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
 				gp.keyH.playCursorSE();
-				commandNum--;
+				selectedItem = npc.inventory_items.get(commandNum);			
 			}
 		}
-		if (gp.keyH.downPressed) {
-			gp.keyH.downPressed = false;
-			if (commandNum < npc.inventory_items.size() - 1) {
-				gp.keyH.playCursorSE();
-				commandNum++;
+		else {						
+			if (gp.keyH.upPressed) {
+				gp.keyH.upPressed = false;
+				if (selectedAmount < 99) {
+					
+					Entity item = gp.player.getItem(selectedItem, gp.player);
+					if (item == null || item.amount + selectedAmount < 99) {
+						gp.keyH.playCursorSE();	
+						selectedAmount++;	
+					}
+				}
 			}
-		}
-		if (gp.keyH.bPressed) {
-			gp.keyH.bPressed = false;
-			subState = 0;
-			commandNum = 0;
-			canSkip = false;
-			charIndex = 0;
-			combinedText = "";
+			if (gp.keyH.downPressed) {
+				gp.keyH.downPressed = false;
+				if (selectedAmount > 1) {					
+					gp.keyH.playCursorSE();	
+					selectedAmount--;					
+				}
+			}
+			if (gp.keyH.bPressed) {
+				gp.keyH.bPressed = false;
+				gp.keyH.playCursorSE();
+				selectedItem = null;
+				selectedAmount = 1;
+			}		
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+			
+				int cost = selectedItem.value * selectedAmount;
+								
+				if (gp.player.money >= selectedItem.value * selectedAmount) {
+					
+					playPurchaseSE();
+					
+					gp.player.money -= cost;
+					gp.player.addItem(selectedItem, gp.player, selectedAmount);
+					
+					selectedItem = null;
+					selectedAmount = 1;
+				}
+				// NOT ENOUGH MONEY
+				else {
+					gp.keyH.playErrorSE();
+				}
+			}
 		}
 	}
 	
@@ -4740,4 +4824,8 @@ public class UI {
 		
 		return image;
 	}	
+	
+	private void playPurchaseSE() {
+		gp.playSE(gp.entity_SE, "purchase");
+	}
 }
