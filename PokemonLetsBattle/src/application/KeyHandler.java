@@ -36,6 +36,9 @@ public class KeyHandler implements KeyListener {
 		else if (gp.gameState == gp.dialogueState) {
 			dialogueState(code);
 		}	
+		else if (gp.gameState == gp.tradeState) {
+			tradeState(code);
+		}
 		else if (gp.gameState == gp.hmState || gp.gameState == gp.healState) {
 			hmState(code);
 		}	
@@ -95,6 +98,18 @@ public class KeyHandler implements KeyListener {
 	private void dialogueState(int code) { 
 		if (code == gp.btn_A && lock) {	aPressed = true; lock = false; }	
 	}	
+	
+	// PAUSE
+	private void tradeState(int code) { 		
+
+		if (code == gp.btn_UP) { upPressed = true; }
+		if (code == gp.btn_DOWN) { downPressed = true; }
+		if (code == gp.btn_LEFT) { leftPressed = true; }
+		if (code == gp.btn_RIGHT) { rightPressed = true; }
+		
+		if (code == gp.btn_A && lock) { aPressed = true; lock = false; }
+		if (code == gp.btn_B && lock) { bPressed = true; lock = false; }
+	}
 	
 	// HM
 	private void hmState(int code) {

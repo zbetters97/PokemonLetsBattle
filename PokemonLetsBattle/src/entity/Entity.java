@@ -281,7 +281,7 @@ public class Entity {
 	/** END DIRECTION **/
 	
 	// DIALOGUE
-	protected void startDialogue(Entity entity, int setNum) {
+	public void startDialogue(Entity entity, int setNum) {
 		spriteNum = 1;
 		dialogueSet = setNum;
 		gp.ui.npc = entity;		

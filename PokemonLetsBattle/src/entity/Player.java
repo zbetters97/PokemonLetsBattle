@@ -107,6 +107,8 @@ public class Player extends Entity {
 		speed = 4; defaultSpeed = speed;
 		animationSpeed = 8; defaultAnimationSpeed = animationSpeed;
 		
+		money = 4123;
+		
 		// PLAYER ATTRIBUTES		
 		setDefaultPosition();
 		setDialogue();
@@ -159,14 +161,14 @@ public class Player extends Entity {
 		inventory_pokeballs.add(new COL_Ball_Master(gp));
 	}
 	public void setDefaultPosition() {	
-		worldX = gp.tileSize * 24;
-		worldY = gp.tileSize * 22;		
+		worldX = gp.tileSize * 18;
+		worldY = gp.tileSize * 27;		
 		defaultWorldX = worldX;
 		defaultWorldY = worldY;
 		safeWorldX = defaultWorldX;
 		safeWorldY = defaultWorldY;
 		
-		gp.currentMap = 0;
+		gp.currentMap = 2;
 		gp.currentArea = gp.town;
 	}
 	public void restoreStatus() {

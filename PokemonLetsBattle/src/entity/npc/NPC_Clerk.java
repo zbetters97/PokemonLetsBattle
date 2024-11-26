@@ -4,6 +4,9 @@ import java.awt.Rectangle;
 
 import application.GamePanel;
 import entity.Entity;
+import entity.collectables.balls.COL_Ball_Poke;
+import entity.collectables.items.ITM_Potion;
+import entity.collectables.items.ITM_Potion_Hyper;
 
 public class NPC_Clerk extends Entity {
 	
@@ -30,6 +33,7 @@ public class NPC_Clerk extends Entity {
 		hitboxDefaultHeight = hitbox.height;
 		
 		setDialogue();
+		setItems();
 	}
 	
 	public void getImage() {			
@@ -40,11 +44,23 @@ public class NPC_Clerk extends Entity {
 	}	
 	public void setDialogue() {
 		dialogues[0][0] = "Welcome to the Pokemon Market!";
+		dialogues[1][0] = "Hey! You don't have enough money!";
+		dialogues[2][0] = "I think you should hold onto that!";
+		dialogues[3][0] = "Come back soon!";		
+	}
+	
+	public void setItems() {		
+		inventory_items.add(new COL_Ball_Poke(gp));
+		inventory_items.add(new ITM_Potion(gp));
+		inventory_items.add(new ITM_Potion_Hyper(gp));
+		inventory_items.add(new ITM_Potion_Hyper(gp));
+		inventory_items.add(new ITM_Potion_Hyper(gp));
+		inventory_items.add(new ITM_Potion_Hyper(gp));
+		inventory_items.add(new ITM_Potion_Hyper(gp));
 	}
 	
 	public void speak() {			
 		gp.ui.npc = this;
-		dialogueSet = 0;		
-		startDialogue(this, dialogueSet);
+		gp.gameState = gp.tradeState;
 	}
 }
