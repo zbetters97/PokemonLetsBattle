@@ -39,6 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
 	private Graphics2D g2;
 	private Thread gameThread;
 	private int FPS = 60;
+	public long playtime = 0;
 
 	public static UtilityTool utility = new UtilityTool();
 	public ConfigManager config = new ConfigManager(this);
@@ -280,6 +281,7 @@ public class GamePanel extends JPanel implements Runnable {
 		long lastTime = System.nanoTime();
 		double drawInterval = 1000000000 / FPS; // 1/60th of a second
 		double delta = 0;
+		int drawCount = 0;
 		
 		// UPDATE AND REPAINT gameThread
 		while (gameThread != null) {
@@ -289,6 +291,7 @@ public class GamePanel extends JPanel implements Runnable {
 			lastTime = currentTime;
 			
 			if (delta >= 1) {
+				
 				// UPDATE GAME INFORMATION
 				update();
 				
@@ -299,6 +302,12 @@ public class GamePanel extends JPanel implements Runnable {
 				drawToScreen();
 				
 				delta = 0;		
+				
+				drawCount++;
+				if (drawCount >= 60) {
+					playtime++;
+					drawCount = 0;		    
+				}
 			}		
 		}
 	}

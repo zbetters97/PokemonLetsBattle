@@ -575,12 +575,21 @@ public class UI {
 			case 3: timeOfDay = "DAWN"; break;
 		}
 		
+		int hours = (int) gp.playtime / 3600;
+		int remainder = (int) gp.playtime - hours * 3600;
+		int mins = remainder / 60;
+		remainder = remainder - mins * 60;
+		int secs = remainder;
+		String time = String.format("%02d:%02d:%02d", hours, mins, secs);	
+		
 		g2.setColor(Color.WHITE);
 		g2.setFont(new Font("Arial", Font.BOLD, 50));
 		g2.drawString(timeOfDay, x, y - gp.tileSize);
 		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20f));						
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 20f));	
 		
+		g2.drawString("Play Time: " + time, x, y);
+		y += lineHeight;
 		g2.drawString("WorldX: " + gp.player.worldX, x , y); 
 		y += lineHeight;
 		g2.drawString("WorldY: " + gp.player.worldY, x , y); 
@@ -590,7 +599,7 @@ public class UI {
 		g2.drawString("Row: " + (gp.player.worldY + gp.player.hitbox.y) / gp.tileSize, x , y);
 		y += lineHeight;
 		g2.drawString("Time Counter: " + gp.eManager.lighting.dayCounter, x, y);
-		
+				
 		g2.setStroke(new BasicStroke(1));	
 		g2.setColor(Color.RED);
 		g2.drawRect(gp.player.screenX + gp.player.hitbox.x, gp.player.screenY + gp.player.hitbox.y, 
