@@ -15,7 +15,9 @@ public class ITM_Potion_Super extends Entity {
 		name = colName;			
 		description = "Restores the HP of\na Pokémon by 50\npoints.";
 		
-		value = 50;
+		power = 50;
+		pprice = 700;
+		sprice = 350;
 		
 		image1 = setup("/collectables/menu/potion_super", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

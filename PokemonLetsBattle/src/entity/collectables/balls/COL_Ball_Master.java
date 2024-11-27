@@ -14,6 +14,8 @@ public class COL_Ball_Master extends Entity {
 		name = colName;			
 		description = "The best ball\ncatches a Pokémon\nwithout fail.";
 		
+		pprice = 0;
+		sprice = 0;
 		catchProbability = 0;
 		
 		image1 = setup("/collectables/menu/ball_master", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));		

@@ -80,6 +80,7 @@ public class Entity {
 	public boolean inGrass = false;
 	public boolean onPath = false;
 	public boolean pathCompleted = false;
+	public Entity keyItem = null;
 	protected int steps = 0;
 	
 	public int skillLevel = 0;
@@ -104,7 +105,8 @@ public class Entity {
 	// ITEM VALUES	
 	public String description;
 	public int amount = 1;
-	public int value = 0;
+	public int pprice = 0;
+	public int sprice = 0;
 	public int power = 0;
 	public int catchProbability;
 	public Status status;
@@ -164,6 +166,7 @@ public class Entity {
 	public void useHM() { }
 	public void apply() { }
 	public void apply(Entity entity, Pokemon p) { }
+	public int getLevel() { return 0; }
 	public void resetValues() { }	
 	
 	// UPDATER
@@ -749,6 +752,26 @@ public class Entity {
 			}
 		}
 	}
+	public void removeItem(Entity item, Entity person, int quantity) {	
+		
+		ArrayList<Entity> inventory = null;
+		if (item.collectableType == type_keyItem) inventory = person.inventory_keyItems;		
+		else if (item.collectableType == type_item) inventory = person.inventory_items;		
+		else if (item.collectableType == type_ball) inventory = person.inventory_pokeballs;		
+		else if (item.collectableType == type_move) inventory = person.inventory_moves;
+		else return;
+		
+		int index = searchInventory(item, inventory);
+		if (index != -1) {
+			inventory.get(index).amount -= quantity;
+			if (inventory.get(index).amount <= 0) {
+				inventory.remove(index);	
+				if (gp.ui.bagNum > 0) {
+					gp.ui.bagNum--;
+				}
+			}
+		}
+	}
 	public Entity getItem(Entity item, Entity person) {
 		
 		ArrayList<Entity> inventory = null;
@@ -782,7 +805,7 @@ public class Entity {
 			
 			gp.playSE(gp.battle_SE, "heal");
 			p.setAlive(true);
-			p.setHP((int) (p.getBHP() / value));			
+			p.setHP((int) (p.getBHP() / power));			
 			removeItem(this, gp.player);						
 			
 			gp.ui.bagNum = 0;
@@ -797,13 +820,13 @@ public class Entity {
 		
 		if (p.isAlive() && p.getHP() < p.getBHP()) {
 			
-			int gainedHP = value;												
-			if (p.getHP() + value > p.getBHP()) {
+			int gainedHP = power;												
+			if (p.getHP() + power > p.getBHP()) {
 				gainedHP = p.getBHP() - p.getHP();
 			}	
 			
 			gp.playSE(gp.battle_SE, "heal");
-			p.addHP(value);			
+			p.addHP(power);			
 			removeItem(this, gp.player);				
 		
 			gp.ui.bagNum = 0;
@@ -1027,4 +1050,5 @@ public class Entity {
 		int screenY = worldY - gp.player.worldY + gp.player.screenY;
 		return screenY;
 	}
+
 }

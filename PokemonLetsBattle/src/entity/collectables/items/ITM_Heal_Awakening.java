@@ -15,6 +15,9 @@ public class ITM_Heal_Awakening extends Entity {
 		collectableType = type_item;
 		name = colName;			
 		description = "Awakens a sleeping\nPokémon.";
+		
+		pprice = 200;
+		sprice = 100;
 		status = Status.SLEEP;
 		
 		image1 = setup("/collectables/menu/heal_awakening", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));

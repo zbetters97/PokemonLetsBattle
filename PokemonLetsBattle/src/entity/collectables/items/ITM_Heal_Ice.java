@@ -15,6 +15,9 @@ public class ITM_Heal_Ice extends Entity {
 		collectableType = type_item;
 		name = colName;			
 		description = "Defrosts a frozen\nPokémon.";
+		
+		pprice = 200;
+		sprice = 100;
 		status = Status.FREEZE;
 		
 		image1 = setup("/collectables/menu/heal_ice", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));

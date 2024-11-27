@@ -13,7 +13,9 @@ public class COL_Ball_Great extends Entity {
 		collectableType = type_ball;
 		name = colName;			
 		description = "A good ball with a\nhigher catch rate\nthan a Poké Ball.";
-		
+				
+		pprice = 600;
+		sprice = 300;
 		catchProbability = 200;
 		
 		image1 = setup("/collectables/menu/ball_great", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));		

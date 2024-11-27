@@ -15,6 +15,9 @@ public class ITM_Heal_Burn extends Entity {
 		collectableType = type_item;
 		name = colName;			
 		description = "Heals a burned\nPokémon.";
+		
+		pprice = 200;
+		sprice = 100;
 		status = Status.BURN;
 		
 		image1 = setup("/collectables/menu/heal_burn", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));

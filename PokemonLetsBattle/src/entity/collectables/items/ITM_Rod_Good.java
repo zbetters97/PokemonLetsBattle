@@ -1,5 +1,7 @@
 package entity.collectables.items;
 
+import java.util.Random;
+
 import application.GamePanel;
 import entity.Entity;
 
@@ -13,7 +15,10 @@ public class ITM_Rod_Good extends Entity {
 		collectableType = type_keyItem;
 		name = colName;			
 		description = "A decent fishing\nrod for catching\nwild Pokémon.";
+		
 		power = 1;
+		pprice = 0;
+		sprice = 0;
 		
 		image1 = setup("/collectables/menu/rod_Good", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
@@ -37,7 +42,9 @@ public class ITM_Rod_Good extends Entity {
 		}
 	}
 	
-	public void getLevel() {
-		
+	public int getLevel() {
+		int level = 1;
+		level = new Random().nextInt(15 - 5 + 1) + 5; 
+		return level;
 	}
 }

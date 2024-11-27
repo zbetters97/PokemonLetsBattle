@@ -14,13 +14,15 @@ public class ITM_Repel_Max extends Entity {
 		name = colName;			
 		description = "Repels weak wild\nPokémon for 250\nsteps.";
 		
-		value = 250;
+		power = 250;
+		pprice = 700;
+		sprice = 350;
 		
 		image1 = setup("/collectables/menu/repel_max", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	
 	public void use() {
-		gp.player.setRepel(value);
+		gp.player.setRepel(power);
 		removeItem(this, gp.player);
 		
 		gp.ui.bagDialogue = "Repel has been used!";

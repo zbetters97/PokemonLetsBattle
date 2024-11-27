@@ -14,6 +14,8 @@ public class COL_Ball_Ultra extends Entity {
 		name = colName;			
 		description = "A better ball with a\nhigher catch rate\nthan a Great Ball.";
 		
+		pprice = 800;
+		sprice = 400;
 		catchProbability = 150;
 		
 		image1 = setup("/collectables/menu/ball_ultra", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));		

@@ -5,8 +5,18 @@ import java.awt.Rectangle;
 import application.GamePanel;
 import entity.Entity;
 import entity.collectables.balls.COL_Ball_Poke;
+import entity.collectables.items.ITM_Full_Restore;
+import entity.collectables.items.ITM_Heal_Antidote;
+import entity.collectables.items.ITM_Heal_Awakening;
+import entity.collectables.items.ITM_Heal_Burn;
+import entity.collectables.items.ITM_Heal_Full;
+import entity.collectables.items.ITM_Heal_Ice;
 import entity.collectables.items.ITM_Potion;
 import entity.collectables.items.ITM_Potion_Hyper;
+import entity.collectables.items.ITM_Potion_Super;
+import entity.collectables.items.ITM_Repel;
+import entity.collectables.items.ITM_Revive;
+import entity.collectables.items.ITM_Revive_Max;
 
 public class NPC_Clerk extends Entity {
 	
@@ -52,11 +62,17 @@ public class NPC_Clerk extends Entity {
 	public void setItems() {		
 		inventory_items.add(new COL_Ball_Poke(gp));
 		inventory_items.add(new ITM_Potion(gp));
+		inventory_items.add(new ITM_Potion_Super(gp));
 		inventory_items.add(new ITM_Potion_Hyper(gp));
-		inventory_items.add(new ITM_Potion_Hyper(gp));
-		inventory_items.add(new ITM_Potion_Hyper(gp));
-		inventory_items.add(new ITM_Potion_Hyper(gp));
-		inventory_items.add(new ITM_Potion_Hyper(gp));
+		inventory_items.add(new ITM_Repel(gp));
+		inventory_items.add(new ITM_Full_Restore(gp));	
+		inventory_items.add(new ITM_Heal_Full(gp));			
+		inventory_items.add(new ITM_Revive(gp));
+		inventory_items.add(new ITM_Revive_Max(gp));	
+		inventory_items.add(new ITM_Heal_Burn(gp));		
+		inventory_items.add(new ITM_Heal_Ice(gp));
+		inventory_items.add(new ITM_Heal_Antidote(gp));
+		inventory_items.add(new ITM_Heal_Awakening(gp));
 	}
 	
 	public void speak() {			

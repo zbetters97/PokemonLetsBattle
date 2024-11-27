@@ -15,7 +15,9 @@ public class ITM_Revive extends Entity {
 		name = colName;			
 		description = "Revives a fainted\nPokémon with half\nits HP.";
 		
-		value = 2;
+		power = 2;
+		pprice = 2000;
+		sprice = 1000;
 		
 		image1 = setup("/collectables/menu/revive", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

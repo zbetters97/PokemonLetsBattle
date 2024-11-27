@@ -15,7 +15,9 @@ public class ITM_Revive_Max extends Entity {
 		name = colName;			
 		description = "Revives a fainted\nPokémon with all\nits HP.";
 		
-		value = 1;
+		power = 1;
+		pprice = 4000;
+		sprice = 2000;
 
 		image1 = setup("/collectables/menu/revive_max", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

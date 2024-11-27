@@ -14,6 +14,9 @@ public class ITM_Heal_Full extends Entity {
 		collectableType = type_item;
 		name = colName;			
 		description = "Heals all the\nstatus problems of\none Pokémon.";		
+		
+		pprice = 400;
+		sprice = 200;
 		status = null;
 		
 		image1 = setup("/collectables/menu/heal_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));

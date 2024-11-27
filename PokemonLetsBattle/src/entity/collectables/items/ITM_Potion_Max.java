@@ -15,7 +15,9 @@ public class ITM_Potion_Max extends Entity {
 		name = colName;			
 		description = "Fully restores the\nHP of a Pokémon.";
 		
-		value = 999;
+		power = 999;
+		pprice = 2500;
+		sprice = 1250;
 		
 		image1 = setup("/collectables/menu/potion_max", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

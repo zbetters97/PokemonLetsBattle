@@ -15,6 +15,9 @@ public class ITM_Heal_Antidote extends Entity {
 		collectableType = type_item;
 		name = colName;			
 		description = "Heals a poisoned\nPokémon.";
+		
+		pprice = 200;
+		sprice = 100;
 		status = Status.POISON;
 		
 		image1 = setup("/collectables/menu/heal_antidote", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));

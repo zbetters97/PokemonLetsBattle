@@ -14,6 +14,8 @@ public class COL_Ball_Poke extends Entity {
 		name = colName;			
 		description = "A tool for catching\nwild Pokémon.";
 		
+		pprice = 200;
+		sprice = 100;
 		catchProbability = 255;
 		
 		image1 = setup("/collectables/menu/ball_poke", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));		

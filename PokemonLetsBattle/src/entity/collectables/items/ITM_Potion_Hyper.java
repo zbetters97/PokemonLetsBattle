@@ -15,7 +15,9 @@ public class ITM_Potion_Hyper extends Entity {
 		name = colName;			
 		description = "Restores the HP of\na Pokémon by 200\npoints.";
 		
-		value = 200;
+		power = 200;
+		pprice = 1500;
+		sprice = 750;
 		
 		image1 = setup("/collectables/menu/potion_hyper", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

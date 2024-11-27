@@ -14,6 +14,9 @@ public class ITM_EXP_Share extends Entity {
 		name = colName;			
 		description = "A hold item that\ngets EXP. points\nfrom battles.";
 		
+		pprice = 0;
+		sprice = 0;
+		
 		image1 = setup("/collectables/menu/exp_share", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
 	

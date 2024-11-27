@@ -110,8 +110,9 @@ public class Player extends Entity {
 		money = 4123;
 		
 		// PLAYER ATTRIBUTES		
-		setDefaultPosition();
+		setDefaultPosition();		
 		setDialogue();
+		setItems();
 		
 		getRunImage();
 		getHMImage();
@@ -121,7 +122,22 @@ public class Player extends Entity {
 		personalDex.add(pokeParty.get(0).getPokemon());
 		personalDex.add(pokeParty.get(1).getPokemon());
 		personalDex.add(pokeParty.get(2).getPokemon());
+	}
+	public void setDefaultPosition() {	
+		worldX = gp.tileSize * 18;
+		worldY = gp.tileSize * 27;		
+		defaultWorldX = worldX;
+		defaultWorldY = worldY;
+		safeWorldX = defaultWorldX;
+		safeWorldY = defaultWorldY;
 		
+		gp.currentMap = 2;
+		gp.currentArea = gp.town;
+	}
+	public void setDialogue() {
+		dialogues[0][0] = "Repel affect has worn off.";		
+	}		
+	public void setItems() {
 		inventory_keyItems.add(new ITM_EXP_Share(gp));
 		inventory_keyItems.add(new ITM_Rod_Old(gp));
 		inventory_keyItems.add(new ITM_Rod_Good(gp));
@@ -143,8 +159,7 @@ public class Player extends Entity {
 		inventory_items.add(new ITM_Heal_Full(gp));			
 		inventory_items.add(new ITM_Revive(gp));
 		inventory_items.add(new ITM_Revive_Max(gp));	
-		inventory_items.add(new ITM_Heal_Burn(gp));
-		
+		inventory_items.add(new ITM_Heal_Burn(gp));		
 		inventory_items.add(new ITM_Heal_Ice(gp));
 		inventory_items.add(new ITM_Heal_Antidote(gp));
 		inventory_items.add(new ITM_Heal_Awakening(gp));
@@ -159,17 +174,6 @@ public class Player extends Entity {
 		inventory_pokeballs.get(2).amount = 3;
 		
 		inventory_pokeballs.add(new COL_Ball_Master(gp));
-	}
-	public void setDefaultPosition() {	
-		worldX = gp.tileSize * 18;
-		worldY = gp.tileSize * 27;		
-		defaultWorldX = worldX;
-		defaultWorldY = worldY;
-		safeWorldX = defaultWorldX;
-		safeWorldY = defaultWorldY;
-		
-		gp.currentMap = 2;
-		gp.currentArea = gp.town;
 	}
 	public void restoreStatus() {
 		speed = defaultSpeed;		
@@ -193,9 +197,7 @@ public class Player extends Entity {
 		hmNum = 1;
 		fishNum = 1;
 	}
-	public void setDialogue() {
-		dialogues[0][0] = "Repel affect has worn off.";		
-	}
+	
 	
 	// PLAYER IMAGES
 	public void getImage() {			
@@ -304,7 +306,7 @@ public class Player extends Entity {
 				
 				if (gp.keyH.xPressed) {
 					gp.keyH.xPressed = false;
-					inventory_keyItems.get(1).use();
+					if (keyItem != null) keyItem.use();
 				}
 				
 				if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) { 		
@@ -649,29 +651,19 @@ public class Player extends Entity {
 		
 		Pokemon wildPokemon = null;	
 		Pokedex randomPokemon = null;
-		
-		int rod = activeItem.power;
-		int minLevel = 1;
-		int maxLevel = 1;
-		int level = 1;
+		int level = activeItem.getLevel();
 		
 		int chance = 1;
 		int total = 0;
-		
-		// SET MIN MAX LEVEL BASED ON ROD USED
-		if (rod == 0) { minLevel = 5; maxLevel = 5; }
-		else if (rod == 1) { minLevel = 5; maxLevel = 15; }
-		else if (rod == 2) { minLevel = 15;	maxLevel = 35; }		
-		level = new Random().nextInt(maxLevel - minLevel + 1) + minLevel;
 					
 		// RANDOM NUM 0-100
 		chance = new Random().nextInt(100);
 		
 		// FOR EACH LIST OF POKEMON FROM LOCATION BY ROD
-		for (Pokedex p : gp.wildEncounters_Fishing.get(gp.currentMap).get(rod).keySet()) {
+		for (Pokedex p : gp.wildEncounters_Fishing.get(gp.currentMap).get(activeItem.power).keySet()) {
 			
 			// GET PROBABILITY OF POKEMON ENCOUNTER
-			int rate = gp.wildEncounters_Fishing.get(gp.currentMap).get(rod).get(p); 
+			int rate = gp.wildEncounters_Fishing.get(gp.currentMap).get(activeItem.power).get(p); 
 			total += rate;
 			
 			// POKEMON RANDOMLY SELECTED, ASSIGN NAME AND BREAK
