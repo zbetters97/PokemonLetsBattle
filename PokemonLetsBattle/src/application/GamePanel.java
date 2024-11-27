@@ -164,7 +164,7 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	protected void setupGame() {	
 		
-		currentMap = 2;
+		currentMap = 0;
 		
 		gameState = playState;
 		currentArea = town;	

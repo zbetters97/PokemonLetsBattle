@@ -55,8 +55,7 @@ public class AssetSetter {
 		
 		gp.obj_i[mapNum][i] = new OI_Boulder(gp, 21, 22); i++;	
 	}
-	protected void setInteractiveTiles(boolean reset) {
-				
+	protected void setInteractiveTiles(boolean reset) {				
 		
 	}
 }

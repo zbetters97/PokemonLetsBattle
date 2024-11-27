@@ -1586,11 +1586,11 @@ public class UI {
 		height = (int) (gp.tileSize * 3);		
 		drawSubWindow(x, y, width, height, 5, 8, battle_white, dialogue_blue);
 		
-		x += gp.tileSize * 0.5;
+		x += gp.tileSize * 0.4;
 		y += gp.tileSize * 1.3;
 		height = gp.tileSize;
 		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 65f));	
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 60f));	
 		g2.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(4));	
 		
@@ -1609,7 +1609,7 @@ public class UI {
 			}
 		}
 
-		x += gp.tileSize * 3;
+		x += gp.tileSize * 3.2;
 		text = "GIVE";
 		g2.drawString(text, x, y);
 		if (commandNum == 1) {
@@ -1633,33 +1633,55 @@ public class UI {
 			}
 		}
 		
-		x = (int) (gp.tileSize * 0.75);
-		y += gp.tileSize * 1.4;
-		text = "TOSS";
-		g2.drawString(text, x, y);
-		if (commandNum == 2) {
-			width = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
-			g2.setColor(battle_red);
-			g2.drawRect(x - 4, y - (int) (gp.tileSize * 0.95), width + 4, height + 2);
-			g2.setColor(Color.BLACK);
-			
-			if (gp.keyH.aPressed) {
-				gp.keyH.aPressed = false;
-				gp.keyH.playCursorSE();			
+		x = (int) (gp.tileSize * 0.65);
+		y += gp.tileSize * 1.4;		
+		
+		if (items.get(bagNum).usable) {				
+			text = "ASSIGN";
+			g2.drawString(text, x, y);
+			if (commandNum == 2) {
+				width = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+				g2.setColor(battle_red);
+				g2.drawRect(x - 4, y - (int) (gp.tileSize * 0.95), width + 4, height + 2);
+				g2.setColor(Color.BLACK);
 				
-				if (items.get(bagNum).collectableType == items.get(bagNum).type_keyItem) {
-					bagDialogue = "You shouldn't toss this\nitem!";
+				if (gp.keyH.aPressed) {
+					gp.keyH.aPressed = false;
+					gp.keyH.playCursorSE();	
+					
+					gp.player.keyItem = items.get(bagNum);
+					bagDialogue = "The " + items.get(bagNum).name + " has been\nmapped to the Key Item\nbutton!";
 					bagState = bag_Dialogue;
 				}
-				else {				
-					gp.player.removeItem(items.get(bagNum), gp.player);	
-					bagState = bag_Main;
-					commandNum = 0;			
-				}	
-			}
+			}	
+		}
+		else { 
+			text = "TOSS";
+			g2.drawString(text, x, y);
+			if (commandNum == 2) {
+				width = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+				g2.setColor(battle_red);
+				g2.drawRect(x - 4, y - (int) (gp.tileSize * 0.95), width + 4, height + 2);
+				g2.setColor(Color.BLACK);
+				
+				if (gp.keyH.aPressed) {
+					gp.keyH.aPressed = false;
+					gp.keyH.playCursorSE();			
+					
+					if (items.get(bagNum).collectableType == items.get(bagNum).type_keyItem) {
+						bagDialogue = "You shouldn't toss this\nitem!";
+						bagState = bag_Dialogue;
+					}
+					else {				
+						gp.player.removeItem(items.get(bagNum), gp.player);	
+						bagState = bag_Main;
+						commandNum = 0;			
+					}	
+				}
+			}	
 		}
 		
-		x += gp.tileSize * 3;
+		x += gp.tileSize * 3.2;
 		text = "CANCEL";
 		g2.drawString(text, x, y);
 		if (commandNum == 3) {
@@ -5012,7 +5034,7 @@ public class UI {
 			if (gp.btlManager.running) {				
 				startBattle();				
 			}
-			else {
+			else {				
 				gp.player.direction = tDirection;
 				gp.currentMap = gp.eHandler.tempMap;
 				

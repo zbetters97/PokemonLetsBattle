@@ -13,18 +13,24 @@ public class ITM_Rod_Good extends Entity {
 		super(gp);	
 		
 		collectableType = type_keyItem;
+		usable = true;
 		name = colName;			
 		description = "A decent fishing\nrod for catching\nwild Pokémon.";
 		
 		power = 1;
 		pprice = 0;
 		sprice = 0;
-		
+				
 		image1 = setup("/collectables/menu/rod_Good", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		
+		setDialogue();
 	}	
+	public void setDialogue() {
+		dialogues[0][0] = "You can't use the " + name + " here!";	
+	}
 	
 	public void use() {		
-		if (!gp.btlManager.active && gp.player.action == Action.IDLE &&
+		if (gp.gameState == gp.playState && gp.player.action == Action.IDLE &&
 				gp.cChecker.checkWater(gp.player)) {
 			
 			gp.player.action = Action.FISHING;
@@ -36,6 +42,10 @@ public class ITM_Rod_Good extends Entity {
 			gp.ui.pauseState = gp.ui.pause_Main;
 			gp.gameState = gp.playState;
 		}
+		else if (gp.gameState == gp.playState) {
+			dialogueSet = 0;	
+			startDialogue(this, dialogueSet);
+		}		
 		else {
 			gp.ui.bagDialogue = "You can't use this here!";
 			gp.ui.bagState = gp.ui.bag_Dialogue;	

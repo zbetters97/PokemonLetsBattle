@@ -109,6 +109,7 @@ public class Entity {
 	public int sprice = 0;
 	public int power = 0;
 	public int catchProbability;
+	public boolean usable = false;
 	public Status status;
 	
 	// ITEM TYPE

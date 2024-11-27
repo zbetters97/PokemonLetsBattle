@@ -124,18 +124,18 @@ public class Player extends Entity {
 		personalDex.add(pokeParty.get(2).getPokemon());
 	}
 	public void setDefaultPosition() {	
-		worldX = gp.tileSize * 18;
-		worldY = gp.tileSize * 27;		
+		worldX = gp.tileSize * 24;
+		worldY = gp.tileSize * 22;		
 		defaultWorldX = worldX;
 		defaultWorldY = worldY;
 		safeWorldX = defaultWorldX;
 		safeWorldY = defaultWorldY;
 		
-		gp.currentMap = 2;
+		gp.currentMap = 0;
 		gp.currentArea = gp.town;
 	}
 	public void setDialogue() {
-		dialogues[0][0] = "Repel affect has worn off.";		
+		dialogues[0][0] = "Repel affect has worn off.";	
 	}		
 	public void setItems() {
 		inventory_keyItems.add(new ITM_EXP_Share(gp));
@@ -177,6 +177,7 @@ public class Player extends Entity {
 	}
 	public void restoreStatus() {
 		speed = defaultSpeed;		
+		keyItem = null;
 		resetValues();
 	}	
 	public void resetValues() {		
@@ -184,20 +185,19 @@ public class Player extends Entity {
 		gp.keyH.bPressed = false;		
 		action = Action.IDLE;
 		nextAction = Action.IDLE;
-		activeItem = null;		
+		activeItem = null;	
 		canMove = true;
 		moving = false;
 		running = false;
 		jumping = false;
-		alert = false;
+		alert = false;		
 		pixelCounter = 0;
 		jumpCounter = 0;
 		fishCounter = 0;
 		surfCounter = 0;		
 		hmNum = 1;
 		fishNum = 1;
-	}
-	
+	}	
 	
 	// PLAYER IMAGES
 	public void getImage() {			
@@ -306,7 +306,7 @@ public class Player extends Entity {
 				
 				if (gp.keyH.xPressed) {
 					gp.keyH.xPressed = false;
-					if (keyItem != null) keyItem.use();
+					if (keyItem != null) keyItem.use();					
 				}
 				
 				if (gp.keyH.upPressed || gp.keyH.downPressed || gp.keyH.leftPressed || gp.keyH.rightPressed) { 		

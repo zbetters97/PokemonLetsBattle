@@ -13,6 +13,7 @@ public class ITM_Rod_Old extends Entity {
 		super(gp);	
 		
 		collectableType = type_keyItem;
+		usable = true;
 		name = colName;			
 		description = "Use by any body\nof water to fish\nfor wild Pokémon.";
 		
@@ -21,10 +22,15 @@ public class ITM_Rod_Old extends Entity {
 		sprice = 0;
 		
 		image1 = setup("/collectables/menu/rod_old", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		
+		setDialogue();
 	}	
+	public void setDialogue() {
+		dialogues[0][0] = "You can't use the " + name + " here!";	
+	}
 	
 	public void use() {		
-		if (!gp.btlManager.active && gp.player.action == Action.IDLE &&
+		if (gp.gameState == gp.playState && gp.player.action == Action.IDLE &&
 				gp.cChecker.checkWater(gp.player)) {
 			
 			gp.player.action = Action.FISHING;
@@ -36,6 +42,10 @@ public class ITM_Rod_Old extends Entity {
 			gp.ui.pauseState = gp.ui.pause_Main;
 			gp.gameState = gp.playState;
 		}
+		else if (gp.gameState == gp.playState) {
+			dialogueSet = 0;	
+			startDialogue(this, dialogueSet);
+		}	
 		else {
 			gp.ui.bagDialogue = "You can't use this here!";
 			gp.ui.bagState = gp.ui.bag_Dialogue;	
