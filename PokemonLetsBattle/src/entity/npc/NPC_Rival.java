@@ -35,8 +35,7 @@ public class NPC_Rival extends Entity {
 		hitboxDefaultHeight = hitbox.height;
 		
 		setDialogue();
-	}
-	
+	}	
 	public void getImage() {			
 		up1 = setup("/npc/rival_up_1"); 
 		up2 = setup("/npc/rival_up_2"); 
@@ -54,11 +53,6 @@ public class NPC_Rival extends Entity {
 		frontSprite = setup("/npc/rival_battle_front", gp.tileSize * 4, gp.tileSize * 4);
 		backSprite = setup("/npc/rival_battle_back", gp.tileSize * 4, gp.tileSize * 4);
 	}	
-	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon(Pokedex.TORCHIC, 5, null));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.COMBUSKEN, 16, null));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.BLAZIKEN, 36, null));
-	}
 	public void setDialogue() {
 		dialogues[0][0] = "My dad says that my Pokemon\nparty might be the best!";
 		dialogues[0][1] = "I promise I'll go easy on you!";
@@ -67,7 +61,12 @@ public class NPC_Rival extends Entity {
 		
 		dialogues[2][0] = "You're suspsiciously tough for\nyour age!";
 	}
-	
+	public void assignParty() {
+		pokeParty.add(Pokemon.getPokemon(Pokedex.TORCHIC, 5, null));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.COMBUSKEN, 16, null));
+		pokeParty.add(Pokemon.getPokemon(Pokedex.BLAZIKEN, 36, null));
+	}
+		
 	public void speak() {			
 		if (hasBattle) {
 			gp.stopMusic();
@@ -96,6 +95,7 @@ public class NPC_Rival extends Entity {
 		if (moving) walking();		
 	}
 		
+	@Override
 	public void getDirection(int rate) {	
 		
 		actionLockCounter++;			

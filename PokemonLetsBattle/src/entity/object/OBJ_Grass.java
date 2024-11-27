@@ -24,11 +24,20 @@ public class OBJ_Grass extends Entity {
 	}
 	
 	public void update() {
+		
 		spriteCounter++;
-		if (spriteCounter < 8) spriteNum = 1; 
-		else if (8 <= spriteCounter && spriteCounter < 16) spriteNum = 2; 
-		else if (16 <= spriteCounter && spriteCounter < 24) spriteNum = 3;
-		else if (24 <= spriteCounter) alive = false;
+		if (spriteCounter < 8) {
+			spriteNum = 1; 
+		}
+		else if (8 <= spriteCounter && spriteCounter < 16) {
+			spriteNum = 2; 
+		}
+		else if (16 <= spriteCounter && spriteCounter < 24) {
+			spriteNum = 3;
+		}
+		else if (24 <= spriteCounter) {
+			alive = false;
+		}
 	}
 	
 	public void draw(Graphics2D g2) {

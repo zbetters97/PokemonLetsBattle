@@ -26,7 +26,7 @@ public class ITM_Rod_Good extends Entity {
 		setDialogue();
 	}	
 	public void setDialogue() {
-		dialogues[0][0] = "You can't use the " + name + " here!";	
+		dialogues[0][0] = "You can't use the " + name + "\nhere!";	
 	}
 	
 	public void use() {		

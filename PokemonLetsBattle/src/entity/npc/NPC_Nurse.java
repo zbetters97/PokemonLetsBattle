@@ -30,8 +30,7 @@ public class NPC_Nurse extends Entity {
 		hitboxDefaultHeight = hitbox.height;
 		
 		setDialogue();
-	}
-	
+	}	
 	public void getImage() {					
 		down1 = setup("/npc/nurse_down_1").getSubimage(0, 0, 48, 40); 
 		down2 = setup("/npc/nurse_down_2").getSubimage(0, 0, 48, 40);

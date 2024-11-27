@@ -24,14 +24,17 @@ public class NPC_Sign extends Entity {
 								
 		if (sign == 0) direction = "up";
 		else if (sign == 1) direction = "down";
-		
-		dialogues[0][0] = message;
-		
+				
 		hitbox = new Rectangle(1, 1, 46, 46); 		
 		hitboxDefaultX = hitbox.x;
 		hitboxDefaultY = hitbox.y;
 		hitboxDefaultWidth = hitbox.width;
 		hitboxDefaultHeight = hitbox.height;
+	
+		setDialogue(message);
+	}
+	public void setDialogue(String message) {
+		dialogues[0][0] = message;
 	}
 	
 	public void getImage() {			
@@ -39,11 +42,11 @@ public class NPC_Sign extends Entity {
 		down1 = setup("/npc/sign_2"); 		
 	}	
 	
-	public void speak() {	
-		
-		gp.ui.npc = this;
-		dialogueSet = 0;	
-		
-		startDialogue(this, dialogueSet);
+	public void speak() {			
+		if (gp.player.direction.equals("up")) {
+			gp.ui.npc = this;
+			dialogueSet = 0;				
+			startDialogue(this, dialogueSet);	
+		}		
 	}
 }

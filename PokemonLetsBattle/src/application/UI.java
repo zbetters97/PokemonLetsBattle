@@ -91,7 +91,7 @@ public class UI {
 	
 	// TRADE VALUES 
 	private Entity selectedItem = null;
-	private int selectedAmount = 1;
+	private int selectedAmount = 0;
 	
 	// BAG VALUES
 	private String bag_Subtitle = "";
@@ -517,6 +517,7 @@ public class UI {
 		}
 		if (gp.keyH.bPressed) {
 			gp.keyH.bPressed = false;
+			gp.keyH.playCursorSE();
 			subState = 0;
 			commandNum = 0;
 			charIndex = 0;
@@ -687,18 +688,19 @@ public class UI {
 		else {						
 			if (gp.keyH.upPressed) {
 				gp.keyH.upPressed = false;
-				if (selectedAmount < 99) {
-					
-					Entity item = gp.player.getItem(selectedItem, gp.player);
-					if (item == null || item.amount + selectedAmount < 99) {
-						gp.keyH.playCursorSE();	
-						selectedAmount++;	
-					}
+				
+				int cost = selectedItem.pprice * (selectedAmount + 1);
+				Entity item = gp.player.getItem(selectedItem, gp.player);
+				
+				if (selectedAmount < 99 && gp.player.money >= cost &&
+						(item == null || item.amount + selectedAmount < 99)) {
+					gp.keyH.playCursorSE();	
+					selectedAmount++;						
 				}
 			}
 			if (gp.keyH.downPressed) {
 				gp.keyH.downPressed = false;
-				if (selectedAmount > 1) {					
+				if (selectedAmount > 0) {					
 					gp.keyH.playCursorSE();	
 					selectedAmount--;					
 				}
@@ -707,14 +709,14 @@ public class UI {
 				gp.keyH.bPressed = false;
 				gp.keyH.playCursorSE();
 				selectedItem = null;
-				selectedAmount = 1;
+				selectedAmount = 0;
 			}		
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
-			
+				
 				int cost = selectedItem.pprice * selectedAmount;
 								
-				if (gp.player.money >= selectedItem.pprice * selectedAmount) {
+				if (gp.player.money >= cost && selectedAmount > 0) {
 					
 					playPurchaseSE();
 					
@@ -722,7 +724,7 @@ public class UI {
 					gp.player.addItem(selectedItem, gp.player, selectedAmount);
 					
 					selectedItem = null;
-					selectedAmount = 1;
+					selectedAmount = 0;
 				}
 				// NOT ENOUGH MONEY
 				else {
@@ -822,7 +824,7 @@ public class UI {
 			
 			if (i < items.size()) {
 				
-				text = "(" + items.get(i).amount + ") " + items.get(i).name;
+				text = "x" + items.get(i).amount + " " + items.get(i).name;
 				
 				if (selectedItem == items.get(i)) {
 					drawText(text, x, y, hp_red, Color.LIGHT_GRAY);			
@@ -915,6 +917,7 @@ public class UI {
 			if (gp.keyH.bPressed) {
 				gp.keyH.bPressed = false;
 				gp.keyH.playCursorSE();	
+				commandNum = 1;
 				subState = 0;
 				bagNum = 0;
 				charIndex = 0;
@@ -943,7 +946,7 @@ public class UI {
 			}
 			if (gp.keyH.downPressed) {
 				gp.keyH.downPressed = false;
-				if (selectedAmount > 1) {					
+				if (selectedAmount > 0) {					
 					gp.keyH.playCursorSE();	
 					selectedAmount--;					
 				}
@@ -952,19 +955,24 @@ public class UI {
 				gp.keyH.bPressed = false;
 				gp.keyH.playCursorSE();
 				selectedItem = null;
-				selectedAmount = 1;
+				selectedAmount = 0;
 			}		
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
-				playPurchaseSE();
-				
-				int cost = selectedItem.sprice * selectedAmount;
-				gp.player.money += cost;
-				gp.player.removeItem(selectedItem, gp.player, selectedAmount);
+								
+				if (selectedAmount > 0) {
+					playPurchaseSE();
 					
-				selectedItem = null;
-				selectedAmount = 1;
-				
+					int cost = selectedItem.sprice * selectedAmount;
+					gp.player.money += cost;
+					gp.player.removeItem(selectedItem, gp.player, selectedAmount);
+						
+					selectedItem = null;
+					selectedAmount = 0;	
+				}
+				else {
+					gp.keyH.playErrorSE();
+				}				
 			}
 		}
 	}

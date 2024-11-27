@@ -157,6 +157,7 @@ public class Entity {
 	
 	// CHILD ONLY		
 	public void getImage() { }
+	public void setDialogue() { }
 	public void assignParty() { }
 	public void setAction() { }	
 	public void move(String direction) { }
@@ -169,7 +170,7 @@ public class Entity {
 	public void apply(Entity entity, Pokemon p) { }
 	public int getLevel() { return 0; }
 	public void resetValues() { }	
-	
+		
 	// UPDATER
 	public void update() {	
 		setAction();					

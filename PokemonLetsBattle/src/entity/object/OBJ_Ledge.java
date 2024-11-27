@@ -98,8 +98,5 @@ public class OBJ_Ledge extends Entity {
 			gp.playSE(gp.entity_SE, "jump");
 			gp.player.jumping = true;
 		}
-		else {
-			
-		}
 	}
 }

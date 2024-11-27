@@ -24,6 +24,7 @@ public class NPC_Clerk extends Entity {
 	
 	public NPC_Clerk(GamePanel gp, int worldX, int worldY) {		
 		super(gp);	
+		
 		this.worldX = worldX * gp.tileSize;
 		this.worldY = worldY * gp.tileSize;	
 		worldXStart = this.worldX;
@@ -45,20 +46,18 @@ public class NPC_Clerk extends Entity {
 		setDialogue();
 		setItems();
 	}
-	
 	public void getImage() {			
 		up1 = setup("/npc/clerk_up_1").getSubimage(0, 0, 48, 40); 
 		down1 = setup("/npc/clerk_down_1").getSubimage(0, 0, 48, 40); 
 		left1 = setup("/npc/clerk_left_1").getSubimage(0, 0, 48, 40); 
 		right1 = setup("/npc/clerk_right_1").getSubimage(0, 0, 48, 40); 	
-	}	
+	}		
 	public void setDialogue() {
 		dialogues[0][0] = "Welcome to the Pokemon Market!";
 		dialogues[1][0] = "Hey! You don't have enough money!";
 		dialogues[2][0] = "I think you should hold onto that!";
 		dialogues[3][0] = "Come back soon!";		
-	}
-	
+	}	
 	public void setItems() {		
 		inventory_items.add(new COL_Ball_Poke(gp));
 		inventory_items.add(new ITM_Potion(gp));

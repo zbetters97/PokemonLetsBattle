@@ -37,8 +37,7 @@ public class NPC_Red extends Entity {
 		hitboxDefaultHeight = hitbox.height;
 		
 		setDialogue();
-	}
-	
+	}	
 	public void getImage() {			
 		up1 = setup("/npc/red_up_1"); 
 		down1 = setup("/npc/red_down_1"); 
@@ -47,6 +46,11 @@ public class NPC_Red extends Entity {
 		
 		frontSprite = setup("/npc/red_battle_front", gp.tileSize * 4, gp.tileSize * 4);
 	}	
+	public void setDialogue() {
+		dialogues[0][0] = "...";
+		
+		dialogues[1][0] = "...";
+	}
 	public void assignParty() {
 		/** RED PARTY REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Red_(game) **/
 		
@@ -95,16 +99,11 @@ public class NPC_Red extends Entity {
 				Moves.GIGAIMPACT
 		));		
 	}
-	public void setDialogue() {
-		dialogues[0][0] = "...";
-		
-		dialogues[1][0] = "...";
-	}
 	
 	public void speak() {	
 		
 		dialogueSet = 0;		
-				
+		
 		direction = getOppositeDirection(gp.player.direction);
 		startDialogue(this, dialogueSet);
 	}

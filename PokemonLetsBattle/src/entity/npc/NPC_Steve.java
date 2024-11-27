@@ -33,8 +33,6 @@ public class NPC_Steve extends Entity {
 		hitboxDefaultY = hitbox.y;
 		hitboxDefaultWidth = hitbox.width;
 		hitboxDefaultHeight = hitbox.height;
-		
-		setDialogue();
 	}
 	
 	public void getImage() {			

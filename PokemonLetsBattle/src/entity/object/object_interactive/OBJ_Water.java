@@ -14,6 +14,9 @@ public class OBJ_Water extends Entity {
 		name = objName;
 		hmType = hmSurf;
 		
+		setDialogue();
+	}
+	public void setDialogue() {		
 		dialogues[0][0] = "This water looks deep enough to\nbe surfed on by a Pokemon.";
 	}	
 	

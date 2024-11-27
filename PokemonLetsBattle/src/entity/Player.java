@@ -270,6 +270,7 @@ public class Player extends Entity {
 	
 	
 /** UPDATER **/
+	@Override
 	public void update() {
 		
 		if (jumping) {
@@ -340,7 +341,7 @@ public class Player extends Entity {
 		else if (objIIndex != -1) interactObject_I(objIIndex);
 		
 		if (action != Action.SURFING && gp.cChecker.checkWater(this)) {			
-			Entity water = new OBJ_Water(gp);
+			Entity water = new OBJ_Water(gp);	
 			water.interact();
 		}
 	}	
