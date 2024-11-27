@@ -13,9 +13,10 @@ import java.util.Random;
 import application.GamePanel;
 import entity.collectables.balls.*;
 import entity.collectables.items.*;
-import entity.object.OBJ_Rock;
-import entity.object.OBJ_Tree;
-import entity.object.OBJ_Water;
+import entity.object.object_interactive.OBJ_Boulder;
+import entity.object.object_interactive.OBJ_Rock;
+import entity.object.object_interactive.OBJ_Tree;
+import entity.object.object_interactive.OBJ_Water;
 import moves.Moves;
 import pokemon.Pokedex;
 import pokemon.Pokemon;
@@ -55,6 +56,7 @@ public class Player extends Entity {
 	private int fishNum = 1;
 	private int fishCatch = 0;
 	
+	private boolean strengthActive = false;
 	private boolean alert = false;
 	public boolean repelActive = false;
 	private int repelSteps = 0;
@@ -91,6 +93,7 @@ public class Player extends Entity {
 		pokeParty.add(Pokemon.getPokemon(Pokedex.MARSHTOMP, 16, new COL_Ball_Great(gp)));
 		pokeParty.add(Pokemon.getPokemon(Pokedex.SWAMPERT, 36, new COL_Ball_Master(gp)));
 		pokeParty.get(0).addMove(Moves.CUT);
+		pokeParty.get(0).addMove(Moves.STRENGTH);
 		pokeParty.get(1).addMove(Moves.ROCKSMASH);
 		pokeParty.get(2).addMove(Moves.SURF);
 	}
@@ -191,6 +194,7 @@ public class Player extends Entity {
 		running = false;
 		jumping = false;
 		alert = false;		
+		strengthActive = false;
 		pixelCounter = 0;
 		jumpCounter = 0;
 		fishCounter = 0;
@@ -330,10 +334,10 @@ public class Player extends Entity {
 	public void action() {
 		
 		int npcIndex = gp.cChecker.checkNPC();
-		int objIndex = gp.cChecker.checkObject(this, true);
-		
+		int objIIndex = gp.cChecker.checkObject_I(this);
+				
 		if (npcIndex != -1) interactNPC(npcIndex);
-		else if (objIndex != -1) interactObject(objIndex);
+		else if (objIIndex != -1) interactObject_I(objIIndex);
 		
 		if (action != Action.SURFING && gp.cChecker.checkWater(this)) {			
 			Entity water = new OBJ_Water(gp);
@@ -346,12 +350,14 @@ public class Player extends Entity {
 			gp.npc[gp.currentMap][i].speak();					
 		}	
 	}	
-	public void interactObject(int i) {
-		if (i != -1 && gp.obj[gp.currentMap][i].type == type_obstacle_i) {
-			gp.obj[gp.currentMap][i].interact();	
+	public void interactObject_I(int i) {		
+		if (i != -1) {		
+			if (gp.obj_i[gp.currentMap][i].type == type_obstacle_i) {							
+				gp.obj_i[gp.currentMap][i].interact();				
+			}				
 		}
-	}
-	
+	}	
+		
 	public void move() {	
 		
 		if (gp.keyH.bPressed && action == Action.IDLE) {
@@ -463,22 +469,28 @@ public class Player extends Entity {
 		gp.eHandler.checkEvent();		
 		gp.cChecker.checkTile(this);	
 		gp.cChecker.checkEntity(this, gp.npc);			
-		gp.cChecker.checkObject(this, true);
 		
-		// CHECK INTERACTIVE OBJECTS COLLISION
+		int objIndex = gp.cChecker.checkObject(this, true);
 		int objIIndex = gp.cChecker.checkObject_I(this);
-		if (objIIndex != -1) interactObjectI(objIIndex);	
+		
+		if (objIndex != -1) interactObject(objIndex);	
+		else if (objIIndex != -1) moveObject_I(objIIndex);
 	}	
-	public void interactObjectI(int i) {
-		if (gp.obj_i[gp.currentMap][i].type == type_obstacle) {				
-			if (!gp.obj_i[gp.currentMap][i].moving) {	
-				gp.obj_i[gp.currentMap][i].move(direction);	
+	public void interactObject(int i) {
+		if (i != -1) {
+			if (gp.obj[gp.currentMap][i].type == type_obstacle) {
+				gp.obj[gp.currentMap][i].interact();	
 			}
-		}	
-		else if (gp.obj_i[gp.currentMap][i].type == type_obstacle_i) {				
-			gp.obj_i[gp.currentMap][i].interact();	
-		}	
+		}		
 	}	
+	public void moveObject_I(int i) {
+		if (i != -1) {			
+			if (gp.obj_i[gp.currentMap][i].name.equals(OBJ_Boulder.objName) && strengthActive && 
+					!gp.obj_i[gp.currentMap][i].moving) {
+				gp.obj_i[gp.currentMap][i].move(direction);								
+			}				
+		}
+	}
 	
 	private void hm() {
 		
@@ -495,13 +507,11 @@ public class Player extends Entity {
 			
 			action = Action.IDLE;
 			
-			switch (activeItem.name) {
-				case OBJ_Water.objName:
-					moving = true;
-					action = Action.SURFING;
-					gp.stopMusic();
-					gp.startMusic(0, "surfing");
-					break;
+			switch (activeItem.name) {			
+				case OBJ_Boulder.objName:
+					gp.playSE(gp.moves_SE, "Strength");
+					strengthActive = true;	
+					break;			
 				case OBJ_Rock.objName:
 					activeItem.opening = true;
 					gp.playSE(gp.moves_SE, "Rock Smash");
@@ -510,6 +520,12 @@ public class Player extends Entity {
 					activeItem.opening = true;
 					gp.playSE(gp.moves_SE, "Cut");
 					break;
+				case OBJ_Water.objName:
+					moving = true;
+					action = Action.SURFING;
+					gp.stopMusic();
+					gp.startMusic(0, "surfing");
+					break;				
 				default:
 					break;
 			}

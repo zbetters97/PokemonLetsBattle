@@ -1,4 +1,4 @@
-package entity.object.object_interactive;
+package entity.object;
 
 import application.GamePanel;
 import entity.Entity;
@@ -15,7 +15,7 @@ public class OBJ_Door extends Entity {
 		this.worldX = worldX *= gp.tileSize;
 		this.worldY = worldY *= gp.tileSize;
 		
-		type = type_obstacle_i;
+		type = type_obstacle;
 		name = objName;
 		direction = "down";
 		hasShadow = false;
@@ -25,14 +25,14 @@ public class OBJ_Door extends Entity {
 	}	
 	
 	public void getStoreImage() {
-		down1 = setup("/objects_interactive/door_store_1");
-		down2 = setup("/objects_interactive/door_store_2");
-		down3 = setup("/objects_interactive/door_store_3");	
+		down1 = setup("/objects/door_store_1");
+		down2 = setup("/objects/door_store_2");
+		down3 = setup("/objects/door_store_3");	
 	}
 	public void getGymImage() {
-		down1 = setup("/objects_interactive/door_gym_1");
-		down2 = setup("/objects_interactive/door_gym_2");
-		down3 = setup("/objects_interactive/door_gym_3");	
+		down1 = setup("/objects/door_gym_1");
+		down2 = setup("/objects/door_gym_2");
+		down3 = setup("/objects/door_gym_3");	
 	}
 	
 	public void update() {
@@ -46,6 +46,14 @@ public class OBJ_Door extends Entity {
 		else if (closing) {
 			close();
 		}			
+	}
+	
+	public void interact() {	
+		if (!opening) {
+			playOpenSE();
+			opening = true;		
+			gp.player.moving = true;
+		}				
 	}
 	
 	private void open() {		
@@ -93,15 +101,7 @@ public class OBJ_Door extends Entity {
 			closing = false;
 		}
 	}
-	
-	public void interact() {	
-		if (!opening) {
-			playOpenSE();
-			opening = true;		
-			gp.player.moving = true;
-		}				
-	}
-	
+			
 	public void playOpenSE() {
 		gp.playSE(gp.world_SE, "door-shop");
 	}

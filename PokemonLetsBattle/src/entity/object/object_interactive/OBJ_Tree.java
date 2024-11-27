@@ -1,4 +1,4 @@
-package entity.object;
+package entity.object.object_interactive;
 
 import application.GamePanel;
 import entity.Entity;
@@ -18,14 +18,14 @@ public class OBJ_Tree extends Entity {
 		hasShadow = false;		
 		hmType = hmCut;
 		
-		dialogues[0][0] = "This tree looks like it could be\ncut by a Pokemon.";
+		dialogues[0][0] = "This tree looks like it could\nbe cut by a Pokemon.";
 	}	
 	
 	public void getImage() {
-		down1 = setup("/objects/tree_1");
-		down2 = setup("/objects/tree_2");
-		down3 = setup("/objects/tree_3");
-		down4 = setup("/objects/tree_4");
+		down1 = setup("/objects_interactive/tree_1");
+		down2 = setup("/objects_interactive/tree_2");
+		down3 = setup("/objects_interactive/tree_3");
+		down4 = setup("/objects_interactive/tree_4");
 	}
 	
 	public void interact() {

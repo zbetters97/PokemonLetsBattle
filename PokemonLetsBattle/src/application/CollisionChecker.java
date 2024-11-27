@@ -250,7 +250,7 @@ public class CollisionChecker {
 		
 		for (int i  = 0; i < gp.obj[1].length; i++) {
 			
-			if (gp.obj[gp.currentMap][i] != null) {
+			if (gp.obj[gp.currentMap][i] != null && entity != gp.obj[gp.currentMap][i]) {
 				
 				// get entity's solid area position
 				entity.hitbox.x = entity.worldX;
@@ -303,7 +303,7 @@ public class CollisionChecker {
 		
 		for (int i  = 0; i < gp.obj_i[1].length; i++) {
 			
-			if (gp.obj_i[gp.currentMap][i] != null) {
+			if (gp.obj_i[gp.currentMap][i] != null && entity != gp.obj_i[gp.currentMap][i]) {
 				
 				// get entity's solid area position
 				entity.hitbox.x = entity.worldX;

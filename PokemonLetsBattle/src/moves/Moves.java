@@ -464,6 +464,8 @@ public enum Moves {
 			"The foe is stomped with a big\nfoot. It may also make the\ntarget flinch."),
 	STONEEDGE ("Stone Edge", MoveType.PHYSICAL, Type.ROCK, 5, 100, 90, 0, 1,
 			"The user stabs the foe with\na sharpened stone. It has a\nhigh critical-hit ratio."),
+	STRENGTH ("Strength", MoveType.PHYSICAL, Type.NORMAL, 15, 80, 100, 0, 
+			"The foe is slugged with a\npunch thrown at maximum\npower. It can also be used\nto move boulders."),
 	STRUGGLE ("Struggle", MoveType.PHYSICAL, Type.NORMAL, 10, 50, 100, 0, 0.25, 
 			"struggle"),
 	SUBMISSION ("Submission", MoveType.PHYSICAL, Type.FIGHTING, 25, 80, 80, 0, 0.25,

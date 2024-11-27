@@ -135,7 +135,7 @@ public class Entity {
 	public String hmType;
 	public final String hmCut = "Cut";
 	public final String hmRockSmash = "Rock Smash";
-	public final String hmStrenght = "Strength";
+	public final String hmStrength = "Strength";
 	public final String hmSurf = "Surf";
 	public final String hmFly = "Fly";
 	
@@ -211,13 +211,12 @@ public class Entity {
 	}
 	
 	// COLLISION CHECKER
-	protected void checkCollision() {	
-		
-		collisionOn = false;
-		
+	protected void checkCollision() {			
+		collisionOn = false;		
 		gp.cChecker.checkTile(this);	
-		gp.cChecker.checkEntity(this, gp.npc);		
 		gp.cChecker.checkPlayer(this);		
+		gp.cChecker.checkEntity(this, gp.npc);				
+		gp.cChecker.checkEntity(this, gp.iTile);
 		gp.cChecker.checkObject(this, false);
 		gp.cChecker.checkObject_I(this);
 	}

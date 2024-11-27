@@ -1,4 +1,4 @@
-package entity.object;
+package entity.object.object_interactive;
 
 import application.GamePanel;
 import entity.Entity;
@@ -17,14 +17,14 @@ public class OBJ_Rock extends Entity {
 		collision = true;
 		hmType = hmRockSmash;
 		
-		dialogues[0][0] = "This rock looks like it could be\nsmashed by a Pokemon.";
+		dialogues[0][0] = "This rock looks like it could\nbe smashed by a Pokemon.";
 	}	
 	
 	public void getImage() {
-		down1 = setup("/objects/rock_1");
-		down2 = setup("/objects/rock_2");
-		down3 = setup("/objects/rock_3");
-		down4 = setup("/objects/rock_4");
+		down1 = setup("/objects_interactive/rock_1");
+		down2 = setup("/objects_interactive/rock_2");
+		down3 = setup("/objects_interactive/rock_3");
+		down4 = setup("/objects_interactive/rock_4");
 	}
 	
 	public void interact() {

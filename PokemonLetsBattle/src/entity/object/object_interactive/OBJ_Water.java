@@ -1,4 +1,4 @@
-package entity.object;
+package entity.object.object_interactive;
 
 import application.GamePanel;
 import entity.Entity;

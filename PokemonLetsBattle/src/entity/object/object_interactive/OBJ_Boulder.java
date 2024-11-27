@@ -5,32 +5,46 @@ import java.awt.Rectangle;
 import application.GamePanel;
 import entity.Entity;
 
-public class OI_Boulder extends Entity {
+public class OBJ_Boulder extends Entity {
 	
-	public static final String obj_iName = "Boulder";
+	public static final String objName = "Boulder";
 	public int pushCounter = 0;
 	
-	public OI_Boulder(GamePanel gp, int worldX, int worldY) {		
+	public OBJ_Boulder(GamePanel gp, int worldX, int worldY) {		
 		super(gp);
 		this.worldX = worldX *= gp.tileSize;
 		this.worldY = worldY *= gp.tileSize;
 		
-		type = type_obstacle;
-		name = obj_iName;
+		type = type_obstacle_i;
+		name = objName;
 		direction = "down";
 		collision = true;	
 		speed = 1; defaultSpeed = speed;
+		
+		hmType = hmStrength;		
+		dialogues[0][0] = "This boulder looks like it could\nbe moved by a Pokemon.";
 		
 		hitbox = new Rectangle(1, 1, 46, 46); 		
 		hitboxDefaultX = hitbox.x;
 		hitboxDefaultY = hitbox.y;
 		hitboxDefaultWidth = hitbox.width;
 		hitboxDefaultHeight = hitbox.height;
-	}
-	
+	}	
 	public void getImage() {		
 		up1 = down1 = left1 = right1 = setup("/objects_interactive/boulder"); 
 		up2 = down2 = left2 = right2 = setup("/objects_interactive/boulder"); 
+	}
+	
+	public void interact() {
+		gp.ui.npc = this;
+		dialogueSet = 0;	
+		
+		startDialogue(this, dialogueSet);
+	}
+	
+	public void useHM() {
+		gp.player.action = Action.HM;
+		gp.player.activeItem = this;
 	}
 	
 	public void move(String dir) {	
@@ -53,11 +67,12 @@ public class OI_Boulder extends Entity {
 	
 	public void checkCollision() {
 		collisionOn = false;
+		gp.cChecker.checkTile(this);
 		gp.cChecker.checkPlayer(this);
-		gp.cChecker.checkTile(this);		
-		gp.cChecker.checkEntity(this, gp.iTile);
-		gp.cChecker.checkEntity(this, gp.obj);	
-		gp.cChecker.checkEntity(this, gp.npc);		
+		gp.cChecker.checkEntity(this, gp.npc);	
+		gp.cChecker.checkEntity(this, gp.iTile);		
+		gp.cChecker.checkObject(this, false);
+		gp.cChecker.checkObject_I(this);
 	}
 	
 	public void update() { 

@@ -14,7 +14,7 @@ public class OBJ_Ledge extends Entity {
 	public OBJ_Ledge(GamePanel gp, int x, int y) {		
 		super(gp);
 		
-		type = type_obstacle_i;
+		type = type_obstacle;
 		worldX = x * gp.tileSize;
 		worldY = y * gp.tileSize;	
 		
@@ -25,7 +25,7 @@ public class OBJ_Ledge extends Entity {
 	public OBJ_Ledge(GamePanel gp, int x, int y, String direction, int tiles) {		
 		super(gp);
 		
-		type = type_obstacle_i;
+		type = type_obstacle;
 		worldX = x * gp.tileSize;
 		worldY = y * gp.tileSize;	
 		
@@ -42,21 +42,21 @@ public class OBJ_Ledge extends Entity {
 		}
 	}	
 	public void getImage() {		
-		up1 = setup("/objects_interactive/ledge_up_1"); 
-		up2 = setup("/objects_interactive/ledge_up_2");
-		up3 = setup("/objects_interactive/ledge_up_3");	
+		up1 = setup("/objects/ledge_up_1"); 
+		up2 = setup("/objects/ledge_up_2");
+		up3 = setup("/objects/ledge_up_3");	
 		
-		down1 = setup("/objects_interactive/ledge_down_1"); 
-		down2 = setup("/objects_interactive/ledge_down_2");
-		down3 = setup("/objects_interactive/ledge_down_3");	
+		down1 = setup("/objects/ledge_down_1"); 
+		down2 = setup("/objects/ledge_down_2");
+		down3 = setup("/objects/ledge_down_3");	
 		
-		left1 = setup("/objects_interactive/ledge_left_1"); 
-		left2 = setup("/objects_interactive/ledge_left_2");
-		left3 = setup("/objects_interactive/ledge_left_3");	
+		left1 = setup("/objects/ledge_left_1"); 
+		left2 = setup("/objects/ledge_left_2");
+		left3 = setup("/objects/ledge_left_3");	
 		
-		right1 = setup("/objects_interactive/ledge_right_1"); 
-		right2 = setup("/objects_interactive/ledge_right_2");
-		right3 = setup("/objects_interactive/ledge_right_3");	
+		right1 = setup("/objects/ledge_right_1"); 
+		right2 = setup("/objects/ledge_right_2");
+		right3 = setup("/objects/ledge_right_3");	
 	}	
 	public BufferedImage getImageHor(int tiles, BufferedImage left, BufferedImage middle, BufferedImage right) {
 		
