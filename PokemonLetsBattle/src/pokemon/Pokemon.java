@@ -34,6 +34,8 @@ public class Pokemon {
 		MACHOP, MACHOKE, MACHAMP,
 		GEODUDE, GRAVELER, GOLEM,
 		PONYTA, RAPIDASH,
+		GASTLY, HAUNTER, GENGAR,
+		HITMONLEE, HITMONCHAN,
 		HORSEA, SEADRA, 
 		MAGIKARP, GYARADOS,
 		LAPRAS, SNORLAX,
@@ -476,8 +478,10 @@ public class Pokemon {
 			new Growlithe(1, null), new Arcanine(1, null),
 			new Abra(1, null), new Kadabra(1, null), new Alakazam(1, null),
 			new Machop(1, null), new Machoke(1, null), new Machamp(1, null),
-			new Geodude(1, null), new Graveler(1, null), new Golem(1, null),
+			new Geodude(1, null), new Graveler(1, null), new Golem(1, null),			
 			new Ponyta(1, null), new Rapidash(1, null),
+			new Gastly(1, null), new Haunter(1, null), new Gengar(1, null),
+			new Hitmonlee(1, null), new Hitmonchan(1, null),
 			new Horsea(1, null), new Seadra(1, null),
 			new Magikarp(1, null), new Gyarados(1, null),
 			new Lapras(1, null), new Snorlax(1, null),
@@ -520,6 +524,11 @@ public class Pokemon {
 			case GOLEM: pokemon = new Golem(level, ball); break;	
 			case PONYTA: pokemon = new Ponyta(level, ball); break;
 			case RAPIDASH: pokemon = new Rapidash(level, ball); break;
+			case GASTLY: pokemon = new Gastly(level, ball); break;
+			case HAUNTER: pokemon = new Haunter(level, ball); break;
+			case GENGAR: pokemon = new Gengar(level, ball); break;
+			case HITMONLEE: pokemon = new Hitmonlee(level, ball); break;
+			case HITMONCHAN: pokemon = new Hitmonchan(level, ball); break;
 			case HORSEA: pokemon = new Horsea(level, ball); break;
 			case SEADRA: pokemon = new Seadra(level, ball); break;
 			case MAGIKARP: pokemon = new Magikarp(level, ball); break;

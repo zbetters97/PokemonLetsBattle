@@ -23,73 +23,6 @@ public enum PokedexOLD {
 	/** CATCH RATE REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pokémon_by_catch_rate **/	
 
 
-	GASTLY ("Gastly", 92, Arrays.asList(Type.GHOST, Type.POISON), Ability.LEVITATE, 30, 35, 30, 100, 35, 80, 25, 93, 95, 1, Growth.MEDIUMSLOW, 190,
-			Map.ofEntries(
-					Map.entry(15, Moves.NIGHTSHADE),
-					Map.entry(19, Moves.CONFUSERAY),
-					Map.entry(22, Moves.SUCKERPUNCH),
-					Map.entry(26, Moves.PAYBACK),
-					Map.entry(29, Moves.SHADOWBALL),
-					Map.entry(33, Moves.DREAMEATER),
-					Map.entry(36, Moves.DARKPULSE)
-			)),
-	HAUNTER ("Haunter", 93, Arrays.asList(Type.GHOST, Type.POISON), Ability.LEVITATE, 45, 50, 45, 115, 55, 96, 40, 94, 126, 2, Growth.MEDIUMSLOW, 90,
-			Map.ofEntries(
-					Map.entry(15, Moves.NIGHTSHADE),
-					Map.entry(19, Moves.CONFUSERAY),
-					Map.entry(22, Moves.SUCKERPUNCH),
-					Map.entry(25, Moves.SHADOWPUNCH),
-					Map.entry(28, Moves.PAYBACK),
-					Map.entry(33, Moves.SHADOWBALL),
-					Map.entry(39, Moves.DREAMEATER),
-					Map.entry(44, Moves.DARKPULSE)
-			)),
-	GENGAR ("Gengar", 94, Arrays.asList(Type.GHOST, Type.POISON), Ability.LEVITATE, 60, 65, 60, 130, 75, 110, -1, -1, 190, 3, Growth.MEDIUMSLOW, 45,
-			Map.ofEntries(
-					Map.entry(15, Moves.NIGHTSHADE),
-					Map.entry(19, Moves.CONFUSERAY),
-					Map.entry(22, Moves.SUCKERPUNCH),
-					Map.entry(25, Moves.SHADOWPUNCH),
-					Map.entry(28, Moves.PAYBACK),
-					Map.entry(33, Moves.SHADOWBALL),
-					Map.entry(39, Moves.DREAMEATER),
-					Map.entry(44, Moves.DARKPULSE)
-			)),	
-	HITMONLEE ("Hitmonlee", 106, Type.FIGHTING, Ability.LIMBER, 50, 120, 53, 35, 110, 87, -1, -1, 139, 2, Growth.MEDIUMFAST, 45, 
-			Map.ofEntries(
-					Map.entry(5, Moves.MEDITATE),
-					Map.entry(9, Moves.ROLLINGKICK),
-					Map.entry(13, Moves.JUMPKICK),
-					Map.entry(17, Moves.BRICKBREAK),
-//					Map.entry(21, Moves.FOCUSENERGY),
-					Map.entry(25, Moves.FEINT),
-					Map.entry(29, Moves.HIGHJUMPKICK),
-//					Map.entry(33, Moves.MINDREADER),
-					Map.entry(37, Moves.FORESIGHT),
-					Map.entry(41, Moves.BLAZEKICK),
-					Map.entry(45, Moves.ENDURE),
-					Map.entry(49, Moves.MEGAKICK),
-					Map.entry(53, Moves.CLOSECOMBAT),
-					Map.entry(57, Moves.REVERSAL)
-			)),
-	HITMONCHAN ("Hitmonchan", 107, Type.FIGHTING, Ability.KEENEYE, 50, 105, 79, 35, 110, 76, -1, -1, 140, 2, Growth.MEDIUMFAST, 45, 
-			Map.ofEntries(
-					Map.entry(6, Moves.AGILITY),
-					Map.entry(11, Moves.PURSUIT),
-					Map.entry(16, Moves.MACHPUNCH),
-					Map.entry(17, Moves.BULLETPUNCH),
-					Map.entry(21, Moves.FEINT),
-					Map.entry(26, Moves.VACUUMWAVE),
-					Map.entry(32, Moves.THUNDERPUNCH),
-					Map.entry(33, Moves.ICEPUNCH),
-					Map.entry(34, Moves.FIREPUNCH),
-					Map.entry(36, Moves.SKYUPPERCUT),
-					Map.entry(41, Moves.MEGAPUNCH),
-					Map.entry(46, Moves.DETECT),
-//					Map.entry(51, Moves.COUNTER),
-					Map.entry(56, Moves.CLOSECOMBAT)
-					
-			)),
 	ARTICUNO ("Articuno", 144, Arrays.asList(Type.FLYING, Type.ICE), Ability.PRESSURE, 90, 85, 100, 95, 125, 85, -1, -1, 215, 3, Growth.SLOW, 3,
 			Map.ofEntries(
 					Map.entry(8, Moves.MIST),
@@ -875,27 +808,7 @@ public enum PokedexOLD {
 	private static final Map<PokedexOLD, List<Move>> moveMap;
 	static {		
 		moveMap = new HashMap<>();
-		
-        moveMap.put(GASTLY, Arrays.asList(
-        		new Move(Moves.LICK), 
-        		new Move(Moves.HYPNOSIS)
-        ));   
-        moveMap.put(HAUNTER, Arrays.asList(
-        		new Move(Moves.LICK), 
-        		new Move(Moves.HYPNOSIS)
-        ));     
-        moveMap.put(GENGAR, Arrays.asList(
-        		new Move(Moves.LICK),
-        		new Move(Moves.HYPNOSIS)
-        )); 
-        moveMap.put(HITMONLEE, Arrays.asList(
-//       		new Move(Moves.REVENGE),
-        		new Move(Moves.DOUBLEKICK)
-        )); 
-        moveMap.put(HITMONCHAN, Arrays.asList(
-//       		new Move(Moves.REVENGE),
-        		new Move(Moves.COMETPUNCH)
-        ));       
+
         moveMap.put(ARTICUNO, Arrays.asList(
         		new Move(Moves.GUST),
         		new Move(Moves.POWDERSNOW)
