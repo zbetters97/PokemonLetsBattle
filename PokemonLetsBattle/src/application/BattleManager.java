@@ -19,7 +19,6 @@ import entity.npc.NPC_Red;
 import moves.Move;
 import moves.Move.MoveType;
 import moves.Moves;
-import pokemon.Pokedex;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Protection;
 import properties.Ability;
@@ -39,7 +38,8 @@ public class BattleManager extends Thread {
 			Moves.SUPERSONIC
 	);
 	private static final Map<Integer, Integer> magnitudeTable = Map.ofEntries(
-			Map.entry(4, 5), Map.entry(5, 10), 
+			Map.entry(4, 5), 
+			Map.entry(5, 10), 
 			Map.entry(6, 20), 
 			Map.entry(7, 30), 
 			Map.entry(8, 20), 
@@ -225,8 +225,8 @@ public class BattleManager extends Thread {
 			}
 		}
 		
-		if (!gp.player.personalDex.contains(fighter[1].getPokemon())) {
-			gp.player.personalDex.add(Pokedex.getByIndex(fighter[1].getIndex()));
+		if (!gp.player.personalDex.contains(fighter[1].getIndex())) {
+			gp.player.personalDex.add(fighter[1].getIndex());
 		}
 		
 		running = false;			
@@ -275,8 +275,8 @@ public class BattleManager extends Thread {
 		
 		for (Pokemon p : gp.player.pokeParty) {
 			if (!otherFighters.contains(p) &&
-					p.getHeldItem() != null && 
-					p.getHeldItem().name.equals(ITM_EXP_Share.colName)) {
+					p.getItem() != null && 
+					p.getItem().name.equals(ITM_EXP_Share.colName)) {
 				otherFighters.add(p);
 			}
 		}
@@ -317,8 +317,8 @@ public class BattleManager extends Thread {
 			newFighter[0] = null;
 			newFighter[1] = null;
 			
-			if (!gp.player.personalDex.contains(fighter[1].getPokemon())) {
-				gp.player.personalDex.add(Pokedex.getByIndex(fighter[1].getIndex()));
+			if (!gp.player.personalDex.contains(fighter[1].getIndex())) {
+				gp.player.personalDex.add(fighter[1].getIndex());
 			}
 			
 			running = false;								
@@ -885,7 +885,7 @@ public class BattleManager extends Thread {
 			
 			typeDialogue(atk.getName() + " used\n" + atkMove.toString() + "!", false); 
 			
-			atk.setProtectedState(Protection.NONE);			
+			atk.setProtection(Protection.NONE);			
 			atk.setAttacking(true);
 			playSE(gp.moves_SE, atkMove.getName());
 			
@@ -905,7 +905,7 @@ public class BattleManager extends Thread {
 		}
 		else {						
 			typeDialogue(atk.getName() + " used\n" + atkMove.toString() + "!");
-			atk.setProtectedState(atkMove.getProtection());				
+			atk.setProtection(atkMove.getProtection());				
 			typeDialogue(atkMove.getDelay(atk.getName()));	
 			
 			atkMove.setTurnCount(atkMove.getTurnCount() - 1);
@@ -994,7 +994,7 @@ public class BattleManager extends Thread {
 		
 		boolean hit = false;
 		
-		switch (trg.getProtectedState()) {
+		switch (trg.getProtection()) {
 			case BOUNCE, FLY, SKYDROP:				
 				if (move.getMove() != Moves.GUST &&
 						move.getMove() != Moves.SKYUPPERCUT &&
@@ -2395,7 +2395,7 @@ public class BattleManager extends Thread {
 		
 		int exp = 0;
 		
-		double b = fighter[loser].getEXPYeild();
+		double b = fighter[loser].getXPYield();
 		double L = fighter[loser].getLevel();
 		double s = 1.0;
 		double e = 1.0;
@@ -2403,7 +2403,7 @@ public class BattleManager extends Thread {
 		double t = 1.0;
 		
 		exp = (int) (Math.floor( (b * L) / 7 ) * Math.floor(1 / s) * e * a * t);
-						
+		
 		return exp;
 	}
 	private void increaseEXP(Pokemon p, int xp, int timer) throws InterruptedException {
@@ -2415,7 +2415,7 @@ public class BattleManager extends Thread {
 			pause(timer);
 												
 			// FIGHTER LEVELED UP
-			if (p.getXP() >= p.getBXP() + p.getNextXP()) {			
+			if (p.getXP() >= p.getBXP() + p.getNXP()) {			
 				
 				gp.pauseMusic();
 				gp.playSE(gp.battle_SE, "level-up");
@@ -3035,7 +3035,7 @@ public class BattleManager extends Thread {
 			if (gp.player.pokeParty.get(i).canEvolve()) {
 				
 				Pokemon oldEvolve = gp.player.pokeParty.get(i);
-				Pokemon newEvolve = Pokemon.evolve(oldEvolve);
+				Pokemon newEvolve = oldEvolve.evolve();
 				
 				gp.ui.evolvePokemon = oldEvolve;
 				gp.ui.battleState = gp.ui.battle_Evolve;
@@ -3085,8 +3085,8 @@ public class BattleManager extends Thread {
 		typeDialogue("Congratulations! Your " +  oldEvolve.getName() + 
 				"\nevolved into " + newEvolve.getName() + "!", true);
 		
-		if (!gp.player.personalDex.contains(newEvolve.getPokemon())) {
-			gp.player.personalDex.add(Pokedex.getByIndex(newEvolve.getIndex()));
+		if (!gp.player.personalDex.contains(newEvolve.getIndex())) {
+			gp.player.personalDex.add(newEvolve.getIndex());
 		}
 				
 		checkNewMove(newEvolve);

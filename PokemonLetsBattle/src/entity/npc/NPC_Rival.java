@@ -4,8 +4,8 @@ import java.awt.Rectangle;
 
 import application.GamePanel;
 import entity.Entity;
-import pokemon.Pokedex;
 import pokemon.Pokemon;
+import pokemon.Pokemon.Pokedex;
 
 public class NPC_Rival extends Entity {
 	
@@ -62,9 +62,9 @@ public class NPC_Rival extends Entity {
 		dialogues[2][0] = "You're suspsiciously tough for\nyour age!";
 	}
 	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon(Pokedex.TORCHIC, 5, null));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.COMBUSKEN, 16, null));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.BLAZIKEN, 36, null));
+		pokeParty.add(Pokemon.get(Pokedex.TORCHIC, 5, null));
+		pokeParty.add(Pokemon.get(Pokedex.COMBUSKEN, 16, null));
+		pokeParty.add(Pokemon.get(Pokedex.BLAZIKEN, 36, null));
 	}
 		
 	public void speak() {			

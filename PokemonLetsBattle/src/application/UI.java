@@ -20,7 +20,6 @@ import javax.imageio.ImageIO;
 import entity.Entity;
 import entity.npc.NPC_Nurse;
 import moves.Move;
-import pokemon.Pokedex;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Protection;
 import properties.Type;
@@ -1276,7 +1275,7 @@ public class UI {
 		int slotWidth;
 		int slotHeight;
 		String text;
-		Pokedex p;
+		Pokemon p;
 		
 		x = gp.tileSize;
 		y = (int) (gp.tileSize * 0.6); 
@@ -1300,8 +1299,8 @@ public class UI {
 		g2.setColor(Color.BLACK);
 		g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 15, 15);
 		
-		p = Pokedex.values()[bagNum];
-		if (gp.player.personalDex.contains(p)) {
+		p = Pokemon.getPokedex().get(bagNum);
+		if (gp.player.personalDex.contains(p.getIndex())) {
 			
 			x = (int) (gp.tileSize * 2.3);
 			y = (int) (gp.tileSize * 4.8);	
@@ -1347,9 +1346,9 @@ public class UI {
 		slotHeight = gp.tileSize;
 		for (int i = bagStart; i < bagStart + 11; i++) {
 			
-			if (i < Pokedex.values().length) {
+			if (i < Pokemon.getPokedex().size()) {
 				
-				p = Pokedex.values()[i];
+				p = Pokemon.getPokedex().get(i);
 				
 				g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35f));
 				if (bagNum == i) {
@@ -1358,7 +1357,7 @@ public class UI {
 				}
 				
 				int index = p.getIndex();
-				if (gp.player.pokeParty.stream().filter(o -> o.getIndex() == index).findFirst().isPresent()) {
+				if (gp.player.pokeParty.stream().anyMatch(o -> o.getIndex() == index)) {
 					g2.drawImage(dex_ball, x - (int) (gp.tileSize * 0.8), y - (int) (gp.tileSize * 0.6), null);
 				}
 												
@@ -1366,7 +1365,7 @@ public class UI {
 				
 				g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48f));
 				drawText(p.getIndex() + "", x + (int) (gp.tileSize * 0.6), y, Color.BLACK, Color.LIGHT_GRAY);					
-				if (gp.player.personalDex.contains(p)) {
+				if (gp.player.personalDex.contains(p.getIndex())) {
 					drawText(p.getName(), x + (int) (gp.tileSize * 2.2), y, Color.BLACK, Color.LIGHT_GRAY);	
 				}
 				else {					
@@ -1387,7 +1386,7 @@ public class UI {
 			drawText("^", x, y, Color.BLACK, Color.LIGHT_GRAY);
 		}
 		
-		if (bagStart + 11 < Pokedex.values().length) {
+		if (bagStart + 11 < Pokemon.getPokedex().size()) {
 			x = (int) (gp.tileSize * 12.5);
 			y = (int) (gp.tileSize * 11.4);
 			drawText("v", x, y, Color.BLACK, Color.LIGHT_GRAY);
@@ -1404,7 +1403,7 @@ public class UI {
 			gp.keyH.downPressed = false;
 			gp.keyH.playCursorSE();
 			
-			if (bagNum < Pokedex.values().length - 1) bagNum++;
+			if (bagNum < Pokemon.getPokedex().size() - 1) bagNum++;
 			if (bagNum >= bagStart + 11) bagStart++;
 		}					
 		if (gp.keyH.bPressed) {
@@ -1419,7 +1418,7 @@ public class UI {
 		
 		if (gp.keyH.xPressed) {
 			gp.keyH.xPressed = false;
-			if (gp.player.personalDex.contains(p)) {
+			if (gp.player.personalDex.contains(p.getIndex())) {
 				gp.playSE(gp.cry_SE, p.toString());				
 			}			
 		}
@@ -2282,7 +2281,7 @@ public class UI {
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;					
 				
-				if (gp.player.pokeParty.get(fighterNum).getHeldItem() == null) {
+				if (gp.player.pokeParty.get(fighterNum).getItem() == null) {
 					gp.keyH.playCursorSE();
 					pauseState = pause_Bag;
 					bagState = bag_Main;
@@ -2305,7 +2304,7 @@ public class UI {
 				gp.keyH.aPressed = false;		
 				
 				Pokemon p = gp.player.pokeParty.get(fighterNum);
-				Entity item = p.getHeldItem();
+				Entity item = p.getItem();
 				
 				if (item != null) {
 					gp.keyH.playCursorSE();					
@@ -2469,8 +2468,8 @@ public class UI {
 		
 		g2.drawImage(fighter.getMenuSprite(), x, y, null);
 		
-		if (fighter.getHeldItem() != null) {			
-			g2.drawImage(fighter.getHeldItem().image1, x + gp.tileSize, y + (int) (gp.tileSize * 1.2), null);
+		if (fighter.getItem() != null) {			
+			g2.drawImage(fighter.getItem().image1, x + gp.tileSize, y + (int) (gp.tileSize * 1.2), null);
 		}
 		
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));	
@@ -2588,19 +2587,19 @@ public class UI {
 		text = fighter.getHP() + "/" + fighter.getBHP(); 
 		frameX = getXforRightAlignText(text, x);	
 		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
-		text = Integer.toString((int) fighter.getAttack()); 
+		text = Integer.toString((int) fighter.getBAttack()); 
 		frameX = getXforRightAlignText(text, x);	
 		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
-		text = Integer.toString((int) fighter.getDefense()); 
+		text = Integer.toString((int) fighter.getBDefense()); 
 		frameX = getXforRightAlignText(text, x);	
 		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
-		text = Integer.toString((int) fighter.getSpAttack()); 
+		text = Integer.toString((int) fighter.getBSpAttack()); 
 		frameX = getXforRightAlignText(text, x);	
 		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
-		text = Integer.toString((int) fighter.getSpDefense()); 
+		text = Integer.toString((int) fighter.getBSpDefense()); 
 		frameX = getXforRightAlignText(text, x);	
 		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
-		text = Integer.toString((int) fighter.getSpeed()); 
+		text = Integer.toString((int) fighter.getBSpeed()); 
 		frameX = getXforRightAlignText(text, x);	
 		drawText(text, frameX, y, Color.WHITE, Color.BLACK); y += gp.tileSize * 0.8;
 		
@@ -2647,7 +2646,7 @@ public class UI {
 		g2.setColor(battle_gray);
 		g2.fillRect(x, y, width, height);		
 				
-		double remainXP = (double) (fighter.getXP() - fighter.getBXP()) / (double) fighter.getNextXP();		
+		double remainXP = (double) (fighter.getXP() - fighter.getBXP()) / (double) fighter.getNXP();		
 		width *= remainXP;				
 		g2.setColor(battle_blue);
 		g2.fillRect(x, y, width, height);
@@ -2674,7 +2673,7 @@ public class UI {
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD));
 		y += gp.tileSize * 0.9;
-		if (fighter.getHeldItem() != null) text = fighter.getHeldItem().name;
+		if (fighter.getItem() != null) text = fighter.getItem().name;
 		else text = "NONE";			
 		g2.drawString(text, x, y);
 		
@@ -3705,7 +3704,7 @@ public class UI {
 		g2.drawImage(battle_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
 		
 		if (gp.btlManager.fighter[0] != null &&
-				gp.btlManager.fighter[0].getProtectedState() == Protection.NONE) {			
+				gp.btlManager.fighter[0].getProtection() == Protection.NONE) {			
 			
 			if (gp.btlManager.fighter[0].getAttacking()) animateAttack_One();			
 			else fighter_one_X = fighter_one_endX;
@@ -3729,7 +3728,7 @@ public class UI {
 			g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));			
 		}
 		if (gp.btlManager.fighter[1] != null &&
-				gp.btlManager.fighter[1].getProtectedState() == Protection.NONE) {				
+				gp.btlManager.fighter[1].getProtection() == Protection.NONE) {				
 			
 			if (isFighterCaptured) {				
 				g2.drawImage(gp.btlManager.ballUsed.image3, fighter_two_X + (int)(gp.tileSize * 2.2), fighter_two_Y + (int)(gp.tileSize * 3.2), null);	
@@ -4009,7 +4008,7 @@ public class UI {
 				
 		double remainXP = 
 				(double) (gp.btlManager.fighter[0].getXP() - gp.btlManager.fighter[0].getBXP()) / 
-				(double) (gp.btlManager.fighter[0].getNextXP());
+				(double) (gp.btlManager.fighter[0].getNXP());
 		
 		width *= remainXP;	
 		g2.setColor(battle_blue);
@@ -4329,22 +4328,22 @@ public class UI {
 		x = getXforRightAlignText(text, frameX);
 		g2.drawString(text, x, y); y += gp.tileSize * 0.8;
 		
-		text = Integer.toString((int) p.getAttack()); 
+		text = Integer.toString((int) p.getBAttack()); 
 		x = getXforRightAlignText(text, frameX);
 		g2.drawString(text, x, y); y += gp.tileSize * 0.8;		
 		
-		text = Integer.toString((int) p.getDefense()); 
+		text = Integer.toString((int) p.getBDefense()); 
 		x = getXforRightAlignText(text, frameX);		
 		g2.drawString(text, x, y); y += gp.tileSize * 0.8;
 		
-		text = Integer.toString((int) p.getSpAttack()); 
+		text = Integer.toString((int) p.getBSpAttack()); 
 		x = getXforRightAlignText(text, frameX);
 		g2.drawString(text, x, y); y += gp.tileSize * 0.8;
-		text = Integer.toString((int) p.getSpDefense()); 
+		text = Integer.toString((int) p.getBSpDefense()); 
 		x = getXforRightAlignText(text, frameX);
 		g2.drawString(text, x, y); y += gp.tileSize * 0.8;
 		
-		text = Integer.toString((int) p.getSpeed()); 
+		text = Integer.toString((int) p.getBSpeed()); 
 		x = getXforRightAlignText(text, frameX);
 		g2.drawString(text, x, y); y += gp.tileSize * 0.8;
 	}

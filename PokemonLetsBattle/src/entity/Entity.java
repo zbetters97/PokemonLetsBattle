@@ -645,7 +645,7 @@ public class Entity {
 		if (pokeParty.size() > 0) {
 			for (Pokemon p : pokeParty) {				
 				p.setAlive(true);
-				p.setHP(p.getBHP());
+				p.setHP(p.getHP());
 				p.resetMoves();
 				p.setStatus(null);				
 			}
@@ -686,7 +686,7 @@ public class Entity {
 	}	
 	public void giveItem(Entity item, Pokemon p) {
 		
-		if (p.getHeldItem() == null) {
+		if (p.getItem() == null) {
 			
 			p.giveItem(item);			
 			removeItem(this, gp.player);				

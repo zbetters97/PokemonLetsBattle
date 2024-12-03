@@ -6,8 +6,8 @@ import java.util.Arrays;
 import application.GamePanel;
 import entity.Entity;
 import moves.Moves;
-import pokemon.Pokedex;
 import pokemon.Pokemon;
+import pokemon.Pokemon.Pokedex;
 
 public class NPC_Red extends Entity {
 	
@@ -55,14 +55,14 @@ public class NPC_Red extends Entity {
 		/** RED PARTY REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Red_(game) **/
 		
 		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.PIKACHU, 88, null));
+		pokeParty.add(Pokemon.get(Pokedex.PIKACHU, 88, null));
 		pokeParty.get(0).addMoves(Arrays.asList(
 				Moves.VOLTTACKLE,
 				Moves.IRONTAIL,
 				Moves.THUNDERBOLT,
 				Moves.QUICKATTACK
 		));				
-		pokeParty.add(Pokemon.getPokemon(Pokedex.VENUSAUR, 84, null));
+		pokeParty.add(Pokemon.get(Pokedex.VENUSAUR, 84, null));
 		pokeParty.get(1).addMoves(Arrays.asList(
 				Moves.FRENZYPLANT,
 				Moves.SLUDGEBOMB,
@@ -70,28 +70,28 @@ public class NPC_Red extends Entity {
 				Moves.GIGADRAIN
 		));			
 		
-		pokeParty.add(Pokemon.getPokemon(Pokedex.CHARIZARD, 84, null));
+		pokeParty.add(Pokemon.get(Pokedex.CHARIZARD, 84, null));
 		pokeParty.get(2).addMoves(Arrays.asList(
 				Moves.BLASTBURN,
 				Moves.AIRSLASH,
 				Moves.FLAREBLITZ,
 				Moves.DRAGONPULSE
 		));				
-		pokeParty.add(Pokemon.getPokemon(Pokedex.BLASTOISE, 84, null));
+		pokeParty.add(Pokemon.get(Pokedex.BLASTOISE, 84, null));
 		pokeParty.get(3).addMoves(Arrays.asList(
 				Moves.HYDROCANNON,
 				Moves.FOCUSBLAST,
 				Moves.BLIZZARD,
 				Moves.FLASHCANNON
 		));				
-		pokeParty.add(Pokemon.getPokemon(Pokedex.LAPRAS, 80, null));
+		pokeParty.add(Pokemon.get(Pokedex.LAPRAS, 80, null));
 		pokeParty.get(4).addMoves(Arrays.asList(
 				Moves.BODYSLAM,
 				Moves.BLIZZARD,
 				Moves.PSYCHIC,
 				Moves.BRINE
 		));				
-		pokeParty.add(Pokemon.getPokemon(Pokedex.SNORLAX, 82, null));
+		pokeParty.add(Pokemon.get(Pokedex.SNORLAX, 82, null));
 		pokeParty.get(5).addMoves(Arrays.asList(
 				Moves.CRUNCH,
 				Moves.SHADOWBALL,

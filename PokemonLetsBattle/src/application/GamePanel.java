@@ -21,7 +21,7 @@ import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
 import event.EventHandler;
-import pokemon.Pokedex;
+import pokemon.Pokemon.Pokedex;
 import tile.TileManager;
 import tile.tile_interactive.InteractiveTile;
 
@@ -208,15 +208,15 @@ public class GamePanel extends JPanel implements Runnable {
 						)),
 						Map.entry(1, Map.ofEntries(
 										Map.entry(Pokedex.HORSEA, 60),
-										Map.entry(Pokedex.MAGIKARP, 25), 										
-										Map.entry(Pokedex.SPHEAL, 15)
+										Map.entry(Pokedex.MAGIKARP, 25)									
+//										Map.entry("Spheal", 15)
 						)),
 						Map.entry(2, Map.ofEntries(										
 										Map.entry(Pokedex.SEADRA, 50),
 										Map.entry(Pokedex.HORSEA, 30),										
-										Map.entry(Pokedex.SPHEAL, 12),
-										Map.entry(Pokedex.GYARADOS, 7), 
-										Map.entry(Pokedex.KYOGRE, 1)
+//										Map.entry("Spheal", 12),
+										Map.entry(Pokedex.GYARADOS, 7) 
+//										Map.entry("Kyogre", 1)
 						))
 				)
 		);

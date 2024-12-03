@@ -4,8 +4,8 @@ import java.awt.Rectangle;
 
 import application.GamePanel;
 import entity.Entity;
-import pokemon.Pokedex;
 import pokemon.Pokemon;
+import pokemon.Pokemon.Pokedex;
 
 public class NPC_Steve extends Entity {
 	
@@ -52,9 +52,9 @@ public class NPC_Steve extends Entity {
 		frontSprite = setup("/npc/steve_battle_front", gp.tileSize * 4, gp.tileSize * 4);
 	}	
 	public void assignParty() {
-		pokeParty.add(Pokemon.getPokemon(Pokedex.MACHOP, 5, null));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.MACHOKE, 16, null));
-		pokeParty.add(Pokemon.getPokemon(Pokedex.MACHAMP, 36, null));
+		pokeParty.add(Pokemon.get(Pokedex.MACHOP, 5, null));
+		pokeParty.add(Pokemon.get(Pokedex.MACHOKE, 16, null));
+		pokeParty.add(Pokemon.get(Pokedex.MACHAMP, 36, null));
 	}
 	public void setDialogue() {
 		dialogues[0][0] = "Don't ask me why I have every\nevolved form of Machop!";
