@@ -12,7 +12,7 @@ import properties.Type;
 public class Growlithe extends Pokemon {
 	
 	public Growlithe(int level, Entity ball) {
-		super(58, "Growlithe", level, ball, 55, 70, 45, 70, 50, 60, 26, 59, 91, 1, Growth.SLOW, 190);
+		super(58, "Growlithe", level, ball, 55, 70, 45, 70, 50, 60, 26, 91, 1, Growth.SLOW, 190);
 		
 		id = Pokedex.GROWLITHE;
 		type = Type.FIRE;
@@ -42,5 +42,14 @@ public class Growlithe extends Pokemon {
 				Map.entry(45, Moves.HEATWAVE),
 				Map.entry(48, Moves.FLAREBLITZ)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Arcanine(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

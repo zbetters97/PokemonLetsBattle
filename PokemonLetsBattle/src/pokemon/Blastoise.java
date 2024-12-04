@@ -12,7 +12,7 @@ import properties.Type;
 public class Blastoise extends Pokemon {
 	
 	public Blastoise(int level, Entity ball) {
-		super(9, "Blastoise", level, ball, 79, 83, 100, 85, 105, 78, -1, -1, 210, 3, Growth.MEDIUMSLOW, 45);
+		super(9, "Blastoise", level, ball, 79, 83, 100, 85, 105, 78, -1, 210, 3, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.WARTORTLE;
 		type = Type.WATER;

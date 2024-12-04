@@ -12,7 +12,7 @@ import properties.Type;
 public class Hitmonlee extends Pokemon {
 	
 	public Hitmonlee(int level, Entity ball) {
-		super(106, "Hitmonlee", level, ball, 50, 120, 53, 35, 110, 87, -1, -1, 139, 2, Growth.MEDIUMFAST, 45);
+		super(106, "Hitmonlee", level, ball, 50, 120, 53, 35, 110, 87, -1, 139, 2, Growth.MEDIUMFAST, 45);
 		
 		id = Pokedex.HITMONLEE;
 		type = Type.FIGHTING;

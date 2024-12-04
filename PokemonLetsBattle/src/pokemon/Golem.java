@@ -12,7 +12,7 @@ import properties.Type;
 public class Golem extends Pokemon {
 	
 	public Golem(int level, Entity ball) {
-		super(76, "Golem", level, ball, 80, 120, 130, 55, 65, 45, -1, -1, 177, 3, Growth.MEDIUMSLOW, 45);
+		super(76, "Golem", level, ball, 80, 120, 130, 55, 65, 45, -1, 177, 3, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.GOLEM;
 		types = Arrays.asList(Type.ROCK, Type.GROUND);

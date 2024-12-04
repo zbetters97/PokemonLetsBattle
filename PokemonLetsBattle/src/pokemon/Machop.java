@@ -12,7 +12,7 @@ import properties.Type;
 public class Machop extends Pokemon {
 	
 	public Machop(int level, Entity ball) {
-		super(66, "Machop", level, ball, 70, 80, 50, 35, 35, 35, 28, 67, 75, 1, Growth.MEDIUMSLOW, 180);
+		super(66, "Machop", level, ball, 70, 80, 50, 35, 35, 35, 28, 75, 1, Growth.MEDIUMSLOW, 180);
 		
 		id = Pokedex.MACHOP;
 		type = Type.FIGHTING;
@@ -39,5 +39,14 @@ public class Machop extends Pokemon {
 				Map.entry(43, Moves.SCARYFACE),
 				Map.entry(46, Moves.DYNAMICPUNCH)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Machoke(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

@@ -225,8 +225,8 @@ public class BattleManager extends Thread {
 			}
 		}
 		
-		if (!gp.player.personalDex.contains(fighter[1].getIndex())) {
-			gp.player.personalDex.add(fighter[1].getIndex());
+		if (!gp.player.hasPokemonDex(fighter[1].getIndex())) {
+			gp.player.personalDex.add(fighter[1]);
 		}
 		
 		running = false;			
@@ -274,9 +274,10 @@ public class BattleManager extends Thread {
 	private void getOtherFighters() {
 		
 		for (Pokemon p : gp.player.pokeParty) {
-			if (!otherFighters.contains(p) &&
+			if (p != fighter[0] && 		
+					!otherFighters.contains(p) &&
 					p.getItem() != null && 
-					p.getItem().name.equals(ITM_EXP_Share.colName)) {
+					p.getItem().name.equals(ITM_EXP_Share.colName)) {				
 				otherFighters.add(p);
 			}
 		}
@@ -317,8 +318,8 @@ public class BattleManager extends Thread {
 			newFighter[0] = null;
 			newFighter[1] = null;
 			
-			if (!gp.player.personalDex.contains(fighter[1].getIndex())) {
-				gp.player.personalDex.add(fighter[1].getIndex());
+			if (!gp.player.hasPokemonDex(fighter[1].getIndex())) {
+				gp.player.personalDex.add(fighter[1]);
 			}
 			
 			running = false;								
@@ -3085,8 +3086,8 @@ public class BattleManager extends Thread {
 		typeDialogue("Congratulations! Your " +  oldEvolve.getName() + 
 				"\nevolved into " + newEvolve.getName() + "!", true);
 		
-		if (!gp.player.personalDex.contains(newEvolve.getIndex())) {
-			gp.player.personalDex.add(newEvolve.getIndex());
+		if (!gp.player.hasPokemonDex(newEvolve.getIndex())) {
+			gp.player.personalDex.add(newEvolve);
 		}
 				
 		checkNewMove(newEvolve);

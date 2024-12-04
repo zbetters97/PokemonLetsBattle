@@ -12,7 +12,7 @@ import properties.Type;
 public class Graveler extends Pokemon {
 	
 	public Graveler(int level, Entity ball) {
-		super(75, "Graveler", level, ball,  55, 95, 115, 45, 45, 35, 40, 76, 134, 2, Growth.MEDIUMSLOW, 120);
+		super(75, "Graveler", level, ball,  55, 95, 115, 45, 45, 35, 40, 134, 2, Growth.MEDIUMSLOW, 120);
 		
 		id = Pokedex.GRAVELER;
 		types = Arrays.asList(Type.ROCK, Type.GROUND);
@@ -40,5 +40,14 @@ public class Graveler extends Pokemon {
 				Map.entry(44, Moves.DOUBLEEDGE),
 				Map.entry(49, Moves.STONEEDGE)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Golem(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

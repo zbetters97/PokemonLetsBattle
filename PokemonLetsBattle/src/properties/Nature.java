@@ -49,13 +49,10 @@ public enum Nature {
     /** END CONSTRUCTOR **/
 	
 	/** GETTERS **/	
-	public String getName() { return this.name; }
-	public int increase() { return this.increase; }
-	public int decrease() { return this.decrease; }
-	
-	public static List<Nature> getNatures() {
-		return NATURES; 
-	}
+	public String getName() { return name; }
+	public int increase() { return increase; }
+	public int decrease() { return decrease; }	
+	public static List<Nature> getNatures() { return NATURES; }
 	/** END GETTERS **/
 }
 /*** END NATURE CLASS ***/

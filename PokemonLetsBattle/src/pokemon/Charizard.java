@@ -12,7 +12,7 @@ import properties.Type;
 public class Charizard extends Pokemon {
 	
 	public Charizard(int level, Entity ball) {
-		super(6, "Charizard", level, ball, 78, 84, 78, 109, 85, 100, -1, -1, 209, 3, Growth.MEDIUMSLOW, 45);
+		super(6, "Charizard", level, ball, 78, 84, 78, 109, 85, 100, -1, 209, 3, Growth.MEDIUMSLOW, 45);
 				
 		id = Pokedex.CHARIZARD;
 		types = Arrays.asList(Type.FIRE, Type.FLYING);

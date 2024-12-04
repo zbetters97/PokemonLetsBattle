@@ -12,7 +12,7 @@ import properties.Type;
 public class Blaziken extends Pokemon {
 	
 	public Blaziken(int level, Entity ball) {
-		super(257, "Blaziken", level, ball, 80, 120, 70, 110, 70, 80, -1, -1, 209, 3, Growth.MEDIUMSLOW, 45);
+		super(257, "Blaziken", level, ball, 80, 120, 70, 110, 70, 80, -1, 209, 3, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.BLAZIKEN;
 		types = Arrays.asList(Type.FIRE, Type.FIGHTING);

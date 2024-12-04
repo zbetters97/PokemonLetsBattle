@@ -12,7 +12,7 @@ import properties.Type;
 public class Torchic extends Pokemon {
 	
 	public Torchic(int level, Entity ball) {
-		super(255, "Torchic", level, ball, 45, 60, 40, 70, 50, 45, 16, 256, 65, 1, Growth.MEDIUMSLOW, 45);
+		super(255, "Torchic", level, ball, 45, 60, 40, 70, 50, 45, 16, 65, 1, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.TORCHIC;
 		type = Type.FIRE;
@@ -37,5 +37,14 @@ public class Torchic extends Pokemon {
 				Map.entry(34, Moves.SLASH),
 				Map.entry(43, Moves.FLAMETHROWER)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Combusken(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

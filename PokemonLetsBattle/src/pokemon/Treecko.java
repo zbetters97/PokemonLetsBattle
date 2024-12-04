@@ -12,7 +12,7 @@ import properties.Type;
 public class Treecko extends Pokemon {
 	
 	public Treecko(int level, Entity ball) {
-		super(252, "Treecko", level, ball, 40, 45, 35, 65, 55, 70, 16, 253, 65, 1, Growth.MEDIUMSLOW, 45);
+		super(252, "Treecko", level, ball, 40, 45, 35, 65, 55, 70, 16, 65, 1, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.TREECKO;
 		type = Type.GRASS;
@@ -39,5 +39,14 @@ public class Treecko extends Pokemon {
 				Map.entry(46, Moves.GIGADRAIN),
 				Map.entry(51, Moves.ENERGYBALL)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Grovyle(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

@@ -12,7 +12,7 @@ import properties.Type;
 public class Mudkip extends Pokemon {
 	
 	public Mudkip(int level, Entity ball) {
-		super(258, "Mudkip", level, ball, 50, 70, 50, 50, 50, 40, 16, 259, 65, 1, Growth.MEDIUMSLOW, 45);
+		super(258, "Mudkip", level, ball, 50, 70, 50, 50, 50, 40, 16, 65, 1, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.MUDKIP;
 		type = Type.WATER;
@@ -36,5 +36,14 @@ public class Mudkip extends Pokemon {
 				Map.entry(42, Moves.HYDROPUMP),
 				Map.entry(46, Moves.ENDEAVOR)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Marshtomp(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

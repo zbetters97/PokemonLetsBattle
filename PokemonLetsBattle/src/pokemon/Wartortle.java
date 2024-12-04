@@ -12,7 +12,7 @@ import properties.Type;
 public class Wartortle extends Pokemon {
 	
 	public Wartortle(int level, Entity ball) {
-		super(8, "Wartortle", level, ball, 59, 63, 80, 65, 80, 58, 36, 9, 143, 2, Growth.MEDIUMSLOW, 45);
+		super(8, "Wartortle", level, ball, 59, 63, 80, 65, 80, 58, 36, 143, 2, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.WARTORTLE;
 		type = Type.WATER;
@@ -43,5 +43,14 @@ public class Wartortle extends Pokemon {
 				Map.entry(40, Moves.RAINDANCE),
 				Map.entry(44, Moves.HYDROPUMP)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Blastoise(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

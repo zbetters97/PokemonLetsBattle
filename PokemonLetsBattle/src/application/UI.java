@@ -1128,7 +1128,7 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55f));
 		x += gp.tileSize * 1.1;
 		y += gp.tileSize * 1.1;
-		text = "POKeDEX";
+		text = "POKéDEX";
 		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);		
 		if (commandNum == 0) {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);		
@@ -1260,10 +1260,7 @@ public class UI {
 	
 	/** DEX MENU **/
 	private void pause_Dex() {
-		
-		g2.setColor(party_green);  
-		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);	
-		
+						
 		int x;
 		int y;
 		int width;
@@ -1275,7 +1272,11 @@ public class UI {
 		int slotWidth;
 		int slotHeight;
 		String text;
+		Pokemon pokemon;
 		Pokemon p;
+		
+		g2.setColor(party_green);  
+		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);	
 		
 		x = gp.tileSize;
 		y = (int) (gp.tileSize * 0.6); 
@@ -1286,7 +1287,7 @@ public class UI {
 	
 		g2.setColor(Color.BLACK);
 		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 60f));
-		text = "POKeDEX";
+		text = "POKéDEX";
 		x = getXForCenteredTextOnWidth(text, width, x);
 		y += gp.tileSize * 0.95;	
 		g2.drawString(text, x, y);
@@ -1298,29 +1299,29 @@ public class UI {
 		g2.fillRoundRect(x, y, width, height, 15, 15);			
 		g2.setColor(Color.BLACK);
 		g2.drawRoundRect(x + 5, y + 5, width - 10, height - 10, 15, 15);
-		
-		p = Pokemon.getPokedex().get(bagNum);
-		if (gp.player.personalDex.contains(p.getIndex())) {
+				
+		pokemon = gp.player.personalDex.stream().filter(o -> o.getIndex() == (bagNum + 1)).findAny().orElse(null);				
+		if (pokemon != null) {
 			
 			x = (int) (gp.tileSize * 2.3);
 			y = (int) (gp.tileSize * 4.8);	
 			width = gp.tileSize * 2;
 			height = gp.tileSize;
-			g2.drawImage(p.getFrontSprite(), x, y, null);	
+			g2.drawImage(pokemon.getFrontSprite(), x, y, null);	
 						
 			y = (int) (gp.tileSize * 10.2);
-			if (p.getTypes() == null) {
+			if (pokemon.getTypes() == null) {
 				x = (int) (gp.tileSize * 3.8);	
-				drawSubWindow(x, y, width, height, 10, 3, p.getType().getColor(), Color.BLACK);											
+				drawSubWindow(x, y, width, height, 10, 3, pokemon.getType().getColor(), Color.BLACK);											
 				g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));			
-				text = p.getType().getName();
+				text = pokemon.getType().getName();
 				textX = getXForCenteredTextOnWidth(text, width, x + 5);
 				textY = (int) (y + (gp.tileSize * 0.75));			
 				drawText(text, textX, textY, battle_white, Color.BLACK);
 			}
 			else {
 				x = (int) (gp.tileSize * 2.4);	
-				for (Type t : p.getTypes()) {					
+				for (Type t : pokemon.getTypes()) {					
 					drawSubWindow(x, y, width, height, 10, 3, t.getColor(), Color.BLACK);											
 					g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30F));			
 					text = t.getName();
@@ -1346,17 +1347,14 @@ public class UI {
 		slotHeight = gp.tileSize;
 		for (int i = bagStart; i < bagStart + 11; i++) {
 			
-			if (i < Pokemon.getPokedex().size()) {
-				
-				p = Pokemon.getPokedex().get(i);
-				
+			if (i < 386) {
+												
 				g2.setFont(g2.getFont().deriveFont(Font.BOLD, 35f));
 				if (bagNum == i) {
 					g2.setColor(battle_white);
 					g2.fillRoundRect(slotX, slotY, slotWidth, slotHeight, 15, 15);
 				}
-				
-				int index = p.getIndex();
+				int index = i + 1;				
 				if (gp.player.pokeParty.stream().anyMatch(o -> o.getIndex() == index)) {
 					g2.drawImage(dex_ball, x - (int) (gp.tileSize * 0.8), y - (int) (gp.tileSize * 0.6), null);
 				}
@@ -1364,8 +1362,10 @@ public class UI {
 				drawText("No", x, y, Color.BLACK, Color.LIGHT_GRAY);
 				
 				g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48f));
-				drawText(p.getIndex() + "", x + (int) (gp.tileSize * 0.6), y, Color.BLACK, Color.LIGHT_GRAY);					
-				if (gp.player.personalDex.contains(p.getIndex())) {
+				drawText((i + 1) + "", x + (int) (gp.tileSize * 0.6), y, Color.BLACK, Color.LIGHT_GRAY);	
+				
+				p = gp.player.personalDex.stream().filter(o -> o.getIndex() == index).findAny().orElse(null);
+				if (p != null) {
 					drawText(p.getName(), x + (int) (gp.tileSize * 2.2), y, Color.BLACK, Color.LIGHT_GRAY);	
 				}
 				else {					
@@ -1381,29 +1381,41 @@ public class UI {
 		}			
 				
 		if (0 < bagStart) {
-			x = (int) (gp.tileSize * 12.5);
+			x = (int) (gp.tileSize * 12.0);
 			y = (int) (gp.tileSize * 1.6);
 			drawText("^", x, y, Color.BLACK, Color.LIGHT_GRAY);
 		}
 		
-		if (bagStart + 11 < Pokemon.getPokedex().size()) {
-			x = (int) (gp.tileSize * 12.5);
+		if (bagStart + 11 < 386) {
+			x = (int) (gp.tileSize * 12.0);
 			y = (int) (gp.tileSize * 11.4);
 			drawText("v", x, y, Color.BLACK, Color.LIGHT_GRAY);
 		}
-						
+		
 		if (gp.keyH.upPressed) {
 			gp.keyH.upPressed = false;
-			gp.keyH.playCursorSE();
 		
-			if (bagNum > 0)	bagNum--;
+			if (bagNum > -1)	{
+				gp.keyH.playCursorSE();
+				bagNum--;
+			}
+			if (bagNum == -1) {
+				bagNum = 385;
+				bagStart = 376;
+			}
 			if (bagStart > 0) bagStart--;
 		}
 		if (gp.keyH.downPressed) {
 			gp.keyH.downPressed = false;
-			gp.keyH.playCursorSE();
 			
-			if (bagNum < Pokemon.getPokedex().size() - 1) bagNum++;
+			if (bagNum < 386) {
+				gp.keyH.playCursorSE();
+				bagNum++;
+			}
+			if (bagNum == 386) {
+				bagNum = 0;
+				bagStart = 0;
+			}
 			if (bagNum >= bagStart + 11) bagStart++;
 		}					
 		if (gp.keyH.bPressed) {
@@ -1418,9 +1430,9 @@ public class UI {
 		
 		if (gp.keyH.xPressed) {
 			gp.keyH.xPressed = false;
-			if (gp.player.personalDex.contains(p.getIndex())) {
-				gp.playSE(gp.cry_SE, p.toString());				
-			}			
+			if (pokemon != null) {
+				gp.playSE(gp.cry_SE, pokemon.toString());					
+			}
 		}
 	}
 	
@@ -1492,16 +1504,20 @@ public class UI {
 		
 		if (gp.keyH.upPressed) {
 			gp.keyH.upPressed = false;
-			gp.keyH.playCursorSE();
 		
-			if (bagNum > 0)	bagNum--;
+			if (bagNum > 0)	{
+				gp.keyH.playCursorSE();
+				bagNum--;
+			}
 			if (bagStart > 0) bagStart--;
 		}
 		if (gp.keyH.downPressed) {
 			gp.keyH.downPressed = false;
-			gp.keyH.playCursorSE();
-			
-			if (bagNum < items.size() - 1) bagNum++;
+						
+			if (bagNum < items.size() - 1) {
+				gp.keyH.playCursorSE();
+				bagNum++;
+			}
 			if (bagNum >= bagStart + 9) bagStart++;
 		}				
 		if (gp.keyH.leftPressed) {

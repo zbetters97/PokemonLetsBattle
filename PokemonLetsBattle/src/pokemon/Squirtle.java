@@ -12,7 +12,7 @@ import properties.Type;
 public class Squirtle extends Pokemon {
 	
 	public Squirtle(int level, Entity ball) {
-		super(7, "Squirtle", level, ball,  44, 48, 65, 50, 64, 43, 16, 8, 66, 1, Growth.MEDIUMSLOW, 45);
+		super(7, "Squirtle", level, ball,  44, 48, 65, 50, 64, 43, 16, 66, 1, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.SQUIRTLE;
 		type = Type.WATER;
@@ -41,5 +41,14 @@ public class Squirtle extends Pokemon {
 				Map.entry(34, Moves.RAINDANCE),
 				Map.entry(37, Moves.HYDROPUMP)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Wartortle(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

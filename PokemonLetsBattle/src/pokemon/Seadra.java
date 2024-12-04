@@ -12,7 +12,7 @@ import properties.Type;
 public class Seadra extends Pokemon {
 	
 	public Seadra(int level, Entity ball) {
-		super(117, "Seadra", level, ball, 55, 65, 95, 95, 45, 85, 45, 230, 155, 2, Growth.MEDIUMFAST, 75);
+		super(117, "Seadra", level, ball, 55, 65, 95, 95, 45, 85, 45, 155, 2, Growth.MEDIUMFAST, 75);
 		
 		id = Pokedex.SEADRA;
 		type = Type.WATER;
@@ -41,5 +41,14 @@ public class Seadra extends Pokemon {
 				Map.entry(48, Moves.DRAGONDANCE),
 				Map.entry(57, Moves.DRAGONPULSE)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Kingdra(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

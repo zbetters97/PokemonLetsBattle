@@ -12,7 +12,7 @@ import properties.Type;
 public class Hitmonchan extends Pokemon {
 	
 	public Hitmonchan(int level, Entity ball) {
-		super(107, "Hitmonchan", level, ball, 50, 105, 79, 35, 110, 76, -1, -1, 140, 2, Growth.MEDIUMFAST, 45);
+		super(107, "Hitmonchan", level, ball, 50, 105, 79, 35, 110, 76, -1, 140, 2, Growth.MEDIUMFAST, 45);
 		
 		id = Pokedex.HITMONCHAN;
 		type = Type.FIGHTING;

@@ -12,7 +12,7 @@ import properties.Type;
 public class Lapras extends Pokemon {
 	
 	public Lapras(int level, Entity ball) {
-		super(131, "Lapras", level, ball, 130, 85, 80, 85, 95, 60, -1, -1, 219, 2, Growth.SLOW, 45);
+		super(131, "Lapras", level, ball, 130, 85, 80, 85, 95, 60, -1, 219, 2, Growth.SLOW, 45);
 		
 		id = Pokedex.LAPRAS;
 		types = Arrays.asList(Type.WATER, Type.ICE);

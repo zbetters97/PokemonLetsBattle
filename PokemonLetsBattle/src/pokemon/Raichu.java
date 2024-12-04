@@ -12,7 +12,7 @@ import properties.Type;
 public class Raichu extends Pokemon {
 	
 	public Raichu(int level, Entity ball) {
-		super(26, "Raichu", level, ball, 60, 90, 55, 90, 80, 110, -1, -1, 122, 3, Growth.MEDIUMFAST, 75);
+		super(26, "Raichu", level, ball, 60, 90, 55, 90, 80, 110, -1, 122, 3, Growth.MEDIUMFAST, 75);
 		
 		id = Pokedex.RAICHU;
 		type = Type.ELECTRIC;

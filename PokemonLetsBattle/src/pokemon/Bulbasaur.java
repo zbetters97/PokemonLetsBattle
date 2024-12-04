@@ -12,7 +12,7 @@ import properties.Type;
 public class Bulbasaur extends Pokemon {
 	
 	public Bulbasaur(int level, Entity ball) {
-		super(1, "Bulbasaur", level, ball, 45, 49, 49, 65, 65, 45, 16, 2, 64, 1, Growth.MEDIUMSLOW, 45);
+		super(1, "Bulbasaur", level, ball, 45, 49, 49, 65, 65, 45, 16, 64, 1, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.BULBUSAUR;
 		type = Type.GRASS;
@@ -41,5 +41,14 @@ public class Bulbasaur extends Pokemon {
 				Map.entry(27, Moves.DOUBLEEDGE),
 				Map.entry(37, Moves.SEEDBOMB)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Ivysaur(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

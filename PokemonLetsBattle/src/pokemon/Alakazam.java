@@ -12,7 +12,7 @@ import properties.Type;
 public class Alakazam extends Pokemon {
 	
 	public Alakazam(int level, Entity ball) {
-		super(65, "Alakazam", level, ball, 55, 50, 45, 135, 95, 120, -1, -1, 186, 3, Growth.MEDIUMSLOW, 50);
+		super(65, "Alakazam", level, ball, 55, 50, 45, 135, 95, 120, -1, 186, 3, Growth.MEDIUMSLOW, 50);
 		
 		id = Pokedex.ALAKAZAM;
 		type = Type.PSYCHIC;

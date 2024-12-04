@@ -12,7 +12,7 @@ import properties.Type;
 public class Geodude extends Pokemon {
 	
 	public Geodude(int level, Entity ball) {
-		super(74, "Geodude", level, ball, 40, 80, 100, 30, 30, 20, 25, 75, 73, 1, Growth.MEDIUMSLOW, 255);
+		super(74, "Geodude", level, ball, 40, 80, 100, 30, 30, 20, 25, 73, 1, Growth.MEDIUMSLOW, 255);
 		
 		id = Pokedex.GEODUDE;
 		types = Arrays.asList(Type.ROCK, Type.GROUND);
@@ -40,5 +40,14 @@ public class Geodude extends Pokemon {
 				Map.entry(36, Moves.DOUBLEEDGE),
 				Map.entry(39, Moves.STONEEDGE)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Graveler(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

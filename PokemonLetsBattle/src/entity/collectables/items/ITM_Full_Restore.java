@@ -2,7 +2,7 @@ package entity.collectables.items;
 
 import application.GamePanel;
 import entity.Entity;
-import pokemon.PokemonOLD;
+import pokemon.Pokemon;
 
 public class ITM_Full_Restore extends Entity {
 	
@@ -25,7 +25,7 @@ public class ITM_Full_Restore extends Entity {
 		this.useItem("Restore a POKEMON.");
 	}
 	
-	public void apply(Entity entity, PokemonOLD p) {
+	public void apply(Entity entity, Pokemon p) {
 		
 		if (p.isAlive() && (p.getHP() < p.getBHP() || p.getStatus() != null)) {
 						

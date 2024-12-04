@@ -12,7 +12,7 @@ import properties.Type;
 public class Machamp extends Pokemon {
 	
 	public Machamp(int level, Entity ball) {
-		super(68, "Machamp", level, ball, 90, 130, 80, 65, 85, 55, -1, -1, 193, 3, Growth.MEDIUMSLOW, 45);
+		super(68, "Machamp", level, ball, 90, 130, 80, 65, 85, 55, -1, 193, 3, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.MACHAMP;
 		type = Type.FIGHTING;

@@ -12,7 +12,7 @@ import properties.Type;
 public class Pikachu extends Pokemon {
 	
 	public Pikachu(int level, Entity ball) {
-		super(25, "Pikachu", level, ball, 55, 55, 40, 50, 50, 90, 30, 26, 82, 2, Growth.MEDIUMFAST, 190);
+		super(25, "Pikachu", level, ball, 55, 55, 40, 50, 50, 90, 30, 82, 2, Growth.MEDIUMFAST, 190);
 		
 		id = Pokedex.PIKACHU;
 		type = Type.ELECTRIC;
@@ -39,5 +39,14 @@ public class Pikachu extends Pokemon {
 				Map.entry(37, Moves.DISCHARGE),
 				Map.entry(45, Moves.THUNDER)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Raichu(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

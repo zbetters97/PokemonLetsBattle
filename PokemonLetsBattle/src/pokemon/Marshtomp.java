@@ -12,7 +12,7 @@ import properties.Type;
 public class Marshtomp extends Pokemon {
 	
 	public Marshtomp(int level, Entity ball) {
-		super(259, "Marshtomp", level, ball, 70, 85, 70, 60, 70, 50, 36, 260, 143, 2, Growth.MEDIUMSLOW, 45);
+		super(259, "Marshtomp", level, ball, 70, 85, 70, 60, 70, 50, 36, 143, 2, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.MARSHTOMP;
 		types = Arrays.asList(Type.WATER, Type.GROUND);
@@ -40,5 +40,14 @@ public class Marshtomp extends Pokemon {
 				Map.entry(46, Moves.EARTHQUAKE),
 				Map.entry(53, Moves.ENDEAVOR)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Swampert(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

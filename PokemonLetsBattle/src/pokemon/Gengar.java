@@ -12,7 +12,7 @@ import properties.Type;
 public class Gengar extends Pokemon {
 	
 	public Gengar(int level, Entity ball) {
-		super(94, "Gengar", level, ball, 60, 65, 60, 130, 75, 110, -1, -1, 190, 3, Growth.MEDIUMSLOW, 45);
+		super(94, "Gengar", level, ball, 60, 65, 60, 130, 75, 110, -1, 190, 3, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.GENGAR;
 		types = Arrays.asList(Type.GHOST, Type.POISON);

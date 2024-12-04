@@ -12,7 +12,7 @@ import properties.Type;
 public class Venusaur extends Pokemon {
 	
 	public Venusaur(int level, Entity ball) {
-		super(3, "Venusaur", level, ball, 80, 82, 83, 100, 100, 80, -1, -1, 208, 3, Growth.MEDIUMSLOW, 45);
+		super(3, "Venusaur", level, ball, 80, 82, 83, 100, 100, 80, -1, 208, 3, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.VENUSAUR;
 		types = Arrays.asList(Type.GRASS, Type.POISON);

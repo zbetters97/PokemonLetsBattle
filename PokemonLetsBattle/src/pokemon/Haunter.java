@@ -12,7 +12,7 @@ import properties.Type;
 public class Haunter extends Pokemon {
 	
 	public Haunter(int level, Entity ball) {
-		super(93, "Haunter", level, ball, 45, 50, 45, 115, 55, 96, 40, 94, 126, 2, Growth.MEDIUMSLOW, 90);
+		super(93, "Haunter", level, ball, 45, 50, 45, 115, 55, 96, 40, 126, 2, Growth.MEDIUMSLOW, 90);
 		
 		id = Pokedex.HAUNTER;
 		types = Arrays.asList(Type.GHOST, Type.POISON);
@@ -38,5 +38,14 @@ public class Haunter extends Pokemon {
 				Map.entry(39, Moves.DREAMEATER),
 				Map.entry(44, Moves.DARKPULSE)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Gengar(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

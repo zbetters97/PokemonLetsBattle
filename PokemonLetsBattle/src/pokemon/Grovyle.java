@@ -12,7 +12,7 @@ import properties.Type;
 public class Grovyle extends Pokemon {
 	
 	public Grovyle(int level, Entity ball) {
-		super(253, "Grovyle", level, ball, 50, 65, 45, 85, 65, 95, 36, 254, 141, 2, Growth.MEDIUMSLOW, 45);
+		super(253, "Grovyle", level, ball, 50, 65, 45, 85, 65, 95, 36, 141, 2, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.GROVYLE;
 		type = Type.GRASS;
@@ -42,5 +42,14 @@ public class Grovyle extends Pokemon {
 				Map.entry(53, Moves.FALSESWIPE),
 				Map.entry(59, Moves.LEAFSTORM)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Sceptile(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

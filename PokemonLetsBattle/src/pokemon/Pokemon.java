@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +20,7 @@ public class Pokemon {
 	/** EXP & EV REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield_in_Generation_IV **/
 	/** XP GROWTH REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_experience_type **/	
 	/** CATCH RATE REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pokémon_by_catch_rate **/	
-	
-	
+		
 	public static enum Pokedex {
 		BULBUSAUR, IVYSAUR, VENUSAUR, 
 		CHARMANDER, CHARMELEON, CHARIZARD,
@@ -35,14 +33,33 @@ public class Pokemon {
 		GEODUDE, GRAVELER, GOLEM,
 		PONYTA, RAPIDASH,
 		GASTLY, HAUNTER, GENGAR,
-		HITMONLEE, HITMONCHAN,
+		HITMONLEE, HITMONCHAN,		
 		HORSEA, SEADRA, 
 		MAGIKARP, GYARADOS,
 		LAPRAS, SNORLAX,
+		ARTICUNO, ZAPDOS, MOLTRES, 
+		DRATINI, DRAGONAIR, DRAGONITE,
+		MEWTWO, MEW,
+		CHIKORITA, BAYLEEF, MEGANIUM,
+		CYNDAQUIL, QUILAVA, TYPHLOSION,
+		TOTODILE, CROCONAW, FERALIGATR,		
+		CROBAT, 
+		KINGDRA,
+		RAIKOU, ENTEI, SUICUNE, 
+		LUGIA, HOOH, CELEBI,		
 		TREECKO, GROVYLE, SCEPTILE,
 		TORCHIC, COMBUSKEN, BLAZIKEN,
 		MUDKIP, MARSHTOMP, SWAMPERT,
-		ZIGZAGOON, POOCHYENA
+		POOCHYENA, MIGHTYENA,
+		ZIGZAGOON, LINOONE,
+		RALTS, KIRLIA, GARDEVOIR,
+		NINCADA, NINJASK, SHEDINJA,
+		WHISMUR, LOUDRED, EXPLOUD,
+		SPHEAL, SEALEO, WALREIN,
+		BAGON, SHELGON, SALAMENCE,
+		BELDUM, METANG, METAGROSS,
+		KYOGRE, GROUDON, RAYQUAZA,
+		JIRACHI, DEOXYS	
 	}
 	
 	protected enum Growth {
@@ -66,7 +83,7 @@ public class Pokemon {
 	protected Protection protection = Protection.NONE;
 	protected Entity ball = null, item = null;
 	
-	protected int level, hp, chp, ev, xp, cxp, nxp, xpYield, evLevel, evIndex, catchRate;
+	protected int level, hp, chp, ev, xp, cxp, nxp, xpYield, evolveLevel, catchRate;
 	protected int hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV;
 	protected int baseHP, baseAttack, baseDefense, baseSpAttack, baseSpDefense, baseSpeed;
 	protected double attack, defense, spAttack, spDefense, speed, accuracy, evasion;
@@ -82,7 +99,7 @@ public class Pokemon {
 	/** CONSTRUCTORS **/
 	public Pokemon(int index, String name, int level, Entity ball,
 			int hp, int attack, int defense, int spAttack, int spDefense, int speed,
-			int evLevel, int evIndex, int xpYield, int ev, Growth growth, int catchRate) {		
+			int evolveLevel, int xpYield, int ev, Growth growth, int catchRate) {		
 				
 		this.index = index;
 		this.name = name;
@@ -110,8 +127,7 @@ public class Pokemon {
 		baseSpAttack = spAttack;
 		baseSpDefense = spDefense;
 		baseSpeed = speed;
-		this.evLevel = evLevel;
-		this.evIndex = evIndex;
+		this.evolveLevel = evolveLevel;
 		this.xpYield = xpYield; 
 		this.ev = ev;		
 		this.catchRate = catchRate;
@@ -155,15 +171,12 @@ public class Pokemon {
 		isAlive = true;
 	}	
 	/** END CONSTRUCTORS **/
-	
-	
-	
+		
 	/** CHILD METHODS **/
 	protected void mapMoves() { }
+	public Pokemon evolve() { return null; }
 	/** END CHILD METHODS **/
-	
-	
-	
+			
 	/** LEVEL UP METHODS **/
 	protected int getXP(int level) {		
 		/*** XP CALULCATOR REFERENCE https://bulbapedia.bulbagarden.net/wiki/Experience#Experience_at_each_level ***/
@@ -263,17 +276,7 @@ public class Pokemon {
 		cSpeed = speed;
 	}
 	public boolean canEvolve() {
-		return (evIndex != -1) && (level >= evLevel);
-	}
-	public Pokemon evolve() {
-		
-		Pokemon evolvedForm = null;
-		
-		evolvedForm = pokedex.stream().filter(p -> p.index == evIndex).findAny().orElse(null);
-				
-		evolvedForm.create(this);
-		
-		return evolvedForm;
+		return (evolveLevel != -1) && (level >= evolveLevel);
 	}
 	protected void create(Pokemon old) {
 		
@@ -329,10 +332,60 @@ public class Pokemon {
 		ball = old.ball;		
 		isAlive = old.isAlive;		
 	}
+	protected void create(char sex, int level, int cxp, int ev,
+			int hpIV, int attackIV, int defenseIV, int spAttackIV, int spDefenseIV, int speedIV, 
+			Nature nature, Status status, ArrayList<Move> moveset, Entity item, Entity ball, boolean isAlive) {
+		
+		this.sex = sex;
+		this.level = level;
+		
+		xp = getXP(level);
+		this.cxp = cxp;
+		nxp = getNXP();
+		
+		this.ev = ev;		
+		
+		this.hpIV = hpIV;
+		this.attackIV = attackIV;
+		this.defenseIV = defenseIV;
+		this.spAttackIV = spAttackIV;
+		this.spDefenseIV = spDefenseIV;
+		this.speedIV = speedIV;
+		
+		hp = (int)(Math.floor(((2 * baseHP + hpIV + Math.floor(0.25 * ev)) * level) / 100) + level + 10);
+		chp = hp;
+		
+		attack = getStat(baseAttack, attackIV); 
+		defense = getStat(baseDefense, defenseIV);		
+		spAttack = getStat(baseSpAttack, spAttackIV); 
+		spDefense = getStat(baseSpDefense, spDefenseIV);
+		speed = getStat(baseSpeed, speedIV);
+		accuracy = 1;
+		evasion = 1;
+		
+		this.nature = nature;
+		setNature();
+		
+		cAttack = attack;
+		cDefense = defense;
+		cSpAttack = spAttack;
+		cSpDefense = spDefense;
+		cSpeed = speed;
+		
+		this.status = status;
+		statusCounter = 0;
+		statusLimit = 0;
+		
+		this.moveset = moveset;
+		activeMoves = new ArrayList<>();		
+		protection = Protection.NONE;
+		
+		this.item = item;
+		this.ball = ball;
+		this.isAlive = isAlive;
+	}
 	/** END LEVEL UP METHODS **/
-	
-	
-	
+			
 	/** MOVE METHODS **/
 	public Move getNewMove() {
 		
@@ -411,9 +464,8 @@ public class Pokemon {
 		}
 	}
 	/** END MOVE METHODS **/
-	
-	
-	
+		
+	/** NATURE METHODS **/
 	protected void setNature() {
 		
 		// find which values to increase/decrease
@@ -437,9 +489,8 @@ public class Pokemon {
 			case (5): speed = Math.rint((double) speed * .90); break;
 		}	
 	}	
-	
-	
-	
+	/** END NATURE METHODS **/
+		
 	/** ACTIVE MOVES METHODS **/
 	public void addActiveMove(Moves move) {
 		activeMoves.add(new Move(move));
@@ -460,39 +511,9 @@ public class Pokemon {
 	public void clearActiveMoves() {
 		activeMoves.clear();		
 	}
-	/** END ADD NEW MOVE METHOD **/
-	
+	/** END MOVE METHODS **/
 		
-	
-	/** POKEDEX METHODS **/
-	private static final ArrayList<Pokemon> pokedex;
-	static {		
-		pokedex = new ArrayList<Pokemon>();
-		
-		pokedex.addAll(Arrays.asList(
-			new Bulbasaur(1, null), new Ivysaur(1, null), new Venusaur(1, null),
-			new Charmander(1, null), new Charmeleon(1, null), new Charizard(1, null),
-			new Squirtle(1, null), new Wartortle(1, null), new Blastoise(1, null),
-			new Pikachu(1, null), new Raichu(1, null),
-			new Zubat(1, null), new Golbat(1, null),
-			new Growlithe(1, null), new Arcanine(1, null),
-			new Abra(1, null), new Kadabra(1, null), new Alakazam(1, null),
-			new Machop(1, null), new Machoke(1, null), new Machamp(1, null),
-			new Geodude(1, null), new Graveler(1, null), new Golem(1, null),			
-			new Ponyta(1, null), new Rapidash(1, null),
-			new Gastly(1, null), new Haunter(1, null), new Gengar(1, null),
-			new Hitmonlee(1, null), new Hitmonchan(1, null),
-			new Horsea(1, null), new Seadra(1, null),
-			new Magikarp(1, null), new Gyarados(1, null),
-			new Lapras(1, null), new Snorlax(1, null),
-			new Treecko(1, null), new Grovyle(1, null), new Sceptile(1, null),
-			new Torchic(1, null), new Combusken(1, null), new Blaziken(1, null),
-			new Mudkip(1, null), new Marshtomp(1, null), new Swampert(1, null)
-		));
-	}	
-	public static ArrayList<Pokemon> getPokedex() {
-		return pokedex;
-	}
+	/** GET POKEMON METHODS **/
 	public static Pokemon get(Pokedex id, int level, Entity ball) {
 		
 		Pokemon pokemon = null;
@@ -534,7 +555,32 @@ public class Pokemon {
 			case MAGIKARP: pokemon = new Magikarp(level, ball); break;
 			case GYARADOS: pokemon = new Gyarados(level, ball); break;
 			case LAPRAS: pokemon = new Lapras(level, ball); break;
-			case SNORLAX: pokemon = new Snorlax(level, ball); break;
+			case SNORLAX: pokemon = new Snorlax(level, ball); break;			
+			case ARTICUNO: pokemon = new Articuno(level, ball); break;
+			case ZAPDOS: pokemon = new Zapdos(level, ball); break;
+			case MOLTRES: pokemon = new Moltres(level, ball); break;
+			case DRATINI: pokemon = new Dratini(level, ball); break;
+			case DRAGONAIR: pokemon = new Dragonair(level, ball); break;
+			case DRAGONITE: pokemon = new Dragonite(level, ball); break;
+			case MEWTWO: pokemon = new Mewtwo(level, ball); break;
+			case MEW: pokemon = new Mew(level, ball); break;
+			case CHIKORITA: pokemon = new Chikorita(level, ball); break;
+			case BAYLEEF: pokemon = new Bayleef(level, ball); break;
+			case MEGANIUM: pokemon = new Meganium(level, ball); break;
+			case CYNDAQUIL: pokemon = new Cyndaquil(level, ball); break;
+			case QUILAVA: pokemon = new Quilava(level, ball); break;
+			case TYPHLOSION: pokemon = new Typhlosion(level, ball); break;
+			case TOTODILE: pokemon = new Totodile(level, ball); break;
+			case CROCONAW: pokemon = new Croconaw(level, ball); break;
+			case FERALIGATR: pokemon = new Feraligatr(level, ball); break;			
+			case CROBAT: pokemon = new Crobat(level, ball); break;
+			case KINGDRA: pokemon = new Kingdra(level, ball); break;
+			case RAIKOU: pokemon = new Raikou(level, ball); break;
+			case ENTEI: pokemon = new Entei(level, ball); break;
+			case SUICUNE: pokemon = new Suicune(level, ball); break;
+			case LUGIA: pokemon = new Lugia(level, ball); break;
+			case HOOH: pokemon = new Hooh(level, ball); break;
+			case CELEBI: pokemon = new Celebi(level, ball); break;			
 			case TREECKO: pokemon = new Treecko(level, ball); break;			
 			case GROVYLE: pokemon = new Grovyle(level, ball); break;			
 			case SCEPTILE: pokemon = new Sceptile(level, ball); break;	
@@ -544,15 +590,41 @@ public class Pokemon {
 			case MUDKIP: pokemon = new Mudkip(level, ball); break;			
 			case MARSHTOMP: pokemon = new Marshtomp(level, ball); break;			
 			case SWAMPERT: pokemon = new Swampert(level, ball); break;	
+			case POOCHYENA: pokemon = new Poochyena(level, ball); break;	
+			case MIGHTYENA: pokemon = new Mightyena(level, ball); break;	
+			case ZIGZAGOON: pokemon = new Zigzagoon(level, ball); break;	
+			case LINOONE: pokemon = new Linoone(level, ball); break;	
+			case RALTS: pokemon = new Ralts(level, ball); break;	
+			case KIRLIA: pokemon = new Kirlia(level, ball); break;	
+			case GARDEVOIR: pokemon = new Gardevoir(level, ball); break;	
+			case NINCADA: pokemon = new Nincada(level, ball); break;	
+			case NINJASK: pokemon = new Ninjask(level, ball); break;	
+			case SHEDINJA: pokemon = new Shedinja(level, ball); break;	
+			case WHISMUR: pokemon = new Whismur(level, ball); break;	
+			case LOUDRED: pokemon = new Loudred(level, ball); break;
+			case EXPLOUD: pokemon = new Exploud(level, ball); break;	
+			case SPHEAL: pokemon = new Spheal(level, ball); break;	
+			case SEALEO: pokemon = new Sealeo(level, ball); break;	
+			case WALREIN: pokemon = new Walrein(level, ball); break;	
+			case BAGON: pokemon = new Bagon(level, ball); break;	
+			case SHELGON: pokemon = new Shelgon(level, ball); break;	
+			case SALAMENCE: pokemon = new Salamence(level, ball); break;	
+			case BELDUM: pokemon = new Beldum(level, ball); break;	
+			case METANG: pokemon = new Metang(level, ball); break;	
+			case METAGROSS: pokemon = new Metagross(level, ball); break;	
+			case KYOGRE: pokemon = new Kyogre(level, ball); break;	
+			case GROUDON: pokemon = new Groudon(level, ball); break;	
+			case RAYQUAZA: pokemon = new Rayquaza(level, ball); break;	
+			case JIRACHI: pokemon = new Jirachi(level, ball); break;	
+			case DEOXYS: pokemon = new Deoxys(level, ball); break;	
+
 			default: break;
 		}
 		
 		return pokemon;
 	}
-	/** END POKEDEX METHODS **/
-			
-	
-	
+	/** END GET POKEMON METHODS **/
+				
 	/** GETTERS AND SETTERS **/
 	public String getNickname() { return nickname; }
 	public void setNickname(String nickname) { this.nickname = nickname; }
@@ -639,7 +711,7 @@ public class Pokemon {
 	public boolean isAlive() { return isAlive; }
 	public void setAlive(boolean isAlive) {	
 		this.isAlive = isAlive; 
-		hp = 0;		
+		chp = 0;		
 		removeStatus();
 		getAbility().setActive(false);
 		resetMoves();
@@ -653,8 +725,6 @@ public class Pokemon {
 	public Entity getItem() { return item; }
 	public void giveItem(Entity item) { this.item = item; }
 	/** END GETTERS AND SETTERS **/
-	
-	
 	
 	/** GETTERS **/
 	public String toString() { return name; }
@@ -715,13 +785,10 @@ public class Pokemon {
 		
 	public int getXPYield() { return xpYield; }
 	public int getEV() { return ev; }
-	public int getEvLevel() { return evLevel; }
-	public int getEvIndex() { return evIndex; }
+	public int getEvolveLevel() { return evolveLevel; }
 	public int getCatchRate() { return catchRate; }		
 	/** END GETTERS **/
-	
-	
-	
+		
 	/** MISC METHODS **/
 	protected int getStat(double base, int IV) {
 		return (int)(Math.floor(0.01 * (2 * base + IV + Math.floor(0.25 * ev)) * level)) + 5;

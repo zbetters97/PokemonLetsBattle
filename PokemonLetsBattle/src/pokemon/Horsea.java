@@ -12,7 +12,7 @@ import properties.Type;
 public class Horsea extends Pokemon {
 	
 	public Horsea(int level, Entity ball) {
-		super(116, "Horsea", level, ball, 30, 40, 70, 70, 25, 60, 32, 117, 83, 1, Growth.MEDIUMFAST, 225);
+		super(116, "Horsea", level, ball, 30, 40, 70, 70, 25, 60, 32, 83, 1, Growth.MEDIUMFAST, 225);
 		
 		id = Pokedex.HORSEA;
 		type = Type.WATER;
@@ -39,5 +39,14 @@ public class Horsea extends Pokemon {
 				Map.entry(38, Moves.DRAGONDANCE),
 				Map.entry(42, Moves.DRAGONPULSE)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Seadra(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

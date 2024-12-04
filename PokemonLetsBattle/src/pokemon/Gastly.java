@@ -12,7 +12,7 @@ import properties.Type;
 public class Gastly extends Pokemon {
 	
 	public Gastly(int level, Entity ball) {
-		super(92, "Gastly", level, ball, 30, 35, 30, 100, 35, 80, 25, 93, 95, 1, Growth.MEDIUMSLOW, 190);
+		super(92, "Gastly", level, ball, 30, 35, 30, 100, 35, 80, 25, 95, 1, Growth.MEDIUMSLOW, 190);
 		
 		id = Pokedex.GASTLY;
 		types = Arrays.asList(Type.GHOST, Type.POISON);
@@ -37,5 +37,14 @@ public class Gastly extends Pokemon {
 				Map.entry(33, Moves.DREAMEATER),
 				Map.entry(36, Moves.DARKPULSE)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Haunter(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

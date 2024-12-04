@@ -17,7 +17,6 @@ import entity.object.object_interactive.OBJ_Boulder;
 import entity.object.object_interactive.OBJ_Rock;
 import entity.object.object_interactive.OBJ_Tree;
 import entity.object.object_interactive.OBJ_Water;
-import moves.Moves;
 import pokemon.Pokemon;
 import pokemon.Pokemon.Pokedex;
 
@@ -41,7 +40,7 @@ public class Player extends Entity {
 			fishLeft1, fishLeft2, fishLeft3, fishLeft4,
 			fishRight1, fishRight2, fishRight3, fishRight4;	
 	
-	public ArrayList<Integer> personalDex = new ArrayList<>();
+	public ArrayList<Pokemon> personalDex = new ArrayList<>();
 	public Pokemon[][] pcParty = new Pokemon[10][30];
 	public ArrayList<Pokemon> pcBox_1 = new ArrayList<Pokemon>(30);
 	
@@ -88,25 +87,20 @@ public class Player extends Entity {
 /** DEFAULT HANDLERS **/
 	
 	// DEFAULT VALUES
-	public void assignParty() {		
-		
-		pokeParty.add(Pokemon.get(Pokedex.MUDKIP, 7, new COL_Ball_Poke(gp)));
+	public void assignParty() {				
+		pokeParty.add(Pokemon.get(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));
 		pokeParty.add(Pokemon.get(Pokedex.MARSHTOMP, 16, new COL_Ball_Great(gp)));
 		pokeParty.add(Pokemon.get(Pokedex.SWAMPERT, 36, new COL_Ball_Ultra(gp)));
-		
-		pokeParty.get(0).addMove(Moves.CUT);
-		pokeParty.get(0).addMove(Moves.STRENGTH);
-		pokeParty.get(1).addMove(Moves.ROCKSMASH);
-		pokeParty.get(2).addMove(Moves.SURF);
 	}
 	public void setDefaultValues() {
 				
 		int c = 0;
 		int x = 0;
-		for (int i = 0; i < Pokemon.getPokedex().size(); i++) {
-			pcParty[c][x] = Pokemon.get(Pokemon.getPokedex().get(i).getID(), 36, new COL_Ball_Master(gp));
+		for (int i = 0; i < Pokemon.Pokedex.values().length; i++) {
+			pcParty[c][x] = Pokemon.get(Pokemon.Pokedex.values()[i], 50, new COL_Ball_Poke(gp));
+			personalDex.add(pcParty[c][x]);			
 			x++;
-			if (i == 29 || i == 59 || i == 89) { c++; x = 0; } 	
+			if (i == 29 || i == 59 || i == 89) { c++; x = 0; } 			
 		}
 		
 		speed = 4; defaultSpeed = speed;
@@ -123,10 +117,6 @@ public class Player extends Entity {
 		getHMImage();
 		getSurfImage();
 		getFishImage();
-		
-		personalDex.add(pokeParty.get(0).getIndex());
-		personalDex.add(pokeParty.get(1).getIndex());
-		personalDex.add(pokeParty.get(2).getIndex());
 	}
 	public void setDefaultPosition() {	
 		worldX = gp.tileSize * 24;
@@ -725,6 +715,10 @@ public class Player extends Entity {
 		else {
 			return false;
 		}
+	}
+	
+	public boolean hasPokemonDex(int index) {
+		return gp.player.personalDex.stream().anyMatch(p -> p.getIndex() == index);
 	}
 	
 	public void stopMoving() {		

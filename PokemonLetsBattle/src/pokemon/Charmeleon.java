@@ -12,7 +12,7 @@ import properties.Type;
 public class Charmeleon extends Pokemon {
 	
 	public Charmeleon(int level, Entity ball) {
-		super(5, "Charmeleon", level, ball, 58, 64, 58, 80, 65,  80, 36, 6, 142, 2, Growth.MEDIUMSLOW, 45);
+		super(5, "Charmeleon", level, ball, 58, 64, 58, 80, 65, 80, 36, 142, 2, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.CHARMELEON;
 		type = Type.FIRE;
@@ -39,5 +39,14 @@ public class Charmeleon extends Pokemon {
 				Map.entry(39, Moves.FLAMETHROWER),
 				Map.entry(43, Moves.FIRESPIN)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Charizard(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

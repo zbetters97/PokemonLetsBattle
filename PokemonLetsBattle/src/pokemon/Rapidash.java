@@ -12,7 +12,7 @@ import properties.Type;
 public class Rapidash extends Pokemon {
 	
 	public Rapidash(int level, Entity ball) {
-		super(78, "Rapidash", level, ball, 65, 100, 70, 80, 80, 105, -1, -1, 192, 2, Growth.MEDIUMFAST, 60);
+		super(78, "Rapidash", level, ball, 65, 100, 70, 80, 80, 105, -1, 192, 2, Growth.MEDIUMFAST, 60);
 		
 		id = Pokedex.RAPIDASH;
 		type = Type.FIRE;

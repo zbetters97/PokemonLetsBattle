@@ -12,7 +12,7 @@ import properties.Type;
 public class Golbat extends Pokemon {
 	
 	public Golbat(int level, Entity ball) {
-		super(42, "Golbat", level, ball, 75, 80, 70, 65, 75, 90, 40, 169, 171, 2, Growth.MEDIUMFAST, 90);
+		super(42, "Golbat", level, ball, 75, 80, 70, 65, 75, 90, 40, 171, 2, Growth.MEDIUMFAST, 90);
 		
 		id = Pokedex.GOLBAT;
 		types = Arrays.asList(Type.FLYING, Type.POISON);
@@ -42,5 +42,14 @@ public class Golbat extends Pokemon {
 				Map.entry(45, Moves.HAZE),
 				Map.entry(51, Moves.AIRSLASH)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Crobat(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

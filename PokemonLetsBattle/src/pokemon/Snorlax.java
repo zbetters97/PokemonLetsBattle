@@ -12,7 +12,7 @@ import properties.Type;
 public class Snorlax extends Pokemon {
 	
 	public Snorlax(int level, Entity ball) {
-		super(143, "Snorlax", level, ball, 160, 110, 65, 65, 110, 30, -1, -1, 154, 2, Growth.SLOW, 25);
+		super(143, "Snorlax", level, ball, 160, 110, 65, 65, 110, 30, -1, 154, 2, Growth.SLOW, 25);
 		
 		id = Pokedex.SNORLAX;
 		type = Type.NORMAL;

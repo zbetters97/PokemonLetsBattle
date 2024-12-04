@@ -12,7 +12,7 @@ import properties.Type;
 public class Charmander extends Pokemon {
 	
 	public Charmander(int level, Entity ball) {
-		super(4, "Charmander", level, ball, 39, 52, 43, 60, 50, 65, 16, 5, 65, 1, Growth.MEDIUMSLOW, 45);
+		super(4, "Charmander", level, ball, 39, 52, 43, 60, 50, 65, 16, 65, 1, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.CHARMANDER;
 		type = Type.FIRE;
@@ -38,5 +38,14 @@ public class Charmander extends Pokemon {
 				Map.entry(34, Moves.FLAMETHROWER),
 				Map.entry(37, Moves.FIRESPIN)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Charmeleon(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

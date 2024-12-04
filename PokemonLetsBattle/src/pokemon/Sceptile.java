@@ -12,7 +12,7 @@ import properties.Type;
 public class Sceptile extends Pokemon {
 	
 	public Sceptile(int level, Entity ball) {
-		super(254, "Sceptile", level, ball, 70, 85, 65, 105, 85, 120, -1, -1, 208, 3, Growth.MEDIUMSLOW, 45);
+		super(254, "Sceptile", level, ball, 70, 85, 65, 105, 85, 120, -1, 208, 3, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.SCEPTILE;
 		type = Type.GRASS;

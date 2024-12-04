@@ -12,7 +12,7 @@ import properties.Type;
 public class Ivysaur extends Pokemon {
 	
 	public Ivysaur(int level, Entity ball) {
-		super(2, "Ivysaur", level, ball, 60, 62, 63, 80, 80, 60, 32, 3, 141, 2, Growth.MEDIUMSLOW, 45);
+		super(2, "Ivysaur", level, ball, 60, 62, 63, 80, 80, 60, 32, 141, 2, Growth.MEDIUMSLOW, 45);
 		
 		id = Pokedex.IVYSAUR;
 		types = Arrays.asList(Type.GRASS, Type.POISON);
@@ -40,5 +40,14 @@ public class Ivysaur extends Pokemon {
 				Map.entry(31, Moves.DOUBLEEDGE),
 				Map.entry(44, Moves.SOLARBEAM)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Venusaur(1, null);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

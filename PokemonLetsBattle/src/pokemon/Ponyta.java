@@ -12,7 +12,7 @@ import properties.Type;
 public class Ponyta extends Pokemon {
 	
 	public Ponyta(int level, Entity ball) {
-		super(77, "Ponyta", level, ball, 50, 85, 55, 65, 65, 90, 45, 78, 152, 1, Growth.MEDIUMFAST, 190);
+		super(77, "Ponyta", level, ball, 50, 85, 55, 65, 65, 90, 45, 152, 1, Growth.MEDIUMFAST, 190);
 		
 		id = Pokedex.PONYTA;
 		type = Type.FIRE;
@@ -39,5 +39,14 @@ public class Ponyta extends Pokemon {
 				Map.entry(44, Moves.BOUNCE),
 				Map.entry(48, Moves.FLAREBLITZ)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Rapidash(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

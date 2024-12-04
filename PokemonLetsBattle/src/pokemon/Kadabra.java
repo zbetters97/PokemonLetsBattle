@@ -12,7 +12,7 @@ import properties.Type;
 public class Kadabra extends Pokemon {
 	
 	public Kadabra(int level, Entity ball) {
-		super(64, "Kadabra", level, ball, 40, 35, 30, 120, 70, 105, 36, 65, 145, 2, Growth.MEDIUMSLOW, 100);
+		super(64, "Kadabra", level, ball, 40, 35, 30, 120, 70, 105, 36, 145, 2, Growth.MEDIUMSLOW, 100);
 		
 		id = Pokedex.KADABRA;
 		type = Type.PSYCHIC;
@@ -36,5 +36,15 @@ public class Kadabra extends Pokemon {
 				Map.entry(34, Moves.PSYCHOCUT),
 				Map.entry(40, Moves.PSYCHIC)
 		);
+	}
+	
+	public Pokemon evolve() {
+		
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Alakazam(1, null);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }

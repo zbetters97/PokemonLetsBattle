@@ -12,7 +12,7 @@ import properties.Type;
 public class Gyarados extends Pokemon {
 	
 	public Gyarados(int level, Entity ball) {
-		super(130, "Gyarados", level, ball, 95, 125, 79, 60, 100, 81, -1, -1, 214, 2, Growth.SLOW, 45);
+		super(130, "Gyarados", level, ball, 95, 125, 79, 60, 100, 81, -1, 214, 2, Growth.SLOW, 45);
 		
 		id = Pokedex.GYARADOS;
 		types = Arrays.asList(Type.WATER, Type.DRAGON);

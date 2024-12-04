@@ -12,7 +12,7 @@ import properties.Type;
 public class Zubat extends Pokemon {
 	
 	public Zubat(int level, Entity ball) {
-		super(41, "Zubat", level, ball, 40, 45, 35, 30, 40, 55, 22, 42, 54, 1, Growth.MEDIUMFAST, 255);
+		super(41, "Zubat", level, ball, 40, 45, 35, 30, 40, 55, 22, 54, 1, Growth.MEDIUMFAST, 255);
 		
 		id = Pokedex.ZUBAT;
 		types = Arrays.asList(Type.FLYING, Type.POISON);
@@ -39,5 +39,14 @@ public class Zubat extends Pokemon {
 				Map.entry(37, Moves.HAZE),
 				Map.entry(41, Moves.AIRSLASH)
 		);
+	}
+	
+	public Pokemon evolve() {
+		Pokemon evolvedForm = null;
+		
+		evolvedForm = new Golbat(level, ball);				
+		evolvedForm.create(this);
+		
+		return evolvedForm;
 	}
 }
