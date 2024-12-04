@@ -225,9 +225,7 @@ public class BattleManager extends Thread {
 			}
 		}
 		
-		if (!gp.player.hasPokemonDex(fighter[1].getIndex())) {
-			gp.player.personalDex.add(fighter[1]);
-		}
+		gp.player.trackSeenPokemon(fighter[1]);
 		
 		running = false;			
 		gp.ui.battleState = gp.ui.battle_Options;
@@ -282,6 +280,7 @@ public class BattleManager extends Thread {
 			}
 		}
 	}
+
 	/** END SETUP BATTLE METHODS **/
 	
 	/** SWAP FIGHTERS **/
@@ -318,9 +317,7 @@ public class BattleManager extends Thread {
 			newFighter[0] = null;
 			newFighter[1] = null;
 			
-			if (!gp.player.hasPokemonDex(fighter[1].getIndex())) {
-				gp.player.personalDex.add(fighter[1]);
-			}
+			gp.player.trackSeenPokemon(fighter[1]);
 			
 			running = false;								
 			gp.ui.battleState = gp.ui.battle_Options;														
@@ -2952,6 +2949,10 @@ public class BattleManager extends Thread {
 		gp.stopMusic();
 		gp.startMusic(1, 3);										
 		typeDialogue("Gotcha!\n" + fighter[1].getName() + " was caught!", true);
+						
+		if (!gp.player.ownsPokemon(fighter[1].getIndex())) {
+			gp.player.dexOwn++;
+		}
 		
 		if (gp.player.pokeParty.size() < 6) {
 			fighter[1].resetMoves();
@@ -3086,9 +3087,8 @@ public class BattleManager extends Thread {
 		typeDialogue("Congratulations! Your " +  oldEvolve.getName() + 
 				"\nevolved into " + newEvolve.getName() + "!", true);
 		
-		if (!gp.player.hasPokemonDex(newEvolve.getIndex())) {
-			gp.player.personalDex.add(newEvolve);
-		}
+		gp.player.trackSeenPokemon(newEvolve);
+		gp.player.trackOwnPokemon(newEvolve.getIndex());
 				
 		checkNewMove(newEvolve);
 		

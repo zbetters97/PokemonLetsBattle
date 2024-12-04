@@ -1274,7 +1274,7 @@ public class UI {
 		String text;
 		Pokemon pokemon;
 		Pokemon p;
-		
+				
 		g2.setColor(party_green);  
 		g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);	
 		
@@ -1291,6 +1291,26 @@ public class UI {
 		x = getXForCenteredTextOnWidth(text, width, x);
 		y += gp.tileSize * 0.95;	
 		g2.drawString(text, x, y);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 45f));
+		x = (int) (gp.tileSize * 2);
+		y = (int) (gp.tileSize * 2.8);
+		text = "-SEEN-";
+		drawText(text, x, y, battle_white, Color.BLACK);
+		text = "" + gp.player.dexSeen;
+		x = getXForCenteredTextOnWidth(text, x, (int) (gp.tileSize * 2.2));		
+		y += gp.tileSize * 0.8;
+		drawText(text, x, y, battle_white, Color.BLACK);
+		
+		x = (int) (gp.tileSize * 5);
+		y = (int) (gp.tileSize * 2.8);
+		text = "-OWN-";
+		g2.drawString(text, x, y);
+		drawText(text, x, y, battle_white, Color.BLACK);
+		text = "" + gp.player.dexOwn;
+		x = getXForCenteredTextOnWidth(text, x, (int) (gp.tileSize * 3.5));		
+		y += gp.tileSize * 0.8;
+		drawText(text, x, y, battle_white, Color.BLACK);
 		
 		x = gp.tileSize;
 		y = (int) (gp.tileSize * 4);		

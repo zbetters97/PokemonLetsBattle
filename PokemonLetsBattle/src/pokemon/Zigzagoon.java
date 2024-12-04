@@ -12,7 +12,7 @@ import properties.Type;
 public class Zigzagoon extends Pokemon {
 	
 	public Zigzagoon(int level, Entity ball) {
-		super(261, "Zigzagoon", level, ball, 38, 30, 41, 30, 41, 60, 25, 60, 1, Growth.MEDIUMFAST, 255);
+		super(263, "Zigzagoon", level, ball, 38, 30, 41, 30, 41, 60, 25, 60, 1, Growth.MEDIUMFAST, 255);
 		
 		id = Pokedex.ZIGZAGOON;
 		type = Type.NORMAL;

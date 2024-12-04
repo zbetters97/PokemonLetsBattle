@@ -12,7 +12,7 @@ import properties.Type;
 public class Linoone extends Pokemon {
 	
 	public Linoone(int level, Entity ball) {
-		super(261, "Linoone", level, ball, 78, 70, 61, 50, 61, 100, -1, 128, 2, Growth.MEDIUMFAST, 264);
+		super(264, "Linoone", level, ball, 78, 70, 61, 50, 61, 100, -1, 128, 2, Growth.MEDIUMFAST, 264);
 		
 		id = Pokedex.LINOONE;
 		type = Type.NORMAL;

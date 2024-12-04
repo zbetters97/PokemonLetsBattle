@@ -94,19 +94,12 @@ public class Player extends Entity {
 	}
 	public void setDefaultValues() {
 				
-		int c = 0;
-		int x = 0;
-		for (int i = 0; i < Pokemon.Pokedex.values().length; i++) {
-			pcParty[c][x] = Pokemon.get(Pokemon.Pokedex.values()[i], 50, new COL_Ball_Poke(gp));
-			personalDex.add(pcParty[c][x]);			
-			x++;
-			if (i == 29 || i == 59 || i == 89) { c++; x = 0; } 			
-		}
-		
 		speed = 4; defaultSpeed = speed;
 		animationSpeed = 8; defaultAnimationSpeed = animationSpeed;
 		
 		money = 4123;
+		dexSeen = 0;
+		dexOwn = 0;
 		
 		// PLAYER ATTRIBUTES		
 		setDefaultPosition();		
@@ -117,6 +110,16 @@ public class Player extends Entity {
 		getHMImage();
 		getSurfImage();
 		getFishImage();
+				
+		int c = 0;
+		int x = 0;
+		for (int i = 0; i < Pokemon.Pokedex.values().length; i++) {
+			pcParty[c][x] = Pokemon.get(Pokemon.Pokedex.values()[i], 50, new COL_Ball_Poke(gp));
+			personalDex.add(pcParty[c][x]);		
+			x++;
+			if (i == 29 || i == 59 || i == 89) { c++; x = 0; } 		
+		}
+		
 	}
 	public void setDefaultPosition() {	
 		worldX = gp.tileSize * 24;
@@ -717,8 +720,41 @@ public class Player extends Entity {
 		}
 	}
 	
+	public void trackSeenPokemon(Pokemon pkm) {			
+		if (!hasPokemonDex(pkm.getIndex())) {
+			personalDex.add(pkm);
+			dexSeen++;
+		}
+	}
+	public void trackOwnPokemon(int index) {
+		if (!ownsPokemon(index)) {
+			dexOwn++;
+		}
+	}
 	public boolean hasPokemonDex(int index) {
 		return gp.player.personalDex.stream().anyMatch(p -> p.getIndex() == index);
+	}
+	public boolean ownsPokemon(int index) {
+		
+		boolean ownsPokemon = false;
+		
+		if (gp.player.pokeParty.stream().anyMatch(p -> p.getIndex() == index)) {
+			ownsPokemon = true;
+		}
+		else {
+			for (int i = 0; i < pcParty.length; i++) {				
+				if (pcParty[i] != null) {				
+					for (int c = 0; c  < pcParty[i].length; c++) {						
+						if (pcParty[i][c] != null && pcParty[i][c].getIndex() == index) {
+							ownsPokemon = true;
+							break;
+						}						
+					}
+				}
+			}
+		}
+		
+		return ownsPokemon;
 	}
 	
 	public void stopMoving() {		
