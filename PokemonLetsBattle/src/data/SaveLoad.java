@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import application.GamePanel;
@@ -78,7 +79,6 @@ public class SaveLoad {
 			ArrayList<Integer> movePP = new ArrayList<>();
 			for (Pokemon p : gp.player.pokeParty) {
 								
-				ds.pPokePartyUID.add(p.getUniqueID());
 				ds.pPokePartyID.add(p.getID());
 				ds.pPokePartySex.add(p.getSex());
 				ds.pPokePartyStats.add(new int[] {
@@ -119,7 +119,6 @@ public class SaveLoad {
 					
 					if (p != null) {
 						
-						ds.pPCPartyUID.add(p.getUniqueID());
 						ds.pPCPartyID.add(p.getID());
 						ds.pPCPartySex.add(p.getSex());
 						ds.pPCPartyStats.add(new int[] {
@@ -291,6 +290,7 @@ public class SaveLoad {
 				for (int i = 0; i < gp.player.inventory_keyItems.size(); i++) {
 					if (gp.player.inventory_keyItems.get(i).name.equals(ds.pKeyItem)) {
 						gp.player.keyItem = gp.player.inventory_keyItems.get(i);
+						break;
 					}
 				}	
 			}
@@ -331,11 +331,10 @@ public class SaveLoad {
 				else {
 					status = null;
 				}
-												
+				
 				for (int c = 0; c < ds.pPokePartyMoveNames.get(i).size(); c++) {
-					Move m = Move.getMove(ds.pPokePartyMoveNames.get(i).get(c), ds.pPokePartyMovePP.get(i).get(c));
-					moves.add(m);
-				}				
+					moves.add(Move.getMove(ds.pPokePartyMoveNames.get(i).get(c), ds.pPokePartyMovePP.get(i).get(c)));
+				}
 				moveset = new ArrayList<Move>(moves);
 				
 				isAlive = ds.pPokePartyAlive.get(i);
@@ -353,15 +352,18 @@ public class SaveLoad {
 					item = null;
 				}
 				
-				p.create(sex, level, cxp, ev, 
-						hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV, 
-						nature, status, moveset, item, ball, isAlive);
+				if (p != null) {
+					p.create(sex, level, cxp, ev, 
+							hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV, 
+							nature, status, moveset, item, ball, isAlive);		
+				}			
 								
 				gp.player.pokeParty.add(p);
 				moves.clear();
 				moveset.clear();
 			}
 				
+			Arrays.stream(gp.player.pcParty).forEach(o -> Arrays.fill(o, null));
 			for (int i = 0; i < ds.pPCPartyID.size(); i++) {
 				
 				p = Pokemon.get(ds.pPCPartyID.get(i), 1, null);
@@ -386,8 +388,7 @@ public class SaveLoad {
 				}
 				
 				for (int c = 0; c < ds.pPCPartyMoveNames.get(i).size(); c++) {
-					Move m = Move.getMove(ds.pPCPartyMoveNames.get(i).get(c), ds.pPCPartyMovePP.get(i).get(c));
-					moves.add(m);
+					moves.add(Move.getMove(ds.pPCPartyMoveNames.get(i).get(c), ds.pPCPartyMovePP.get(i).get(c)));
 				}
 				moveset = new ArrayList<Move>(moves);
 				
@@ -406,11 +407,14 @@ public class SaveLoad {
 					item = null;
 				}
 				
-				p.create(sex, level, cxp, ev, 
-						hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV, 
-						nature, status, moveset, item, ball, isAlive);
-								
-				gp.player.pcParty[ds.pPCPartyIndexBox.get(i)][ds.pPCPartyIndexSlot.get(i)] = p;
+				if (p != null) {
+					p.create(sex, level, cxp, ev, 
+							hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV, 
+							nature, status, moveset, item, ball, isAlive);
+					
+					gp.player.pcParty[ds.pPCPartyIndexBox.get(i)][ds.pPCPartyIndexSlot.get(i)] = p;		
+				}				
+				
 				moves.clear();
 				moveset.clear();
 			}			

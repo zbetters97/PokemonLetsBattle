@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
@@ -21,7 +20,6 @@ public class Pokemon {
 	/** EXP & EV REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_effort_value_yield_in_Generation_IV **/
 	/** XP GROWTH REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_experience_type **/	
 	/** CATCH RATE REFERENCE: https://bulbapedia.bulbagarden.net/wiki/List_of_Pokémon_by_catch_rate **/	
-		
 	public static enum Pokedex {
 		BULBUSAUR, IVYSAUR, VENUSAUR, 
 		CHARMANDER, CHARMELEON, CHARIZARD,
@@ -70,7 +68,6 @@ public class Pokemon {
 		NONE, BOUNCE, DIG, DIVE, FLY, PHANTOMFORCE, SHADOWFORCE, SKYDROP
 	}
 	
-	private String uniqueID;
 	protected Pokedex id;
 	protected int index;
 	protected String name, nickname;
@@ -102,9 +99,7 @@ public class Pokemon {
 	public Pokemon(int index, String name, int level, Entity ball,
 			int hp, int attack, int defense, int spAttack, int spDefense, int speed,
 			int evolveLevel, int xpYield, int ev, Growth growth, int catchRate) {		
-				
-		uniqueID = UUID.randomUUID().toString();
-		
+						
 		this.index = index;
 		this.name = name;
 		
@@ -364,8 +359,6 @@ public class Pokemon {
 		spAttack = getStat(baseSpAttack, spAttackIV); 
 		spDefense = getStat(baseSpDefense, spDefenseIV);
 		speed = getStat(baseSpeed, speedIV);
-		accuracy = 1;
-		evasion = 1;
 		
 		this.nature = nature;
 		setNature();
@@ -377,12 +370,8 @@ public class Pokemon {
 		cSpeed = speed;
 		
 		this.status = status;
-		statusCounter = 0;
-		statusLimit = 0;
 		
 		this.moveset = new ArrayList<Move>(moveset);
-		activeMoves = new ArrayList<>();		
-		protection = Protection.NONE;
 		
 		this.item = item;
 		this.ball = ball;
@@ -483,6 +472,7 @@ public class Pokemon {
 			case (3): spAttack = Math.rint((double) spAttack * 1.10); break;
 			case (4): spDefense = Math.rint((double) spDefense * 1.10); break;
 			case (5): speed = Math.rint((double) speed * 1.10); break;
+			default: break;
 		}		
 		// decrease by 10%
 		switch (decrease) {
@@ -491,6 +481,7 @@ public class Pokemon {
 			case (3): spAttack = Math.rint((double) spAttack * .90); break;
 			case (4): spDefense = Math.rint((double) spDefense * .90); break;
 			case (5): speed = Math.rint((double) speed * .90); break;
+			default: break;
 		}	
 	}	
 	/** END NATURE METHODS **/
@@ -732,7 +723,6 @@ public class Pokemon {
 	
 	/** GETTERS **/
 	public String toString() { return name; }
-	public String getUniqueID() { return uniqueID; }
 	public Pokedex getID() { return id; }
 	public int getIndex() { return index; }
 	public String getName() { 

@@ -37,7 +37,6 @@ public class DataStorage implements Serializable {
 	String pKeyItem;
 	
 	// PLAYER POKEPARTY
-	ArrayList<String> pPokePartyUID = new ArrayList<>();
 	ArrayList<Pokedex> pPokePartyID = new ArrayList<>();
 	ArrayList<Character> pPokePartySex = new ArrayList<>();
 	ArrayList<int[]> pPokePartyStats = new ArrayList<>();
@@ -50,7 +49,6 @@ public class DataStorage implements Serializable {
 	ArrayList<Boolean> pPokePartyAlive = new ArrayList<>();
 	
 	// PLAYER PC
-	ArrayList<String> pPCPartyUID = new ArrayList<>();
 	ArrayList<Pokedex> pPCPartyID = new ArrayList<>();
 	ArrayList<Character> pPCPartySex = new ArrayList<>();
 	ArrayList<int[]> pPCPartyStats = new ArrayList<>();

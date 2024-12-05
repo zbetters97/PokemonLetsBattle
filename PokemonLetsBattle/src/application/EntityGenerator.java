@@ -47,6 +47,8 @@ public class EntityGenerator {
 			
 			case ITM_Revive_Max.colName: obj = new ITM_Revive_Max(gp); break;
 			case ITM_Revive.colName: obj = new ITM_Revive(gp); break;
+			
+			default: break;
 		}
 		
 		return obj;		
@@ -63,6 +65,8 @@ public class EntityGenerator {
 			case OBJ_Boulder.objName: obj = new OBJ_Boulder(gp, worldX, worldY); break;
 			case OBJ_Rock.objName: obj = new OBJ_Rock(gp, worldX, worldY); break;			
 			case OBJ_Tree.objName: obj = new OBJ_Tree(gp, worldX, worldY); break;
+			
+			default: break;
 		}
 		
 		return obj;		
