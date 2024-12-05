@@ -498,7 +498,7 @@ public class SaveLoad {
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(saveFiles[saveSlot])));				
 				DataStorage ds = (DataStorage)ois.readObject();			
 				ois.close();
-				
+																
 				return ds.toString();			
 			}
 		}

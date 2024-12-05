@@ -156,6 +156,7 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	// SAVE LOAD MANAGER
 	public SaveLoad saveLoad = new SaveLoad(this);
+	public int fileSlot = 0;
 	
 /** CONSTRUCTOR **/	
 	public GamePanel() {

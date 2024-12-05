@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Random;
 
 import application.GamePanel;
+import data.Progress;
 import entity.collectables.balls.*;
 import entity.collectables.items.*;
 import entity.object.object_interactive.OBJ_Boulder;
@@ -176,6 +177,7 @@ public class Player extends Entity {
 	public void restoreStatus() {
 		speed = defaultSpeed;		
 		keyItem = null;
+		Progress.canSave = true;
 		resetValues();
 	}	
 	public void resetValues() {		
@@ -404,6 +406,7 @@ public class Player extends Entity {
 			if (action == Action.SURFING && gp.cChecker.checkGround(this)) {					
 				action = Action.IDLE;	
 				surfCounter = 0;
+				Progress.canSave = true;
 				
 				gp.stopMusic();
 				gp.setupMusic();
@@ -519,6 +522,7 @@ public class Player extends Entity {
 				case OBJ_Water.objName:
 					moving = true;
 					action = Action.SURFING;
+					Progress.canSave = false;
 					gp.stopMusic();
 					gp.startMusic(0, "surfing");
 					break;				

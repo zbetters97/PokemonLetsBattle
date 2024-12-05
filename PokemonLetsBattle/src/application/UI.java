@@ -17,6 +17,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import data.Progress;
 import entity.Entity;
 import entity.npc.NPC_Nurse;
 import moves.Move;
@@ -66,8 +67,10 @@ public class UI {
 	private BufferedImage dialogue_next;
 	public BufferedImage battleIcon;
 	
+	// GENERAL HANDLERS
 	public int commandNum = 0;
 	public int subState = 0;
+	private String[] files = new String[3];
 
 	// TRANSITION
 	public boolean tMoving = false;
@@ -142,6 +145,7 @@ public class UI {
 	public final int pause_Bag = 3;
 	public final int pause_Player = 4;
 	public final int pause_Save = 5;
+	public final int pause_Load = 6;
 	public final int pause_Options = 7;	
 	
 	// PARTY STATES
@@ -1106,6 +1110,12 @@ public class UI {
 			case pause_Bag:
 				pause_Bag();
 				break;
+			case pause_Save:
+				pause_Save();
+				break;
+			case pause_Load:
+				pause_Load();
+				break;
 			case pause_Options:
 				pause_Options();
 				break;			
@@ -1194,13 +1204,22 @@ public class UI {
 		text = "SAVE";
 		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
 		if (commandNum == 4) {
-			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
+			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);										
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
-				gp.keyH.playCursorSE();
-				gp.saveLoad.save(0);
-				gp.gameState = gp.playState;
-				commandNum = 0;
+				
+				if (Progress.canSave) {
+					gp.keyH.playCursorSE();
+					pauseState = pause_Save;
+					commandNum = gp.fileSlot;	
+					
+					files[0] = gp.saveLoad.loadFileData(0);
+					files[1] = gp.saveLoad.loadFileData(1);
+					files[2] = gp.saveLoad.loadFileData(2);
+				}
+				else {
+					gp.keyH.playErrorSE();
+				}
 			}
 		}
 		
@@ -1212,14 +1231,12 @@ public class UI {
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
 				gp.keyH.playCursorSE();				
-				gp.stopMusic();
-				gp.resetGame();
-				commandNum = 0;
-				subState = 0;
-				gp.saveLoad.load(0);
-				gp.tileM.loadMap();
-				gp.gameState = gp.playState;
-				gp.setupMusic();	
+				pauseState = pause_Load;
+				commandNum = gp.fileSlot;
+				
+				files[0] = gp.saveLoad.loadFileData(0);
+				files[1] = gp.saveLoad.loadFileData(1);
+				files[2] = gp.saveLoad.loadFileData(2);
 			}
 		}
 		
@@ -3411,6 +3428,191 @@ public class UI {
 	}
 	/** END PARTY SCREEN **/
 	
+	/** SAVE/LOAD SCREENS **/	
+	private void pause_Save() {
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		String text;		
+		
+		x = gp.tileSize * 2;
+		y = (int) (gp.tileSize * 1.2);		
+		width = gp.tileSize * 12;
+		height = gp.tileSize * 9;		
+		drawSubWindow(x, y, width, height, 5, 12, battle_white, dialogue_blue);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55f));
+		text = "SAVE GAME SLOT";
+		x = getXforCenteredText(text);
+		y = gp.tileSize * 3;		
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);		
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42f));
+		x = gp.tileSize * 3;
+		y += gp.tileSize;
+		for (int i = 0; i < 3; i++) {
+			
+			if (files[i] == null) text = i + 1 + ")  [EMPTY]";			
+			else text = i + 1 + ")  " + files[i];		
+			y += gp.tileSize;
+			drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+			
+			if (commandNum == i) {
+				drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);		
+				
+				if (gp.keyH.aPressed) {
+					gp.keyH.aPressed = false;
+					gp.keyH.playCursorSE();
+					gp.saveLoad.save(i);
+					gp.fileSlot = i;	
+					
+					files[i] = gp.saveLoad.loadFileData(i);
+				}
+			}		
+		}
+		
+		text = "BACK";
+		x = getXforCenteredText(text);
+		y += gp.tileSize * 2.3;
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);		
+		if (commandNum == 3) {
+			drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+				gp.keyH.playCursorSE();
+				pauseState = pause_Main;
+				commandNum = 4;
+			}
+		}		
+		
+		if (gp.keyH.upPressed) {
+			gp.keyH.upPressed = false;
+			
+			if (commandNum > 0) {
+				gp.keyH.playCursorSE();
+				commandNum--;
+			}			
+		}
+		if (gp.keyH.downPressed) {
+			gp.keyH.downPressed = false;
+			if (commandNum < 3) {
+				gp.keyH.playCursorSE();
+				commandNum++;
+			}
+		}		
+		if (gp.keyH.bPressed) {
+			gp.keyH.bPressed = false;
+			gp.keyH.playCursorSE();
+			pauseState = pause_Main;
+			commandNum = 4;
+		}
+	}
+	private void pause_Load() {
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		String text;		
+		
+		x = gp.tileSize * 2;
+		y = (int) (gp.tileSize * 1.2);		
+		width = gp.tileSize * 12;
+		height = gp.tileSize * 9;		
+		drawSubWindow(x, y, width, height, 5, 12, battle_white, dialogue_blue);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55f));
+		text = "LOAD GAME SLOT";
+		x = getXforCenteredText(text);
+		y = gp.tileSize * 3;		
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);		
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42f));
+		x = gp.tileSize * 3;
+		y += gp.tileSize;
+		for (int i = 0; i < 3; i++) {
+			
+			y += gp.tileSize;
+			
+			if (files[i] == null) {
+				text = i + 1 + ")  [EMPTY]";					
+				drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+				
+				if (commandNum == i) {
+					drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);		
+					
+					if (gp.keyH.aPressed) {
+						gp.keyH.aPressed = false;
+						gp.keyH.playErrorSE();						
+					}
+				}		
+			}
+			else {
+				text = i + 1 + ")  " + files[i];		
+				drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+				
+				if (commandNum == i) {
+					drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);		
+					
+					if (gp.keyH.aPressed) {
+						gp.keyH.aPressed = false;
+						gp.keyH.playCursorSE();					
+						gp.stopMusic();
+						gp.resetGame();
+						pauseState = pause_Main;
+						commandNum = 0;
+						gp.fileSlot = i;	
+						gp.saveLoad.load(i);
+						gp.tileM.loadMap();
+						gp.gameState = gp.playState;
+						gp.setupMusic();						
+					}
+				}		
+			}
+		}
+		
+		text = "BACK";
+		x = getXforCenteredText(text);
+		y += gp.tileSize * 2.3;
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);		
+		if (commandNum == 3) {
+			drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+				gp.keyH.playCursorSE();
+				pauseState = pause_Main;
+				commandNum = 5;
+			}
+		}		
+		
+		if (gp.keyH.upPressed) {
+			gp.keyH.upPressed = false;
+			
+			if (commandNum > 0) {
+				gp.keyH.playCursorSE();
+				commandNum--;
+			}			
+		}
+		if (gp.keyH.downPressed) {
+			gp.keyH.downPressed = false;
+			if (commandNum < 3) {
+				gp.keyH.playCursorSE();
+				commandNum++;
+			}
+		}		
+		if (gp.keyH.bPressed) {
+			gp.keyH.bPressed = false;
+			gp.keyH.playCursorSE();
+			pauseState = pause_Main;
+			commandNum = 5;
+		}
+	}
+	/** END SAVE/LOAD SCREENS **/
+	
 	/** OPTIONS SCREEN **/
 	private void pause_Options() {
 		
@@ -3621,13 +3823,12 @@ public class UI {
   			gp.keyH.aPressed = false;
   		}
   		if (gp.keyH.bPressed) {
+  			gp.keyH.bPressed = false;
   			gp.keyH.playCursorSE();
   			pauseState = pause_Main;
-  			commandNum = 6;  			
-  			gp.keyH.bPressed = false;
-  		}  		
-  		
-		gp.config.saveConfig();
+  			commandNum = 6;  	  			
+  			gp.config.saveConfig();
+  		}  		  			
 	}
 	/** END OPTIONS SCREEN **/	
 	/** END PAUSE SCREEN **/
@@ -5165,6 +5366,16 @@ public class UI {
 		int x = tailX - length;
 		return x;
 	}	
+	public int getXforCenteredText(String text) {
+		try {
+			int length = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+			int x = (gp.screenWidth / 2) - (length / 2);
+			return x;
+		}
+		catch (Exception e) {
+			return gp.screenWidth / 2;
+		}		
+	}
 	private int getXForCenteredTextOnWidth(String text, int width, int x) {		
 		FontMetrics fm = g2.getFontMetrics();
 		int stringWidth = fm.stringWidth(text);
