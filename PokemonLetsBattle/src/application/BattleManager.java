@@ -2838,9 +2838,11 @@ public class BattleManager extends Thread {
 			
 			typeDialogue("Player defeated\nTrainer " + trainer.name + "!", true);
 			
+			trainer.battleIconTimer = 0;
+			trainer.speed = trainer.defaultSpeed;
 			trainer.isDefeated = true;
 			trainer.hasBattle = false;
-			
+						
 			int dialogueSet = trainer.dialogueSet + 1;
 			typeDialogue(trainer.dialogues[dialogueSet][0], true);
 			
@@ -3130,7 +3132,7 @@ public class BattleManager extends Thread {
 		battleQueue.clear();	
 		
 		active = false; running = false;
-								
+						
 		trainer = null;
 		fighter[0] = null; fighter[1] = null;
 		newFighter[0] = null; newFighter[1] = null;
@@ -3146,6 +3148,8 @@ public class BattleManager extends Thread {
 		loser = -1;
 		
 		escapeAttempts = 0;
+		
+		gp.player.canMove = true;
  	}
  	/** END END BATTLE METHODS **/
 	

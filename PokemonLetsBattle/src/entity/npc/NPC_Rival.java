@@ -22,7 +22,7 @@ public class NPC_Rival extends Entity {
 		skillLevel = skill_rookie;
 		name = npcName;
 		direction = "right";
-		speed = 2; defaultSpeed = speed;
+		speed = 1; defaultSpeed = speed;
 		animationSpeed = 8; 
 		
 		hasBattle = true;
@@ -81,18 +81,20 @@ public class NPC_Rival extends Entity {
 		startDialogue(this, dialogueSet);
 	}
 	
-	public void setAction() {		
+	public void setAction() {	
+				
 		if (hasBattle) {			
 			if (!moving && !lookForBattle(5)) {
 				getDirection(45);	
 			}	
 		}	
 		else if (!moving) {
-			getDirection(60);		
-			move();			
+			getDirection(60);	
 		}		
 			
-		if (moving) walking();		
+		if (moving) {
+			walking();
+		}
 	}
 		
 	@Override
@@ -108,6 +110,8 @@ public class NPC_Rival extends Entity {
 			else if (dir == 4) direction = "right";
 			
 			actionLockCounter = 0;
+			steps = 0;
+			move();	
 		}		
 	}
 	

@@ -95,7 +95,7 @@ public class Entity {
 	public int dialogueSet = 0;
 	public int dialogueIndex = 0;		
 	public String responses[][] = new String[10][3];
-	protected int battleIconTimer = 0;
+	public int battleIconTimer = 0;
 					
 	// DEFAULT HITBOX
 	public Rectangle hitbox = new Rectangle(0, 0, 48, 48);
@@ -181,7 +181,6 @@ public class Entity {
 	
 	public void move() {
 		
-		speed = 6;
 		checkCollision();
 		if (!collisionOn && withinBounds()) { 	
 			moving = true;	
@@ -209,6 +208,7 @@ public class Entity {
 		if (pixelCounter >= gp.tileSize) {
 			moving = false;
 			pixelCounter = 0;
+			spriteNum = 1;
 			steps++;
 		}
 	}
@@ -226,14 +226,23 @@ public class Entity {
 			
 	// SPRITE CYCLE
 	public void cycleSprites() {
+				
 		spriteCounter++;
-		if (spriteCounter > animationSpeed && animationSpeed != 0) {
-			
-			if (spriteNum == 1) spriteNum = 2;
+		if (spriteCounter > animationSpeed) {			
+										
+			if (spriteNum == 1 && spriteCycle == 0) {
+				spriteNum = 2;	
+				spriteCycle = 1;
+			}
+			else if (spriteNum == 1 && spriteCycle == 1) {
+				spriteNum = 3;
+				spriteCycle = 0;
+			}
 			else if (spriteNum == 2) spriteNum = 1;
-			
+			else if (spriteNum == 3) spriteNum = 1;		
+							
 			spriteCounter = 0;
-		}
+		}					
 	}
 	
 	/** DIRECTION **/
@@ -255,18 +264,10 @@ public class Entity {
 		
 		if (steps == length) {
 			switch (direction) {
-				case "up":
-					direction = "right";
-					break;
-				case "down":
-					direction = "left";
-					break;
-				case "left":
-					direction = "up";
-					break;
-				case "right":
-					direction = "down";
-					break;
+				case "up": direction = "right"; break;
+				case "down": direction = "left"; break;
+				case "left": direction = "up"; break;
+				case "right": direction = "down"; break;
 			}			
 			steps = 0;
 		}		
