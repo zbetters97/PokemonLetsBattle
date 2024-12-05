@@ -144,6 +144,17 @@ public class Move {
 	public int getCrit() { return move.getCrit(); }	
 	public int getLevel() { return move.getLevel(); }	
 	public List<String> getStats() { return move.getStats(); }
+	
+	public static Move getMove(String name, int pp) {
+		
+		for (Moves m : Moves.values()) {
+			if (m.getName().equals(name)) {
+				return new Move(m, pp);
+			}
+		}		
+		
+		return null;
+	}
 	/** END GETTERS **/
 }
 /*** END MOVE CLASS ***/

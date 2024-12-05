@@ -31,14 +31,15 @@ public class OBJ_Ledge extends Entity {
 		
 		name = objName;
 		hasShadow = false;
-		this.direction = direction;		
-		if (tiles < 2) tiles = 2;
+		this.direction = direction;	
+		power = tiles;
+		if (power < 2) power = 2;
 							
 		switch (direction) {
-			case "up": up1 = getImageHor(tiles, up1, up2, up3); break;
-			case "down": down1 = getImageHor(tiles, down1, down2, down3); break;
-			case "left": left1 = getImageVer(tiles, left1, left2, left3); break;
-			case "right": right1 = getImageVer(tiles, right1, right2, right3); break;
+			case "up": up1 = getImageHor(power, up1, up2, up3); break;
+			case "down": down1 = getImageHor(power, down1, down2, down3); break;
+			case "left": left1 = getImageVer(power, left1, left2, left3); break;
+			case "right": right1 = getImageVer(power, right1, right2, right3); break;
 		}
 	}	
 	public void getImage() {		

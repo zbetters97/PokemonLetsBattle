@@ -25,7 +25,7 @@ public enum Status {
     }
     /** END CONSTRUCTOR **/
 	
-	/** GETTERS **/
+	/** GETTERS **/    
     public String getName() { return this.name; }
     public String getStatus() { return this.status; }
 	public String getAbreviation() { return this.abr; }
@@ -44,6 +44,17 @@ public enum Status {
 		}		
 		return color; 
 	}
+	
+	public static Status getStatus(String name) {
+    	
+    	for (Status s : Status.values()) {
+    		if (s.getName().equals(name)) {
+    			return s;
+    		}
+    	}
+    	
+    	return null;
+    }
 	/** END GETTERS **/
 		
 	public void printStatus(GamePanel gp, String fighter) throws InterruptedException {

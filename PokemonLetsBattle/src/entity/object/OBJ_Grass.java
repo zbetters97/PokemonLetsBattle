@@ -8,6 +8,7 @@ import entity.Entity;
 public class OBJ_Grass extends Entity {
 
 	Entity generator;
+	public static final String objName = "Grass";
 	
 	public OBJ_Grass(GamePanel gp, int x, int y) {		
 		super(gp);

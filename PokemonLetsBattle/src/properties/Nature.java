@@ -53,6 +53,16 @@ public enum Nature {
 	public int increase() { return increase; }
 	public int decrease() { return decrease; }	
 	public static List<Nature> getNatures() { return NATURES; }
+	public static Nature getNature(String name) {
+		
+		for (Nature n : NATURES) {
+			if (n.getName().equals(name)) {
+				return n;
+			}
+		}
+		
+		return null;
+	}
 	/** END GETTERS **/
 }
 /*** END NATURE CLASS ***/

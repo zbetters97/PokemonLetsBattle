@@ -1120,7 +1120,7 @@ public class UI {
 		String text;		
 		
 		width = (int) (gp.tileSize * 4.5);
-		height = gp.tileSize * 8;
+		height = gp.tileSize * 9;
 		x = gp.screenWidth - width - 10;
 		y = 10;		
 		drawSubWindow(x, y, width, height, 5, 12, battle_white, dialogue_blue);
@@ -1198,14 +1198,35 @@ public class UI {
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
 				gp.keyH.playCursorSE();
+				gp.saveLoad.save(0);
+				gp.gameState = gp.playState;
 				commandNum = 0;
+			}
+		}
+		
+		y += gp.tileSize * 1.1;
+		text = "LOAD";
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		if (commandNum == 5) {
+			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+				gp.keyH.playCursorSE();				
+				gp.stopMusic();
+				gp.resetGame();
+				commandNum = 0;
+				subState = 0;
+				gp.saveLoad.load(0);
+				gp.tileM.loadMap();
+				gp.gameState = gp.playState;
+				gp.setupMusic();	
 			}
 		}
 		
 		y += gp.tileSize * 1.1;
 		text = "OPTIONS";
 		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
-		if (commandNum == 5) {
+		if (commandNum == 6) {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
@@ -1218,7 +1239,7 @@ public class UI {
 		y += gp.tileSize * 1.1;
 		text = "EXIT";
 		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
-		if (commandNum == 6) {
+		if (commandNum == 7) {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
@@ -1236,7 +1257,7 @@ public class UI {
 			gp.keyH.upPressed = false;
 		}
 		if (gp.keyH.downPressed) {
-			if (commandNum < 6) {
+			if (commandNum < 7) {
 				gp.keyH.playCursorSE();
 				commandNum++;
 			}
@@ -1855,7 +1876,7 @@ public class UI {
 								
 		for (int i = bagStart; i < bagStart + 9; i++) {
 								
-			if (i < items.size()) {
+			if (i < items.size() && items.get(i) != null) {
 												
 				text = items.get(i).name;
 				drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
@@ -3595,14 +3616,14 @@ public class UI {
   			if (commandNum == 5) {
   				gp.keyH.playCursorSE();
   				pauseState = pause_Main;
-  				commandNum = 5;
+  				commandNum = 6;
   			}
   			gp.keyH.aPressed = false;
   		}
   		if (gp.keyH.bPressed) {
   			gp.keyH.playCursorSE();
   			pauseState = pause_Main;
-  			commandNum = 5;  			
+  			commandNum = 6;  			
   			gp.keyH.bPressed = false;
   		}  		
   		

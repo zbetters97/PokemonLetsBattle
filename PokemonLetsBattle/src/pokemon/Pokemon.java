@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.imageio.ImageIO;
 
@@ -69,6 +70,7 @@ public class Pokemon {
 		NONE, BOUNCE, DIG, DIVE, FLY, PHANTOMFORCE, SHADOWFORCE, SKYDROP
 	}
 	
+	private String uniqueID;
 	protected Pokedex id;
 	protected int index;
 	protected String name, nickname;
@@ -101,6 +103,8 @@ public class Pokemon {
 			int hp, int attack, int defense, int spAttack, int spDefense, int speed,
 			int evolveLevel, int xpYield, int ev, Growth growth, int catchRate) {		
 				
+		uniqueID = UUID.randomUUID().toString();
+		
 		this.index = index;
 		this.name = name;
 		
@@ -332,9 +336,9 @@ public class Pokemon {
 		ball = old.ball;		
 		isAlive = old.isAlive;		
 	}
-	protected void create(char sex, int level, int cxp, int ev,
+	public void create(char sex, int level, int cxp, int ev,
 			int hpIV, int attackIV, int defenseIV, int spAttackIV, int spDefenseIV, int speedIV, 
-			Nature nature, Status status, ArrayList<Move> moveset, Entity item, Entity ball, boolean isAlive) {
+			Nature nature, Status status, List<Move> moveset, Entity item, Entity ball, boolean isAlive) {
 		
 		this.sex = sex;
 		this.level = level;
@@ -376,7 +380,7 @@ public class Pokemon {
 		statusCounter = 0;
 		statusLimit = 0;
 		
-		this.moveset = moveset;
+		this.moveset = new ArrayList<Move>(moveset);
 		activeMoves = new ArrayList<>();		
 		protection = Protection.NONE;
 		
@@ -728,6 +732,7 @@ public class Pokemon {
 	
 	/** GETTERS **/
 	public String toString() { return name; }
+	public String getUniqueID() { return uniqueID; }
 	public Pokedex getID() { return id; }
 	public int getIndex() { return index; }
 	public String getName() { 

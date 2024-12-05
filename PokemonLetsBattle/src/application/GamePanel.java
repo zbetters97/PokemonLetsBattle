@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.swing.JPanel;
 
 import ai.PathFinder;
+import data.SaveLoad;
 import entity.Entity;
 import entity.Player;
 import environment.EnvironmentManager;
@@ -137,6 +138,7 @@ public class GamePanel extends JPanel implements Runnable {
 	public CollisionChecker cChecker = new CollisionChecker(this);	
 	public EventHandler eHandler = new EventHandler(this);	
 	public EntityGenerator eGenerator = new EntityGenerator(this);
+	public iTileGenerator iGenerator = new iTileGenerator(this);
 	public BattleManager btlManager = new BattleManager(this);
 	public PathFinder pFinder = new PathFinder(this);
 	
@@ -151,6 +153,9 @@ public class GamePanel extends JPanel implements Runnable {
 	public Map<Integer, Map<Pokedex, Integer>> wildEncounters_Grass = new HashMap<>();
 	public Map<Integer, Integer> wildLevels_Grass = new HashMap<>();	
 	public Map<Integer, Map<Integer, Map<Pokedex, Integer>>> wildEncounters_Fishing = new HashMap<>();
+	
+	// SAVE LOAD MANAGER
+	public SaveLoad saveLoad = new SaveLoad(this);
 	
 /** CONSTRUCTOR **/	
 	public GamePanel() {
@@ -384,6 +389,50 @@ public class GamePanel extends JPanel implements Runnable {
 		aSetter.setInteractiveObjects();
 		
 		currentArea = nextArea;
+	}
+	
+	public void resetGame() {
+		stopMusic();
+		
+		removeTempEntity(true);
+		
+		player.alive = true;	
+		player.pokeParty.clear();
+		player.inventory_keyItems.clear();
+		player.inventory_items.clear();
+		player.inventory_pokeballs.clear();
+		player.restoreStatus();
+		player.setDefaultValues();
+		player.setDefaultPosition();	
+		player.resetCounter();		
+				
+		aSetter.setNPC();	
+		aSetter.setObject();
+		aSetter.setInteractiveObjects();
+		aSetter.setInteractiveTiles(true);
+		
+		eManager.lighting.resetDay();	
+	}
+	public void removeTempEntity(boolean reset) {		
+
+		for (int mapNum = 0; mapNum < maxMap; mapNum++) {
+			
+			for (int i = 0; i < npc[1].length; i++) {
+				if (npc[mapNum][i] != null && npc[mapNum][i].temp) {
+					npc[mapNum][i] = null;
+				}
+			}	
+			for (int i = 0; i < obj[1].length; i++) {
+				if (obj[mapNum][i] != null && obj[mapNum][i].temp) {					
+					obj[mapNum][i] = null;						
+				}
+			}	
+			for (int i = 0; i < obj_i[1].length; i++) {
+				if (obj_i[mapNum][i] != null && obj_i[mapNum][i].temp) {
+					obj_i[mapNum][i] = null;
+				}
+			}	
+		}
 	}
 	
 	private void drawToTempScreen() {
