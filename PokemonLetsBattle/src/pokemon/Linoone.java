@@ -34,8 +34,8 @@ public class Linoone extends Pokemon {
 				Map.entry(9, Moves.HEADBUTT),
 				Map.entry(13, Moves.SANDATTACK),
 				Map.entry(41, Moves.SLASH),
-				Map.entry(47, Moves.REST)
-//				Map.entry(59, Moves.FLING)
+				Map.entry(47, Moves.REST),
+				Map.entry(59, Moves.FLING)
 		);
 	}
 }

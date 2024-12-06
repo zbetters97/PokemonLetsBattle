@@ -18,6 +18,7 @@ public class ITM_Heal_Paralyze extends Entity {
 		
 		pprice = 200;
 		sprice = 100;
+		damage = 30;
 		status = Status.PARALYZE;
 		
 		image1 = setup("/collectables/menu/heal_paralyze", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));

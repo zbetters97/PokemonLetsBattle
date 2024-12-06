@@ -14,10 +14,6 @@ public class DataStorage implements Serializable {
 	String file_date;
 	boolean gameCompleted;
 	
-	// DAY STATE
-	int dayState, dayCounter;
-	float filterAlpha;
-	
 	// PROGRESS
 	
 	// PLAYER DATA

@@ -17,6 +17,7 @@ public class ITM_Repel extends Entity {
 		power = 100;
 		pprice = 350;
 		sprice = 175;
+		damage = 30;
 		
 		image1 = setup("/collectables/menu/repel", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

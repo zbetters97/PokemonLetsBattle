@@ -17,6 +17,7 @@ public class ITM_Repel_Max extends Entity {
 		power = 250;
 		pprice = 700;
 		sprice = 350;
+		damage = 30;
 		
 		image1 = setup("/collectables/menu/repel_max", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

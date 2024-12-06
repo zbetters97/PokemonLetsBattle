@@ -20,7 +20,6 @@ import ai.PathFinder;
 import data.SaveLoad;
 import entity.Entity;
 import entity.Player;
-import environment.EnvironmentManager;
 import event.EventHandler;
 import pokemon.Pokemon.Pokedex;
 import tile.TileManager;
@@ -134,7 +133,6 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	public TileManager tileM = new TileManager(this);
 	public AssetSetter aSetter = new AssetSetter(this);
-	public EnvironmentManager eManager = new EnvironmentManager(this);
 	public CollisionChecker cChecker = new CollisionChecker(this);	
 	public EventHandler eHandler = new EventHandler(this);	
 	public EntityGenerator eGenerator = new EntityGenerator(this);
@@ -178,7 +176,6 @@ public class GamePanel extends JPanel implements Runnable {
 		setupMusic();
 		
 		tileM.loadMap();
-		eManager.setup();
 		
 		player.setDefaultValues();	
 		aSetter.setNPC();
@@ -322,7 +319,6 @@ public class GamePanel extends JPanel implements Runnable {
 		
 		// GAME PLAYING
 		if (gameState == playState) {
-			eManager.update();
 			player.update();	
 			updateNPC();
 			updateOBJ();
@@ -411,8 +407,6 @@ public class GamePanel extends JPanel implements Runnable {
 		aSetter.setObject();
 		aSetter.setInteractiveObjects();
 		aSetter.setInteractiveTiles(true);
-		
-		eManager.lighting.resetDay();	
 	}
 	public void removeTempEntity(boolean reset) {		
 

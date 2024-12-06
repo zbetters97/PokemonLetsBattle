@@ -18,6 +18,7 @@ public class ITM_Revive extends Entity {
 		power = 2;
 		pprice = 2000;
 		sprice = 1000;
+		damage = 30;
 		
 		image1 = setup("/collectables/menu/revive", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

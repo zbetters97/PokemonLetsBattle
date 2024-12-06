@@ -170,6 +170,8 @@ public enum Moves {
 			"The foe is scorched with an\nintense blast of fire.\nThe target may also be\nleft with a burn."),
 	FLASHCANNON ("Flash Cannon", MoveType.SPECIAL, Type.STEEL, 10, 80, 100, 0,
 			"The user gathers all its\nlight energy and releases it at\nonce."),
+	FLING ("Fling", MoveType.OTHER, Type.DARK, 10, -1, 100, 0,
+			"The user flings its held\nitem at the foe to attack.\nIts power and effects\ndepend on the item."),
 	FLY ("Fly", MoveType.PHYSICAL, Type.FLYING, 15, 90, 95, 0, 1, false, Protection.FLY,
 			"took\nflight!", 
 			"The user soars, then\nstrikes on the second turn.\nIt can also be used for\nflying to any familiar town."),

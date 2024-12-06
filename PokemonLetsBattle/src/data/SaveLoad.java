@@ -38,12 +38,7 @@ public class SaveLoad {
 			
 			// CURRENT DATE/TIME
 			ds.file_date =  new SimpleDateFormat("MM-dd-yyyy HH:mm:ss").format(new Date(System.currentTimeMillis()));
-						
-			// DAY DATA
-			ds.dayState = gp.eManager.lighting.dayState;
-			ds.dayCounter = gp.eManager.lighting.dayCounter;
-			ds.filterAlpha = gp.eManager.lighting.filterAlpha;			
-			
+									
 			// PROGRESS DATA
 			ds.gameCompleted = Progress.gameCompleted;
 			
@@ -252,11 +247,6 @@ public class SaveLoad {
 						
 			// FILE DATA
 			Progress.gameCompleted = ds.gameCompleted;
-			
-			// DAY DATA
-			gp.eManager.lighting.dayState = ds.dayState;
-			gp.eManager.lighting.dayCounter = ds.dayCounter;
-			gp.eManager.lighting.filterAlpha = ds.filterAlpha;
 			
 			// PLAYER DATA
 			gp.player.name = ds.pName;

@@ -18,6 +18,7 @@ public class ITM_Potion_Super extends Entity {
 		power = 50;
 		pprice = 700;
 		sprice = 350;
+		damage = 30;
 		
 		image1 = setup("/collectables/menu/potion_super", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

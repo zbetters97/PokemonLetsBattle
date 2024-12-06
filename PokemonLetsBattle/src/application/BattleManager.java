@@ -1233,6 +1233,17 @@ public class BattleManager extends Thread {
 			case ENDURE:
 				typeDialogue(atk.getName() + " braced\nitself!");
 				break;
+			case FLING:				
+				Entity item = atk.getItem();
+				if (item != null && item.damage != 0) {
+					typeDialogue(atk.getName() +" flung\nits " + item.name + "!");
+					damageMove(atk, trg, move);
+				}
+				else {
+					typeDialogue("It had no effect!");
+				}
+				
+				break;
 			case FUTURESIGHT:
 				if (trg.hasActiveMove(move.getMove())) {
 					typeDialogue("It had no effect!");
@@ -1498,7 +1509,6 @@ public class BattleManager extends Thread {
 				}				
 				typeDialogue("Hit " + i + " times!");
 				break;
-				
 			default:
 				damage = (int) (dealDamage(atk, trg, move) * crit);
 				break;		
@@ -1587,12 +1597,12 @@ public class BattleManager extends Thread {
 			power * (A / D)) / 50)) + 2) * STAB * type * random);
 										
 		switch (move.getMove()) {
+			case DRAGONRAGE:
+				damage = 40;
+				break;
 			case ENDEAVOR: 		
 				if (trg.getHP() < atk.getHP()) damage = 0;			
 				else damage = trg.getHP() - atk.getHP();	
-				break;
-			case DRAGONRAGE:
-				damage = 40;
 				break;
 			case SEISMICTOSS:
 				damage = trg.getLevel();
@@ -1639,6 +1649,11 @@ public class BattleManager extends Thread {
 				else if (0.094 > remainHP && remainHP >= 0.031) power = 150;
 				else if (0.031 > remainHP) power = 200;		
 				
+				break;
+				
+			case FLING:				
+				power = atk.getItem().power;	
+				atk.giveItem(null);
 				break;
 			case MAGNITUDE:
 				int strength = 4;

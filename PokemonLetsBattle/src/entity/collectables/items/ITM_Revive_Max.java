@@ -18,6 +18,7 @@ public class ITM_Revive_Max extends Entity {
 		power = 1;
 		pprice = 4000;
 		sprice = 2000;
+		damage = 30;
 
 		image1 = setup("/collectables/menu/revive_max", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

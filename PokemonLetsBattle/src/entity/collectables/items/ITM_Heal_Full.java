@@ -17,6 +17,7 @@ public class ITM_Heal_Full extends Entity {
 		
 		pprice = 400;
 		sprice = 200;
+		damage = 30;
 		status = null;
 		
 		image1 = setup("/collectables/menu/heal_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));

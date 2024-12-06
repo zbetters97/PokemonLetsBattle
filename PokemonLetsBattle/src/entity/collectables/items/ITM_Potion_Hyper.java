@@ -18,6 +18,7 @@ public class ITM_Potion_Hyper extends Entity {
 		power = 200;
 		pprice = 1500;
 		sprice = 750;
+		damage = 30;
 		
 		image1 = setup("/collectables/menu/potion_hyper", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

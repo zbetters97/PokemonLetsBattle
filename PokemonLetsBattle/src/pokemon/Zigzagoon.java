@@ -33,8 +33,8 @@ public class Zigzagoon extends Pokemon {
 				Map.entry(9, Moves.HEADBUTT),
 				Map.entry(13, Moves.SANDATTACK),
 				Map.entry(33, Moves.FLAIL),
-				Map.entry(37, Moves.REST)
-//				Map.entry(45, Moves.FLING)
+				Map.entry(37, Moves.REST),
+				Map.entry(45, Moves.FLING)
 		);
 	}
 	

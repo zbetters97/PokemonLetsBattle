@@ -17,6 +17,7 @@ public class ITM_Full_Restore extends Entity {
 		
 		pprice = 3000;
 		sprice = 1500;
+		damage = 30;
 		
 		image1 = setup("/collectables/menu/restore_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	

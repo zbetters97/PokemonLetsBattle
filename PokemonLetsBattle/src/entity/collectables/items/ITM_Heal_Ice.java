@@ -18,6 +18,7 @@ public class ITM_Heal_Ice extends Entity {
 		
 		pprice = 200;
 		sprice = 100;
+		damage = 30;
 		status = Status.FREEZE;
 		
 		image1 = setup("/collectables/menu/heal_ice", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
