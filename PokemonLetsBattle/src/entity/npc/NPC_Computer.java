@@ -31,8 +31,9 @@ public class NPC_Computer extends Entity {
 		down1 = setup("/npc/computer_down_1"); 
 	}	
 	
-	public void speak() {			
+	public void speak() {					
 		gp.playSE(gp.world_SE, "pc-open");
+		gp.ui.pcState = 0;
 		gp.gameState = gp.pcState;		
 	}
 }

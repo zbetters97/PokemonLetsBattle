@@ -141,7 +141,8 @@ public class GamePanel extends JPanel implements Runnable {
 	public PathFinder pFinder = new PathFinder(this);
 	
 	public ArrayList<Entity> entities = new ArrayList<>();
-	public Player player = new Player(this);	
+	public Player player = new Player(this);
+	public Player player_2 = new Player(this);
 	public Entity npc[][] = new Entity[maxMap][10]; 
 	public Entity obj[][] = new Entity[maxMap][20];
 	public Entity obj_i[][] = new Entity[maxMap][20];
@@ -439,12 +440,6 @@ public class GamePanel extends JPanel implements Runnable {
 		// BATTLE STATE
 		else if (gameState == battleState) {
 							
-			// DRAW UI
-			ui.draw(g2);
-		}
-		// PC STATE
-		else if (gameState == pcState) {
-			
 			// DRAW UI
 			ui.draw(g2);
 		}

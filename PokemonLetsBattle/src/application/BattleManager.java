@@ -55,6 +55,7 @@ public class BattleManager extends Thread {
 	private int textSpeed = 30;
 	
 	// BATTLE INFORMATION			
+	public boolean cpu = false;
 	public Entity trainer;	
 	public Pokemon[] fighter = new Pokemon[2];
 	private Pokemon[] newFighter = new Pokemon[2];
@@ -69,14 +70,16 @@ public class BattleManager extends Thread {
 						
 	// BATTLE QUEUE
 	public Deque<Integer> battleQueue = new ArrayDeque<>();	
-	private final int queue_GetCPUMove = 1;
-	private final int queue_Rotation = 2;
-	private final int queue_PlayerMove = 3;
-	private final int queue_CPUMove = 4;
-	private final int queue_ActiveMoves = 5;
-	private final int queue_StatusDamage = 6;
-	private final int queue_WeatherDamage = 7;
-	private final int queue_TurnReset = 8;
+	private final int queue_PlayerSwap = 1;
+	private final int queue_CPUSwap = 2;
+	private final int queue_GetCPUMove = 3;
+	private final int queue_Rotation = 4;
+	private final int queue_PlayerMove = 5;
+	private final int queue_CPUMove = 6;
+	private final int queue_ActiveMoves = 7;
+	private final int queue_StatusDamage = 8;
+	private final int queue_WeatherDamage = 9;
+	private final int queue_TurnReset = 10;
 	
 	// BATTLE STATES
 	public int battleMode;
@@ -91,11 +94,10 @@ public class BattleManager extends Thread {
 	// FIGHT STAGES
 	public int fightStage;
 	public final int fight_Encounter = 1;
-	public final int fight_Swap = 2;
-	public final int fight_Start = 3;
-	public final int fight_Capture = 4;
-	public final int fight_Run = 5;
-	public final int fight_Evolve = 6;
+	public final int fight_Start = 2;
+	public final int fight_Capture = 3;
+	public final int fight_Run = 4;
+	public final int fight_Evolve = 5;
 	
 	/** CONSTRUCTOR **/
 	public BattleManager(GamePanel gp) {
@@ -103,21 +105,23 @@ public class BattleManager extends Thread {
 	}
 	
 	/** SETUP METHOD **/
-	public void setup(int currentBattle, Entity trainer, Pokemon pokemon, String condition) {
+	public void setup(int currentBattle, Entity trainer, Pokemon pokemon, String condition, boolean cpu) {
 		
 		if (gp.ui.textSpeed == 2) textSpeed = 30;
 		else if (gp.ui.textSpeed == 3) textSpeed = 40;
 		else if (gp.ui.textSpeed == 4) textSpeed = 50;
-		
+						
 		battleMode = currentBattle;
+						
+		if (trainer != null) this.trainer = trainer;	
+		else if (pokemon != null) fighter[1] = pokemon;
+		
+		this.cpu = cpu;
 		
 		if (condition == null) weather = Weather.CLEAR;
 		else weather = Weather.valueOf(condition);
-		
-		weatherDays = -1;
-					
-		if (trainer != null) this.trainer = trainer;	
-		else if (pokemon != null) fighter[1] = pokemon;
+
+		weatherDays = -1;					
 
 		active = true;
 		running = true;		
@@ -133,11 +137,6 @@ public class BattleManager extends Thread {
 				case fight_Encounter:
 					try { setBattle(); } 
 					catch (InterruptedException e) { e.printStackTrace(); }					
-					break;
-			
-				case fight_Swap:
-					try { swapFighters(); } 
-					catch (InterruptedException e) { e.printStackTrace(); }
 					break;
 			
 				case fight_Start:					
@@ -283,16 +282,62 @@ public class BattleManager extends Thread {
 
 	/** END SETUP BATTLE METHODS **/
 	
-	/** SWAP FIGHTERS **/
+	/** SWAP FIGHTERS 
+	 * @throws InterruptedException **/
+	private void swapPlayerFighter() throws InterruptedException {
+								
+		if (!fighter[0].isAlive()) fighter[0] = null;
+		
+		gp.ui.battleState = gp.ui.battle_Dialogue;
+		
+		fighter[0] = newFighter[0];		
+		if (otherFighters.contains(fighter[0])) {
+			otherFighters.remove(fighter[0]);
+		}		
+		
+		gp.playSE(gp.cry_SE, fighter[0].toString());	
+		typeDialogue("Go, " + fighter[0].getName() + "!");					
+		pause(100);
+		
+		newFighter[0] = null;
+		
+		getFighterAbility();
+	}
+	private void swapCPUFighter() throws InterruptedException {
+		
+		if (!fighter[1].isAlive()) fighter[1] = null;
+		
+		gp.ui.battleState = gp.ui.battle_Dialogue;
+		
+		fighter[1] = newFighter[1];		
+		gp.player.trackSeenPokemon(fighter[1]);
+		
+		gp.playSE(gp.cry_SE, fighter[1].toString());	
+		typeDialogue("Trainer " + trainer.name + "\nsent out " + fighter[1].getName() + "!");				
+		pause(100);		
+		
+		newFighter[1] = null;	
+		
+		getFighterAbility();
+	}	
+	
+	/*
 	private void swapFighters() throws InterruptedException {
 			
 		if (!fighter[0].isAlive()) fighter[0] = null;
 		if (!fighter[1].isAlive()) fighter[1] = null;
-								
+		
 		gp.ui.battleState = gp.ui.battle_Dialogue;
 		
 		// CPU SWAP OUT
-		if (fighter[1] == null) {
+		if (newFighter[1] != null) {
+									
+			fighter[1] = newFighter[1];			
+			gp.player.trackSeenPokemon(fighter[1]);
+			
+			gp.playSE(gp.cry_SE, fighter[1].toString());	
+			typeDialogue("Trainer " + trainer.name + "\nsent out " + fighter[1].getName() + "!");				
+			pause(100);
 			
 			// PLAYER SWAP OUT
 			if (newFighter[0] != null) {
@@ -306,21 +351,16 @@ public class BattleManager extends Thread {
 				gp.playSE(gp.cry_SE, fighter[0].toString());	
 				typeDialogue("Go, " + fighter[0].getName() + "!");					
 				pause(100);
+											
+				running = false;								
+				gp.ui.battleState = gp.ui.battle_Options;	
+			}
+			else {
+				fightStage = fight_Start;
 			}
 			
-			fighter[1] = newFighter[1];
-			
-			gp.playSE(gp.cry_SE, fighter[1].toString());	
-			typeDialogue("Trainer " + trainer.name + "\nsent out " + fighter[1].getName() + "!");				
-			pause(100);
-			
 			newFighter[0] = null;
-			newFighter[1] = null;
-			
-			gp.player.trackSeenPokemon(fighter[1]);
-			
-			running = false;								
-			gp.ui.battleState = gp.ui.battle_Options;														
+			newFighter[1] = null;		
 		}
 		// PLAYER FORCE SWAP OUT
 		else if (fighter[0] == null) {
@@ -343,7 +383,6 @@ public class BattleManager extends Thread {
 		}
 		// MID BATTLE SWAP OUT
 		else {			
-			
 			if (otherFighters.contains(newFighter[0])) {
 				otherFighters.remove(newFighter[0]);
 			}
@@ -365,28 +404,44 @@ public class BattleManager extends Thread {
 			newFighter[0] = null;
 			newFighter[1] = null;
 			
-			fightStage = fight_Start;
+			if (cpu) {
+				fightStage = fight_Start;	
+			}
+			else {
+				running = false;				
+				gp.ui.player = 1;
+				gp.ui.battleState = gp.ui.battle_Options;	
+			}
 		}		
 		
 		getFighterAbility();
 	}
+	*/
 	public boolean swapPokemon(int partySlot) {
 		
-		if (fighter[0] == gp.player.pokeParty.get(partySlot)) {
+		Entity player = gp.player;
+		if (gp.ui.player == 1) {
+			player = trainer;
+			battleQueue.add(queue_CPUSwap);
+		}
+		else {
+			battleQueue.add(queue_PlayerSwap);
+		}
+		if (fighter[gp.ui.player] == player.pokeParty.get(partySlot)) {
 			return false;
 		}
 		
-		if (gp.player.pokeParty.get(partySlot).isAlive()) {
+		if (player.pokeParty.get(partySlot).isAlive()) {
 						
-			fighter[0].resetStats();
-			fighter[0].resetStatStages();
-			fighter[0].resetMoveTurns();
-			fighter[0].clearActiveMoves();
+			fighter[gp.ui.player].resetStats();
+			fighter[gp.ui.player].resetStatStages();
+			fighter[gp.ui.player].resetMoveTurns();
+			fighter[gp.ui.player].clearActiveMoves();
 			
-			newFighter[0] = gp.player.pokeParty.get(partySlot);
-						
+			newFighter[gp.ui.player] = player.pokeParty.get(partySlot);
+			
 			if (gp.player.pokeParty.size() > 1) {
-				Collections.swap(gp.player.pokeParty, 0, partySlot);	
+				Collections.swap(player.pokeParty, 0, partySlot);	
 			}
 						
 			return true;
@@ -412,8 +467,16 @@ public class BattleManager extends Thread {
 			
 			int action = battleQueue.poll();
 			
+			System.out.println(action);
+			
 			switch (action) {
 			
+				case queue_PlayerSwap:
+					swapPlayerFighter();
+					break;
+				case queue_CPUSwap:
+					swapCPUFighter();
+					break;
 				case queue_GetCPUMove: 
 					getCPUMove();
 					break;								
@@ -438,7 +501,7 @@ public class BattleManager extends Thread {
 					break;							
 				case queue_TurnReset:
 					getDelayedTurn();
-					break;
+					break;				
 			}
 			
 			if (hasWinningPokemon()) {
@@ -450,12 +513,12 @@ public class BattleManager extends Thread {
 	}
 	
 	/** GET MOVE METHODS **/
-	public Move getPlayerMove(int selection) {
+	public Move getPlayerMove(int selection, int player) {
 		
-		playerMove = fighter[0].getMoveSet().get(selection);
+		Move selectedMove = fighter[player].getMoveSet().get(selection);
 		
 		boolean struggle = true;
-		for (Move m : fighter[0].getMoveSet()) {
+		for (Move m : fighter[player].getMoveSet()) {
 			if (m.getPP() > 0) {
 				struggle = false;
 				break;
@@ -463,19 +526,29 @@ public class BattleManager extends Thread {
 		}
 		
 		if (struggle) {
-			playerMove = new Move(Moves.STRUGGLE);
+			selectedMove = new Move(Moves.STRUGGLE);
+		}	
+		
+		if (player == 0) {
+			playerMove = selectedMove;
+		}
+		else {
+			cpuMove = selectedMove;
 		}
 		
-		return playerMove;
+		return selectedMove;
 	}
 	private void getCPUMove() throws InterruptedException {
 		
-		// GET CPU MOVE IF NO CPU DELAY
-		int delay = getDelay();
-		
-		if (delay == 0 || delay == 1) {						
-			cpuMove = chooseCPUMove();		
-		}
+		if (cpu) {
+			
+			// GET CPU MOVE IF NO CPU DELAY
+			int delay = getDelay();
+			
+			if (delay == 0 || delay == 1) {						
+				cpuMove = chooseCPUMove();		
+			}	
+		}		
 	}
 	private int getDelay() {		
 		
@@ -2289,6 +2362,7 @@ public class BattleManager extends Thread {
 		else {				
 			running = false;
 			fightStage = fight_Start;
+			gp.ui.player = 0;
 			gp.ui.battleState = gp.ui.battle_Options;
 		}
 	}
@@ -2483,7 +2557,7 @@ public class BattleManager extends Thread {
 				gp.ui.battleState = gp.ui.battle_Evolve;	
 			}
 			else {
-				fightStage = fight_Swap;	
+//				fightStage = fight_Swap;	
 				gp.ui.battleState = gp.ui.battle_Dialogue;	
 			}
 			
@@ -2541,7 +2615,8 @@ public class BattleManager extends Thread {
 				gp.ui.battleState = gp.ui.battle_Evolve;	
 			}
 			else {
-				fightStage = fight_Swap;	
+//				fightStage = fight_Swap;	
+				fightStage = fight_Start;				
 				gp.ui.battleState = gp.ui.battle_Dialogue;	
 			}
 			
@@ -2572,7 +2647,8 @@ public class BattleManager extends Thread {
 					
 					winner = -1;							
 					running = false;
-					fightStage = fight_Swap;
+//					fightStage = fight_Swap;
+					fightStage = fight_Start;
 					
 					gp.gameState = gp.pauseState;
 					gp.ui.pauseState = gp.ui.pause_Party;
@@ -2627,7 +2703,8 @@ public class BattleManager extends Thread {
 					
 					winner = -1;							
 					running = false;
-					fightStage = fight_Swap;
+//					fightStage = fight_Swap;
+					fightStage = fight_Start;
 					
 					gp.gameState = gp.pauseState;
 					gp.ui.pauseState = gp.ui.pause_Party;
@@ -2648,7 +2725,8 @@ public class BattleManager extends Thread {
 					
 					winner = -1;							
 					running = false;
-					fightStage = fight_Swap;
+//					fightStage = fight_Swap;
+					fightStage = fight_Start;
 					
 					gp.gameState = gp.pauseState;
 					gp.ui.pauseState = gp.ui.pause_Party;
@@ -2823,7 +2901,8 @@ public class BattleManager extends Thread {
 			
 			gp.ui.resetFighterPositions();
 			
-			fightStage = fight_Swap;
+//			fightStage = fight_Swap;
+			fightStage = fight_Start;
 			gp.ui.battleState = gp.ui.battle_Dialogue;						
 			
 			if (gp.ui.commandNum == 0) {

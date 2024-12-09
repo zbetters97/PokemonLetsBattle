@@ -482,6 +482,129 @@ public class SaveLoad {
 		}
 	}
 	
+	public void loadFighterData(int saveSlot) {
+		
+		try {
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(saveFiles[saveSlot])));
+			
+			// LOAD DATA FROM DS
+			DataStorage ds = (DataStorage)ois.readObject();
+			
+			// PLAYER DATA
+			gp.player_2.name = ds.pName;
+			
+			// PLAYER BAG
+			gp.player_2.inventory_keyItems.clear();
+			for (int i = 0; i < ds.pKeyItemNames.size(); i++) {
+				gp.player_2.inventory_keyItems.add(gp.eGenerator.getItem(ds.pKeyItemNames.get(i)));
+			}
+			gp.player_2.inventory_items.clear();
+			for (int i = 0; i < ds.pItemNames.size(); i++) {
+				gp.player_2.inventory_items.add(gp.eGenerator.getItem(ds.pItemNames.get(i)));
+				gp.player_2.inventory_items.get(i).amount = ds.pItemAmounts.get(i);
+			}
+			gp.player_2.inventory_pokeballs.clear();
+			for (int i = 0; i < ds.pPokeballNames.size(); i++) {
+				gp.player_2.inventory_pokeballs.add(gp.eGenerator.getItem(ds.pPokeballNames.get(i)));
+				gp.player_2.inventory_pokeballs.get(i).amount = ds.pPokeballAmounts.get(i);
+			}
+			
+			// player_2 POKE PARTY
+			gp.player_2.pokeParty.clear();
+			Pokemon p;
+			char sex;
+			int level, cxp, ev;
+			int hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV;
+			Nature nature;
+			Status status;
+			List<Move> moves = new ArrayList<>();
+			List<Move> moveset = new ArrayList<>();
+			Entity item;
+			Entity ball;
+			boolean isAlive;
+			for (int i = 0; i < ds.pPokePartyID.size(); i++) {
+								
+				p = Pokemon.get(ds.pPokePartyID.get(i), 1, null);
+								
+				sex = ds.pPokePartySex.get(i);
+				level = ds.pPokePartyStats.get(i)[0];
+				cxp = ds.pPokePartyStats.get(i)[1];
+				ev = ds.pPokePartyStats.get(i)[2];
+				hpIV = ds.pPokePartyStats.get(i)[3];
+				attackIV = ds.pPokePartyStats.get(i)[4];
+				defenseIV = ds.pPokePartyStats.get(i)[5];
+				spAttackIV = ds.pPokePartyStats.get(i)[6];
+				spDefenseIV = ds.pPokePartyStats.get(i)[7];
+				speedIV = ds.pPokePartyStats.get(i)[8];
+								
+				nature = Nature.getNature(ds.pPokePartyNature.get(i));
+				
+				if (!ds.pPokePartyStatus.get(i).equals("NULL")) {
+					status = Status.getStatus(ds.pPokePartyStatus.get(i));	
+				}
+				else {
+					status = null;
+				}
+				
+				for (int c = 0; c < ds.pPokePartyMoveNames.get(i).size(); c++) {
+					moves.add(Move.getMove(ds.pPokePartyMoveNames.get(i).get(c), ds.pPokePartyMovePP.get(i).get(c)));
+				}
+				moveset = new ArrayList<Move>(moves);
+				
+				isAlive = ds.pPokePartyAlive.get(i);
+				
+				if (!ds.pPokePartyBall.get(i).equals("NULL")) {
+					ball = gp.eGenerator.getItem(ds.pPokePartyBall.get(i));
+				}
+				else {
+					ball = null;
+				}
+				if (!ds.pPokePartyItem.get(i).equals("NULL")) {
+					item = gp.eGenerator.getItem(ds.pPokePartyItem.get(i));
+				}
+				else {
+					item = null;
+				}
+				
+				if (p != null) {
+					p.create(sex, level, cxp, ev, 
+							hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV, 
+							nature, status, moveset, item, ball, isAlive);		
+				}			
+								
+				gp.player_2.pokeParty.add(p);
+				moves.clear();
+				moveset.clear();
+			}
+			
+			ois.close();
+		}
+		catch(Exception e) { 
+			e.printStackTrace();
+		}
+	}
+	
+	public String getPlayerData(int saveSlot) {
+		
+		try {			
+			File f = new File(saveFiles[saveSlot]);
+			
+			if (f.exists()) { 
+				
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(saveFiles[saveSlot])));				
+				DataStorage ds = (DataStorage)ois.readObject();			
+				ois.close();
+																
+				return ds.pName;			
+			}
+		}
+		catch(Exception e) { 
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
 	public String loadFileData(int saveSlot) {
 		
 		try {			
