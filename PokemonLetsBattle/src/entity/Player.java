@@ -42,7 +42,7 @@ public class Player extends Entity {
 			fishRight1, fishRight2, fishRight3, fishRight4;	
 	
 	public ArrayList<Pokemon> personalDex = new ArrayList<>();
-	public Pokemon[][] pcParty = new Pokemon[10][30];
+	public Pokemon[][] pcParty = new Pokemon[20][30];
 	public ArrayList<Pokemon> pcBox_1 = new ArrayList<Pokemon>(30);
 	
 	public Action nextAction = Action.IDLE;
@@ -114,8 +114,8 @@ public class Player extends Entity {
 				
 		int c = 0;
 		int x = 0;
-		for (int i = 0; i < Pokemon.Pokedex.values().length; i++) {
-			pcParty[c][x] = Pokemon.get(Pokemon.Pokedex.values()[i], 50, new COL_Ball_Poke(gp));
+		for (int i = 0; i < Pokedex.values().length; i++) {
+			pcParty[c][x] = Pokemon.get(Pokedex.values()[i], 50, new COL_Ball_Poke(gp));
 			personalDex.add(pcParty[c][x]);		
 			x++;
 			if (i == 29 || i == 59 || i == 89) { c++; x = 0; } 		

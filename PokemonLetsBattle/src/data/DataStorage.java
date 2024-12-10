@@ -12,6 +12,7 @@ public class DataStorage implements Serializable {
 	
 	// FILE INFO
 	String file_date;
+	long playtime;
 	boolean gameCompleted;
 	
 	// PROGRESS

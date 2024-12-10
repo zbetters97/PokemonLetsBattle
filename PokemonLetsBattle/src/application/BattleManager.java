@@ -2600,23 +2600,34 @@ public class BattleManager extends Thread {
 					
 					winner = -1;					
 
-					newFighter[1] = getCPUFighter();	
+					if (cpu) {
+						newFighter[1] = getCPUFighter();		
 					
-					if (gp.player.getAvailablePokemon() > 1 && set) {
-						
-						battleQueue.add(queue_CPUSwap);
-						
-						typeDialogue("Trainer " + trainer.name + " is about\nto sent out " + 
-								newFighter[1].getName() + "!", true);
-						
-						typeDialogue("Will " + gp.player.name + " swap\nPokemon?", false);							
-						gp.ui.battleState = gp.ui.battle_Confirm;	
-						
-						waitForKeyPress();
-						getSwapAnswer();
+						if (gp.player.getAvailablePokemon() > 1 && set) {
+							
+							battleQueue.add(queue_CPUSwap);
+							
+							typeDialogue("Trainer " + trainer.name + " is about\nto sent out " + 
+									newFighter[1].getName() + "!", true);
+							
+							typeDialogue("Will " + gp.player.name + " swap\nPokemon?", false);							
+							gp.ui.battleState = gp.ui.battle_Confirm;	
+							
+							waitForKeyPress();
+							getSwapAnswer();
+						}
+						else {
+							gp.ui.resetFighterPositions();	
+						}					
 					}
 					else {
-						gp.ui.resetFighterPositions();	
+						winner = -1;							
+						running = false;
+						
+						gp.gameState = gp.pauseState;
+						gp.ui.player = 1;
+						gp.ui.pauseState = gp.ui.pause_Party;
+						gp.ui.partyState = gp.ui.party_Main_Select;
 					}
 				}
 				// TRAINER 2 OUT OF POKEMON

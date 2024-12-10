@@ -40,9 +40,6 @@ public class ConfigManager {
 			bw.write("BATTLE SET\n" + String.valueOf(gp.btlManager.set));			
 			bw.newLine();
 			
-			bw.write("PLAY TIME\n" + String.valueOf(gp.playtime));			
-			bw.newLine();
-			
 			// CLOSE FILE
 			bw.close();			
 		} 
@@ -83,12 +80,7 @@ public class ConfigManager {
 			s = br.readLine();
 			gp.btlManager.set = Boolean.valueOf(s);
 			br.readLine();		
-			
-			// PLAY TIME
-			s = br.readLine();
-			gp.playtime = Long.valueOf(s);
-			br.readLine();		
-			
+						
 			br.close();			
 		} 
 		catch (Exception e) {

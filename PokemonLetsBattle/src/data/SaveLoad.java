@@ -38,7 +38,10 @@ public class SaveLoad {
 			
 			// CURRENT DATE/TIME
 			ds.file_date =  new SimpleDateFormat("MM-dd-yyyy HH:mm:ss").format(new Date(System.currentTimeMillis()));
-									
+								
+			// PLAY TIME
+			ds.playtime = gp.playtime;
+			
 			// PROGRESS DATA
 			ds.gameCompleted = Progress.gameCompleted;
 			
@@ -245,6 +248,9 @@ public class SaveLoad {
 			// LOAD DATA FROM DS
 			DataStorage ds = (DataStorage)ois.readObject();
 						
+			// PLAY TIME
+			gp.playtime = ds.playtime;						
+			
 			// FILE DATA
 			Progress.gameCompleted = ds.gameCompleted;
 			

@@ -2233,6 +2233,7 @@ public class UI {
 						partyState = party_Main_Select;
 						pauseState = pause_Main;
 						
+						player = 0;
 						gp.btlManager.fightStage = gp.btlManager.fight_Start;
 						gp.btlManager.running = true;							
 						new Thread(gp.btlManager).start();
@@ -4193,7 +4194,7 @@ public class UI {
 			if (num == 0) {				
 				if (remainHP > 0) {
 					hpCounter++;
-					if (hpCounter == 33) {
+					if (hpCounter == 33 && gp.btlManager.cpu) {
 						gp.playSE(gp.battle_SE, "hp-low");
 						hpCounter = 0;
 					}	
@@ -4894,14 +4895,14 @@ public class UI {
 				gp.keyH.leftPressed = false;			
 				gp.keyH.playCursorSE();
 				boxTab--;
-				if (boxTab < 0) boxTab = 9;					
+				if (boxTab < 0) boxTab = gp.player.pcParty.length - 1;					
 			}
 			
 			if (gp.keyH.rightPressed) {
 				gp.keyH.rightPressed = false;				
 				gp.keyH.playCursorSE();
 				boxTab++;
-				if (boxTab > 9) boxTab = 0;						
+				if (boxTab > gp.player.pcParty.length - 1) boxTab = 0;						
 			}
 		}
 		
