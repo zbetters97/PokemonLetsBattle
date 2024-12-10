@@ -28,6 +28,7 @@ public class NPC_Red extends Entity {
 		animationSpeed = 8; 
 		
 		hasBattle = true;
+		music = 10;
 		trainerClass = 5;
 		
 		hitbox = new Rectangle(1, 1, 46, 46); 		
@@ -53,8 +54,7 @@ public class NPC_Red extends Entity {
 	}
 	public void assignParty() {
 		/** RED PARTY REFERENCE: https://bulbapedia.bulbagarden.net/wiki/Red_(game) **/
-		
-		
+				
 		pokeParty.add(Pokemon.get(Pokedex.PIKACHU, 88, null));
 		pokeParty.get(0).addMoves(Arrays.asList(
 				Moves.VOLTTACKLE,

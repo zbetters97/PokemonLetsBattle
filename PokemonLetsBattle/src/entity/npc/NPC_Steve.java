@@ -26,6 +26,7 @@ public class NPC_Steve extends Entity {
 		animationSpeed = 8; 
 		
 		hasBattle = true;
+		music = 6;
 		trainerClass = 5;
 		
 		hitbox = new Rectangle(1, 1, 46, 46); 		
@@ -33,6 +34,8 @@ public class NPC_Steve extends Entity {
 		hitboxDefaultY = hitbox.y;
 		hitboxDefaultWidth = hitbox.width;
 		hitboxDefaultHeight = hitbox.height;
+		
+		setDialogue();
 	}
 	
 	public void getImage() {			
@@ -64,10 +67,15 @@ public class NPC_Steve extends Entity {
 		dialogues[2][0] = "Maybe I should diversify my party...";
 	}
 	
-	public void speak() {	
-		
-		if (hasBattle) dialogueSet = 0;		
-		else dialogueSet = 2;
+	public void speak() {			
+		if (hasBattle) {
+			gp.stopMusic();
+			gp.startMusic(0, gp.se.getFile(0, name));	
+			dialogueSet = 0;				
+		}
+		else {
+			dialogueSet = 2;
+		}
 				
 		direction = getOppositeDirection(gp.player.direction);
 		startDialogue(this, dialogueSet);

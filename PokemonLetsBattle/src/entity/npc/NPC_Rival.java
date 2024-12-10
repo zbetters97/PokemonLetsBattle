@@ -26,6 +26,7 @@ public class NPC_Rival extends Entity {
 		animationSpeed = 8; 
 		
 		hasBattle = true;
+		music = 4;
 		trainerClass = 5;
 		
 		hitbox = new Rectangle(1, 1, 46, 46); 		

@@ -9,6 +9,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -371,7 +372,7 @@ public class UI {
 				
 				skipDialogue();
 				
-				gp.btlManager.setup(gp.btlManager.trainerBattle, npc, null, null, true);
+				gp.btlManager.setup(gp.btlManager.trainerBattle, npc.music, npc, null, null, true);
 				
 				startBattle();
 			}
@@ -5431,9 +5432,9 @@ public class UI {
 	
 	private void pc_Fight() {
 		switch (subState) {
-			case 0: 
-				pc_Fight_Load();
-				break;
+			case 0: pc_Fight_Load(); break;
+			case 1: pc_Fight_Music(); break;
+			case 2: pc_Fight_Confirm(); break;
 		}
 	}
 	private void pc_Fight_Load() {
@@ -5487,15 +5488,9 @@ public class UI {
 					if (gp.keyH.aPressed) {
 						gp.keyH.aPressed = false;
 						gp.keyH.playCursorSE();		
-						
 						commandNum = 0;
-						subState = 0;
-						pcState = pc_Options;
-						
-						gp.saveLoad.loadFighterData(i);
-						gp.btlManager.setup(gp.btlManager.trainerBattle, gp.player_2, null, null, false);						
-						
-						gp.gameState = gp.transitionState;	
+						subState = 1;		
+						gp.fileSlot = i;
 					}
 				}		
 			}
@@ -5510,7 +5505,6 @@ public class UI {
 			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
-				gp.keyH.playCursorSE();
 				gp.playSE(gp.world_SE, "pc-exit");  			
 	  			commandNum = 1;
 	  			subState = 0;
@@ -5538,6 +5532,195 @@ public class UI {
   			commandNum = 1;
   			subState = 0;
   			pcState = pc_Options;
+  		}
+	}
+	private void pc_Fight_Music() {
+
+		int x = (int) (gp.tileSize * 2);
+		int y = gp.tileSize * 9;
+		int width =(int) (gp.tileSize * 12);
+		int height = (int) (gp.tileSize * 2.5);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
+
+		x += gp.tileSize * 0.6;
+		y += gp.tileSize * 1.1;			
+		String dialogue = "Select your battle music:";
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
+  		for (String line : dialogue.split("\n")) {   			
+  			drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
+  			y += 40;
+		} 
+  		
+  		x = (int) (gp.tileSize * 6.2);
+  		y = (int) (gp.tileSize * 5.3);
+		width = (int) (gp.tileSize * 7.8);
+		height = (int) (gp.tileSize * 3.4);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
+				
+		x += gp.tileSize * 0.8;
+		y += gp.tileSize + 5;
+		
+		// format music
+		String song = new File(gp.se.getSELibrary(9)[bagNum])
+				.getName()			
+				.replace(".wav", "")
+				.replace("-", ": ")
+				.replace("_", ", ")
+				.replace("&", " ")
+				.toUpperCase();
+						
+		// add closing bracket and space after song index #
+		StringBuilder formattedSong = new StringBuilder(song);				
+		
+		drawText(formattedSong.toString(), x, y, Color.BLACK, Color.LIGHT_GRAY);
+		if (commandNum == 0) {
+			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
+			
+			if (gp.keyH.leftPressed) {
+	  			gp.keyH.leftPressed = false;  	
+	  			if (bagNum > 0) {
+	  				bagNum--;  				
+	  			}
+	  			else {
+	  				bagNum = gp.se.getSELibrary(9).length - 1;  				
+	  			}
+	  			gp.keyH.playCursorSE();
+	  		}
+	  		if (gp.keyH.rightPressed) {
+	  			gp.keyH.rightPressed = false;  			
+	  			if (bagNum < gp.se.getSELibrary(9).length - 1) {
+	  				bagNum++;  				
+	  			}
+	  			else {
+	  				bagNum = 0;  				
+	  			}
+	  			gp.keyH.playCursorSE();
+	  		}
+		}		
+		
+		y += gp.tileSize;
+		drawText("CONFIRM", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		if (commandNum == 1) {
+			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
+			if (gp.keyH.aPressed) {
+	  			gp.keyH.aPressed = false;
+	  			gp.keyH.playCursorSE();	  			
+	  			commandNum = 0;
+				subState = 2;
+	  		}
+		}				
+				
+		y += gp.tileSize;		
+		drawText("BACK", x, y, Color.BLACK, Color.LIGHT_GRAY);		
+		if (commandNum == 2) {
+			drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);
+		
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+				gp.playSE(gp.world_SE, "pc-exit");  			
+	  			commandNum = 0;
+	  			subState = 0;
+	  			bagNum = 0;
+			}
+		}	
+						
+		if (gp.keyH.upPressed) {
+  			gp.keyH.upPressed = false;  			
+  			if (commandNum > 0) {
+  				gp.keyH.playCursorSE();
+  				commandNum--;
+  			}
+  		}
+  		if (gp.keyH.downPressed) {
+  			gp.keyH.downPressed = false;  			
+  			if (commandNum < 2) {
+  				gp.keyH.playCursorSE();
+  				commandNum++;
+  			}
+  		}
+  		if (gp.keyH.bPressed) {
+  			gp.keyH.bPressed = false;
+  			gp.playSE(gp.world_SE, "pc-exit");  			
+  			commandNum = 0;
+  			subState = 0;
+  			bagNum = 0;
+  		}
+	}
+	private void pc_Fight_Confirm() {
+
+		int x = (int) (gp.tileSize * 2);
+		int y = gp.tileSize * 9;
+		int width =(int) (gp.tileSize * 12);
+		int height = (int) (gp.tileSize * 2.5);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
+
+		x += gp.tileSize * 0.6;
+		y += gp.tileSize * 1.1;			
+		String dialogue = "Ready to begin your battle?";
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
+  		for (String line : dialogue.split("\n")) {   			
+  			drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
+  			y += 40;
+		} 
+  		
+  		x = (int) (gp.tileSize * 10.2);
+		y = (int) (gp.tileSize * 6.3);
+		width = (int) (gp.tileSize * 3.8);
+		height = (int) (gp.tileSize * 2.4);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
+				
+		x += gp.tileSize * 0.8;
+		y += gp.tileSize + 5;
+		drawText("START", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		if (commandNum == 0) {
+			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
+			if (gp.keyH.aPressed) {
+	  			gp.keyH.aPressed = false;
+	  			
+	  			commandNum = 0;
+				subState = 0;
+				pcState = pc_Options;
+				
+				gp.saveLoad.loadFighterData(gp.fileSlot);
+				gp.btlManager.setup(gp.btlManager.trainerBattle, bagNum, gp.player_2, null, null, false);						
+				
+				bagNum = 0;
+				gp.gameState = gp.transitionState;	
+	  		}
+		}				
+				
+		y += gp.tileSize;		
+		drawText("BACK", x, y, Color.BLACK, Color.LIGHT_GRAY);		
+		if (commandNum == 1) {
+			drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+				gp.playSE(gp.world_SE, "pc-exit");  			
+	  			commandNum = 0;
+	  			subState = 1;
+			}
+		}	
+		
+		if (gp.keyH.upPressed) {
+  			gp.keyH.upPressed = false;  			
+  			if (commandNum > 0) {
+  				gp.keyH.playCursorSE();
+  				commandNum--;
+  			}
+  		}
+  		if (gp.keyH.downPressed) {
+  			gp.keyH.downPressed = false;  			
+  			if (commandNum < 2) {
+  				gp.keyH.playCursorSE();
+  				commandNum++;
+  			}
+  		}
+  		if (gp.keyH.bPressed) {
+  			gp.keyH.bPressed = false;
+  			gp.playSE(gp.world_SE, "pc-exit");  			
+  			commandNum = 0;
+  			subState = 1;
   		}
 	}
 	/** END PC SCREEN **/

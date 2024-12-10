@@ -169,10 +169,9 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	protected void setupGame() {	
 		
-		currentMap = 0;
-		
-		gameState = playState;
+		currentMap = 0;		
 		currentArea = town;	
+		gameState = playState;		
 								
 		setupMusic();
 		
@@ -190,8 +189,6 @@ public class GamePanel extends JPanel implements Runnable {
 		g2 = (Graphics2D)tempScreen.getGraphics();
 		
 		if (fullScreenOn) setFullScreen();
-		
-		gameState = playState;
 	}
 	
 	private void setupWildPokemon() {

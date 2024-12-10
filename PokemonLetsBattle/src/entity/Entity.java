@@ -84,6 +84,7 @@ public class Entity {
 	protected int steps = 0;
 	public int dexSeen = 0;
 	public int dexOwn = 0;
+	public int music = 0;
 	
 	public int skillLevel = 0;
 	public final int skill_rookie = 1;

@@ -15,7 +15,6 @@ import java.util.Random;
 import application.GamePanel.Weather;
 import entity.Entity;
 import entity.collectables.items.ITM_EXP_Share;
-import entity.npc.NPC_Red;
 import moves.Move;
 import moves.Move.MoveType;
 import moves.Moves;
@@ -105,7 +104,9 @@ public class BattleManager extends Thread {
 	}
 	
 	/** SETUP METHOD **/
-	public void setup(int currentBattle, Entity trainer, Pokemon pokemon, String condition, boolean cpu) {
+	public void setup(int currentBattle, int music, Entity trainer, Pokemon pokemon, String condition, boolean cpu) {
+		
+		gp.stopMusic();	
 		
 		if (gp.ui.textSpeed == 2) textSpeed = 30;
 		else if (gp.ui.textSpeed == 3) textSpeed = 40;
@@ -126,6 +127,9 @@ public class BattleManager extends Thread {
 		active = true;
 		running = true;		
 		fightStage = fight_Encounter;
+		
+		if (cpu) gp.startMusic(1, music);	
+		else gp.startMusic(9, music);
 	}
 			
 	/** RUN METHOD **/
@@ -163,13 +167,11 @@ public class BattleManager extends Thread {
 	}
 		
 	/** SETUP BATTLE METHODS **/
- 	private void setBattle() throws InterruptedException {		
-		gp.stopMusic();	
+ 	private void setBattle() throws InterruptedException {	
 				
 		switch (battleMode) {
 			case wildBattle:
-				
-				gp.startMusic(1, 1);				
+							
 				pause(1400);
 				
 				gp.playSE(gp.cry_SE, fighter[1].toString());	
@@ -179,13 +181,6 @@ public class BattleManager extends Thread {
 				
 				break;
 			case trainerBattle: 
-				
-				if (trainer.name.equals(NPC_Red.npcName)) {
-					gp.startMusic(1, 10);
-				}
-				else {
-					gp.startMusic(1, 4);	
-				}
 				
 				pause(1400);		
 				
@@ -2415,7 +2410,7 @@ public class BattleManager extends Thread {
 			gp.playSE(gp.faint_SE, fighter[1].toString());
 			typeDialogue(fighter[1].getName() + " fainted!");	
 			
-			gainEXP();
+			if (cpu) gainEXP();
 		}
 		// TRAINER 2 WINNER
 		else if (winner == 1) {		
@@ -2443,7 +2438,7 @@ public class BattleManager extends Thread {
 	
 	/** EXP METHODS **/
 	private void gainEXP() throws InterruptedException {
-		
+			
 		int gainedXP = calculateEXPGain();
 				
 		if (otherFighters.size() > 0) {
@@ -2475,7 +2470,7 @@ public class BattleManager extends Thread {
 		}
 		
 		getOtherFighters();	
-		pause(500);
+		pause(500);		
 	}
 	private int calculateEXPGain() {
 		// EXP FORMULA REFERENCE (GEN I-IV): https://bulbapedia.bulbagarden.net/wiki/Experience		
