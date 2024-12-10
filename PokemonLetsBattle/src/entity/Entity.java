@@ -186,7 +186,6 @@ public class Entity {
 		checkCollision();
 		if (!collisionOn && withinBounds()) { 	
 			moving = true;	
-			speed = defaultSpeed;
 		}
 		else {						
 			spriteNum = 1;
@@ -210,7 +209,6 @@ public class Entity {
 		if (pixelCounter >= gp.tileSize) {
 			moving = false;
 			pixelCounter = 0;
-			spriteNum = 1;
 			steps++;
 		}
 	}
@@ -460,11 +458,13 @@ public class Entity {
 	protected boolean lookForBattle(int tileDistance) {
 		
 		if (battleFound) {
-			
 			followPath(getGoalCol(gp.player), getGoalRow(gp.player));
 				
 			if (!moving) move();	
-			if (pathCompleted) startBattle(0);	
+			if (pathCompleted) {
+				speed = defaultSpeed;
+				startBattle(0);				
+			}
 							
 			return true;
 		}
@@ -479,6 +479,7 @@ public class Entity {
 					gp.startMusic(0, gp.se.getFile(0, "May"));	
 				}
 				else if (battleIconTimer > 60) {
+					speed = 2;
 					battleFound = true;
 					battleIconTimer = 0;
 				}
@@ -650,7 +651,7 @@ public class Entity {
 		if (pokeParty.size() > 0) {
 			for (Pokemon p : pokeParty) {				
 				p.setAlive(true);
-				p.setHP(p.getHP());
+				p.setHP(p.getBHP());
 				p.resetMoves();
 				p.setStatus(null);				
 			}

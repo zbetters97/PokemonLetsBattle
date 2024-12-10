@@ -2233,16 +2233,11 @@ public class UI {
 						partyState = party_Main_Select;
 						pauseState = pause_Main;
 						
-						if (gp.btlManager.cpu || player == 1) {
-							gp.btlManager.running = true;
-							gp.btlManager.fightStage = gp.btlManager.fight_Start;
-							new Thread(gp.btlManager).start();					
-							gp.gameState = gp.battleState;	
-						}
-						else {
-							player = 1;
-							gp.gameState = gp.battleState;
-						}
+						gp.btlManager.fightStage = gp.btlManager.fight_Start;
+						gp.btlManager.running = true;							
+						new Thread(gp.btlManager).start();
+							
+						gp.gameState = gp.battleState;							
 					}						
 					// UNABLE TO SELECT FIGHTER
 					else {
@@ -4563,12 +4558,12 @@ public class UI {
 			else {
 				gp.keyH.playCursorSE();
 				
-				if (gp.btlManager.cpu || player == 1) {
+				if (gp.btlManager.cpu || player == 1) {			
 					
+					gp.btlManager.fightStage = gp.btlManager.fight_Start;
 					gp.btlManager.running = true;			
 					new Thread(gp.btlManager).start();	
-					gp.btlManager.fightStage = gp.btlManager.fight_Start;
-					
+										
 					battleState = battle_Dialogue;				
 					commandNum = 0;	
 					player = 0;

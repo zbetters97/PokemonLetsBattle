@@ -93,27 +93,8 @@ public class NPC_Steve extends Entity {
 			getDirection(60);
 		}		
 		
-		if (moving) walking();		
+		if (moving) {
+			walking();		
+		}
 	}
-	
-	public void cycleSprites() {
-		
-		spriteCounter++;
-		if (spriteCounter > animationSpeed) {			
-										
-			// CYLCE WALKING/SWIMMING SPRITES
-			if (spriteNum == 1 && spriteCycle == 0) {
-				spriteNum = 2;	
-				spriteCycle = 1;
-			}
-			else if (spriteNum == 1 && spriteCycle == 1) {
-				spriteNum = 3;
-				spriteCycle = 0;
-			}
-			else if (spriteNum == 2) spriteNum = 1;
-			else if (spriteNum == 3) spriteNum = 1;		
-							
-			spriteCounter = 0;
-		}					
-	}	
 }

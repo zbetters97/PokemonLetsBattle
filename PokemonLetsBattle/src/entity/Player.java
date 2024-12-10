@@ -443,8 +443,8 @@ public class Player extends Entity {
 	public void cycleSprites() {
 		
 		spriteCounter++;
-		if (spriteCounter > animationSpeed) {			
-										
+		if (spriteCounter > animationSpeed) {	
+
 			// CYLCE WALKING/SWIMMING SPRITES
 			if (spriteNum == 1 && spriteCycle == 0) {
 				spriteNum = 2;	
