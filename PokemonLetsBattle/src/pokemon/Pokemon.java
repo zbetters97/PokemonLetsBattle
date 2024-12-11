@@ -113,9 +113,9 @@ public class Pokemon {
 		this.growth = growth;
 		this.ball = ball;
 		
-		xp = getXP(level);
+		xp = setBXP(level);
 		cxp = xp;
-		nxp = getNextXP();
+		nxp = setNXP();
 		
 		this.hp = (int)(Math.floor(((2 * hp + hpIV + Math.floor(0.25 * ev)) * level) / 100) + level + 10);
 		chp = this.hp;
@@ -177,7 +177,7 @@ public class Pokemon {
 	/** END CHILD METHODS **/
 			
 	/** LEVEL UP METHODS **/
-	protected int getXP(int level) {		
+	protected int setBXP(int level) {		
 		/*** XP CALULCATOR REFERENCE https://bulbapedia.bulbagarden.net/wiki/Experience#Experience_at_each_level ***/
 		
 		double xp = 0;		
@@ -239,8 +239,8 @@ public class Pokemon {
 		
 		return (int) Math.floor(xp);		
 	}
-	protected int getNextXP() {		
-		int nextXP = getXP(level + 1) - getXP(level);		
+	protected int setNXP() {		
+		int nextXP = setBXP(level + 1) - setBXP(level);		
 		if (nextXP < 0) nextXP = 0;
 		return nextXP;		
 	}
@@ -252,7 +252,7 @@ public class Pokemon {
 		
 		level++;
 		
-		this.xp = getXP(level);
+		this.xp = setBXP(level);
 		
 		int oldBHP = hp;
 		hp = (int)(Math.floor(((2 * baseHP + hpIV + Math.floor(ev / 4)) * level) / 100) + level + 10);
@@ -285,9 +285,9 @@ public class Pokemon {
 		
 		level = old.level;
 				
-		xp = getXP(level);
+		xp = setBXP(level);
 		cxp = xp;
-		nxp = getNextXP();
+		nxp = setNXP();
 		
 		hpIV = old.hpIV;		
 		attackIV = old.attackIV;
@@ -338,10 +338,10 @@ public class Pokemon {
 		this.sex = sex;
 		this.level = level;
 		
-		xp = getXP(level);
+		xp = setBXP(level);
 		this.cxp = cxp;
-		nxp = getNXP();
-		
+		nxp = setNXP();
+						
 		this.ev = ev;		
 		
 		this.hpIV = hpIV;
@@ -632,9 +632,8 @@ public class Pokemon {
 			this.chp = this.hp; 
 	}	
 	public int getBXP() { return xp; }
-	public void setBXP(int bxp) { this.xp = bxp; }
 	public int getXP() { return cxp; }
-	public void setXP(int cxp) { this.cxp = cxp; }	
+	public void setXP(int xp) { this.cxp = xp; }	
 	
 	public double getBAttack() { return attack; }
 	public void setBAttack(int attack) {	this.attack = attack; }

@@ -45,7 +45,7 @@ public class DataStorage implements Serializable {
 	ArrayList<String> pPokePartyBall = new ArrayList<>();
 	ArrayList<Boolean> pPokePartyAlive = new ArrayList<>();
 	
-	// PLAYER PC
+	// PLAYER PC PARTY
 	ArrayList<Pokedex> pPCPartyID = new ArrayList<>();
 	ArrayList<Character> pPCPartySex = new ArrayList<>();
 	ArrayList<int[]> pPCPartyStats = new ArrayList<>();
@@ -65,6 +65,15 @@ public class DataStorage implements Serializable {
 	int npcWorldY[][];
 	int npcDialogueSet[][];
 	boolean npcHasBattle[][];
+	
+	// NPC POKE PARTY
+	ArrayList<ArrayList<Pokedex>> nPokePartyID = new ArrayList<>();	
+	ArrayList<ArrayList<Character>> nPokePartySex = new ArrayList<>();
+	ArrayList<ArrayList<int[]>> nPokePartyStats = new ArrayList<>();
+	ArrayList<ArrayList<String>> nPokePartyNature = new ArrayList<>();
+	ArrayList<ArrayList<List<String>>> nPokePartyMoves = new ArrayList<>();
+	ArrayList<ArrayList<String>> nPokePartyItem = new ArrayList<>();
+	ArrayList<ArrayList<String>> nPokePartyBall = new ArrayList<>();
 	
 	// MAP OBJECTS
 	String mapObjectNames[][];

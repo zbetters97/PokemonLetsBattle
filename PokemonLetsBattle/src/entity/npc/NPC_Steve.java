@@ -67,7 +67,8 @@ public class NPC_Steve extends Entity {
 		dialogues[2][0] = "Maybe I should diversify my party...";
 	}
 	
-	public void speak() {			
+	public void speak() {
+		
 		if (hasBattle) {
 			gp.stopMusic();
 			gp.startMusic(0, gp.se.getFile(0, name));	
@@ -95,6 +96,9 @@ public class NPC_Steve extends Entity {
 		
 		if (moving) {
 			walking();		
+		}
+		else {
+			spriteNum = 1;
 		}
 	}
 }

@@ -81,6 +81,7 @@ public class Player extends Entity {
 		
 		name = "ASH";
 		trainerClass = 5;
+		skillLevel = skill_elite;
 	}
 /** END PLAYER CONSTRUCTOR **/
 		
@@ -122,8 +123,7 @@ public class Player extends Entity {
 		}
 		
 	}
-	public void setDefaultPosition() {	
-		
+	public void setDefaultPosition() {			
 		worldX = gp.tileSize * 24;
 		worldY = gp.tileSize * 22;		
 		defaultWorldX = worldX;
@@ -285,8 +285,7 @@ public class Player extends Entity {
 		}
 		else if (!moving && canMove) {			
 			
-			if (gp.keyH.startPressed) {
-				
+			if (gp.keyH.startPressed) {				
 				gp.keyH.startPressed = false;
 				gp.keyH.bPressed = false;
 				gp.keyH.playMenuOpenSE();
