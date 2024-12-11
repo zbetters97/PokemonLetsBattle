@@ -21,7 +21,6 @@ public class NPC_Red extends Entity {
 		worldYStart = this.worldY;
 		
 		type = type_npc;
-		skillLevel = skill_elite;
 		name = npcName;
 		direction = "down";
 		speed = 2; defaultSpeed = speed;
@@ -30,6 +29,7 @@ public class NPC_Red extends Entity {
 		hasBattle = true;
 		music = 10;
 		trainerClass = 5;
+		skillLevel = skill_elite;
 		
 		hitbox = new Rectangle(1, 1, 46, 46); 		
 		hitboxDefaultX = hitbox.x;

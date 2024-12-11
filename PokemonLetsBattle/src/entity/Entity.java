@@ -12,6 +12,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import application.GamePanel;
+import entity.object.OBJ_Ledge;
 import moves.Move;
 import pokemon.Pokemon;
 import properties.Status;
@@ -228,8 +229,9 @@ public class Entity {
 	public void cycleSprites() {
 				
 		spriteCounter++;
-		if (spriteCounter > animationSpeed) {			
-										
+		if (spriteCounter > animationSpeed) {	
+
+			// CYLCE WALKING/SWIMMING SPRITES
 			if (spriteNum == 1 && spriteCycle == 0) {
 				spriteNum = 2;	
 				spriteCycle = 1;
@@ -1004,14 +1006,26 @@ public class Entity {
 		// AWAY FROM CENTER OF CAMERA
 		offCenter();
 		
-		// WITHIN SCREEN BOUNDARY
-		if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
-				worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
-				worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
-				worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
-			inFrame = true;
-		
-		}				
+		if (name.equals(OBJ_Ledge.objName)) {
+			
+			// WITHIN SCREEN BOUNDARY
+			if (worldX + gp.tileSize + gp.tileSize * power > gp.player.worldX - gp.player.screenX &&
+					worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
+					worldY + gp.tileSize + gp.tileSize * power > gp.player.worldY - gp.player.screenY &&
+					worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
+				inFrame = true;
+			}	
+		}
+		else {
+			
+			// WITHIN SCREEN BOUNDARY
+			if (worldX + gp.tileSize > gp.player.worldX - gp.player.screenX &&
+					worldX - gp.tileSize < gp.player.worldX + gp.player.screenX &&
+					worldY + gp.tileSize > gp.player.worldY - gp.player.screenY &&
+					worldY - gp.tileSize < gp.player.worldY + gp.player.screenY) {
+				inFrame = true;		
+			}			
+		}
 		
 		return inFrame;
 	}

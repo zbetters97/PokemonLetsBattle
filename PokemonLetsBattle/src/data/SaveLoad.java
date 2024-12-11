@@ -15,6 +15,7 @@ import application.GamePanel;
 import entity.Entity;
 import moves.Move;
 import pokemon.Pokemon;
+import pokemon.Pokemon.Pokedex;
 import properties.Nature;
 import properties.Status;
 
@@ -73,6 +74,7 @@ public class SaveLoad {
 			if (gp.player.keyItem != null) ds.pKeyItem = gp.player.keyItem.name;				
 			else ds.pKeyItem = "NULL";			
 					
+			// PLAYER POKE PARTY
 			ArrayList<String> moveNames = new ArrayList<>();
 			ArrayList<Integer> movePP = new ArrayList<>();
 			for (Pokemon p : gp.player.pokeParty) {
@@ -107,7 +109,8 @@ public class SaveLoad {
 				moveNames.clear();
 				movePP.clear();
 			}
-									
+						
+			// PLAYER PC PARTY
 			Pokemon p;
 			for (int i = 0; i < gp.player.pcParty.length; i++) {
 				
@@ -173,9 +176,19 @@ public class SaveLoad {
 			ds.iTileWorldY = new int[gp.maxMap][gp.iTile[1].length];
 			ds.iTileDirections = new String[gp.maxMap][gp.iTile[1].length];
 			
+
+			// NPC POKE PARTY							
+			ArrayList<Pokedex> id = new ArrayList<>();	
+			ArrayList<Character> sex = new ArrayList<>();
+			ArrayList<int[]> stats = new ArrayList<>();
+			ArrayList<String> nature = new ArrayList<>();
+			ArrayList<List<String>> moves = new ArrayList<>();
+			ArrayList<String> item = new ArrayList<>();
+			ArrayList<String> ball = new ArrayList<>();			
+			
 			for (int mapNum = 0; mapNum < gp.maxMap; mapNum++) {
 				
-				// NPCs
+				// NPCs				
 				for (int i = 0; i < gp.npc[1].length; i++) {
 					
 					if (gp.npc[mapNum][i] == null) {
@@ -187,7 +200,61 @@ public class SaveLoad {
 						ds.npcWorldY[mapNum][i] = gp.npc[mapNum][i].worldY;
 						ds.npcDialogueSet[mapNum][i] = gp.npc[mapNum][i].dialogueSet;
 						ds.npcHasBattle[mapNum][i] = gp.npc[mapNum][i].hasBattle;
-					}					
+						
+						if (!gp.npc[mapNum][i].pokeParty.isEmpty()) {
+							
+							ArrayList<String> npcMoveNames = new ArrayList<>();
+							for (Pokemon pk : gp.npc[mapNum][i].pokeParty) {	
+																
+								id.add(pk.getID());	
+								sex.add(pk.getSex());
+								stats.add(new int[] {
+										pk.getLevel(), pk.getXP(), pk.getEV(), 
+										pk.getHPIV(), pk.getAttackIV(), pk.getDefenseIV(),
+										pk.getSpAttackIV(), pk.getSpDefenseIV(), pk.getSpeedIV() 
+								});
+								nature.add(pk.getNature().getName());
+								
+								for (Move m : pk.getMoveSet()) {
+									npcMoveNames.add(m.getName());	
+								}
+								moves.add(new ArrayList<String>(npcMoveNames));
+																								
+								if (pk.getItem() != null) item.add(pk.getItem().name);
+								else item.add("NULL");
+								
+								if (pk.getBall() != null) ball.add(pk.getBall().name);
+								else ball.add("NULL");
+																
+								npcMoveNames.clear();
+							}
+							
+							ds.nPokePartyID.add(new ArrayList<>(id));
+							ds.nPokePartySex.add(new ArrayList<>(sex));
+							ds.nPokePartyStats.add(new ArrayList<>(stats));
+							ds.nPokePartyNature.add(new ArrayList<>(nature));
+							ds.nPokePartyMoves.add(new ArrayList<>(moves));
+							ds.nPokePartyItem.add(new ArrayList<>(item));
+							ds.nPokePartyBall.add(new ArrayList<>(ball));
+							
+							id.clear();
+							sex.clear();
+							stats.clear();
+							nature.clear();
+							moves.clear();
+							item.clear();
+							ball.clear();
+						}	
+						else {
+							ds.nPokePartyID.add(null);
+							ds.nPokePartySex.add(null);
+							ds.nPokePartyStats.add(null);
+							ds.nPokePartyNature.add(null);
+							ds.nPokePartyMoves.add(null);
+							ds.nPokePartyItem.add(null);
+							ds.nPokePartyBall.add(null);
+						}
+					}		
 				}	
 				
 				// MAP OBJECTS
@@ -358,7 +425,8 @@ public class SaveLoad {
 				moves.clear();
 				moveset.clear();
 			}
-				
+			
+			// PLAYER PC PARTY
 			Arrays.stream(gp.player.pcParty).forEach(o -> Arrays.fill(o, null));
 			for (int i = 0; i < ds.pPCPartyID.size(); i++) {
 				
@@ -427,7 +495,57 @@ public class SaveLoad {
 						gp.npc[mapNum][i].worldX = ds.npcWorldX[mapNum][i];
 						gp.npc[mapNum][i].worldY = ds.npcWorldY[mapNum][i];		
 						gp.npc[mapNum][i].dialogueSet = ds.npcDialogueSet[mapNum][i];
-						gp.npc[mapNum][i].hasBattle = ds.npcHasBattle[mapNum][i];						
+						gp.npc[mapNum][i].hasBattle = ds.npcHasBattle[mapNum][i];		
+						
+						// NPC POKE PARTY
+						if (!gp.npc[mapNum][i].pokeParty.isEmpty()) {
+							
+							gp.npc[mapNum][i].pokeParty.clear();	
+							
+							for (int c = 0; c < ds.nPokePartyID.get(i).size(); c++) {
+												
+								p = Pokemon.get(ds.nPokePartyID.get(i).get(c), 1, null);
+												
+								sex = ds.nPokePartySex.get(i).get(c);
+								level = ds.nPokePartyStats.get(i).get(c)[0];
+								cxp = ds.nPokePartyStats.get(i).get(c)[1];
+								ev = ds.nPokePartyStats.get(i).get(c)[2];
+								hpIV = ds.nPokePartyStats.get(i).get(c)[3];
+								attackIV = ds.nPokePartyStats.get(i).get(c)[4];
+								defenseIV = ds.nPokePartyStats.get(i).get(c)[5];
+								spAttackIV = ds.nPokePartyStats.get(i).get(c)[6];
+								spDefenseIV = ds.nPokePartyStats.get(i).get(c)[7];
+								speedIV = ds.nPokePartyStats.get(i).get(c)[8];
+												
+								nature = Nature.getNature(ds.nPokePartyNature.get(i).get(c));							
+								
+								ds.nPokePartyMoves.get(i).get(c).forEach(m -> moves.add(Move.getMove(m)));
+								moveset = new ArrayList<Move>(moves);
+								
+								if (!ds.nPokePartyBall.get(i).get(c).equals("NULL")) {
+									ball = gp.eGenerator.getItem(ds.nPokePartyBall.get(i).get(c));
+								}
+								else {
+									ball = null;
+								}
+								if (!ds.nPokePartyItem.get(i).get(c).equals("NULL")) {
+									item = gp.eGenerator.getItem(ds.nPokePartyItem.get(i).get(c));
+								}
+								else {
+									item = null;
+								}
+								
+								if (p != null) {
+									p.create(sex, level, cxp, ev, 
+											hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV, 
+											nature, null, moveset, item, ball, true);		
+								}			
+												
+								gp.npc[mapNum][i].pokeParty.add(p);
+								moves.clear();
+								moveset.clear();
+							}				
+						}
 					}			
 				}				
 												

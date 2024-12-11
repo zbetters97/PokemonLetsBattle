@@ -2477,14 +2477,30 @@ public class UI {
   				fighterNum = 0;	
   				commandNum = 0;		
   				
-  				if (gp.btlManager.active) {  					
-					gp.btlManager.running = true;
-					gp.btlManager.fightStage = gp.btlManager.fight_Start;
-					new Thread(gp.btlManager).start();
-					
-					bagState = bag_Main;
-					battleState = battle_Dialogue;
-					gp.gameState = gp.battleState;
+  				if (gp.btlManager.active) {  
+  					
+  					if (gp.btlManager.cpu || player == 1) {	
+  						
+  						gp.btlManager.fightStage = gp.btlManager.fight_Start;
+  						gp.btlManager.setQueue();
+  						gp.btlManager.running = true;			
+  						new Thread(gp.btlManager).start();	
+  											
+  						battleState = battle_Dialogue;				
+  						commandNum = 0;	
+  						player = 0;
+  						
+  						bagState = bag_Main;
+  						battleState = battle_Dialogue;
+  						gp.gameState = gp.battleState;
+  					}
+  					else {
+  						bagState = bag_Main;  						
+  						commandNum = 0;
+  						player = 1;						
+  						battleState = battle_Options;
+  						gp.gameState = gp.battleState;
+  					}					
   				}
   				else {
   					bagState = bag_Main;
@@ -4562,6 +4578,7 @@ public class UI {
 				if (gp.btlManager.cpu || player == 1) {			
 					
 					gp.btlManager.fightStage = gp.btlManager.fight_Start;
+					gp.btlManager.setQueue();
 					gp.btlManager.running = true;			
 					new Thread(gp.btlManager).start();	
 										

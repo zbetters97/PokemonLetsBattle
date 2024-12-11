@@ -84,17 +84,22 @@ public class NPC_Rival extends Entity {
 	
 	public void setAction() {	
 				
-		if (hasBattle) {			
+/*		
+  		if (hasBattle) {			
 			if (!moving && !lookForBattle(5)) {
 				getDirection(45);	
 			}	
-		}	
-		else if (!moving) {
+		} 
+*/
+		if (!moving) {
 			getDirection(60);	
 		}		
 			
 		if (moving) {
 			walking();
+		}
+		else {
+			spriteNum = 1;
 		}
 	}
 		
@@ -115,25 +120,4 @@ public class NPC_Rival extends Entity {
 			move();	
 		}		
 	}
-	
-	public void cycleSprites() {
-		
-		spriteCounter++;
-		if (spriteCounter > animationSpeed) {			
-										
-			// CYLCE WALKING/SWIMMING SPRITES
-			if (spriteNum == 1 && spriteCycle == 0) {
-				spriteNum = 2;	
-				spriteCycle = 1;
-			}
-			else if (spriteNum == 1 && spriteCycle == 1) {
-				spriteNum = 3;
-				spriteCycle = 0;
-			}
-			else if (spriteNum == 2) spriteNum = 1;
-			else if (spriteNum == 3) spriteNum = 1;		
-							
-			spriteCounter = 0;
-		}					
-	}	
 }
