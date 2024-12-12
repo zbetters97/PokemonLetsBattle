@@ -28,6 +28,7 @@ public class NPC_Steve extends Entity {
 		hasBattle = true;
 		music = 6;
 		trainerClass = 5;
+		iv = 5;
 		
 		hitbox = new Rectangle(1, 1, 46, 46); 		
 		hitboxDefaultX = hitbox.x;
@@ -58,6 +59,7 @@ public class NPC_Steve extends Entity {
 		pokeParty.add(Pokemon.get(Pokedex.MACHOP, 5, null));
 		pokeParty.add(Pokemon.get(Pokedex.MACHOKE, 16, null));
 		pokeParty.add(Pokemon.get(Pokedex.MACHAMP, 36, null));
+		for (Pokemon p : pokeParty) p.setIV(iv);
 	}
 	public void setDialogue() {
 		dialogues[0][0] = "Don't ask me why I have every\nevolved form of Machop!";

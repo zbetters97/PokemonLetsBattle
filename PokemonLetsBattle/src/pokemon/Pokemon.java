@@ -243,8 +243,7 @@ public class Pokemon {
 		int nextXP = setBXP(level + 1) - setBXP(level);		
 		if (nextXP < 0) nextXP = 0;
 		return nextXP;		
-	}
-				
+	}	
 	public boolean checkLevelUp(int gainedXP) {		
 		return nxp <= xp + gainedXP;		
 	}	
@@ -376,6 +375,32 @@ public class Pokemon {
 		this.item = item;
 		this.ball = ball;
 		this.isAlive = isAlive;
+	}
+	public void setIV(int iv) {
+		
+		if (iv < 0) iv = 0; 
+		else if (iv > 31) iv = 31;
+		
+		hpIV = iv;		
+		attackIV = iv;
+		defenseIV = iv;
+		spAttackIV = iv;
+		spDefenseIV = iv;
+		speedIV = iv;
+		
+		attack = getStat(baseAttack, attackIV); 
+		defense = getStat(baseDefense, defenseIV);		
+		spAttack = getStat(baseSpAttack, spAttackIV); 
+		spDefense = getStat(baseSpDefense, spDefenseIV);
+		speed = getStat(baseSpeed, speedIV);
+		accuracy = 1;
+		evasion = 1;
+				
+		cAttack = attack;
+		cDefense = defense;
+		cSpAttack = spAttack;
+		cSpDefense = spDefense;
+		cSpeed = speed;
 	}
 	/** END LEVEL UP METHODS **/
 			

@@ -29,6 +29,7 @@ public class NPC_Red extends Entity {
 		hasBattle = true;
 		music = 10;
 		trainerClass = 5;
+		iv = 30;
 		skillLevel = skill_elite;
 		
 		hitbox = new Rectangle(1, 1, 46, 46); 		
@@ -98,6 +99,8 @@ public class NPC_Red extends Entity {
 				Moves.BLIZZARD,
 				Moves.GIGAIMPACT
 		));		
+		
+		for (Pokemon p : pokeParty) p.setIV(iv);		
 	}
 	
 	public void speak() {	

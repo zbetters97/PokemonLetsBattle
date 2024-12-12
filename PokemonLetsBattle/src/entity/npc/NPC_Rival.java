@@ -28,6 +28,7 @@ public class NPC_Rival extends Entity {
 		hasBattle = true;
 		music = 4;
 		trainerClass = 5;
+		iv = 15;
 		
 		hitbox = new Rectangle(1, 1, 46, 46); 		
 		hitboxDefaultX = hitbox.x;
@@ -66,6 +67,7 @@ public class NPC_Rival extends Entity {
 		pokeParty.add(Pokemon.get(Pokedex.TORCHIC, 5, null));
 		pokeParty.add(Pokemon.get(Pokedex.COMBUSKEN, 16, null));
 		pokeParty.add(Pokemon.get(Pokedex.BLAZIKEN, 36, null));
+		for (Pokemon p : pokeParty) p.setIV(iv);	
 	}
 		
 	public void speak() {			

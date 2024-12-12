@@ -86,6 +86,7 @@ public class Entity {
 	public int dexSeen = 0;
 	public int dexOwn = 0;
 	public int music = 0;
+	public int iv = 0;
 	
 	public int skillLevel = 0;
 	public final int skill_rookie = 1;
