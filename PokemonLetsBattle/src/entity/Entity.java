@@ -153,11 +153,7 @@ public class Entity {
 	
 	// CONSTRUCTOR
 	public Entity(GamePanel gp) {
-		this.gp = gp;
-		
-		pokeParty = new ArrayList<>();
-		assignParty();
-		
+		this.gp = gp;				
 		getImage();
 	}
 	

@@ -20,9 +20,23 @@ public class ITM_Heal_Burn extends Entity {
 		sprice = 100;
 		damage = 30;
 		status = Status.BURN;
-		
-		image1 = setup("/collectables/menu/heal_burn", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
+	public ITM_Heal_Burn(GamePanel gp, int amount) {		
+		super(gp);	
+		
+		collectableType = type_item;
+		name = colName;			
+		description = "Heals a burned\nPokémon.";
+		
+		this.amount = amount;
+		pprice = 200;
+		sprice = 100;
+		damage = 30;
+		status = Status.BURN;
+	}	
+	public void getImage() {
+		image1 = setup("/collectables/menu/heal_burn", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+	}
 	
 	public void use() {
 		useItem("Heal a POKEMON");

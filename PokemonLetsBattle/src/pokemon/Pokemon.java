@@ -58,7 +58,7 @@ public class Pokemon {
 		BAGON, SHELGON, SALAMENCE,
 		BELDUM, METANG, METAGROSS,
 		KYOGRE, GROUDON, RAYQUAZA,
-		JIRACHI, DEOXYS	
+		JIRACHI, DEOXYS
 	}
 	
 	protected enum Growth {

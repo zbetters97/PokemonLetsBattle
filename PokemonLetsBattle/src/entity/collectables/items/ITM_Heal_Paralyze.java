@@ -20,9 +20,23 @@ public class ITM_Heal_Paralyze extends Entity {
 		sprice = 100;
 		damage = 30;
 		status = Status.PARALYZE;
+	}
+	public ITM_Heal_Paralyze(GamePanel gp, int amount) {		
+		super(gp);	
 		
+		collectableType = type_item;
+		name = colName;			
+		description = "Heals a paralyzed\nPokémon.";
+		
+		this.amount = amount;
+		pprice = 200;
+		sprice = 100;
+		damage = 30;
+		status = Status.PARALYZE;
+	}
+	public void getImage() {
 		image1 = setup("/collectables/menu/heal_paralyze", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
-	}	
+	}
 	
 	public void use() {
 		useItem("Heal a POKEMON");

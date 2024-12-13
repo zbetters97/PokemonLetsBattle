@@ -16,9 +16,10 @@ public class ITM_EXP_Share extends Entity {
 		
 		pprice = 0;
 		sprice = 0;
-		
-		image1 = setup("/collectables/menu/exp_share", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
+	public void getImage() {
+		image1 = setup("/collectables/menu/exp_share", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+	}
 	
 	public void use() {
 		gp.ui.bagDialogue = "You can't use this here!";

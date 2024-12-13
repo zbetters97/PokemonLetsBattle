@@ -1,6 +1,7 @@
 package entity.npc;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import application.GamePanel;
@@ -39,6 +40,9 @@ public class NPC_Red extends Entity {
 		hitboxDefaultHeight = hitbox.height;
 		
 		setDialogue();
+		
+		pokeParty = new ArrayList<>();
+		assignParty();
 	}	
 	public void getImage() {			
 		up1 = setup("/npc/red_up_1"); 

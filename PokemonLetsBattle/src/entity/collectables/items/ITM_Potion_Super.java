@@ -19,9 +19,23 @@ public class ITM_Potion_Super extends Entity {
 		pprice = 700;
 		sprice = 350;
 		damage = 30;
-		
-		image1 = setup("/collectables/menu/potion_super", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
+	public ITM_Potion_Super(GamePanel gp, int amount) {		
+		super(gp);	
+		
+		collectableType = type_item;
+		name = colName;			
+		description = "Restores the HP of\na Pokémon by 50\npoints.";
+		
+		this.amount = amount;
+		power = 50;
+		pprice = 700;
+		sprice = 350;
+		damage = 30;
+	}	
+	public void getImage() {
+		image1 = setup("/collectables/menu/potion_super", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+	}
 	
 	public void use() {
 		useItem("Heal a POKEMON");

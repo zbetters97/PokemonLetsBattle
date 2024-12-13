@@ -19,9 +19,23 @@ public class ITM_Revive extends Entity {
 		pprice = 2000;
 		sprice = 1000;
 		damage = 30;
-		
-		image1 = setup("/collectables/menu/revive", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
+	public ITM_Revive(GamePanel gp, int amount) {		
+		super(gp);	
+		
+		collectableType = type_item;
+		name = colName;			
+		description = "Revives a fainted\nPokémon with half\nits HP.";
+		
+		this.amount = amount;
+		power = 2;
+		pprice = 2000;
+		sprice = 1000;
+		damage = 30;
+	}	
+	public void getImage() {		
+		image1 = setup("/collectables/menu/revive", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+	}
 	
 	public void use() {
 		useItem("Revive a POKEMON");

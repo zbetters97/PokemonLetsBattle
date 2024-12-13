@@ -19,10 +19,25 @@ public class ITM_Heal_Awakening extends Entity {
 		pprice = 200;
 		sprice = 100;
 		damage = 30;
-		status = Status.SLEEP;
-		
-		image1 = setup("/collectables/menu/heal_awakening", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+		status = Status.SLEEP;		
 	}	
+	public ITM_Heal_Awakening(GamePanel gp, int amount) {		
+		super(gp);	
+		
+		collectableType = type_item;
+		name = colName;			
+		description = "Awakens a sleeping\nPokémon.";
+		
+		this.amount = amount;
+		pprice = 200;
+		sprice = 100;
+		damage = 30;
+		status = Status.SLEEP;		
+	}	
+	
+	public void getImage() {
+		image1 = setup("/collectables/menu/heal_awakening", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+	}
 	
 	public void use() {
 		useItem("Heal a POKEMON");

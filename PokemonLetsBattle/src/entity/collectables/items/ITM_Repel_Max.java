@@ -18,9 +18,23 @@ public class ITM_Repel_Max extends Entity {
 		pprice = 700;
 		sprice = 350;
 		damage = 30;
+	}
+	public ITM_Repel_Max(GamePanel gp, int amount) {		
+		super(gp);	
 		
+		collectableType = type_item;
+		name = colName;			
+		description = "Repels weak wild\nPokémon for 250\nsteps.";
+		
+		this.amount = amount;
+		power = 250;
+		pprice = 700;
+		sprice = 350;
+		damage = 30;
+	}
+	public void getImage() {
 		image1 = setup("/collectables/menu/repel_max", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
-	}	
+	}
 	
 	public void use() {
 		gp.player.setRepel(power);

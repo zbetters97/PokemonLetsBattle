@@ -18,9 +18,23 @@ public class ITM_Repel_Super extends Entity {
 		pprice = 500;
 		sprice = 250;
 		damage = 30;
-
-		image1 = setup("/collectables/menu/repel_super", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));		
 	}	
+	public ITM_Repel_Super(GamePanel gp, int amount) {		
+		super(gp);	
+		
+		collectableType = type_item;
+		name = colName;			
+		description = "Repels weak wild\nPokémon for 200\nsteps.";
+		
+		this.amount = amount;
+		power = 200;
+		pprice = 500;
+		sprice = 250;
+		damage = 30;
+	}	
+	public void getImage() {
+		image1 = setup("/collectables/menu/repel_super", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));		
+	}
 	
 	public void use() {
 		gp.player.setRepel(power);

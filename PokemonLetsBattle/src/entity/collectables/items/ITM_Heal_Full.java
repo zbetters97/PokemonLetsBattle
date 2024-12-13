@@ -19,9 +19,23 @@ public class ITM_Heal_Full extends Entity {
 		sprice = 200;
 		damage = 30;
 		status = null;
-		
-		image1 = setup("/collectables/menu/heal_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
+	public ITM_Heal_Full(GamePanel gp, int amount) {		
+		super(gp);	
+		
+		collectableType = type_item;
+		name = colName;			
+		description = "Heals all the\nstatus problems of\none Pokémon.";		
+		
+		this.amount = amount;
+		pprice = 400;
+		sprice = 200;
+		damage = 30;
+		status = null;
+	}	
+	public void getImage() {
+		image1 = setup("/collectables/menu/heal_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+	}
 	
 	public void use() {
 		useItem("Heal a POKEMON");

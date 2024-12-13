@@ -82,6 +82,9 @@ public class Player extends Entity {
 		name = "ASH";
 		trainerClass = 5;
 		skillLevel = skill_elite;
+		
+		pokeParty = new ArrayList<>();
+		assignParty();
 	}
 /** END PLAYER CONSTRUCTOR **/
 		
@@ -89,8 +92,8 @@ public class Player extends Entity {
 /** DEFAULT HANDLERS **/
 	
 	// DEFAULT VALUES
-	public void assignParty() {				
-		pokeParty.add(Pokemon.get(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));
+	public void assignParty() {							
+		pokeParty.add(Pokemon.get(Pokedex.MUDKIP, 5, new COL_Ball_Poke(gp)));	
 		pokeParty.add(Pokemon.get(Pokedex.MARSHTOMP, 16, new COL_Ball_Great(gp)));
 		pokeParty.add(Pokemon.get(Pokedex.SWAMPERT, 36, new COL_Ball_Ultra(gp)));
 	}
@@ -143,16 +146,10 @@ public class Player extends Entity {
 		inventory_keyItems.add(new ITM_Rod_Good(gp));
 		inventory_keyItems.add(new ITM_Rod_Super(gp));
 		
-		inventory_items.add(new ITM_Potion(gp));
-		inventory_items.get(0).amount = 10;
-		
-		inventory_items.add(new ITM_Potion_Super(gp));
-		inventory_items.get(1).amount = 5;
-	
-		inventory_items.add(new ITM_Potion_Hyper(gp));
-		inventory_items.get(2).amount = 3;
-		
-		inventory_items.add(new ITM_Potion_Max(gp));
+		inventory_items.add(new ITM_Potion(gp, 20));		
+		inventory_items.add(new ITM_Potion_Super(gp, 15));	
+		inventory_items.add(new ITM_Potion_Hyper(gp, 10));		
+		inventory_items.add(new ITM_Potion_Max(gp, 5));
 		
 		inventory_items.add(new ITM_Repel(gp));
 		inventory_items.add(new ITM_Full_Restore(gp));	
@@ -164,14 +161,9 @@ public class Player extends Entity {
 		inventory_items.add(new ITM_Heal_Antidote(gp));
 		inventory_items.add(new ITM_Heal_Awakening(gp));
 				
-		inventory_pokeballs.add(new COL_Ball_Poke(gp));
-		inventory_pokeballs.get(0).amount = 10;
-		
-		inventory_pokeballs.add(new COL_Ball_Great(gp));
-		inventory_pokeballs.get(1).amount = 5;
-	
-		inventory_pokeballs.add(new COL_Ball_Ultra(gp));
-		inventory_pokeballs.get(2).amount = 3;
+		inventory_pokeballs.add(new COL_Ball_Poke(gp, 15));		
+		inventory_pokeballs.add(new COL_Ball_Great(gp, 10));	
+		inventory_pokeballs.add(new COL_Ball_Ultra(gp, 5));
 		
 		inventory_pokeballs.add(new COL_Ball_Master(gp));
 	}

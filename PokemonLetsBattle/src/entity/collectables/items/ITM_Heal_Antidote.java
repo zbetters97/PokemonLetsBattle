@@ -20,9 +20,23 @@ public class ITM_Heal_Antidote extends Entity {
 		sprice = 100;
 		damage = 30;
 		status = Status.POISON;
-		
-		image1 = setup("/collectables/menu/heal_antidote", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
+	public ITM_Heal_Antidote(GamePanel gp, int amount) {		
+		super(gp);	
+		
+		collectableType = type_item;
+		name = colName;			
+		description = "Heals a poisoned\nPokémon.";
+		
+		this.amount = amount;
+		pprice = 200;
+		sprice = 100;
+		damage = 30;
+		status = Status.POISON;
+	}	
+	public void getImage() {
+		image1 = setup("/collectables/menu/heal_antidote", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+	}
 	
 	public void use() {
 		useItem("Heal a POKEMON");

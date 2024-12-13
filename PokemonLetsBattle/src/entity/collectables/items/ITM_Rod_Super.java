@@ -21,10 +21,11 @@ public class ITM_Rod_Super extends Entity {
 		pprice = 0;
 		sprice = 0;
 		
-		image1 = setup("/collectables/menu/rod_super", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
-		
 		setDialogue();
 	}	
+	public void getImage() {
+		image1 = setup("/collectables/menu/rod_super", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+	}
 	public void setDialogue() {
 		dialogues[0][0] = "You can't use the " + name + "\nhere!";	
 	}

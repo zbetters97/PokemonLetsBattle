@@ -115,6 +115,7 @@ public class UI {
 	public boolean isFighterCaptured = false;
 	public Pokemon evolvePokemon = null;
 	public int player = 0;
+	private int faintCounter = 0;
 	
 	// FIGHTER X/Y VALUES
 	public int fighter_one_X;
@@ -1202,6 +1203,7 @@ public class UI {
 					gp.keyH.playCursorSE();
 					pauseState = pause_Save;
 					commandNum = gp.fileSlot;	
+					subState = 0;
 					
 					files[0] = gp.saveLoad.loadFileData(0);
 					files[1] = gp.saveLoad.loadFileData(1);
@@ -1223,6 +1225,7 @@ public class UI {
 				gp.keyH.playCursorSE();				
 				pauseState = pause_Load;
 				commandNum = gp.fileSlot;
+				subState = 0;
 				
 				files[0] = gp.saveLoad.loadFileData(0);
 				files[1] = gp.saveLoad.loadFileData(1);
@@ -2577,23 +2580,22 @@ public class UI {
 			g2.drawImage(fighter.getItem().image1, x + gp.tileSize, y + (int) (gp.tileSize * 1.2), null);
 		}
 		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35F));	
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));	
 		x += gp.tileSize * 2.1;
 		y += gp.tileSize;
 		String text = fighter.getName();
 		drawText(text, x, y, battle_white, Color.BLACK);
-	
-		x += gp.tileSize * 0.9;
+			
 		y += gp.tileSize * 0.55;
 		text = "Lv" + fighter.getLevel();			
 		drawText(text, x, y, battle_white, Color.BLACK);
 		
 		if (main) {
-			x = (int) (gp.tileSize * 1.7);
+			x = (int) (gp.tileSize * 1.8);
 			y = (int) (gp.tileSize * 4.8); 
 		}
-		else {
-			x += gp.tileSize * 1.65;
+		else {			
+			x = (int) (gp.tileSize * 11.4);
 			y -= gp.tileSize;	
 		}
 		
@@ -3488,7 +3490,13 @@ public class UI {
 	/** END PARTY SCREEN **/
 	
 	/** SAVE/LOAD SCREENS **/	
-	private void pause_Save() {
+	private void pause_Save() {		
+		switch (subState) {
+			case 0: pause_Save_Main(); break;
+			case 1: pause_Save_Confirm(); break;
+		}
+	}
+	private void pause_Save_Main() {
 		
 		int x;
 		int y;
@@ -3528,6 +3536,7 @@ public class UI {
 					gp.fileSlot = i;	
 					
 					files[i] = gp.saveLoad.loadFileData(i);
+					subState = 1;					
 				}
 			}		
 		}
@@ -3567,9 +3576,56 @@ public class UI {
 			gp.keyH.playCursorSE();
 			pauseState = pause_Main;
 			commandNum = 4;
+		}	
+	}
+	private void pause_Save_Confirm() {
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		String text;		
+		
+		x = gp.tileSize * 2;
+		y = (int) (gp.tileSize * 1.2);		
+		width = gp.tileSize * 12;
+		height = gp.tileSize * 9;		
+		drawSubWindow(x, y, width, height, 5, 12, battle_white, dialogue_blue);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55f));
+		text = "SAVE GAME SLOT";
+		x = getXforCenteredText(text);
+		y = gp.tileSize * 3;		
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);		
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42f));
+		text = "GAME SAVED TO FILE " + (gp.fileSlot + 1) + "!";
+		x = getXforCenteredText(text);
+		y += gp.tileSize * 3;
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+			
+		text = "OK";
+		x = getXforCenteredText(text);
+		y += gp.tileSize * 3.3;
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);		
+		drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);
+					
+		if (gp.keyH.aPressed) {
+			gp.keyH.aPressed = false;
+			gp.keyH.playCursorSE();
+			pauseState = pause_Main;
+			subState = 0;
+			commandNum = 4;
 		}
 	}
-	private void pause_Load() {
+	
+ 	private void pause_Load() {
+ 		switch (subState) {
+			case 0: pause_Load_Main(); break;
+			case 1: pause_Load_Confirm(); break;
+		}	
+	}
+ 	private void pause_Load_Main() {
 		
 		int x;
 		int y;
@@ -3618,16 +3674,10 @@ public class UI {
 					
 					if (gp.keyH.aPressed) {
 						gp.keyH.aPressed = false;
-						gp.keyH.playCursorSE();					
-						gp.stopMusic();
-						gp.resetGame();
-						pauseState = pause_Main;
-						commandNum = 0;
+						gp.keyH.playCursorSE();			
 						gp.fileSlot = i;	
-						gp.saveLoad.load(i);
-						gp.tileM.loadMap();
-						gp.gameState = gp.playState;
-						gp.setupMusic();						
+						commandNum = 0;
+						subState = 1;						
 					}
 				}		
 			}
@@ -3670,7 +3720,49 @@ public class UI {
 			commandNum = 5;
 		}
 	}
-	/** END SAVE/LOAD SCREENS **/
+	private void pause_Load_Confirm() {
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		String text;		
+		
+		x = gp.tileSize * 2;
+		y = (int) (gp.tileSize * 1.2);		
+		width = gp.tileSize * 12;
+		height = gp.tileSize * 9;		
+		drawSubWindow(x, y, width, height, 5, 12, battle_white, dialogue_blue);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 55f));
+		text = "LOAD GAME SLOT";
+		x = getXforCenteredText(text);
+		y = gp.tileSize * 3;		
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 42f));
+		text = "LOADING FILE " + (gp.fileSlot + 1) + "...";
+		x = getXforCenteredText(text);
+		y += gp.tileSize * 3;
+		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+		
+		// SKIP FIRST FRAME TO DRAW TO SCREEN
+		if (commandNum == -1) {
+			gp.stopMusic();
+			gp.resetGame();
+			pauseState = pause_Main;
+			commandNum = 0;		
+			subState = 0;
+			gp.saveLoad.load(gp.fileSlot);
+			gp.tileM.loadMap();
+			gp.gameState = gp.playState;
+			gp.setupMusic();	
+		}
+		else {
+			commandNum = -1;			
+		}		
+	}
+ 	/** END SAVE/LOAD SCREENS **/
 	
 	/** OPTIONS SCREEN **/
 	private void pause_Options() {
@@ -4068,6 +4160,7 @@ public class UI {
 							g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f));
 						}
 					}
+										
 					g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
 					g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));	
 				}
@@ -4081,11 +4174,20 @@ public class UI {
 		}
 	}
 	private void animateFaint_Two() {
+		
 		if (fighter_two_Y < gp.screenHeight) {
-			fighter_two_Y += 16;
+			fighter_two_Y += 14;			
+			faintCounter += 14;			
+			if (faintCounter >= gp.btlManager.fighter[1].getFrontSprite().getHeight()) {
+				faintCounter = gp.btlManager.fighter[1].getFrontSprite().getHeight() - 1;
+			}
 		}
 		
-		g2.drawImage(gp.btlManager.fighter[1].getFrontSprite(), fighter_two_X, fighter_two_Y, null);	
+		int width = gp.btlManager.fighter[1].getFrontSprite().getWidth();
+		int height = gp.btlManager.fighter[1].getFrontSprite().getHeight();
+		BufferedImage faintImg = gp.btlManager.fighter[1].getFrontSprite().getSubimage(0, 0, width, height - faintCounter);
+		
+		g2.drawImage(faintImg, fighter_two_X, fighter_two_Y, null);	
 	}		
 	private void animateAttack_One() {
 		attackCounter++;
@@ -5797,7 +5899,8 @@ public class UI {
 		fighter_one_X = fighter_one_startX;
 		fighter_two_X = fighter_two_startX;
 		fighter_one_Y = fighter_one_startY;
-		fighter_two_Y = fighter_two_startY;		
+		fighter_two_Y = fighter_two_startY;	
+		faintCounter = 0;
 	}
 	public void drawText(String text, int x, int y, Color primary, Color shadow) {
 		g2.setColor(shadow);	

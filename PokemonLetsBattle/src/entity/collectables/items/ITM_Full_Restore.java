@@ -18,9 +18,23 @@ public class ITM_Full_Restore extends Entity {
 		pprice = 3000;
 		sprice = 1500;
 		damage = 30;
-		
-		image1 = setup("/collectables/menu/restore_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
 	}	
+	public ITM_Full_Restore(GamePanel gp, int amount) {		
+		super(gp);	
+		
+		collectableType = type_item;
+		name = colName;			
+		description = "Fully restores the\nHP and status of\na Pokémon.";
+		
+		this.amount = amount;
+		pprice = 3000;
+		sprice = 1500;
+		damage = 30;		
+	}	
+	
+	public void getImage() {
+		image1 = setup("/collectables/menu/restore_full", (int) (gp.tileSize * 0.6), (int) (gp.tileSize * 0.6));
+	}
 	
 	public void use() {
 		this.useItem("Restore a POKEMON.");
