@@ -16,6 +16,7 @@ public class OBJ_Grass extends Entity {
 		worldX = x * gp.tileSize;
 		worldY = y * gp.tileSize;	
 		
+		name = objName;
 		direction = "down";
 		hasShadow = false;
 		

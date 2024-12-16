@@ -1003,7 +1003,7 @@ public class Entity {
 		// AWAY FROM CENTER OF CAMERA
 		offCenter();
 		
-		if (name.equals(OBJ_Ledge.objName)) {
+		if (name != null && name.equals(OBJ_Ledge.objName)) {
 			
 			// WITHIN SCREEN BOUNDARY
 			if (worldX + gp.tileSize + gp.tileSize * power > gp.player.worldX - gp.player.screenX &&

@@ -118,16 +118,16 @@ public class UI {
 	private int faintCounter = 0;
 	
 	// FIGHTER X/Y VALUES
-	public int fighter_one_X;
+	private int fighter_one_X;
 	public int fighter_two_X;
-	public int fighter_one_Y;
-	public int fighter_two_Y;	
-	public final int fighter_one_startX;
-	public final int fighter_two_startX;
+	private int fighter_one_Y;
+	private int fighter_two_Y;	
+	private final int fighter_one_startX;
+	private final int fighter_two_startX;
 	private final int fighter_one_endX;
 	private final int fighter_two_endX;	
-	public final int fighter_one_startY;
-	public final int fighter_two_startY;
+	private final int fighter_one_startY;
+	private final int fighter_two_startY;
 	private final int fighter_one_platform_endX;
 	private final int fighter_two_platform_endX;
 	private final int fighter_one_platform_Y;
@@ -4182,6 +4182,9 @@ public class UI {
 				faintCounter = gp.btlManager.fighter[1].getFrontSprite().getHeight() - 1;
 			}
 		}
+		else {
+			faintCounter = 0;
+		}
 		
 		int width = gp.btlManager.fighter[1].getFrontSprite().getWidth();
 		int height = gp.btlManager.fighter[1].getFrontSprite().getHeight();
@@ -4189,6 +4192,7 @@ public class UI {
 		
 		g2.drawImage(faintImg, fighter_two_X, fighter_two_Y, null);	
 	}		
+	
 	private void animateAttack_One() {
 		attackCounter++;
 		if (attackCounter > 20) fighter_one_X -= 3;
@@ -4209,6 +4213,7 @@ public class UI {
 			gp.btlManager.fighter[1].setAttacking(false);
 		}
 	}
+	
 	private void animateTrainerDefeat() {
 		
 		fighter_two_Y = fighter_two_startY;	
@@ -4221,7 +4226,7 @@ public class UI {
 		g2.drawImage(battle_arena, fighter_two_platform_endX, fighter_two_platform_Y, null);
 
 		g2.drawImage(gp.btlManager.trainer.frontSprite, fighter_two_X + 25, fighter_two_Y + 15, null);
-		g2.drawImage(gp.btlManager.fighter[0].getBackSprite(), fighter_one_X, fighter_one_Y, null);			
+		g2.drawImage(gp.player.backSprite, fighter_one_X + 30, fighter_one_Y + 40, null);			
 	}
 		
 	private void battle_HUD() {
@@ -4274,8 +4279,14 @@ public class UI {
 		x = (int) (tempX + width - length - gp.tileSize * 0.4);
 		g2.drawString(text, x, y);		
 		
-		if (gp.btlManager.fighter[num].getStatus() != null) {			
-			battle_Status((int) (tempX + gp.tileSize * 0.3), (int) (y + gp.tileSize * 0.2), gp.btlManager.fighter[num], 32F);
+		if (gp.btlManager.fighter[num].getStatus() != null) {	
+			
+			int sX = (int) (tempX + gp.tileSize * 0.3);
+			int sY = (int) (y + gp.tileSize * 0.2);
+			Pokemon fighter = gp.btlManager.fighter[num];
+			float font = 32F;
+			battle_Status(sX, sY, fighter, font);
+			
 			g2.setFont(g2.getFont().deriveFont(Font.BOLD, 32F));		
 		}
 		
@@ -4302,11 +4313,14 @@ public class UI {
 		g2.setStroke(new BasicStroke(3));
 		g2.fillRoundRect(x, y, width, height, 3, 3);				
 			
-		double remainHP = (double)gp.btlManager.fighter[num].getHP() / 
-				(double)gp.btlManager.fighter[num].getBHP();	
-					
-		if (remainHP >= .50) g2.setColor(hp_green);
-		else if (remainHP >= .25) g2.setColor(hp_yellow);
+		double remainHP = (double)gp.btlManager.fighter[num].getHP() / (double)gp.btlManager.fighter[num].getBHP();	
+									
+		if (remainHP >= .50) {
+			g2.setColor(hp_green);
+		}
+		else if (remainHP >= .25) {
+			g2.setColor(hp_yellow);
+		}
 		else { 
 			g2.setColor(hp_red); 
 			if (num == 0) {				
@@ -5900,7 +5914,6 @@ public class UI {
 		fighter_two_X = fighter_two_startX;
 		fighter_one_Y = fighter_one_startY;
 		fighter_two_Y = fighter_two_startY;	
-		faintCounter = 0;
 	}
 	public void drawText(String text, int x, int y, Color primary, Color shadow) {
 		g2.setColor(shadow);	
