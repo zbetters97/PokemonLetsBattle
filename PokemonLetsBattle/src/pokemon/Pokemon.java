@@ -103,9 +103,9 @@ public class Pokemon {
 		this.index = index;
 		this.name = name;
 		
-		frontSprite = setup("/pokedex/front/" + name, 48 * 5, 48 * 5); 
-		backSprite = setup("/pokedex/back/" + name, 48 * 5, 48 * 5);
-		menuSprite = setup("/pokedex/menu/" + name, 48 * 2, 48 * 2);
+		frontSprite = setup("/pokedex/front/" + name.toLowerCase(), 48 * 5, 48 * 5); 
+		backSprite = setup("/pokedex/back/" + name.toLowerCase(), 48 * 5, 48 * 5);
+		menuSprite = setup("/pokedex/menu/" + name.toLowerCase(), 48 * 2, 48 * 2);
 		
 		sex = Math.random() > 0.5 ? '♂' : '♀';
 		
@@ -1076,6 +1076,7 @@ public class Pokemon {
 			image = GamePanel.utility.scaleImage(image, width, height);
 		}
 		catch (IOException e) {
+			System.out.println(e);
 			e.printStackTrace();
 		}
 

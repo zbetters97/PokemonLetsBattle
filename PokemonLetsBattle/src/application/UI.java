@@ -989,7 +989,7 @@ public class UI {
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
 		x += gp.tileSize * 0.6;
 		y += gp.tileSize * 1.1;		
-		String text = "Would you like to heal your\nPokemon team?";
+		String text = "Would you like to heal your\nPOKéMON team?";
 		for (String line : text.split("\n")) {   			
   			drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
   			y += 40;
@@ -1707,7 +1707,7 @@ public class UI {
 				partyItem = items.get(bagNum);
 				partyItemGive = true;
 				
-				partyDialogue = "Give to which POKEMON?";				
+				partyDialogue = "Give to which POKéMON?";				
 				partyState = party_Main_Select;
 				pauseState = pause_Party;
 				
@@ -2058,7 +2058,7 @@ public class UI {
 					
 					partyMove = false;
 					partyMoveNum = -1;
-					partyDialogue = "Choose a POKEMON.";
+					partyDialogue = "Choose a POKéMON.";
 				}
 				else if (partyItem != null) {
 					
@@ -2098,7 +2098,7 @@ public class UI {
 			
 			partyMove = false;	
 			partyMoveNum = -1;
-			partyDialogue = "Choose a POKEMON.";
+			partyDialogue = "Choose a POKéMON.";
 		}
 		else if (partyItem != null) {
 			gp.keyH.playCursorSE();		
@@ -2282,7 +2282,7 @@ public class UI {
 			if (gp.keyH.aPressed) {
 				gp.keyH.playCursorSE();
 				gp.keyH.aPressed = false;		
-				partyDialogue = "Choose a POKEMON.";
+				partyDialogue = "Choose a POKéMON.";
 				partyState = party_Main_Select;	
 				commandNum = 0;	
 			}
@@ -2306,7 +2306,7 @@ public class UI {
 		if (gp.keyH.bPressed) {		
 			gp.keyH.playCursorSE();
 			gp.keyH.bPressed = false;
-			partyDialogue = "Choose a POKEMON.";
+			partyDialogue = "Choose a POKéMON.";
 			partyState = party_Main_Select;	
 			commandNum = 0;	
 		}
@@ -2398,7 +2398,7 @@ public class UI {
 					gp.keyH.playCursorSE();					
 					trainer.addItem(item, trainer);
 					p.giveItem(null);
-					partyDialogue = "Choose a POKEMON.";
+					partyDialogue = "Choose a POKéMON.";
 					partyState = party_Main_Select;	
 					commandNum = 0;
 				}
@@ -2417,7 +2417,7 @@ public class UI {
 			if (gp.keyH.aPressed) {
 				gp.keyH.playCursorSE();
 				gp.keyH.aPressed = false;		
-				partyDialogue = "Choose a POKEMON.";
+				partyDialogue = "Choose a POKéMON.";
 				partyState = party_Main_Select;	
 				commandNum = 0;	
 			}
@@ -2441,7 +2441,7 @@ public class UI {
 		if (gp.keyH.bPressed) {		
 			gp.keyH.playCursorSE();
 			gp.keyH.bPressed = false;
-			partyDialogue = "Choose a POKEMON.";
+			partyDialogue = "Choose a POKéMON.";
 			partyState = party_Main_Select;	
 			commandNum = 0;	
 		}
@@ -2469,7 +2469,7 @@ public class UI {
   			gp.keyH.playCursorSE();
   			
   			if (partyItem == null) {
-  				partyDialogue = "Choose a POKEMON.";
+  				partyDialogue = "Choose a POKéMON.";
   				partyState = party_Main_Select;
   			}
   			else {  				
@@ -2835,7 +2835,7 @@ public class UI {
 				partyState = 0;
 			}
 			else {
-				partyDialogue = "Choose a POKEMON.";
+				partyDialogue = "Choose a POKéMON.";
 				partyState = party_Main_Select;	
 			}			
 			commandNum = 0;
@@ -3037,7 +3037,7 @@ public class UI {
 				partyState = 0;
 			}
 			else {
-				partyDialogue = "Choose a POKEMON.";
+				partyDialogue = "Choose a POKéMON.";
 				partyState = party_Main_Select;
 				commandNum = 0;
 			}				
@@ -4521,7 +4521,7 @@ public class UI {
 		
 		x = gp.tileSize * 9 + gp.tileSize / 2;
 		y += gp.tileSize * 1.5;
-		text = "POKEMON";
+		text = "POKéMON";
 		g2.drawString(text, x, y);
 		if (commandNum == 2) {
 			width = (int)g2.getFontMetrics().getStringBounds(text, g2).getWidth();
@@ -4533,7 +4533,7 @@ public class UI {
 				gp.keyH.aPressed = false;
 				gp.keyH.playCursorSE();		
 				
-				partyDialogue = "Choose a POKEMON.";				
+				partyDialogue = "Choose a POKéMON.";				
 				gp.gameState = gp.pauseState;
 				pauseState = pause_Party;
 				partyState = party_Main_Select;						
@@ -4915,7 +4915,7 @@ public class UI {
 				
 		x += gp.tileSize * 0.8;
 		y += gp.tileSize + 5;
-		drawText("POKEMON", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		drawText("POKéMON", x, y, Color.BLACK, Color.LIGHT_GRAY);
 		if (commandNum == 0) {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			if (gp.keyH.aPressed) {
@@ -5689,17 +5689,16 @@ public class UI {
 		x += gp.tileSize * 0.8;
 		y += gp.tileSize + 5;
 		
-		// format music
-		String song = new File(gp.se.getSELibrary(9)[bagNum])
-				.getName()			
-				.replace(".wav", "")
-				.replace("-", ": ")
-				.replace("_", ", ")
-				.replace("&", " ")
-				.toUpperCase();
-						
 		// add closing bracket and space after song index #
-		StringBuilder formattedSong = new StringBuilder(song);				
+		StringBuilder formattedSong = new StringBuilder(
+				new File(gp.se.getSELibrary(9)[bagNum])
+					.getName()			
+					.replace(".wav", "")
+					.replace("-", ": ")
+					.replace("_", ", ")
+					.replace("&", " ")
+					.toUpperCase()
+		);				
 		
 		drawText(formattedSong.toString(), x, y, Color.BLACK, Color.LIGHT_GRAY);
 		if (commandNum == 0) {

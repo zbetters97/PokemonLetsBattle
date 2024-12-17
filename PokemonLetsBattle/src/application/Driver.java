@@ -10,7 +10,7 @@ public class Driver {
 	public static void main(String[] args) {
 
 		window = new JFrame();
-		
+						
 		// WINDOW PROPERTIES		
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);

@@ -913,7 +913,7 @@ public class Entity {
 		BufferedImage image = null;
 		
 		try {
-			image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+			image = ImageIO.read(getClass().getResourceAsStream(imagePath.toLowerCase() + ".png"));
 			image = GamePanel.utility.scaleImage(image, gp.tileSize, gp.tileSize);
 		}
 		catch (IOException e) {
@@ -927,7 +927,7 @@ public class Entity {
 		BufferedImage image = null;
 		
 		try {
-			image = ImageIO.read(getClass().getResourceAsStream(imagePath + ".png"));
+			image = ImageIO.read(getClass().getResourceAsStream(imagePath.toLowerCase() + ".png"));
 			image = GamePanel.utility.scaleImage(image, width, height);
 		}
 		catch (IOException e) {

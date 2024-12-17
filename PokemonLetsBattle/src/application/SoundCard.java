@@ -2,6 +2,13 @@ package application;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -37,28 +44,62 @@ public class SoundCard {
 		return sounds[index];
 	}
 	
-	private String[] getSounds(String library) {		
-					
-		File folder = new File(new File("").getAbsolutePath() + "/sound/" + library);
-		File soundFiles[] = folder.listFiles();
-		String sounds[] = new String[soundFiles.length];
+	private String[] getSounds(String library) { 
 		
-		for (int i = 0; i < soundFiles.length; i++) {					
-		
-			String path = new File("").getAbsolutePath() + "/sound/" + 
-					library + "/" + soundFiles[i].getName().toLowerCase();
+		if (Driver.class.getResource("Driver.class").toString().startsWith("jar")) {
 			
-			sounds[i] = path;
-		}	
+			String jarPath;
+			List<String> sounds = new ArrayList<String>();
+			try {
+				jarPath = new File(Driver.class
+				         .getProtectionDomain()
+				         .getCodeSource()
+				         .getLocation()
+				         .toURI()).getPath();
+				
+				JarFile jarFile = new JarFile(jarPath);
+				Enumeration<JarEntry> entries = jarFile.entries();
+				
+				while (entries.hasMoreElements()) {
+					
+				    JarEntry entry = entries.nextElement();
+				    
+				    if (entry.getName().startsWith("sound/" + library) && !entry.isDirectory()) {
+				    	sounds.add("/" + entry.getName());
+				    }
+				}			
+				
+				jarFile.close();
+				
+				return sounds.stream().toArray(String[]::new);
+			} 
+			catch (URISyntaxException e) {
+				e.printStackTrace();
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}	
+		}
+		else {
+			File folder = new File("res/sound/" + library);	
+			List<String> sounds = new ArrayList<String>();
+			
+			for (File f : folder.listFiles()) {			
+				String path = f.getName().toLowerCase();
+				sounds.add("/sound/" + library + "/" + path);					
+			}
+			
+			return sounds.stream().toArray(String[]::new);			
+		}
 		
-		return sounds;					
+		return null;		
 	}
 	
 	public int getFile(int category, String file) {
 		
 		if (category > -1 && file != null) {
-			for (int i = 0; i < sounds[category].length; i++) {	
-				if (sounds[category][i].contains(file.toLowerCase())) {					
+			for (int i = 0; i < sounds[category].length; i++) {
+				if (sounds[category][i].toLowerCase().contains(file.toLowerCase())) {	
 					return i;
 				}			
 			}	
@@ -68,17 +109,19 @@ public class SoundCard {
 	}
 	
 	public void setFile(int category, int record) {		
+		
 		try {			
-			String filePath = sounds[category][record];
-			AudioInputStream ais = AudioSystem.getAudioInputStream(new File(filePath));
+			URL file = getClass().getResource(sounds[category][record]);
+			AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+			
 			clip = AudioSystem.getClip();
 			clip.open(ais);
 			
-			// VOLUME
 			fc = (FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN);
 			checkVolume();
 		}
 		catch (Exception e) {
+			System.out.println(e);
 			return;
 		}
 	}
@@ -88,8 +131,9 @@ public class SoundCard {
 		int duration = 0;
 		
 		if (category >= 0 && record >= 0) {		
-			String filePath = sounds[category][record];
-			File file = new File(filePath);		
+			
+			URL file = getClass().getResource(sounds[category][record]);
+			
 			AudioInputStream audioInputStream;
 			try {
 				audioInputStream = AudioSystem.getAudioInputStream(file);

@@ -2,7 +2,6 @@ package tile;
 
 import java.awt.Graphics2D;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -46,12 +45,11 @@ public class TileManager {
 	
 	public void loadMap() {
 		
-		String currentMap = "res/maps/" + gp.mapFiles[gp.currentMap];
+		InputStream inputStream = getClass().getResourceAsStream("/maps/" + gp.mapFiles[gp.currentMap]);
 		int mapLength = 0;
 		
 		try {			
-			
-			Scanner sc = new Scanner(new File(currentMap));
+			Scanner sc = new Scanner(inputStream);
 			
 			for (int row = 0; sc.hasNextLine(); row++) {
 				

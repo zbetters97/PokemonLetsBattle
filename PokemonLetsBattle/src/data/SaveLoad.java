@@ -21,7 +21,11 @@ import properties.Status;
 
 public class SaveLoad {
 
-	public String[] saveFiles = { "save_1.dat", "save_2.dat", "save_3.dat" };
+	public String[] saveFiles = { 
+			File.separator+"save_1.dat", 
+			File.separator+"save_2.dat", 
+			File.separator+"save_3.dat", 
+	};
 	public boolean ready = true;
 	private GamePanel gp;	
 	
@@ -32,7 +36,7 @@ public class SaveLoad {
 	public void save(int saveSlot) {		
 		
 		try {							
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(saveFiles[saveSlot])));			
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(gp.saveDir + saveFiles[saveSlot])));			
 						
 			// SAVE DATA TO DS 
 			DataStorage ds = new DataStorage();		
@@ -310,7 +314,7 @@ public class SaveLoad {
 	public void load(int saveSlot) {
 		
 		try {								
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(saveFiles[saveSlot])));
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(gp.saveDir + saveFiles[saveSlot])));
 			
 			// LOAD DATA FROM DS
 			DataStorage ds = (DataStorage)ois.readObject();
@@ -609,7 +613,7 @@ public class SaveLoad {
 	public void loadFighterData(int saveSlot) {
 		
 		try {
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(saveFiles[saveSlot])));
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(gp.saveDir + saveFiles[saveSlot])));
 			
 			// LOAD DATA FROM DS
 			DataStorage ds = (DataStorage)ois.readObject();
@@ -711,11 +715,11 @@ public class SaveLoad {
 	public String getPlayerData(int saveSlot) {
 		
 		try {			
-			File f = new File(saveFiles[saveSlot]);
+			File saveFile = new File(gp.saveDir + saveFiles[saveSlot]);
 			
-			if (f.exists()) { 
+			if (saveFile.exists()) { 
 				
-				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(saveFiles[saveSlot])));				
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(saveFile));				
 				DataStorage ds = (DataStorage)ois.readObject();			
 				ois.close();
 																
@@ -732,11 +736,11 @@ public class SaveLoad {
 	public String loadFileData(int saveSlot) {
 		
 		try {			
-			File f = new File(saveFiles[saveSlot]);
+			File saveFile = new File(gp.saveDir + saveFiles[saveSlot]);
 			
-			if (f.exists()) { 
+			if (saveFile.exists()) { 
 				
-				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(saveFiles[saveSlot])));				
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(saveFile));				
 				DataStorage ds = (DataStorage)ois.readObject();			
 				ois.close();
 																

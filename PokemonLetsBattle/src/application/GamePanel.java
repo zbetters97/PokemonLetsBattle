@@ -8,6 +8,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -155,6 +156,7 @@ public class GamePanel extends JPanel implements Runnable {
 	
 	// SAVE LOAD MANAGER
 	public SaveLoad saveLoad = new SaveLoad(this);
+	public File saveDir = new File(System.getProperty("user.home") + "/poke-conf/");
 	public int fileSlot = 0;
 	
 /** CONSTRUCTOR **/	
@@ -168,6 +170,8 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 	
 	protected void setupGame() {	
+			
+		if (!saveDir.exists()) saveDir.mkdir();	 
 		
 		currentMap = 0;		
 		currentArea = town;	
