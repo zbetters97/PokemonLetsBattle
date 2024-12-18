@@ -572,7 +572,7 @@ public class Player extends Entity {
 				if (wildPokemon != null) {
 					
 					gp.btlManager.fighter[1] = wildPokemon;
-					gp.btlManager.setup(gp.btlManager.wildBattle, 1, null, wildPokemon, null, true);
+					gp.btlManager.setup(gp.btlManager.wildBattle, 1, null, wildPokemon, null, true, false);
 									
 					alert = false;
 					action = Action.IDLE;
@@ -607,7 +607,7 @@ public class Player extends Entity {
 			if (wildPokemon != null) {
 				
 				gp.btlManager.fighter[1] = wildPokemon;
-				gp.btlManager.setup(gp.btlManager.wildBattle, 1, null, wildPokemon, null, true);
+				gp.btlManager.setup(gp.btlManager.wildBattle, 1, null, wildPokemon, null, true, false);
 								
 				gp.gameState = gp.transitionState;	
 			}

@@ -121,7 +121,6 @@ public class SoundCard {
 			checkVolume();
 		}
 		catch (Exception e) {
-			System.out.println(e);
 			return;
 		}
 	}

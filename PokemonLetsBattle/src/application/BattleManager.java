@@ -54,7 +54,8 @@ public class BattleManager extends Thread {
 	private int textSpeed = 30;
 	
 	// BATTLE INFORMATION			
-	public boolean cpu = false;
+	public boolean cpu = true;
+	public boolean pcBattle = false;
 	public Entity trainer;	
 	public Pokemon[] fighter = new Pokemon[2];
 	private Pokemon[] newFighter = new Pokemon[2];
@@ -104,7 +105,9 @@ public class BattleManager extends Thread {
 	}
 	
 	/** SETUP METHOD **/
-	public void setup(int currentBattle, int music, Entity trainer, Pokemon pokemon, String condition, boolean cpu) {
+	public void setup(int currentBattle, int music, 
+			Entity trainer, Pokemon pokemon, 
+			String condition, boolean cpu, boolean pcBattle) {
 		
 		gp.stopMusic();	
 		
@@ -116,20 +119,21 @@ public class BattleManager extends Thread {
 						
 		if (trainer != null) this.trainer = trainer;	
 		else if (pokemon != null) fighter[1] = pokemon;
-		
-		this.cpu = cpu;
-		
+						
 		if (condition == null) weather = Weather.CLEAR;
 		else weather = Weather.valueOf(condition);
 
 		weatherDays = -1;					
 
+		this.cpu = cpu;
+		this.pcBattle = pcBattle;
+		
+		if (pcBattle) gp.startMusic(9, music); 
+		else gp.startMusic(1, music);	
+		
 		active = true;
 		running = true;		
 		fightStage = fight_Encounter;
-	
-		if (cpu) gp.startMusic(1, music);	
-		else gp.startMusic(9, music);
 	}
 			
 	/** RUN METHOD **/
@@ -2402,7 +2406,7 @@ public class BattleManager extends Thread {
 			gp.playSE(gp.faint_SE, fighter[1].toString());
 			typeDialogue(fighter[1].getName() + " fainted!");	
 			
-			if (cpu) gainEXP();
+			if (!pcBattle) gainEXP();
 		}
 		// TRAINER 2 WINNER
 		else if (winner == 1) {		
@@ -2911,7 +2915,8 @@ public class BattleManager extends Thread {
 	/** ANNOUNCE WINNER **/
 	private void announceWinner() throws InterruptedException {
 		
-		if (cpu) {
+		// CPU BATTLE
+		if (!pcBattle) {
 			
 			// TRAINER 1 VICTORY
 			if (winner == 0) {
@@ -2947,6 +2952,7 @@ public class BattleManager extends Thread {
 				endBattle();
 			}			
 		}
+		// PC BATTLE
 		else {
 			gp.stopMusic();
 			gp.startMusic(1, 5);				
@@ -3096,6 +3102,7 @@ public class BattleManager extends Thread {
 		
 		boolean escape = false;
 		
+		// WILD BATTLE
 		if (trainer == null) {
 			
 			double playerSpeed = fighter[0].getSpeed();
@@ -3127,7 +3134,22 @@ public class BattleManager extends Thread {
 				fightStage = fight_Start;
 			}
 		}
-		else {
+		// PC BATTLE
+		else if (pcBattle) {
+			if (gp.ui.player == 0) {
+				typeDialogue("Trainer " + gp.player.name + " has fled\nthe battle!", true);	
+			}
+			else {
+				typeDialogue("Trainer " + trainer.name + " has fled\nthe battle!", true);	
+			}
+			
+			gp.player.healPokemonParty();
+			trainer.healPokemonParty();
+			
+			endBattle();
+		}
+		// CPU TRAINER BATTLE
+		else {						
 			typeDialogue("You can't flee\na trainer battle!", true);
 			gp.ui.battleState = gp.ui.battle_Options;
 			running = false;
@@ -3234,9 +3256,10 @@ public class BattleManager extends Thread {
 	}	 	
  	private void resetValues() {
 		battleQueue.clear();	
-		
+				
 		active = false; running = false;
-						
+		pcBattle = false; cpu = true;
+		
 		trainer = null;
 		fighter[0] = null; fighter[1] = null;
 		newFighter[0] = null; newFighter[1] = null;

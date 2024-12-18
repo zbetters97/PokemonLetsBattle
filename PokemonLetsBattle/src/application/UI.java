@@ -116,6 +116,7 @@ public class UI {
 	public Pokemon evolvePokemon = null;
 	public int player = 0;
 	private int faintCounter = 0;
+	public boolean cpuMode = true;
 	
 	// FIGHTER X/Y VALUES
 	private int fighter_one_X;
@@ -373,7 +374,7 @@ public class UI {
 				
 				skipDialogue();
 				
-				gp.btlManager.setup(gp.btlManager.trainerBattle, npc.music, npc, null, null, true);
+				gp.btlManager.setup(gp.btlManager.trainerBattle, npc.music, npc, null, null, true, false);
 				
 				startBattle();
 			}
@@ -4724,19 +4725,26 @@ public class UI {
 		int height = (int) (gp.tileSize * 3.5);
 		int x = (int) (gp.tileSize * 12.1);
 		int y = (int) (gp.screenHeight - (height * 1.02)); 		
+		int power = 0;
 		
 		drawSubWindow(x, y, width, height, 12, 10, gp.btlManager.fighter[player].getMoveSet().get(commandNum).getType().getColor(), battle_gray);
-						
-		x += gp.tileSize * 0.3;
-		y = (int) (gp.screenHeight - gp.tileSize * 2.2);	
-		text = "PP " + gp.btlManager.fighter[player].getMoveSet().get(commandNum).getPP() + "/" + 
-				gp.btlManager.fighter[player].getMoveSet().get(commandNum).getBPP();
 		
-		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 57F));	
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 50F));	
+		x += gp.tileSize * 0.3;
+		y = (int) (gp.screenHeight - gp.tileSize * 2.5);	
+		text = "PP " + gp.btlManager.fighter[player].getMoveSet().get(commandNum).getPP() + "/" + 
+				gp.btlManager.fighter[player].getMoveSet().get(commandNum).getBPP();		
 		drawText(text, x, y, battle_white, Color.BLACK);
 		
-		y += gp.tileSize * 1.5;
+		power = gp.btlManager.fighter[player].getMoveSet().get(commandNum).getPower();
+		y += gp.tileSize;
+		if (power <= 0) text = "PWR ---";
+		else text = "PWR " + power;
+		drawText(text, x, y, battle_white, Color.BLACK);
+		
+		y += gp.tileSize * 1.2;
 		text = gp.btlManager.fighter[player].getMoveSet().get(commandNum).getType().getName();
+		x = getXForCenteredTextOnWidth(text, width - 15, x);
 		drawText(text, x, y, battle_white, Color.BLACK);
 	}		
 	
@@ -5562,8 +5570,9 @@ public class UI {
 	private void pc_Fight() {
 		switch (subState) {
 			case 0: pc_Fight_Load(); break;
-			case 1: pc_Fight_Music(); break;
-			case 2: pc_Fight_Confirm(); break;
+			case 1: pc_Fight_Mode(); break;
+			case 2: pc_Fight_Music(); break;
+			case 3: pc_Fight_Confirm(); break;
 		}
 	}
 	private void pc_Fight_Load() {
@@ -5663,6 +5672,92 @@ public class UI {
   			pcState = pc_Options;
   		}
 	}
+	private void pc_Fight_Mode() {	
+  				
+		int x = (int) (gp.tileSize * 2);
+		int y = gp.tileSize * 9;
+		int width =(int) (gp.tileSize * 12);
+		int height = (int) (gp.tileSize * 2.5);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
+
+		x += gp.tileSize * 0.6;
+		y += gp.tileSize * 1.1;			
+		String dialogue = "Choose your battle mode:";
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
+  		for (String line : dialogue.split("\n")) {   			
+  			drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
+  			y += 40;
+		} 
+  		  		
+  		x = (int) (gp.tileSize * 9.8);
+		y = (int) (gp.tileSize * 5.3);
+		width = (int) (gp.tileSize * 4.2);
+		height = (int) (gp.tileSize * 3.4);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
+				
+		x += gp.tileSize * 0.8;
+		y += gp.tileSize + 5;
+		drawText("2 PLAYER", x, y, Color.BLACK, Color.LIGHT_GRAY);
+		if (commandNum == 0) {
+			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
+			if (gp.keyH.aPressed) {
+	  			gp.keyH.aPressed = false;
+	  			gp.keyH.playCursorSE();	  			
+	  			commandNum = 0;
+				subState = 2;
+				cpuMode = false;
+	  		}
+		}				
+			
+		y += gp.tileSize;		
+		drawText("CPU", x, y, Color.BLACK, Color.LIGHT_GRAY);		
+		if (commandNum == 1) {
+			drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+	  			gp.keyH.playCursorSE();	  			
+	  			commandNum = 0;
+				subState = 2;
+				cpuMode = true;
+			}
+		}	
+		
+		y += gp.tileSize;		
+		drawText("BACK", x, y, Color.BLACK, Color.LIGHT_GRAY);		
+		if (commandNum == 2) {
+			drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);
+			
+			if (gp.keyH.aPressed) {
+				gp.keyH.aPressed = false;
+				gp.playSE(gp.world_SE, "pc-exit");  			
+	  			commandNum = 0;
+	  			subState = 0;
+			}
+		}	
+		
+		if (gp.keyH.upPressed) {
+  			gp.keyH.upPressed = false;  			
+  			if (commandNum > 0) {
+  				gp.keyH.playCursorSE();
+  				commandNum--;
+  			}
+  		}
+  		if (gp.keyH.downPressed) {
+  			gp.keyH.downPressed = false;  			
+  			if (commandNum < 2) {
+  				gp.keyH.playCursorSE();
+  				commandNum++;
+  			}
+  		}
+  		if (gp.keyH.bPressed) {
+  			gp.keyH.bPressed = false;
+  			gp.playSE(gp.world_SE, "pc-exit");  			
+  			commandNum = 0;
+  			subState = 0;
+  			cpuMode = true;
+  		}		
+	}
 	private void pc_Fight_Music() {
 
 		int x = (int) (gp.tileSize * 2);
@@ -5734,7 +5829,7 @@ public class UI {
 	  			gp.keyH.aPressed = false;
 	  			gp.keyH.playCursorSE();	  			
 	  			commandNum = 0;
-				subState = 2;
+				subState = 3;
 	  		}
 		}				
 				
@@ -5745,10 +5840,10 @@ public class UI {
 		
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;
-				gp.playSE(gp.world_SE, "pc-exit");  			
-	  			commandNum = 0;
-	  			subState = 0;
-	  			bagNum = 0;
+				gp.playSE(gp.world_SE, "pc-exit");  	
+				commandNum = cpuMode ? 1 : 0;
+				subState = 1;
+	  			bagNum = 0;	  			
 			}
 		}	
 						
@@ -5768,10 +5863,10 @@ public class UI {
   		}
   		if (gp.keyH.bPressed) {
   			gp.keyH.bPressed = false;
-  			gp.playSE(gp.world_SE, "pc-exit");  			
-  			commandNum = 0;
-  			subState = 0;
-  			bagNum = 0;
+  			gp.playSE(gp.world_SE, "pc-exit");  	
+  			commandNum = cpuMode ? 1 : 0;
+			subState = 1;
+  			bagNum = 0;	  	
   		}
 	}
 	private void pc_Fight_Confirm() {
@@ -5810,7 +5905,7 @@ public class UI {
 				pcState = pc_Options;
 				
 				gp.saveLoad.loadFighterData(gp.fileSlot);
-				gp.btlManager.setup(gp.btlManager.trainerBattle, bagNum, gp.player_2, null, null, false);						
+				gp.btlManager.setup(gp.btlManager.trainerBattle, bagNum, gp.player_2, null, null, cpuMode, true);						
 				
 				bagNum = 0;
 				gp.gameState = gp.transitionState;	
@@ -5826,7 +5921,7 @@ public class UI {
 				gp.keyH.aPressed = false;
 				gp.playSE(gp.world_SE, "pc-exit");  			
 	  			commandNum = 0;
-	  			subState = 1;
+	  			subState = 2;
 			}
 		}	
 		
@@ -5848,7 +5943,7 @@ public class UI {
   			gp.keyH.bPressed = false;
   			gp.playSE(gp.world_SE, "pc-exit");  			
   			commandNum = 0;
-  			subState = 1;
+  			subState = 2;
   		}
 	}
 	/** END PC SCREEN **/
