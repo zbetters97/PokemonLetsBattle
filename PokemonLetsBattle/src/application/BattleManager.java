@@ -283,7 +283,7 @@ public class BattleManager extends Thread {
 	/** END SETUP BATTLE METHODS **/
 	
 	/** SWAP FIGHTERS **/	
-	private void swapPlayerFighter() throws InterruptedException {
+	private void swapFighter_Player() throws InterruptedException {
 								
 		boolean defeated = false;
 					
@@ -307,8 +307,8 @@ public class BattleManager extends Thread {
 			running = false;								
 			gp.ui.battleState = gp.ui.battle_Options;				
 		} 
-		// MID SWAP OUT IN MULTI PLAYER
-		else if (!cpu) {
+		// MID SWAP OUT IN 2 PLAYER
+		else if (pcBattle && !cpu) {
 			
 			otherFighters.remove(newFighter[0]);
 					
@@ -361,7 +361,7 @@ public class BattleManager extends Thread {
 		newFighter[1] = null;
 		getFighterAbility();		
 	}
-	private void swapCPUFighter() throws InterruptedException {
+	private void swapFighter_CPU() throws InterruptedException {
 		
 		boolean defeated = false;
 						
@@ -384,7 +384,7 @@ public class BattleManager extends Thread {
 			running = false;								
 			gp.ui.battleState = gp.ui.battle_Options;	
 		}	
-		// MID SWAP OUT IN MULTI PLAYER
+		// MID SWAP OUT IN 2 PLAYER
 		else if (!cpu) {
 			
 			if (fighter[1].getAbility() == Ability.NATURALCURE) {
@@ -458,10 +458,10 @@ public class BattleManager extends Thread {
 			switch (action) {
 			
 				case queue_PlayerSwap:
-					swapPlayerFighter();
+					swapFighter_Player();
 					break;
 				case queue_CPUSwap:
-					swapCPUFighter();
+					swapFighter_CPU();
 					break;
 				case queue_GetCPUMove: 
 					getCPUMove();
@@ -2707,6 +2707,7 @@ public class BattleManager extends Thread {
 					running = false;
 					
 					gp.gameState = gp.pauseState;
+					gp.ui.partyDialogue = "Choose a POKéMON.";
 					gp.ui.pauseState = gp.ui.pause_Party;
 					gp.ui.partyState = gp.ui.party_Main_Select;
 				}
@@ -2915,8 +2916,23 @@ public class BattleManager extends Thread {
 	/** ANNOUNCE WINNER **/
 	private void announceWinner() throws InterruptedException {
 		
+		// PC BATTLE
+		if (pcBattle) {
+			
+			if (winner == 0) { 
+				typeDialogue("Player defeated\nTrainer " + trainer.name + "!", true);	
+			}
+			else {
+				typeDialogue("Player defeated\nTrainer " + gp.player.name + "!", true);
+			}
+			
+			gp.player.healPokemonParty();
+			trainer.healPokemonParty();
+			
+			endBattle();			
+		}
 		// CPU BATTLE
-		if (!pcBattle) {
+		else {
 			
 			// TRAINER 1 VICTORY
 			if (winner == 0) {
@@ -2951,23 +2967,6 @@ public class BattleManager extends Thread {
 				
 				endBattle();
 			}			
-		}
-		// PC BATTLE
-		else {
-			gp.stopMusic();
-			gp.startMusic(1, 5);				
-			
-			if (winner == 0) { 
-				typeDialogue("Player defeated\nTrainer " + trainer.name + "!", true);	
-			}
-			else {
-				typeDialogue("Player defeated\nTrainer " + gp.player.name + "!", true);
-			}
-			
-			gp.player.healPokemonParty();
-			trainer.healPokemonParty();
-			
-			endBattle();
 		}		
 	}	
 	

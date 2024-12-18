@@ -14,7 +14,7 @@ public class Driver {
 		// WINDOW PROPERTIES		
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setResizable(false);
-		window.setTitle("Pokemon: Let's Battle!");	
+		window.setTitle("POKéMON: Let's Battle!");	
 		new Driver().setIcon();				
 		
 		GamePanel gamePanel = new GamePanel();

@@ -117,6 +117,7 @@ public class UI {
 	public int player = 0;
 	private int faintCounter = 0;
 	public boolean cpuMode = true;
+	private boolean showMoveDesc = false;
 	
 	// FIGHTER X/Y VALUES
 	private int fighter_one_X;
@@ -2133,9 +2134,7 @@ public class UI {
 					gp.btlManager.running = true;
 					new Thread(gp.btlManager).start();	
 					gp.gameState = gp.battleState;		
-				}					
-				
-				pauseState = pause_Main;
+				}							
 			}
 			else {
 				gp.keyH.playCursorSE();
@@ -2268,9 +2267,15 @@ public class UI {
 			
 			if (gp.keyH.aPressed) {
 				gp.keyH.aPressed = false;	
-				gp.keyH.playCursorSE();
-				partyState = party_Main_Options_Item;				
-				commandNum = 0;			
+				
+				if (!gp.btlManager.fighter[player].isAlive()) {
+					gp.keyH.playErrorSE();
+				}
+				else {
+					gp.keyH.playCursorSE();
+					partyState = party_Main_Options_Item;				
+					commandNum = 0;			
+				}				
 			}
 		}
 		
@@ -2473,7 +2478,8 @@ public class UI {
   				partyDialogue = "Choose a POKéMON.";
   				partyState = party_Main_Select;
   			}
-  			else {  				
+  			else {  		
+  				partyDialogue = "";
   				partyItem = null;
   				partyItemApply = false;
   				partyItemGive = false;
@@ -4327,7 +4333,7 @@ public class UI {
 			if (num == 0) {				
 				if (remainHP > 0) {
 					hpCounter++;
-					if (hpCounter == 33 && gp.btlManager.cpu) {
+					if (hpCounter == 33 && !gp.btlManager.pcBattle) {
 						gp.playSE(gp.battle_SE, "hp-low");
 						hpCounter = 0;
 					}	
@@ -4595,13 +4601,16 @@ public class UI {
 	}
 	private void battle_Moves() {
 		
-		battle_MovesDesc();
+		battle_Move_Stats();
+		
+		if (showMoveDesc) {
+			battle_Move_Desc();
+		}
 		
 		int width = (int) (gp.screenWidth - (gp.tileSize * 4.2));
 		int height = (int) (gp.tileSize * 3.5);
 		int x = (int) (gp.tileSize * 0.1);
-		int y = (int) (gp.screenHeight - (height * 1.02)); 
-		
+		int y = (int) (gp.screenHeight - (height * 1.02)); 		
 		drawSubWindow(x, y, width, height, 12, 10, battle_white, battle_gray);
 				
 		x = gp.tileSize / 2;
@@ -4683,6 +4692,7 @@ public class UI {
 		
 		if (gp.keyH.aPressed) {		
 			gp.keyH.aPressed = false;
+			showMoveDesc = false;
 			
 			Move pMove = gp.btlManager.getPlayerMove(commandNum, player);
 			
@@ -4716,9 +4726,16 @@ public class UI {
 			
 			battleState = battle_Options;			
 			commandNum = 0;
+			showMoveDesc = false;
+		}
+		if (gp.keyH.xPressed) {
+			gp.keyH.xPressed = false;
+			gp.keyH.playCursorSE();
+			
+			showMoveDesc = !showMoveDesc;
 		}
 	}	
-	private void battle_MovesDesc() {
+	private void battle_Move_Stats() {
 		
 		String text;
 		int width = (int) (gp.tileSize * 3.9);
@@ -4742,11 +4759,42 @@ public class UI {
 		else text = "PWR " + power;
 		drawText(text, x, y, battle_white, Color.BLACK);
 		
-		y += gp.tileSize * 1.2;
+		y += gp.tileSize * 1.1;
 		text = gp.btlManager.fighter[player].getMoveSet().get(commandNum).getType().getName();
 		x = getXForCenteredTextOnWidth(text, width - 15, x);
 		drawText(text, x, y, battle_white, Color.BLACK);
 	}		
+	private void battle_Move_Desc() {
+		
+		int x;
+		int y;
+		int width;
+		int height;
+		String text;
+		Move move;
+		
+		move = gp.btlManager.fighter[player].getMoveSet().get(commandNum);
+		
+		x = (int) (gp.tileSize * 0.1);
+		y = (int) (gp.tileSize * 3.9);		
+		width = (int) (gp.tileSize * 8.8);
+		height = (int) (gp.tileSize * 4.32);		
+		drawSubWindow(x, y, width, height, 12, 10, battle_white, battle_gray);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 42F));
+		x += gp.tileSize * 0.35;
+		y += gp.tileSize * 0.85;
+		text = "DESCRIPTION";
+		drawText(text, x, y, Color.BLACK, battle_white);	
+				
+		y += gp.tileSize * 0.8;
+		g2.setFont(g2.getFont().deriveFont(Font.BOLD, 38F));
+		g2.setColor(Color.BLACK);
+		for (String line : move.getInfo().split("\n")) {	
+		g2.drawString(line, x, y);
+			y += gp.tileSize * 0.8;
+		} 	
+	}
 	
 	private void battle_LevelUp() {		
 		
