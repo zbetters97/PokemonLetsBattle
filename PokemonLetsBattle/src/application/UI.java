@@ -2121,7 +2121,7 @@ public class UI {
 					
 					fighterNum = 0;	
 					commandNum = 2;
-					gp.gameState = gp.battleState;								
+					gp.gameState = gp.battleState;	
 				}
 				else if (!gp.btlManager.fighter[player].isAlive()) {							
 					gp.keyH.playErrorSE();
@@ -2152,10 +2152,7 @@ public class UI {
 		int width;
 		int height;
 		String text;
-		Entity trainer = gp.player;
-		if (gp.btlManager.active && player == 1) {
-			trainer = gp.btlManager.trainer;
-		}
+		Entity trainer = (gp.btlManager.active && player == 1 ? gp.btlManager.trainer : gp.player);
 		
 		partyDialogue = "Do what with " + trainer.pokeParty.get(fighterNum).getName() + "?";
 		party_Main();
@@ -2230,18 +2227,27 @@ public class UI {
 					// NEW FIGHTER SELECTED
 					if (gp.btlManager.swapPokemon(fighterNum)) {					
 						gp.keyH.playCursorSE();	
-						
+																								
 						commandNum = 0;
 						fighterNum = 0;	
-						partyState = party_Main_Select;
-						pauseState = pause_Main;
 						
-						player = 0;
-						gp.btlManager.fightStage = gp.btlManager.fight_Start;
-						gp.btlManager.running = true;							
-						new Thread(gp.btlManager).start();
-							
-						gp.gameState = gp.battleState;							
+						partyState = party_Main_Select;
+						
+						// 2 PLAYER BATTLE, BOTH NEED TO SWAP
+						if (gp.btlManager.pcBattle && !gp.btlManager.cpu && player == 1 &&
+								!gp.btlManager.fighter[0].isAlive()) {
+							player = 0;
+							partyDialogue = "Choose a POKéMON.";
+						}
+						else {
+							pauseState = pause_Main;
+							player = 0;
+							gp.btlManager.fightStage = gp.btlManager.fight_Start;
+							gp.btlManager.running = true;							
+							new Thread(gp.btlManager).start();
+								
+							gp.gameState = gp.battleState;				
+						}
 					}						
 					// UNABLE TO SELECT FIGHTER
 					else {
@@ -3858,7 +3864,7 @@ public class UI {
 		g2.fillRect(x, y - (int) (gp.tileSize * 0.7), volumeWidth, slotHeight); 
 		
 		y += gp.tileSize * 1.3;
-		if (!gp.btlManager.set) drawText("SHIFT", x, y, hp_red, Color.LIGHT_GRAY);			
+		if (gp.btlManager.shift) drawText("SHIFT", x, y, hp_red, Color.LIGHT_GRAY);			
 		else drawText("SHIFT", x, y, Color.BLACK, Color.LIGHT_GRAY);
 		  		
   		x += gp.tileSize * 2.5;
@@ -3877,7 +3883,7 @@ public class UI {
   		else drawText("FAST", x, y, Color.BLACK, Color.LIGHT_GRAY);  
   		
   		y += (gp.tileSize * 1.3) * 3;
-  		if (gp.btlManager.set) drawText("SET", x, y, hp_red, Color.LIGHT_GRAY);
+  		if (!gp.btlManager.shift) drawText("SET", x, y, hp_red, Color.LIGHT_GRAY);
   		else drawText("SET", x, y, Color.BLACK, Color.LIGHT_GRAY);
 
   		if (gp.keyH.upPressed) {
@@ -3927,9 +3933,9 @@ public class UI {
   				}
   			}
   			else if (commandNum == 4) {
-  				if (gp.btlManager.set) {
+  				if (!gp.btlManager.shift) {
   					gp.keyH.playCursorSE();  	
-  					gp.btlManager.set = false;  					
+  					gp.btlManager.shift = true;  					
   				}
   			}
   			
@@ -3963,9 +3969,9 @@ public class UI {
   				}
   			}
   			else if (commandNum == 4) {
-  				if (!gp.btlManager.set) {
+  				if (gp.btlManager.shift) {
   					gp.keyH.playCursorSE();  	
-  					gp.btlManager.set = true;  					
+  					gp.btlManager.shift = false;  					
   				}
   			}
   			
@@ -4147,7 +4153,7 @@ public class UI {
 				gp.btlManager.fighter[1].getProtection() == Protection.NONE) {				
 			
 			if (isFighterCaptured) {				
-				g2.drawImage(gp.btlManager.ballUsed.image3, fighter_two_X + (int)(gp.tileSize * 2.2), fighter_two_Y + (int)(gp.tileSize * 3.2), null);	
+				g2.drawImage(gp.btlManager.ballUsed.image3, fighter_two_X + (int)(gp.tileSize * 1.9), fighter_two_Y + (int)(gp.tileSize * 3.3), null);	
 			}
 			else {								
 				if (gp.btlManager.fighter[1].getAttacking()) animateAttack_Two();				
@@ -4763,7 +4769,7 @@ public class UI {
 		text = gp.btlManager.fighter[player].getMoveSet().get(commandNum).getType().getName();
 		x = getXForCenteredTextOnWidth(text, width - 15, x);
 		drawText(text, x, y, battle_white, Color.BLACK);
-	}		
+	}	
 	private void battle_Move_Desc() {
 		
 		int x;
@@ -5212,7 +5218,7 @@ public class UI {
 		
 		x = (int) (gp.tileSize * 5.6); 
 		y = (int) (gp.tileSize * 2.9);					
-		for (int i = 0; i < 30; i++) {	
+		for (int i = 0; i < gp.player.pcParty[boxTab].length; i++) {	
 			
 			if (gp.player.pcParty[boxTab][i] != null) {
 				fighter = gp.player.pcParty[boxTab][i];	
@@ -5823,17 +5829,16 @@ public class UI {
   			y += 40;
 		} 
   		
-  		x = (int) (gp.tileSize * 6.2);
-  		y = (int) (gp.tileSize * 5.3);
-		width = (int) (gp.tileSize * 7.8);
-		height = (int) (gp.tileSize * 3.4);
+  		x = (int) (gp.tileSize * 6.5);
+		y = (int) (gp.tileSize * 6.3);
+		width = (int) (gp.tileSize * 7.5);
+		height = (int) (gp.tileSize * 2.4);
 		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
 				
 		x += gp.tileSize * 0.8;
 		y += gp.tileSize + 5;
 		
-		// add closing bracket and space after song index #
-		StringBuilder formattedSong = new StringBuilder(
+		String song = new StringBuilder(
 				new File(gp.se.getSELibrary(9)[bagNum])
 					.getName()			
 					.replace(".wav", "")
@@ -5841,9 +5846,9 @@ public class UI {
 					.replace("_", ", ")
 					.replace("&", " ")
 					.toUpperCase()
-		);				
+			).toString();				
 		
-		drawText(formattedSong.toString(), x, y, Color.BLACK, Color.LIGHT_GRAY);
+		drawText(song, x, y, Color.BLACK, Color.LIGHT_GRAY);
 		if (commandNum == 0) {
 			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
 			
@@ -5867,23 +5872,17 @@ public class UI {
 	  			}
 	  			gp.keyH.playCursorSE();
 	  		}
-		}		
-		
-		y += gp.tileSize;
-		drawText("CONFIRM", x, y, Color.BLACK, Color.LIGHT_GRAY);
-		if (commandNum == 1) {
-			drawText(">", x-20, y, Color.BLACK, Color.LIGHT_GRAY);	
-			if (gp.keyH.aPressed) {
+	  		if (gp.keyH.aPressed) {
 	  			gp.keyH.aPressed = false;
 	  			gp.keyH.playCursorSE();	  			
 	  			commandNum = 0;
 				subState = 3;
 	  		}
-		}				
+		}					
 				
 		y += gp.tileSize;		
 		drawText("BACK", x, y, Color.BLACK, Color.LIGHT_GRAY);		
-		if (commandNum == 2) {
+		if (commandNum == 1) {
 			drawText(">", x - 25, y, Color.BLACK, Color.LIGHT_GRAY);
 		
 			if (gp.keyH.aPressed) {
@@ -5904,7 +5903,7 @@ public class UI {
   		}
   		if (gp.keyH.downPressed) {
   			gp.keyH.downPressed = false;  			
-  			if (commandNum < 2) {
+  			if (commandNum < 1) {
   				gp.keyH.playCursorSE();
   				commandNum++;
   			}
@@ -5919,20 +5918,54 @@ public class UI {
 	}
 	private void pc_Fight_Confirm() {
 
-		int x = (int) (gp.tileSize * 2);
-		int y = gp.tileSize * 9;
-		int width =(int) (gp.tileSize * 12);
-		int height = (int) (gp.tileSize * 2.5);
+		int x;
+		int y;
+		int width;
+		int height;
+		String text;
+		
+		x = (int) (gp.tileSize * 2);
+		y = gp.tileSize * 9;
+		width =(int) (gp.tileSize * 12);
+		height = (int) (gp.tileSize * 2.5);
 		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
 
 		x += gp.tileSize * 0.6;
 		y += gp.tileSize * 1.1;			
-		String dialogue = "Ready to begin your battle?";
+		text = "Ready to begin your battle?";
 		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
-  		for (String line : dialogue.split("\n")) {   			
+  		for (String line : text.split("\n")) {   			
   			drawText(line, x, y, Color.BLACK, Color.LIGHT_GRAY);
   			y += 40;
 		} 
+  		
+  		x = (int) (gp.tileSize * 2);
+		y = (int) (gp.tileSize * 5.3);
+		width = (int) (gp.tileSize * 7.5);
+		height = (int) (gp.tileSize * 3.4);
+		drawSubWindow(x, y, width, height, 25, 10, battle_white, dialogue_blue);
+		
+		g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 48F));
+		x += gp.tileSize * 0.6;
+		y += gp.tileSize;			
+		text = "Trainer " + gp.player_2.name;		
+  		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
+  		  		
+  		y += gp.tileSize;
+  		text = (cpuMode ? "CPU Battle" : "2 Player Battle");
+  		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);	
+  		  		
+  		text = new StringBuilder(
+				new File(gp.se.getSELibrary(9)[bagNum])
+					.getName()			
+					.replace(".wav", "")
+					.replace("-", ": ")
+					.replace("_", ", ")
+					.replace("&", " ")
+					.toUpperCase()
+  			).toString();	
+  		y += gp.tileSize;			
+  		drawText(text, x, y, Color.BLACK, Color.LIGHT_GRAY);
   		
   		x = (int) (gp.tileSize * 10.2);
 		y = (int) (gp.tileSize * 6.3);
@@ -5952,6 +5985,7 @@ public class UI {
 				subState = 0;
 				pcState = pc_Options;
 				
+				gp.player.healPokemonParty();
 				gp.saveLoad.loadFighterData(gp.fileSlot);
 				gp.btlManager.setup(gp.btlManager.trainerBattle, bagNum, gp.player_2, null, null, cpuMode, true);						
 				

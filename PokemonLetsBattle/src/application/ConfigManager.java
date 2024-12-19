@@ -38,7 +38,7 @@ public class ConfigManager {
 			bw.newLine();
 			
 			// SOUND EFFECTS VOLUME
-			bw.write("BATTLE SET\n" + String.valueOf(gp.btlManager.set));			
+			bw.write("BATTLE SET\n" + String.valueOf(gp.btlManager.shift));			
 			bw.newLine();
 			
 			// CLOSE FILE
@@ -79,7 +79,7 @@ public class ConfigManager {
 			
 			// BATTLE SET
 			s = br.readLine();
-			gp.btlManager.set = Boolean.valueOf(s);
+			gp.btlManager.shift = Boolean.valueOf(s);
 			br.readLine();		
 						
 			br.close();			
@@ -99,7 +99,7 @@ public class ConfigManager {
 			gp.se.volumeScale = 3;
 			
 			// BATTLE SET
-			gp.btlManager.set = true;	
+			gp.btlManager.shift = true;	
 		}
 	}
 }
