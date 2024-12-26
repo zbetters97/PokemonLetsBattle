@@ -3365,16 +3365,21 @@ public class BattleManager extends Thread {
 		}	 
 	}
 	private int getHPTimer(int damage) {
+		/** FORMULA GENERATED FROM LINEAR REGRESSION CALCULATOR **/
+		
 		
 		int hpTimer = 1;
 		
-		if (damage < 25) hpTimer = 70;
-		else if (25 <= damage && damage < 50) hpTimer = 55;
-		else if (50 <= damage && damage < 100) hpTimer = 40;
-		else if (100 <= damage && damage < 200) hpTimer = 25;
-		else if (200 <= damage && damage < 300) hpTimer = 15;
-		else if (300 <= damage) hpTimer = 10;
-						
+		if (damage < 10) {
+			hpTimer = 70;
+		}
+		else {
+			hpTimer = (int) ((-0.2405 * damage) + 71);
+			if (hpTimer < 7) {
+				hpTimer = 7;	
+			}
+		}
+		
 		return hpTimer;		
 	}
 	private void pause(int time) throws InterruptedException {
