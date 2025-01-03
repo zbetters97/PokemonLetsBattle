@@ -19,7 +19,7 @@ public class Driver {
 		
 		GamePanel gamePanel = new GamePanel();
 		window.add(gamePanel); 
-		
+						
 		// LOAD SETTINGS
 		gamePanel.config.loadConfig();
 		if (gamePanel.fullScreenOn) {

@@ -82,7 +82,7 @@ public class Entity {
 	public boolean onPath = false;
 	public boolean pathCompleted = false;
 	public Entity keyItem = null;
-	protected int steps = 0;
+	public int steps = 0;
 	public int dexSeen = 0;
 	public int dexOwn = 0;
 	public int music = 0;

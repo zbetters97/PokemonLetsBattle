@@ -58,6 +58,7 @@ public class SaveLoad {
 			ds.pWorldX = gp.player.worldX;
 			ds.pWorldY = gp.player.worldY;
 			ds.pMoney = gp.player.money;
+			ds.pSteps = gp.player.steps;
 			ds.pDexSeen = gp.player.dexSeen;
 			ds.pDexOwn = gp.player.dexOwn;
 			
@@ -161,8 +162,10 @@ public class SaveLoad {
 			
 			// NPCs
 			ds.npcNames = new String[gp.maxMap][gp.npc[1].length];
+			ds.npcDirections = new String[gp.maxMap][gp.npc[1].length];
 			ds.npcWorldX = new int[gp.maxMap][gp.npc[1].length];
 			ds.npcWorldY = new int[gp.maxMap][gp.npc[1].length];
+			ds.npcSteps = new int[gp.maxMap][gp.npc[1].length];
 			ds.npcDialogueSet = new int[gp.maxMap][gp.npc[1].length];
 			ds.npcHasBattle = new boolean[gp.maxMap][gp.npc[1].length];
 			
@@ -178,8 +181,7 @@ public class SaveLoad {
 			ds.iTileNames = new String[gp.maxMap][gp.iTile[1].length];
 			ds.iTileWorldX = new int[gp.maxMap][gp.iTile[1].length];
 			ds.iTileWorldY = new int[gp.maxMap][gp.iTile[1].length];
-			ds.iTileDirections = new String[gp.maxMap][gp.iTile[1].length];
-			
+			ds.iTileDirections = new String[gp.maxMap][gp.iTile[1].length];			
 
 			// NPC POKE PARTY							
 			ArrayList<Pokedex> id = new ArrayList<>();	
@@ -200,8 +202,10 @@ public class SaveLoad {
 					}
 					else {
 						ds.npcNames[mapNum][i] = gp.npc[mapNum][i].name;
+						ds.npcDirections[mapNum][i] = gp.npc[mapNum][i].direction;
 						ds.npcWorldX[mapNum][i] = gp.npc[mapNum][i].worldX;
 						ds.npcWorldY[mapNum][i] = gp.npc[mapNum][i].worldY;
+						ds.npcSteps[mapNum][i] = gp.npc[mapNum][i].steps;
 						ds.npcDialogueSet[mapNum][i] = gp.npc[mapNum][i].dialogueSet;
 						ds.npcHasBattle[mapNum][i] = gp.npc[mapNum][i].hasBattle;
 						
@@ -332,6 +336,7 @@ public class SaveLoad {
 			gp.currentArea = ds.cArea;
 			gp.player.worldX = ds.pWorldX;
 			gp.player.worldY = ds.pWorldY;
+			gp.player.steps = ds.pSteps;
 			gp.player.money = ds.pMoney;
 			gp.player.dexSeen = ds.pDexSeen;
 			gp.player.dexOwn = ds.pDexOwn;
@@ -496,9 +501,11 @@ public class SaveLoad {
 						gp.npc[mapNum][i] = null;
 					}
 					else if (gp.npc[mapNum][i] != null) {						
+						gp.npc[mapNum][i].direction = ds.npcDirections[mapNum][i];		
 						gp.npc[mapNum][i].worldX = ds.npcWorldX[mapNum][i];
 						gp.npc[mapNum][i].worldY = ds.npcWorldY[mapNum][i];		
 						gp.npc[mapNum][i].dialogueSet = ds.npcDialogueSet[mapNum][i];
+						gp.npc[mapNum][i].steps = ds.npcSteps[mapNum][i];		
 						gp.npc[mapNum][i].hasBattle = ds.npcHasBattle[mapNum][i];		
 						
 						// NPC POKE PARTY

@@ -20,7 +20,7 @@ public class DataStorage implements Serializable {
 	// PLAYER DATA
 	String pName, pDirection;	
 	int cMap, cArea, pWorldX, pWorldY;
-	int pMoney, pDexSeen, pDexOwn;	
+	int pMoney, pSteps, pDexSeen, pDexOwn;	
 	
 	// PLAYER BAG
 	ArrayList<String> pKeyItemNames = new ArrayList<>();
@@ -60,10 +60,8 @@ public class DataStorage implements Serializable {
 	ArrayList<Integer> pPCPartyIndexSlot = new ArrayList<>();
 	
 	// NPC DATA
-	String npcNames[][];
-	int npcWorldX[][];
-	int npcWorldY[][];
-	int npcDialogueSet[][];
+	String npcNames[][], npcDirections[][];
+	int npcWorldX[][], npcWorldY[][], npcDialogueSet[][], npcSteps[][];
 	boolean npcHasBattle[][];
 	
 	// NPC POKE PARTY
@@ -76,18 +74,12 @@ public class DataStorage implements Serializable {
 	ArrayList<ArrayList<String>> nPokePartyBall = new ArrayList<>();
 	
 	// MAP OBJECTS
-	String mapObjectNames[][];
-	int mapObjectWorldX[][];
-	int mapObjectWorldY[][];
-	String mapObjectDirections[][];
-	int mapObjectDoors[][];
-	int mapObjectLedges[][];
+	String mapObjectNames[][], mapObjectDirections[][];
+	int mapObjectWorldX[][], mapObjectWorldY[][], mapObjectDoors[][], mapObjectLedges[][];
 	
 	// MAP iTILES
-	String iTileNames[][];
-	int iTileWorldX[][];
-	int iTileWorldY[][];
-	String iTileDirections[][];
+	String iTileNames[][], iTileDirections[][];
+	int iTileWorldX[][], iTileWorldY[][];
 	
 	public String toString() {
 		return "[" + pName + "]  " + file_date;
